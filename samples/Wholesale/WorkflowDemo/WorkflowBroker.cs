@@ -15,6 +15,14 @@ namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo;
 /// <summary>Native sample routing and acknowledgement. Owns separate channels for concurrent hosted roles.</summary>
 public sealed class WorkflowBroker : IAsyncDisposable
 {
+    private static readonly string[] Routes =
+    [
+        "inventory.issue-stock",
+        "inventory.stock-issues",
+        "inventory.reserve-stock",
+        "inventory.release-reservation",
+        "inventory.reservation-outcomes",
+    ];
     private readonly IConnection connection;
     private readonly IChannel commands;
     private readonly IChannel replies;
@@ -67,7 +75,7 @@ public sealed class WorkflowBroker : IAsyncDisposable
 
     public async Task SetupAsync(CancellationToken token)
     {
-        foreach (string route in new[] { "inventory.issue-stock", "inventory.stock-issues" })
+        foreach (string route in Routes)
             await intake.QueueDeclareAsync(
                 Queue(route),
                 durable: true,
@@ -80,19 +88,24 @@ public sealed class WorkflowBroker : IAsyncDisposable
     /// <summary>Checks existing topology without creating queues during worker startup.</summary>
     public async Task RequireQueuesAsync(CancellationToken token)
     {
-        await intake.QueueDeclarePassiveAsync(Queue("inventory.issue-stock"), token);
-        await intake.QueueDeclarePassiveAsync(Queue("inventory.stock-issues"), token);
+        foreach (string route in Routes)
+            await intake.QueueDeclarePassiveAsync(Queue(route), token);
     }
 
     public async Task PublishCommandAsync(OutgoingMessage message, CancellationToken token)
     {
         if (
-            message.RouteKey != "inventory.issue-stock"
-            || message.MessageName != "inventory.issue-stock"
+            message.RouteKey
+                is not (
+                    "inventory.issue-stock"
+                    or "inventory.reserve-stock"
+                    or "inventory.release-reservation"
+                )
+            || message.MessageName != message.RouteKey
             || message.SchemaVersion != 1
         )
             throw new InvalidDataException(
-                "The Sales publisher accepts only stock-issue v1 commands."
+                "The Sales publisher accepts only configured Inventory v1 commands."
             );
 
         await PublishAsync(commands, message, StockIssueMessageAdmission.SalesProducer, token);
@@ -101,13 +114,18 @@ public sealed class WorkflowBroker : IAsyncDisposable
     public async Task PublishReplyAsync(OutgoingMessage message, CancellationToken token)
     {
         if (
-            message.RouteKey != "inventory.stock-issues"
-            || message.MessageName
-                is not ("inventory.stock-issue-recorded" or "inventory.stock-issue-declined")
+            !(
+                message.RouteKey == "inventory.stock-issues"
+                    && message.MessageName
+                        is ("inventory.stock-issue-recorded" or "inventory.stock-issue-declined")
+                || message.RouteKey == "inventory.reservation-outcomes"
+                    && message.MessageName
+                        is ("inventory.reservation-decided" or "inventory.reservation-released")
+            )
             || message.SchemaVersion != 1
         )
             throw new InvalidDataException(
-                "The Inventory publisher accepts only stock-issue v1 outcomes."
+                "The Inventory publisher accepts only configured Inventory v1 outcomes."
             );
 
         await PublishAsync(replies, message, StockIssueReplyAdmission.Producer, token);
@@ -176,6 +194,42 @@ public sealed class WorkflowBroker : IAsyncDisposable
             StockIssueReplyAdmission.Producer,
             StockIssueReplyAdmission.Subscription,
             StockIssueReplyAdmission.Validate,
+            token
+        );
+
+    public Task<bool> ReceiveReservationAsync(
+        IServiceScopeFactory scopes,
+        CancellationToken token
+    ) =>
+        ReceiveAsync<InventoryDbContext>(
+            scopes,
+            "inventory.reserve-stock",
+            "sales",
+            StockReservationAdmission.Subscription,
+            StockReservationAdmission.Validate,
+            token
+        );
+
+    public Task<bool> ReceiveReleaseAsync(IServiceScopeFactory scopes, CancellationToken token) =>
+        ReceiveAsync<InventoryDbContext>(
+            scopes,
+            "inventory.release-reservation",
+            "sales",
+            StockReservationAdmission.Subscription,
+            StockReservationAdmission.Validate,
+            token
+        );
+
+    public Task<bool> ReceiveReservationReplyAsync(
+        IServiceScopeFactory scopes,
+        CancellationToken token
+    ) =>
+        ReceiveAsync<SalesDbContext>(
+            scopes,
+            "inventory.reservation-outcomes",
+            "inventory",
+            StockReservationReplyAdmission.Subscription,
+            StockReservationReplyAdmission.Validate,
             token
         );
 
@@ -273,8 +327,8 @@ public sealed class WorkflowBroker : IAsyncDisposable
 
     public async Task DeleteQueuesAsync(CancellationToken token)
     {
-        await intake.QueueDeleteAsync(Queue("inventory.issue-stock"), cancellationToken: token);
-        await intake.QueueDeleteAsync(Queue("inventory.stock-issues"), cancellationToken: token);
+        foreach (string route in Routes)
+            await intake.QueueDeleteAsync(Queue(route), cancellationToken: token);
     }
 
     public async ValueTask DisposeAsync()

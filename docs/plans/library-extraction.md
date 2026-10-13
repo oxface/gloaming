@@ -23,12 +23,21 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Explicit transactional audit E9 | Owner considers the slice complete; checkpoint `18a76f8` is present in `origin/main`. [Reviewed scope](e9-explicit-transactional-audit.md); [library contract](../../src/Rootbolt.Auditing/README.md); [verification and remaining gaps](../reports/e9-explicit-transactional-audit.md). |
 | Separate worker hosts W1 | Owner-approved checkpoint `7b43201`, merged into `origin/main` as `94ca57a`. Existing inbox/outbox APIs compose separate native roles with explicit setup; [scope](w1-separate-worker-hosts.md), [usage](../../samples/MessagingWorkerDemo/README.md) and [process proofs](../reports/w1-separate-worker-hosts.md). No new library interface or mechanism. |
 | Durable message observability OBS1 | Owner-approved checkpoint `b44b5d5`, merged into `origin/main` at `4c0e0c5`, including the optional native OTel subscription adapter. [Local contract](../../src/Rootbolt.Messaging/docs/observability.md), [scope/file map](durable-message-observability.md) and [fresh proofs](../reports/obs1-durable-message-observability.md). |
-| Durable inter-module workflow WF1 | Implemented for owner code review: Sales-owned stock-issue progress with independent Inventory decisions, persisted replies and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism; changes remain uncommitted. |
+| Durable inter-module workflow WF1 | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: Sales-owned stock-issue progress, independent Inventory decisions and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism. |
+| Compensating workflow WF2 | Owner-approved [bounded continuation interface/replacement scope](wf2-durable-continuations.md) implemented on `feat/compensating-workflow`. Optional core/EF packages, Sales continuation adoption and standalone branching PostgreSQL proofs; [new evidence](../reports/wf2-durable-continuations.md) supersedes the uncommitted fixed-sequence experiment. Index review snapshot is preserved. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
 and telemetry concerns. Its optional PostgreSQL mapping and item timeline belong to the
 current [audit contract](../../src/Rootbolt.Auditing/README.md).
+
+On 2026-10-12 the owner selected bounded explicit continuations over replayed orchestration
+and authorized preparing a concrete replacement of the uncommitted sequential experiment.
+[The continuation proposal](wf2-durable-continuations.md) supplies public types, consumer code,
+provided table/transaction protocol and exact replacement scope approved by the owner on
+2026-10-12. The replacement is implemented for code review; earlier sequential reports remain
+historical evidence. Existing inbox/outbox workers and native save/commit ownership are retained;
+no graph interpreter or replay runtime is supplied.
 
 The [remaining capability roadmap](remaining-capability-roadmap.md) is the current starting
 point for selecting another slice. It explicitly includes DDD/CQRS assessments and template
@@ -577,7 +586,7 @@ interfaces. Links below deliberately point to the historical evidence.
 | Rebus/RabbitMQ integration | Optional adapters around demonstrated delivery/publishing behavior | Consumer creates endpoints and wires queues, topics, subscriptions, handlers, routing and retry/error policy. No generic bus registration facade. |
 | Audit | Common technical envelope and explicit staging, if comparison earns a library | Action/reason vocabulary, denial policy, sensitive details, retention and query visibility. Event streams are not security audits. |
 | Authentication and Access | Evaluate focused technical utilities and, later, an optional Access feature module if reuse earns it | BFF/OIDC settings, principal completion, users, Organizations, memberships, invitations and roles begin as customizable sample/template code. Promotion follows the extraction and strategy gate; Access is not a technical-library foundation. |
-| Saga/process coordination | Compare repeated persistence/claim mechanics after reliable delivery | Concrete transitions, deadlines, compensation and operator attention remain in Sales/Purchasing. No generic saga engine is justified yet. |
+| Saga/process coordination | WF2 supplies optional explicit typed continuations and provided EF process storage after owner review | Ordinary consumer methods own branching, compensation/effects and business replies. Library matches operations, continues saved methods and enqueues requests. Native transaction/admission/transport remain explicit; no replay/graph/scheduler engine. |
 | DDD and CQRS | Small pending-event or value utilities only if they remove meaningful duplication | Rich aggregates, children, value-object rules, domain services, handlers/results and direct queries begin as consumer code. No mandatory inheritance or mediator. |
 | Structure, API and registration | Explicit sample conventions and configurable architecture utilities | Consumer-selected graph, HTTP ingress and module composition. A configurable policy tool must demonstrate an alternative layout and detect violations. |
 | Testing and delivery | CI lanes, fixtures, architecture checks and development tooling | Extract helpers only when used; template pipeline is not a runtime dependency. Dependabot or an alternative enters with a reviewed update policy. |

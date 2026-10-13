@@ -54,6 +54,8 @@ public sealed class SampleModuleBoundaryTests
         typeof(IEventStreamRecord).Assembly,
         typeof(IEventSourcedAggregate<>).Assembly,
         typeof(Rootbolt.Messaging.OutgoingMessage).Assembly,
+        typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly,
+        typeof(Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
         typeof(Rootbolt.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
         typeof(Rootbolt.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
     ];

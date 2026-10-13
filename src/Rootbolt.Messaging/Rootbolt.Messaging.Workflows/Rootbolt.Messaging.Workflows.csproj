@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Rootbolt.Messaging/Rootbolt.Messaging.csproj" />
+    <InternalsVisibleTo Include="Rootbolt.Messaging.Workflows.EntityFrameworkCore" />
+  </ItemGroup>
+</Project>

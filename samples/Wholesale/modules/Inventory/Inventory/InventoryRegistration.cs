@@ -13,6 +13,23 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory;
 
 public static class InventoryRegistration
 {
+    /// <summary>Registers reservation intake/processing; compose with stock commands and consumer transport.</summary>
+    public static IServiceCollection AddStockReservationInbox(this IServiceCollection services)
+    {
+        services.TryAddScoped<ActorContextAccessor>();
+        services.TryAddScoped<IActorContextAccessor>(provider =>
+            provider.GetRequiredService<ActorContextAccessor>()
+        );
+        services.TryAddScoped<IActorContextInitializer>(provider =>
+            provider.GetRequiredService<ActorContextAccessor>()
+        );
+        services.AddPostgresInbox<InventoryDbContext>();
+        services.AddPostgresInboxProcessor<InventoryDbContext>(new(TimeSpan.FromSeconds(1)));
+        return services.AddInboxHandler<InventoryDbContext, Reservations.StockReservationHandler>(
+            StockReservationAdmission.Subscription
+        );
+    }
+
     public static IServiceCollection AddInventoryQueries(this IServiceCollection services) =>
         services.AddScoped<IStockCatalog, StockCatalog>();
 

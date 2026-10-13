@@ -11,7 +11,9 @@ internal sealed class WorkflowBarrier(NpgsqlConnection owner, string database) :
     internal static async Task<WorkflowBarrier> HoldAsync(
         string database,
         bool insert,
-        CancellationToken token
+        CancellationToken token,
+        string table = "sales.stock_issue_requests",
+        string? condition = null
     )
     {
         var owner = new NpgsqlConnection(database);
@@ -21,18 +23,16 @@ internal sealed class WorkflowBarrier(NpgsqlConnection owner, string database) :
             await using var command = new NpgsqlCommand(
                 $"""
                 SELECT pg_advisory_lock({LockKey});
-                CREATE FUNCTION sales.workflow_proof_barrier() RETURNS trigger LANGUAGE plpgsql AS $$
+                CREATE FUNCTION public.workflow_proof_barrier() RETURNS trigger LANGUAGE plpgsql AS $$
                 BEGIN
                     PERFORM pg_advisory_xact_lock({LockKey});
                     RETURN NEW;
                 END;
                 $$;
                 """
-                    + (
-                        insert
-                            ? "CREATE TRIGGER workflow_proof_barrier BEFORE INSERT ON sales.stock_issue_requests FOR EACH ROW EXECUTE FUNCTION sales.workflow_proof_barrier();"
-                            : "CREATE TRIGGER workflow_proof_barrier BEFORE UPDATE ON sales.stock_issue_requests FOR EACH ROW EXECUTE FUNCTION sales.workflow_proof_barrier();"
-                    ),
+                    + $"CREATE TRIGGER workflow_proof_barrier BEFORE {(insert ? "INSERT" : "UPDATE")} ON {table} FOR EACH ROW "
+                    + (condition is null ? "" : $"WHEN ({condition}) ")
+                    + "EXECUTE FUNCTION public.workflow_proof_barrier();",
                 owner
             );
             await command.ExecuteNonQueryAsync(token);

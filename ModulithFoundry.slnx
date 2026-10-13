@@ -7,12 +7,16 @@
     <Project Path="src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/">
+    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj" />
+    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging/Rootbolt.Messaging.csproj" />
     <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/Rootbolt.Messaging.EntityFrameworkCore.csproj" />
     <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj" />
     <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/Rootbolt.Messaging.OpenTelemetry.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/Tests/">
+    <Project Path="src/Rootbolt.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
+    <Project Path="src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj" />
     <Project Path="src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj" />
     <Project Path="src/Rootbolt.Messaging/tests/MessagingTests/MessagingTests.csproj" />
     <Project Path="src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj" />

@@ -27,6 +27,8 @@ internal sealed class StockPositionStateRow : IInlineStateRecord
             || state.StockingLocationId == Guid.Empty
             || string.IsNullOrWhiteSpace(state.BaseUnitCode)
             || state.OnHand < 0
+            || state.Reserved < 0
+            || state.Available < 0
         )
             throw new InvalidDataException("The stock-position write view has invalid state.");
         return state;

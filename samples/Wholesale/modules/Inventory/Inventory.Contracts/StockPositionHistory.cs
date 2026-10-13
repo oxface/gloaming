@@ -8,5 +8,9 @@ public sealed record StockPositionHistory(
     Guid StockingLocationId,
     string BaseUnitCode,
     decimal OnHand,
-    string? LatestDeliveryReference
-);
+    string? LatestDeliveryReference,
+    decimal Reserved = 0
+)
+{
+    public decimal Available => OnHand - Reserved;
+}

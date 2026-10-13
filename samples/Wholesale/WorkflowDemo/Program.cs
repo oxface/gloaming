@@ -22,7 +22,7 @@ string inventory = Required("ConnectionStrings:Inventory");
 builder.Services.AddWorkflowDemo(sales, inventory);
 using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(60));
 
-if (role is "start" or "read" or "seed")
+if (role is "start" or "read" or "seed" or "reserve-order" or "read-order" or "retry-compensation")
 {
     using var operations = builder.Build();
     await using var scope = operations.Services.CreateAsyncScope();
@@ -37,7 +37,34 @@ if (role is "start" or "read" or "seed")
         .ServiceProvider.GetRequiredService<IActorContextInitializer>()
         .Initialize(new ActorContext(Actor.System(new ActorId("sales.workflow-demo"))));
     var requests = scope.ServiceProvider.GetRequiredService<IStockIssueRequests>();
-    if (role == "seed")
+    if (role is "reserve-order" or "read-order" or "retry-compensation")
+    {
+        var orders = scope.ServiceProvider.GetRequiredService<IStockReservationOrders>();
+        Guid id = Guid.Parse(Required("OrderId"));
+        var order = role switch
+        {
+            "read-order" => await orders.ReadAsync(id, startup.Token),
+            "retry-compensation" => await orders.RetryCompensationAsync(id, startup.Token),
+            _ => await orders.StartAsync(
+                new(
+                    id,
+                    new(
+                        Guid.Parse(Required("FirstStockId")),
+                        builder.Configuration.GetValue("FirstVersion", 2L),
+                        builder.Configuration.GetValue("FirstQuantity", 1m)
+                    ),
+                    new(
+                        Guid.Parse(Required("SecondStockId")),
+                        builder.Configuration.GetValue("SecondVersion", 2L),
+                        builder.Configuration.GetValue("SecondQuantity", 1m)
+                    )
+                ),
+                startup.Token
+            ),
+        };
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(order));
+    }
+    else if (role == "seed")
     {
         var database = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
         await using var transaction = await database.Database.BeginTransactionAsync(startup.Token);
@@ -121,7 +148,9 @@ if (role == "setup")
 }
 
 if (role != "run")
-    throw new InvalidOperationException("Choose --role setup, seed, start, read or run.");
+    throw new InvalidOperationException(
+        "Choose --role setup, seed, start, read, reserve-order, read-order, retry-compensation or run."
+    );
 
 // Fail before hosting if explicit setup has not installed the required storage/topology.
 // These privileged probes check structure only; they do not expose tenant business data.
@@ -155,6 +184,14 @@ builder.Services.AddInboxWorker<InventoryDbContext>(
     StockIssueMessageAdmission.Subscription,
     new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
 );
+builder.Services.AddInboxWorker<SalesDbContext>(
+    StockReservationReplyAdmission.Subscription,
+    new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
+);
+builder.Services.AddInboxWorker<InventoryDbContext>(
+    StockReservationAdmission.Subscription,
+    new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
+);
 builder.Services.AddHostedService<WorkflowIntakeWorker>();
 builder.Services.AddHostedService<StockIssueDeadlineWorker>();
 using var host = builder.Build();
@@ -174,6 +211,14 @@ await using (var scope = host.Services.CreateAsyncScope())
         .AnyAsync(startup.Token);
     _ = await salesDatabase
         .Database.SqlQueryRaw<int>("SELECT 1 AS \"Value\" FROM sales.stock_issue_requests")
+        .Take(1)
+        .ToArrayAsync(startup.Token);
+    _ = await salesDatabase
+        .Database.SqlQueryRaw<int>("SELECT 1 AS \"Value\" FROM sales.workflow_instances")
+        .Take(1)
+        .ToArrayAsync(startup.Token);
+    _ = await inventoryDatabase
+        .Database.SqlQueryRaw<int>("SELECT 1 AS \"Value\" FROM inventory.stock_reservations")
         .Take(1)
         .ToArrayAsync(startup.Token);
 }

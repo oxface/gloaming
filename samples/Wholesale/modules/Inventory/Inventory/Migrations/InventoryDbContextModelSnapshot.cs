@@ -25,6 +25,55 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Inventory.Reservations.StockReservation",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("Id").HasColumnType("uuid");
+
+                    b.Property<int>("Decision").HasColumnType("integer");
+
+                    b.Property<long>("ExpectedVersion").HasColumnType("bigint");
+
+                    b.Property<decimal>("Quantity").HasColumnType("numeric");
+
+                    b.Property<bool>("Released").HasColumnType("boolean");
+
+                    b.Property<Guid>("StockPositionId").HasColumnType("uuid");
+
+                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
+
+                    b.HasKey("OrganizationKey", "Id");
+
+                    b.ToTable(
+                        "stock_reservations",
+                        "inventory",
+                        t =>
+                        {
+                            t.HasCheckConstraint(
+                                "valid_reservation",
+                                "\"Quantity\" > 0 AND \"ExpectedVersion\" >= 1 AND \"Version\" >= 1 AND \"Decision\" BETWEEN 1 AND 4 AND (NOT \"Released\" OR \"Decision\" = 1)"
+                            );
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Inventory.InventoryDbContext, Inventory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
                 "ModulithFoundry.Samples.Wholesale.Inventory.StockPositions.EventStream",
                 b =>
                 {

@@ -51,11 +51,26 @@ internal sealed class StockPositionAggregate
 
     protected override void ValidateCandidate(StockPositionState candidate)
     {
-        if (candidate.OnHand < 0)
+        if (candidate.OnHand < 0 || candidate.Reserved < 0 || candidate.Available < 0)
             throw new InvalidOperationException(
                 "The complete stock candidate has negative on-hand quantity."
             );
     }
+
+    internal bool TryReserve(Guid reservationId, decimal quantity)
+    {
+        if (State is null)
+            throw new InvalidOperationException("The stock position must be open.");
+
+        if (quantity > State.Available)
+            return false;
+
+        ApplyChanges([new StockPositionReserved(reservationId, quantity)]);
+        return true;
+    }
+
+    internal void Release(Guid reservationId, decimal quantity) =>
+        ApplyChanges([new StockPositionReservationReleased(reservationId, quantity)]);
 
     protected override StockPositionState Evolve(
         StockPositionState? state,

@@ -7,9 +7,12 @@ internal sealed record StockPositionState(
     Guid StockingLocationId,
     string BaseUnitCode,
     decimal OnHand,
-    string? LatestDeliveryReference
+    string? LatestDeliveryReference,
+    decimal Reserved = 0
 )
 {
+    internal decimal Available => OnHand - Reserved;
+
     internal StockPositionHistory ToHistory(Guid id, long version, DateTimeOffset recordedAt) =>
         new(
             id,
@@ -19,6 +22,7 @@ internal sealed record StockPositionState(
             StockingLocationId,
             BaseUnitCode,
             OnHand,
-            LatestDeliveryReference
+            LatestDeliveryReference,
+            Reserved
         );
 }

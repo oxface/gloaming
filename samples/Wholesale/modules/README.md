@@ -4,6 +4,11 @@ The HTTP sample composes three populated module implementations through separate
 projects. The native event-history executable also composes Purchasing. These are
 consumer-owned sample/template projects, not reusable technical libraries.
 
+The separate [compensating reservation workflow](../WorkflowDemo/compensating-reservations.md)
+adds Inventory-owned reservation receipts and available-stock decisions, plus Sales-owned
+two-line process state and compensation attempts. Both contexts commit independently using
+their existing inbox/outbox; implementations still communicate only through Contracts.
+
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |

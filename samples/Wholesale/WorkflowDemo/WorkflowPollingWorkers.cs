@@ -20,7 +20,13 @@ internal sealed partial class WorkflowIntakeWorker(
             {
                 bool command = await broker.ReceiveCommandAsync(scopes, stoppingToken);
                 bool reply = await broker.ReceiveReplyAsync(scopes, stoppingToken);
-                if (!command && !reply)
+                bool reservation = await broker.ReceiveReservationAsync(scopes, stoppingToken);
+                bool release = await broker.ReceiveReleaseAsync(scopes, stoppingToken);
+                bool reservationReply = await broker.ReceiveReservationReplyAsync(
+                    scopes,
+                    stoppingToken
+                );
+                if (!command && !reply && !reservation && !release && !reservationReply)
                     await Task.Delay(TimeSpan.FromMilliseconds(100), stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)

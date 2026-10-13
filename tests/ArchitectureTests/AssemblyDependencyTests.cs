@@ -42,6 +42,8 @@ public sealed class AssemblyDependencyTests
             typeof(Rootbolt.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
             typeof(Rootbolt.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
             typeof(Rootbolt.Messaging.OutgoingMessage).Assembly,
+            typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly,
+            typeof(Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
             typeof(Rootbolt.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
             typeof(Rootbolt.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
             typeof(Samples.OutboxDemo.DemoJourneys).Assembly,
@@ -65,6 +67,48 @@ public sealed class AssemblyDependencyTests
             typeof(Samples.Wholesale.HttpIdentityDemo.DemoComposition).Assembly
         )
         .Build();
+
+    [Fact]
+    public void WorkflowCoreAndRunnerRemainOptionalWithoutTransportOrModuleDependencies()
+    {
+        foreach (
+            string library in new[]
+            {
+                "Rootbolt.Messaging.Workflows",
+                "Rootbolt.Messaging.Workflows.EntityFrameworkCore",
+            }
+        )
+        {
+            foreach (
+                string forbidden in new[]
+                {
+                    Actor,
+                    Tenancy,
+                    Persistence,
+                    EventSerialization,
+                    History,
+                    AggregateCore,
+                    Storage,
+                    "Rootbolt.Messaging.EntityFrameworkCore.Postgres",
+                }
+            )
+                NoDependency(library, forbidden).Check(Architecture);
+        }
+
+        Assert.DoesNotContain(
+            typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly.GetReferencedAssemblies(),
+            reference =>
+                reference.Name!.StartsWith(
+                    "Microsoft.EntityFrameworkCore",
+                    StringComparison.Ordinal
+                )
+                || reference.Name.StartsWith("Npgsql", StringComparison.Ordinal)
+                || reference.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)
+        );
+        NoDependency("Rootbolt.Messaging", "Rootbolt.Messaging.Workflows").Check(Architecture);
+        NoDependency("Rootbolt.Messaging.EntityFrameworkCore", "Rootbolt.Messaging.Workflows")
+            .Check(Architecture);
+    }
 
     [Theory]
     [InlineData(Actor, Audit)]

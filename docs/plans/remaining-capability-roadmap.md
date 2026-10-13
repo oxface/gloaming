@@ -33,7 +33,8 @@ references, not selected runtime dependencies or a feature-parity target.
 | C1: CQRS patterns and optional helpers | Explicit command/query contracts, handlers and native `{Aggregate}Queries` / `{Aggregate}Filters` in real consumers, including filtering a joined EF read view. | Separate read/write logic can share storage. Preserve direct calls, typed DI and caller-owned save/commit. A mediator, pipeline or handler registry needs demonstrated value rather than CQRS naming alone. |
 | W1: separately hosted workers | Complete and merged: separate API, dispatch/intake/processing roles and finite setup. | Real PostgreSQL/RabbitMQ process proofs cover API independence, competing processors, shutdown, death and recovery using existing locks/leases. See the W1 report; no new library mechanism. |
 | OBS1: durable message observability | Complete and merged: [observability scope](durable-message-observability.md) instruments the existing Exports → Rendering process journey. | Fresh process/OTLP/PostgreSQL proofs are recorded in the OBS1 report. Backlog alerts, dashboard inspection and new audit/reply workflows are deferred. |
-| WF1: durable inter-module workflow / saga assessment | Implemented for owner code review: [stock-issue scope](wf1-durable-inter-module-workflow.md), [usage](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh proofs](../reports/wf1-durable-inter-module-workflow.md). | Persisted module-owned progress composes existing inbox/outbox. Business compensation and semantic idempotency stay consumer-owned. No new reusable mechanism; compare a materially different workflow before extracting mechanics. |
+| WF1: durable inter-module workflow / saga assessment | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: [stock-issue scope](wf1-durable-inter-module-workflow.md), [usage](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh proofs](../reports/wf1-durable-inter-module-workflow.md). | Persisted module-owned request/reply progress composes existing inbox/outbox. No new reusable mechanism. |
+| WF2: multi-step saga with compensation | Owner-approved [bounded continuation replacement](wf2-durable-continuations.md), [Sales usage](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md) and [new protocol/adoption evidence](../reports/wf2-durable-continuations.md). | Provided process table, typed selected-method execution, semantic outcomes and atomic request enqueue. Consumer C# owns branching/compensation and native transactions; no workflow scheduler/replay engine. |
 | B1: replayable source contract | One source module exposes retained integration changes with a provable progress cursor, ordering, retention floor and expired-cursor outcome. | Prove late commits, gaps, duplicates and restart. Outbox dispatch order and timestamps are not an established replay protocol. Public export contracts must preserve module ownership. |
 | B2: new-service repopulation | Populate a new receiver from a consistent initial snapshot, then apply retained changes without losing or incorrectly repeating effects. | Builds on a proven boundary/feed such as B1. Prove concurrent writes during export, interrupted copy/pages, deletes and transactional receiver checkpoints. Start with one source; state-stored modules must also be supported by the chosen scenario. |
 | ES3: aggregate regeneration orchestration | A simple explicit maintenance host/job around the existing full aggregate rebuilder. | Still needed eventually. Separate from normal fetch/write and from new-service bootstrap. Prove bounded retries, cancellation, restart and conflicts with writers; scheduling, admission and online/offline policy remain explicit. |
@@ -52,8 +53,10 @@ before v1. This roadmap does not discard them or promote them into library commi
 W1 demonstrates that the existing Hosting abstractions, fresh DI scopes and callable
 processing/dispatch can run outside an API. Host placement is consumer composition. OBS1 adds diagnostic propagation to that path after owner interface/scope review; its
 implementation and fresh evidence are owner-approved and merged. W1 itself added no retained
-trace fields or OTel runtime. WF1 is implemented for owner code review; its consumer-owned
-progress introduces no saga runtime. B1 is the next recommended runtime slice after WF1 review.
+trace fields or OTel runtime. WF1 is merged; WF2 now exercises multiple steps and compensation
+for owner code review. Its owner-approved sequential coordinator follow-up is implemented
+and has its own fresh contract/adoption proofs, separate from earlier consumer-only evidence.
+B1 remains the next recommended runtime slice after WF2 review.
 
 D1 and C1 can be explored independently before adding template choices. They are explicit
 roadmap items, with a library extraction decision at the end of each assessment. Reuse the
@@ -110,7 +113,9 @@ A saga first means persistent business progress across independently committed m
 operations. It is not a distributed rollback transaction. Start with visible transitions
 and existing messaging; durable timeout delivery requires a real persisted/recoverable path,
 not an in-memory timer. A saga base class, registry, generic scheduler or workflow DSL is
-not selected by WF1.
+not selected by the consumer implementations. WF2 adds a real compensating business action;
+its owner-approved follow-up implements a small fixed-sequence coordinator. Its scope and
+report distinguish the new mechanism from existing messaging and consumer-owned policy.
 
 ## Current boundaries and completion criteria
 

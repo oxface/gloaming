@@ -136,6 +136,15 @@ public sealed class AdoptionDependencyTests
     [Fact]
     public void MessagingLayersDeclareOnlyUsedContractsAndNativeDependencies()
     {
+        Check("Rootbolt.Messaging.Workflows", ["Rootbolt.Messaging"], []);
+        Check(
+            "Rootbolt.Messaging.Workflows.EntityFrameworkCore",
+            ["Rootbolt.Messaging.Workflows", "Rootbolt.Messaging.EntityFrameworkCore"],
+            [
+                "Microsoft.EntityFrameworkCore.Relational",
+                "Microsoft.Extensions.DependencyInjection.Abstractions",
+            ]
+        );
         Check(
             "Rootbolt.Messaging.EntityFrameworkCore",
             ["Rootbolt.Messaging"],
