@@ -1,9 +1,9 @@
 # WF1: durable inter-module workflow
 
-Date: 2026-10-10. Implementation authorized by the owner and complete for code review on
-`feat/durable-inter-module-workflow`, based on fetched `origin/main` at `4c0e0c5`.
-All changes remain unstaged and uncommitted; the index was empty on entry and is preserved.
-No push or pull request was created. This branch also corrects OBS1's status to record its
+Date: 2026-10-10. Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`.
+The original `feat/durable-inter-module-workflow` branch was based on `4c0e0c5`;
+its index was preserved until the owner explicitly authorized the checkpoint.
+The implementation agent created no push or pull request. This branch also corrected OBS1's status to record its
 owner-approved checkpoint `b44b5d5` and merge at `4c0e0c5`.
 
 ## Outcome and ownership

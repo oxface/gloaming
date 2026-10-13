@@ -149,7 +149,7 @@ library interface is introduced; existing typed composition, leases and row lock
 [The W1 report](../../../docs/reports/w1-separate-worker-hosts.md) distinguishes these executions
 from historical O1/I1 results.
 
-## Deferred capabilities
+## Current observability and workflow boundaries
 
 Host placement is consumer composition. Optional retained W3C context, native attempt
 activities, correlated failure logs and metrics are supported; see [observability](observability.md).
@@ -164,6 +164,17 @@ module-owned state and the existing messaging contracts. The
 persisted request/reply progress, native EF request concurrency, semantic idempotency and
 overdue-state recovery. These are consumer policies composed with inbox/outbox, not a supplied
 saga engine or scheduler; see its separate dated report for the proven behavior.
+
+[WF2's reservation saga](../../../samples/Wholesale/WorkflowDemo/compensating-reservations.md)
+adds sequential steps and an actual compensating release across separate module commits.
+The optional [durable continuation runner](workflows.md) now owns provided process storage,
+requested IDs, semantic reply matching, selected-method execution and atomic request enqueue.
+Ordinary consumer methods own branching, compensation and business state. Native transactions
+and existing inbox/outbox workers remain explicit. No workflow worker, scheduler or replay engine
+is supplied. The independent tenantless workspace adopter takes a different existing-resource
+branch and does not release resources it did not create.
+
+## Deferred capabilities
 
 Receipt-only mode if an adopter needs it;
 queued-message compatibility/upcasting rollout proofs; retention/deduplication windows;

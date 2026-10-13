@@ -5,6 +5,8 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj" />
     <ProjectReference Include="../../samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
     <ProjectReference Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/Rootbolt.Auditing.EntityFrameworkCore.csproj" />
@@ -37,6 +39,16 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.Workflows.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <None
       Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/Rootbolt.Messaging.OpenTelemetry.csproj"
       Link="ProjectDeclarations/Rootbolt.Messaging.OpenTelemetry.csproj"

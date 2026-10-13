@@ -28,9 +28,12 @@ public static class WorkflowComposition
             InventoryDatabase.Configure(options, inventoryConnection)
         );
         services.AddStockIssueRequests();
+        services.AddStockReservationOrders();
         services.AddStockPositionCommands();
         services.AddStockPositionQueries();
+        services.AddStockPositionHistory();
         services.AddStockIssueInbox();
+        services.AddStockReservationInbox();
         return services;
     }
 }

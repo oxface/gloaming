@@ -81,7 +81,7 @@ internal sealed class StockPositionCommands(
                 return new StockPositionChangeResult.NotFound();
             if (!aggregate.TryIssue(quantities, out decimal requested))
                 return new StockPositionChangeResult.InsufficientStock(
-                    aggregate.State!.OnHand,
+                    aggregate.State!.Available,
                     requested
                 );
             var recordedAt = (await store.AppendAsync(aggregate, cancellationToken)).RecordedAt;

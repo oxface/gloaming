@@ -3,6 +3,7 @@ using Rootbolt.Auditing.EntityFrameworkCore;
 using Rootbolt.Auditing.EntityFrameworkCore.Postgres;
 using Rootbolt.Messaging.EntityFrameworkCore;
 using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
+using Rootbolt.Messaging.Workflows.EntityFrameworkCore;
 using Rootbolt.Persistence.EntityFrameworkCore;
 using Rootbolt.Tenancy;
 
@@ -20,6 +21,7 @@ public sealed class SalesDbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("sales");
+        modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(
             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),
             () => RequiredOrganizationKey
@@ -101,6 +103,7 @@ public sealed class SalesDbContext(
         this.ValidateAuditChanges();
         this.ValidateInboxChanges();
         this.ValidateOutboxChanges();
+        this.ValidateWorkflowChanges();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
@@ -113,6 +116,7 @@ public sealed class SalesDbContext(
         this.ValidateAuditChanges();
         this.ValidateInboxChanges();
         this.ValidateOutboxChanges();
+        this.ValidateWorkflowChanges();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

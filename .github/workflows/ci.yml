@@ -115,6 +115,8 @@ jobs:
     env:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Rootbolt.Messaging/tests/MessagingTests/MessagingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/WorkflowTests/WorkflowTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed

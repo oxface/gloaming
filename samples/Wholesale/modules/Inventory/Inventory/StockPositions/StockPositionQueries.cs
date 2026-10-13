@@ -17,7 +17,7 @@ internal sealed class StockPositionQueries(
         _ = database.RequiredOrganizationKey;
         var rows = await database
             .StockPositions.AsNoTracking()
-            .WithOnHandAtLeast(requiredQuantity)
+            .WithAvailableAtLeast(requiredQuantity)
             .Join(
                 database
                     .EventStreams.AsNoTracking()

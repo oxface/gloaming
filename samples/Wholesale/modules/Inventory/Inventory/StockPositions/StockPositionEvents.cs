@@ -18,3 +18,13 @@ internal sealed record StockPositionReceived(
 
 internal sealed record StockPositionIssued([property: JsonRequired] decimal Quantity)
     : IStockPositionEvent;
+
+internal sealed record StockPositionReserved(
+    [property: JsonRequired] Guid ReservationId,
+    [property: JsonRequired] decimal Quantity
+) : IStockPositionEvent;
+
+internal sealed record StockPositionReservationReleased(
+    [property: JsonRequired] Guid ReservationId,
+    [property: JsonRequired] decimal Quantity
+) : IStockPositionEvent;

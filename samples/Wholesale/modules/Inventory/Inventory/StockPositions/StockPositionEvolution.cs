@@ -42,6 +42,22 @@ internal static class StockPositionEvolution
                     {
                         OnHand = state.OnHand - issued.Quantity,
                     },
+                StockPositionReserved reserved
+                    when state is not null
+                        && reserved.ReservationId != Guid.Empty
+                        && reserved.Quantity > 0
+                        && reserved.Quantity <= state.Available => state with
+                {
+                    Reserved = state.Reserved + reserved.Quantity,
+                },
+                StockPositionReservationReleased released
+                    when state is not null
+                        && released.ReservationId != Guid.Empty
+                        && released.Quantity > 0
+                        && released.Quantity <= state.Reserved => state with
+                {
+                    Reserved = state.Reserved - released.Quantity,
+                },
                 _ => throw new InvalidOperationException(
                     "Invalid stock-position event sequence or business values."
                 ),

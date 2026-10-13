@@ -24,6 +24,14 @@ internal static class StockPositionCodec
                     "inventory.stock-position.issued",
                     1
                 ),
+                EventRegistration<IStockPositionEvent>.For<StockPositionReserved>(
+                    "inventory.stock-position.reserved",
+                    1
+                ),
+                EventRegistration<IStockPositionEvent>.For<StockPositionReservationReleased>(
+                    "inventory.stock-position.reservation-released",
+                    1
+                ),
             ],
             [new ReceiptV1ToV2()]
         );

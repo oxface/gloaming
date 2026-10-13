@@ -3,6 +3,7 @@
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Sales</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
     <ProjectReference Include="../../../../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../../../../src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj" />

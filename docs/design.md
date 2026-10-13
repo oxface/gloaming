@@ -508,6 +508,16 @@ recovery are separate proof gates, not consequences of local extraction.
 
 ## Library documentation and family ownership
 
+The owner-approved WF2 replacement provides optional bounded durable continuations and a typed
+native EF runner. The provided process row retains initial input, consumer state and requested
+operations/outcomes, with scalar version concurrency. Only the saved continuation executes;
+ordinary consumer methods choose branching and compensation. The runner enqueues one returned
+request in the owning transaction. Admission, Contracts, business validation and native save/commit
+remain consumer-owned. Existing inbox/outbox workers execute delivery; no workflow scheduler,
+replay engine or generated harness is introduced. [ADR 0014](adr/0014-bounded-durable-continuations.md)
+supersedes the uncommitted sequential experiment; [the local contract](../src/Rootbolt.Messaging/docs/workflows.md)
+records supported behavior and limits.
+
 Active ActorIdentity, Tenancy, Persistence, Events and EventSourcing families group their
 independently selectable projects, README, local capability/deferred context and library tests
 under `src/Rootbolt.{Family}/`. Detailed package setup remains with each project. Root

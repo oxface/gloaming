@@ -467,6 +467,45 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
             );
 
             modelBuilder.Entity(
+                "Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowInstanceRecord",
+                b =>
+                {
+                    b.Property<string>("WorkflowType")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("Id").HasColumnType("uuid");
+
+                    b.Property<string>("ContinuationName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("DefinitionVersion").HasColumnType("integer");
+
+                    b.Property<JsonElement>("InitialInput").HasColumnType("jsonb");
+
+                    b.Property<JsonElement>("Operations").HasColumnType("jsonb");
+
+                    b.Property<Guid?>("PendingCommandId").HasColumnType("uuid");
+
+                    b.Property<JsonElement>("State").HasColumnType("jsonb");
+
+                    b.Property<int>("Status").HasColumnType("integer");
+
+                    b.Property<string>("TenantKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
+
+                    b.HasKey("WorkflowType", "Id");
+
+                    b.ToTable("workflow_instances", "sales");
+                }
+            );
+
+            modelBuilder.Entity(
                 "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
                 b =>
                 {

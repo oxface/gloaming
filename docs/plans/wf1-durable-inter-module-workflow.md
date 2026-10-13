@@ -1,8 +1,8 @@
 # WF1: durable inter-module workflow
 
-Status: owner authorized implementation, 2026-10-10; implemented for final code review.
-Branch `feat/durable-inter-module-workflow` starts from fetched `origin/main`
-at `4c0e0c5`, containing owner-approved OBS1. No Rootbolt interface was changed.
+Status: owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`.
+The original `feat/durable-inter-module-workflow` branch started from `4c0e0c5`, containing
+owner-approved OBS1. No Rootbolt interface was changed.
 The [slice report](../reports/wf1-durable-inter-module-workflow.md) records fresh verification.
 
 ## Actual consumers and bounded outcome

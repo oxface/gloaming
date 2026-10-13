@@ -24,6 +24,10 @@ public sealed class InventoryDbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("inventory");
+        Reservations.StockReservationMapping.Configure(
+            modelBuilder.Entity<Reservations.StockReservation>(),
+            () => RequiredOrganizationKey
+        );
         var audit = modelBuilder.ConfigurePostgresAudit("inventory", "audit_entries");
         audit.HasTenantOwnership(
             row => row.TenantKey!,

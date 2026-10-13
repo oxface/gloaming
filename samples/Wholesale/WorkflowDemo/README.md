@@ -1,8 +1,13 @@
 # Durable stock-issue workflow
 
+The same host also runs [WF2's two-line reservation saga with compensation](compensating-reservations.md).
+Its separate commands and business state preserve the WF1 journey below.
+
 WF1 demonstrates Sales-owned progress across an independently committed Inventory command.
 The modules communicate through their versioned Contracts using the existing Rootbolt
-inbox/outbox. The executable owns transport and hosting; there is no saga engine.
+inbox/outbox. The executable owns transport and hosting. WF2 opts into the typed continuation
+runner; WF1 keeps its own business process without that dependency in its usage. No graph/replay
+engine or workflow scheduler is supplied.
 
 Sales persists a request and one outgoing command together. Inventory processes that command
 in its own transaction, appending stock facts, updating its inline aggregate, recording its

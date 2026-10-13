@@ -9,6 +9,8 @@ selected sequential workers. Transport configuration and business contracts belo
 | [Rootbolt.Messaging.EntityFrameworkCore](Rootbolt.Messaging.EntityFrameworkCore/README.md) | Provided records, mapping/save guards, typed roles, keyed handlers and opt-in workers. |
 | [Rootbolt.Messaging.EntityFrameworkCore.Postgres](Rootbolt.Messaging.EntityFrameworkCore.Postgres/README.md) | JSONB/database-time mapping, outbox leases, inbox deduplication and locked transactional processing. |
 | [Rootbolt.Messaging.OpenTelemetry](Rootbolt.Messaging.OpenTelemetry/README.md) | Optional AddRootboltMessaging extensions on native trace/metric builders; API-only dependency. |
+| [Rootbolt.Messaging.Workflows](Rootbolt.Messaging.Workflows/README.md) | Optional typed continuation bindings, return instructions and detached snapshots. |
+| [Rootbolt.Messaging.Workflows.EntityFrameworkCore](Rootbolt.Messaging.Workflows.EntityFrameworkCore/README.md) | Optional provided process table, typed runner, atomic request enqueue and native concurrency. |
 
 Each module owns its context, schema/table, publisher and registrations. The family does
 not supply a global bus, shared DbContext or cross-module transaction. Core publisher code
@@ -21,13 +23,17 @@ and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.m
 [inbox-only receiver](../../samples/InboxDemo/README.md) and
 [two-module RabbitMQ journey](../../samples/MessagingDemo/README.md), followed by
 [separate API/worker hosts](../../samples/MessagingWorkerDemo/README.md) and
-[Sales → Inventory request/reply progress](../../samples/Wholesale/WorkflowDemo/README.md).
+[Sales → Inventory request/reply progress](../../samples/Wholesale/WorkflowDemo/README.md) and
+[two-line reservations with compensation](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
+See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:
 
 ```bash
 dotnet test --project src/Rootbolt.Messaging/tests/MessagingTests/MessagingTests.csproj
+dotnet test --project src/Rootbolt.Messaging/tests/WorkflowTests/WorkflowTests.csproj
+dotnet test --project src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj
 dotnet test --project src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj
 dotnet test --project src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj
 dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj

@@ -34,7 +34,7 @@ internal static class StockPositionDecisions
         // Whole-batch eligibility precedes fact production and candidate evolution.
         return (
             requested,
-            requested > state.OnHand
+            requested > state.Available
                 ? null
                 : quantities
                     .Select(quantity => (IStockPositionEvent)new StockPositionIssued(quantity))
