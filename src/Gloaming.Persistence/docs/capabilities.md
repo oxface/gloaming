@@ -36,3 +36,11 @@ proofs.
 
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
+
+## Queued consumer research
+
+Optional PostgreSQL RLS and tenant/resource authorization composition are recorded in
+[A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
+[A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
+These are assessment-only backlog items for Umbrine, not supported capabilities or approved
+interfaces. The current guarantees and dependencies above remain the baseline.
