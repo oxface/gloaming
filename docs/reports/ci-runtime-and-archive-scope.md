@@ -23,7 +23,7 @@ The same journey with normal trust passed in 51 seconds. This probe did not modi
 machine's certificate store or weaken application TLS validation.
 
 The owner also supplied an archived PostgreSQL-restart connection failure and an archived
-API startup failure. Those are historical application/test-harness issues, not Rootbolt
+API startup failure. Those are historical application/test-harness issues, not Gloaming
 failures. Initial local archived probes passed, demonstrating that a local green result
 does not settle their CI portability. No archived runtime guarantee is claimed or repaired
 by this change. Further archive maintenance was stopped after the owner proposed excluding

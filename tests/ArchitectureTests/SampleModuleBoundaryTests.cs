@@ -1,6 +1,15 @@
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnitV3;
+using Gloaming.ActorIdentity;
+using Gloaming.ActorIdentity.AspNetCore;
+using Gloaming.Events.History;
+using Gloaming.Events.Serialization;
+using Gloaming.EventSourcing;
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
+using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Access.Contracts;
@@ -12,15 +21,6 @@ using ModulithFoundry.Samples.Wholesale.Purchasing;
 using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.ActorIdentity.AspNetCore;
-using Rootbolt.Events.History;
-using Rootbolt.Events.Serialization;
-using Rootbolt.EventSourcing;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
-using Rootbolt.Tenancy.AspNetCore;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
@@ -53,11 +53,11 @@ public sealed class SampleModuleBoundaryTests
         typeof(EventHistory).Assembly,
         typeof(IEventStreamRecord).Assembly,
         typeof(IEventSourcedAggregate<>).Assembly,
-        typeof(Rootbolt.Messaging.OutgoingMessage).Assembly,
-        typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly,
-        typeof(Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
-        typeof(Rootbolt.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
-        typeof(Rootbolt.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
+        typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
+        typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
+        typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
+        typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
+        typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
     ];
     private static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies([

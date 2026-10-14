@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +9,6 @@ using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 

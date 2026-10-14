@@ -31,7 +31,7 @@ unhandled intake failure without acknowledging the message. Native host cancella
 disposal release this process's resources. A permanently closed publishing channel requires
 operator/supervisor restart; the existing outbox worker continues its documented retry loop.
 
-No Rootbolt interface/implementation or package version changed. The explicit worker
+No Gloaming interface/implementation or package version changed. The explicit worker
 framework reference supplies native Generic Host APIs and matches the existing receiver's
 ASP.NET shared-framework dependency. No runtime code generation, transport facade, global
 transaction/context, leader election, worker registry or deployment engine was introduced.

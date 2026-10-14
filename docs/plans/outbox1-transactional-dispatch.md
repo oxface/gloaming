@@ -11,7 +11,7 @@ The owner authorized implementation after reviewing XML documentation, typed con
 clearer names and a compiled weak-registry exploration. The current interface uses RouteKey
 and optional TenantKey; the ordinary EF handler is ExportRequestCommands. Dispatch outcomes
 retain NoWork, Published and ClaimLost with documented acceptance/completion meanings.
-Equivalent XML coverage in older Rootbolt families remains follow-up work outside this review.
+Equivalent XML coverage in older Gloaming families remains follow-up work outside this review.
 
 Typed construction is one static generic factory returning the existing non-generic envelope:
 
@@ -107,16 +107,16 @@ complexity; the recoverable callable dispatch is what earns this extraction.
 Owner follow-up, 2026-10-08: name both EF Core and PostgreSQL explicitly, group inbox/outbox
 in the Messaging family and keep actual transport configuration with the consumer.
 
-Propose three packages under `src/Rootbolt.Messaging/`, plus family-local README/docs/tests:
+Propose three packages under `src/Gloaming.Messaging/`, plus family-local README/docs/tests:
 
-- `Rootbolt.Messaging`: the immutable validated `OutgoingMessage` and callable
+- `Gloaming.Messaging`: the immutable validated `OutgoingMessage` and callable
   `IMessagePublisher` interface, using BCL JSON only. A consumer's publisher can reference
   this contract without EF or Npgsql. This is a used interface package, not an empty core
-  or a transport runtime, and it has no dependency on other Rootbolt families.
-- `Rootbolt.Messaging.EntityFrameworkCore`: provided record, relational model configuration,
+  or a transport runtime, and it has no dependency on other Gloaming families.
+- `Gloaming.Messaging.EntityFrameworkCore`: provided record, relational model configuration,
   enqueue/save validation, typed-context producer/dispatcher contracts and a simple optional
   hosted worker. References the Messaging contract and native EF/DI/hosting/logging packages.
-- `Rootbolt.Messaging.EntityFrameworkCore.Postgres`: PostgreSQL model specialization (JSONB,
+- `Gloaming.Messaging.EntityFrameworkCore.Postgres`: PostgreSQL model specialization (JSONB,
   database-time defaults), provider-specific registration and callable claim/complete/defer
   implementation. References the EF layer and the existing Npgsql EF provider.
 
@@ -147,7 +147,7 @@ on Events, EventSourcing, Persistence, Tenancy, ActorIdentity, Rebus, Aspire or 
 No provider-neutral dispatch guarantee is proposed now. Native provider utilities remain
 available to the PostgreSQL implementation without leaking claim objects into consumer code.
 
-Consumers can reuse `Rootbolt.Events.Serialization` for exact durable name/schema registration,
+Consumers can reuse `Gloaming.Events.Serialization` for exact durable name/schema registration,
 native JSON encoding and old queued-message decoding/upcasting. They explicitly copy its
 encoded identity/payload into the outgoing transport envelope. No second registry or upcaster
 is added, and callers using direct JSON remain valid. An integration contract is not automatically
@@ -162,7 +162,7 @@ record carries mutable delivery lifecycle. No dispatch columns, publisher hooks 
 outbox behavior are added to the existing event store. Caller-owned transactions compose
 the two when a business command deliberately needs both.
 
-Consumers can apply `Rootbolt.Persistence.EntityFrameworkCore` ownership/filter validation to
+Consumers can apply `Gloaming.Persistence.EntityFrameworkCore` ownership/filter validation to
 the provided row's optional opaque `TenantKey`. O1 does not duplicate that mechanism, infer
 tenancy, grant admission or establish actor attribution. The standalone adopter has no owner
 or context-library dependency. Module isolation comes from typed DbContext registrations,
@@ -212,7 +212,7 @@ that the receiver's eventual business workflow completed.
 See [RabbitMQ acknowledgements and confirms](https://www.rabbitmq.com/docs/confirms) and
 [its reliability guidance](https://www.rabbitmq.com/docs/reliability).
 
-Keep `Rootbolt.Persistence.EntityFrameworkCore` as the existing reusable ownership utility;
+Keep `Gloaming.Persistence.EntityFrameworkCore` as the existing reusable ownership utility;
 do not move messaging under it or duplicate ownership checks in this family. Messaging-specific
 EF code belongs here. No existing package relocation/rename is part of O1. Likewise, reuse
 the Events.Serialization codec optionally at consumer mapping/handler boundaries, without
@@ -295,8 +295,8 @@ publisher/context binding are used.
 
 ## Reviewed public types
 
-`OutgoingMessage` and `IMessagePublisher` live in `Rootbolt.Messaging`; the provider-independent
-EF types live in `Rootbolt.Messaging.EntityFrameworkCore`, with PostgreSQL implementations
+`OutgoingMessage` and `IMessagePublisher` live in `Gloaming.Messaging`; the provider-independent
+EF types live in `Gloaming.Messaging.EntityFrameworkCore`, with PostgreSQL implementations
 and registration in `.Postgres`. The context generic selects
 the owning database and DI binding; it does not restrict payloads to one CLR message type.
 
@@ -476,10 +476,10 @@ run in the same native save overrides, each enforcing its own declared obligatio
 package starts another producer transaction or dispatches during save/commit. Prove a fault
 in every included participant through that concrete composition.
 
-No common `Rootbolt` root package, transaction coordinator, ambient unit of work or global
+No common `Gloaming` root package, transaction coordinator, ambient unit of work or global
 context is proposed. Native DbContext/IDbContextTransaction are already the shared transaction
 interface. A repeated reference-equality check is not enough reason to introduce a compulsory
-cross-family runtime. `Rootbolt.Messaging` holds messaging-specific contracts only, and other
+cross-family runtime. `Gloaming.Messaging` holds messaging-specific contracts only, and other
 families stay independently adoptable. A future shared helper needs concrete complexity and
 proof obligations beyond forwarding native EF calls.
 
@@ -541,13 +541,13 @@ business rejection or silently reset/retry the producer context. Recovery uses a
 
 | Files | Proposed change |
 | --- | --- |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging/{Rootbolt.Messaging.csproj,OutgoingMessage.cs,IMessagePublisher.cs,README.md}` | Add used messaging contracts with immutable payload ownership and no EF/provider/other-family dependencies. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/{Rootbolt.Messaging.EntityFrameworkCore.csproj,IOutbox.cs,IOutboxDispatcher.cs,OutboxDispatchOptions.cs,OutboxWorkerOptions.cs}` | Add used EF contracts and native dependencies; dispatch result enum lives with its interface. No Npgsql or other-family dependency. |
+| `src/Gloaming.Messaging/Gloaming.Messaging/{Gloaming.Messaging.csproj,OutgoingMessage.cs,IMessagePublisher.cs,README.md}` | Add used messaging contracts with immutable payload ownership and no EF/provider/other-family dependencies. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/{Gloaming.Messaging.EntityFrameworkCore.csproj,IOutbox.cs,IOutboxDispatcher.cs,OutboxDispatchOptions.cs,OutboxWorkerOptions.cs}` | Add used EF contracts and native dependencies; dispatch result enum lives with its interface. No Npgsql or other-family dependency. |
 | Same project's `{OutboxMessageRecord.cs,OutboxModelExtensions.cs,EfOutbox.cs,OutboxWorker.cs,OutboxWorkerServiceCollectionExtensions.cs}` | Provided relational shape/enqueue/save guard and an internal optional sequential hosted worker using fresh dispatcher scopes. No transport or generic SQL dialect. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/{Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj,PostgresOutboxModelExtensions.cs,PostgresOutboxDispatcher.cs,PostgresOutboxServiceCollectionExtensions.cs}` | Reference the EF package; specialize JSONB/time/model configuration and implement private PostgreSQL claims/fencing/backoff and typed scoped composition. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/{Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj,PostgresOutboxModelExtensions.cs,PostgresOutboxDispatcher.cs,PostgresOutboxServiceCollectionExtensions.cs}` | Reference the EF package; specialize JSONB/time/model configuration and implement private PostgreSQL claims/fencing/backoff and typed scoped composition. |
 | Family `{README.md,docs/capabilities.md}` and package `README.md` | Self-sufficient setup, guarantees, PostgreSQL-only status, privilege/duplicate/cancellation limits and deferred context. |
-| `src/Rootbolt.Messaging/tests/MessagingTests/{MessagingTests.csproj,MessageTests.cs}` | Exercise envelope identity/schema validation, owned JSON lifetime and provider-free contract adoption. No hypothetical handler/bus abstraction tests. |
-| `src/Rootbolt.Messaging/tests/OutboxPostgresTests/{OutboxPostgresTests.csproj,ProducerTests.cs,DispatchTests.cs,RegistrationTests.cs,WorkerTests.cs,OutboxConsumer.cs}` | Public-interface producer/dispatcher/configuration and real hosted-worker tests, including fresh scopes, failure recovery and cooperative shutdown. Share existing PostgreSQL test support. |
+| `src/Gloaming.Messaging/tests/MessagingTests/{MessagingTests.csproj,MessageTests.cs}` | Exercise envelope identity/schema validation, owned JSON lifetime and provider-free contract adoption. No hypothetical handler/bus abstraction tests. |
+| `src/Gloaming.Messaging/tests/OutboxPostgresTests/{OutboxPostgresTests.csproj,ProducerTests.cs,DispatchTests.cs,RegistrationTests.cs,WorkerTests.cs,OutboxConsumer.cs}` | Public-interface producer/dispatcher/configuration and real hosted-worker tests, including fresh scopes, failure recovery and cooperative shutdown. Share existing PostgreSQL test support. |
 | `samples/Wholesale/modules/Inventory/Inventory/{Inventory.csproj,InventoryDbContext.cs,InventoryRegistration.cs}` | Explicit outbox dependency/model, existing tenant validation reuse, both save guards and typed producer registration. No automatic dispatch registration. |
 | Inventory `StockPositions/StockPositionCommands.cs`; new `Messaging/StockIssueMessages.cs`; `Inventory.Contracts/StockIssueRecordedV1.cs` | Explicitly map and enqueue only accepted stock issues; integration DTO remains consumer-owned and independent of library types. Existing open/receive/rebuild behavior has no automatic publication. |
 | Inventory `Migrations/{new AddTransactionalOutbox.cs,new AddTransactionalOutbox.Designer.cs,InventoryDbContextModelSnapshot.cs}` | Add only `inventory.outbox_messages` through a forward native migration. Preserve every previous migration/fixture. |
@@ -621,7 +621,7 @@ sample grouping policy. MessageId remains the delivery identity. No CausationId 
 where the command contract carries no incoming message/command ID. The inbox proposal must
 define deduplication scope and metadata meaning explicitly; correlation/causation alone cannot
 identify one delivery. Current setup/limits live in the
-[Messaging family](../../src/Rootbolt.Messaging/README.md), and fresh proof results belong in
+[Messaging family](../../src/Gloaming.Messaging/README.md), and fresh proof results belong in
 [the report](../reports/outbox1-transactional-dispatch.md).
 
 ## Deferred next capabilities

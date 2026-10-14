@@ -1,11 +1,11 @@
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Auditing.EntityFrameworkCore.Postgres;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Auditing.EntityFrameworkCore.Postgres;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
-using Rootbolt.Messaging.Workflows.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 

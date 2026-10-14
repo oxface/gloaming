@@ -86,7 +86,7 @@ message names; a generic per-DTO handler registry is deferred until a caller nee
 
 ## Proposed public surface
 
-The provider-free `Rootbolt.Messaging` package adds an immutable incoming envelope:
+The provider-free `Gloaming.Messaging` package adds an immutable incoming envelope:
 
 ```csharp
 public sealed class IncomingMessage
@@ -113,7 +113,7 @@ public sealed class IncomingMessage
 ```
 
 ProducerKey is a stable producer identity assigned by the receiving adapter after checking
-its trusted transport configuration; it is not authentication supplied by Rootbolt. SubscriptionKey
+its trusted transport configuration; it is not authentication supplied by Gloaming. SubscriptionKey
 is the receiver's stable logical processing registration, supplied to ReceiveAsync rather than
 accepted from untrusted payload data. Neither is necessarily a physical broker queue.
 
@@ -122,7 +122,7 @@ OutgoingMessage's existing constructor and FromPayload method gain trailing opti
 MessageId remains a nonempty Guid. CorrelationId and CausationId are optional opaque nonblank
 strings, not deduplication keys. TenantKey remains optional and does not admit a tenant. Payload
 ownership remains a JsonElement clone; JSONB stores values rather than original lexical bytes.
-No general metadata bag or common Rootbolt execution context is added.
+No general metadata bag or common Gloaming execution context is added.
 
 Core also adds `InboxMessageConflictException : Exception` with SubscriptionKey, ProducerKey
 and MessageId properties and constructor
@@ -175,7 +175,7 @@ or lifecycle mutation API. It has no transaction, claim token or in-memory execu
 Model and DI extensions follow O1's existing explicit setup:
 
 ```csharp
-// InboxModelExtensions, in Rootbolt.Messaging.EntityFrameworkCore.
+// InboxModelExtensions, in Gloaming.Messaging.EntityFrameworkCore.
 public static EntityTypeBuilder<InboxMessageRecord> ConfigureInbox(
     this ModelBuilder model, string schema, string table);
 public static void ValidateInboxChanges(this DbContext database);
@@ -317,14 +317,14 @@ delivery ID do not create another job; incompatible pages are a consumer failure
 registers inbox only, with no outbox table/publisher/dispatch services of its own.
 It decodes an explicit receiver-local wire DTO matching exports.render v1; it does not
 reference the Exports implementation assembly. The composition host alone references both
-applications. Shared business Contracts may be chosen by a consumer without adding them to Rootbolt.
+applications. Shared business Contracts may be chosen by a consumer without adding them to Gloaming.
 
 A small MessagingDemo console composes the existing Exports sender and the new Rendering receiver
 with separate contexts/schemas/migration histories and native RabbitMQ adapters. It demonstrates
 commit-outbox, confirmed publication, commit-intake, manual ack and later processing. The modules
 can instead use separate databases; no shared connection/transaction is required. InboxDemo's
 HTTP journey proves a different acceptance boundary; Inventory proves tenant admission and
-event/required-state/reply atomicity. Consumer contracts and routing stay outside Rootbolt.
+event/required-state/reply atomicity. Consumer contracts and routing stay outside Gloaming.
 
 ## Exact file/behavior change map
 
@@ -334,12 +334,12 @@ tooling during implementation; their table/column changes below are the reviewed
 
 | Files | Proposed change |
 | --- | --- |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging/{IncomingMessage,InboxMessageConflictException}.cs` | New incoming envelope and typed incompatible-redelivery error. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging/OutgoingMessage.cs` | Optional retained correlation/causation constructor/factory arguments and properties. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/{IInbox,IInboxHandler,IInboxProcessor,InboxMessageRecord,InboxProcessingOptions,InboxWorkerOptions,InboxModelExtensions,InboxServiceCollectionExtensions,InboxWorker,InboxWorkerServiceCollectionExtensions}.cs` | Typed intake/handler/processor contracts, result enums beside interfaces, mapping/save guard, keyed handler setup and opt-in fresh-scope hosting. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/{OutboxMessageRecord,OutboxModelExtensions}.cs` | Retain/map/validate new optional metadata using the existing enqueue registry; no registry, outbox transaction or lease behavior change. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/{PostgresInbox,PostgresInboxProcessor,PostgresInboxModelExtensions,PostgresInboxServiceCollectionExtensions}.cs` | PostgreSQL intake/conflict comparison, locked transactional processing/retry and typed registration. Private SQL helpers may be separate internal files if used by both operations. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs` | Read correlation/causation in claim return and envelope reconstruction; retain existing claim/completion protocol. |
+| `src/Gloaming.Messaging/Gloaming.Messaging/{IncomingMessage,InboxMessageConflictException}.cs` | New incoming envelope and typed incompatible-redelivery error. |
+| `src/Gloaming.Messaging/Gloaming.Messaging/OutgoingMessage.cs` | Optional retained correlation/causation constructor/factory arguments and properties. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/{IInbox,IInboxHandler,IInboxProcessor,InboxMessageRecord,InboxProcessingOptions,InboxWorkerOptions,InboxModelExtensions,InboxServiceCollectionExtensions,InboxWorker,InboxWorkerServiceCollectionExtensions}.cs` | Typed intake/handler/processor contracts, result enums beside interfaces, mapping/save guard, keyed handler setup and opt-in fresh-scope hosting. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/{OutboxMessageRecord,OutboxModelExtensions}.cs` | Retain/map/validate new optional metadata using the existing enqueue registry; no registry, outbox transaction or lease behavior change. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/{PostgresInbox,PostgresInboxProcessor,PostgresInboxModelExtensions,PostgresInboxServiceCollectionExtensions}.cs` | PostgreSQL intake/conflict comparison, locked transactional processing/retry and typed registration. Private SQL helpers may be separate internal files if used by both operations. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs` | Read correlation/causation in claim return and envelope reconstruction; retain existing claim/completion protocol. |
 | `samples/Wholesale/modules/Inventory/Inventory.Contracts/{IssueStockV1,StockIssueDeclinedV1}.cs` | Consumer-owned incoming DTO and business refusal reply/reasons; no technical-library Contracts dependency. |
 | `samples/Wholesale/modules/Inventory/Inventory/Messaging/{StockIssueInboxHandler,StockIssueMessageAdmission,InventoryMessageContext}.cs` | Trusted command processing, native business call and reply metadata, with explicit admission responsibility. |
 | `samples/Wholesale/modules/Inventory/Inventory/{InventoryDbContext,InventoryRegistration}.cs`, `Messaging/StockIssueMessages.cs` | Inbox mapping/save guard and opt-in receiver registration; correlation/causation in explicit outgoing mapping. |
@@ -348,14 +348,14 @@ tooling during implementation; their table/column changes below are the reviewed
 | `samples/OutboxDemo/HttpCommandPublisher.cs`, `samples/OutboxDemo/Migrations/` | Carry optional wire metadata; new forward outbox-metadata migration/current snapshot, preserving originals. |
 | `samples/InboxDemo/InboxDemo.csproj`, `{Program,InboxDemoHost,RenderDbContext,RenderExportHandler,RenderJob}.cs`, `README.md`, `Migrations/` | New ordinary EF inbox-only receiver with explicit HTTP setup/acceptance and optional worker; native design-time factory in RenderDbContext.cs and InitialRendering migration/snapshot. |
 | `samples/MessagingDemo/MessagingDemo.csproj`, `{Program,MessagingJourney,RabbitMqExportPublisher,RabbitMqRenderReceiver}.cs`, `README.md` | Finite native RabbitMQ journey composing the separately owned sender/receiver contexts; adapters remain consumer source. |
-| `src/Rootbolt.Messaging/tests/MessagingTests/MessageTests.cs`, `tests/OutboxPostgresTests/{ProducerTests,DispatchTests,EnqueueLifecycleTests}.cs`, new `tests/InboxPostgresTests/` | Envelope/metadata guard/round-trip tests and real PostgreSQL intake, processing, recovery, binding and hosting proofs. All test-directory paths in this row belong to src/Rootbolt.Messaging. |
+| `src/Gloaming.Messaging/tests/MessagingTests/MessageTests.cs`, `tests/OutboxPostgresTests/{ProducerTests,DispatchTests,EnqueueLifecycleTests}.cs`, new `tests/InboxPostgresTests/` | Envelope/metadata guard/round-trip tests and real PostgreSQL intake, processing, recovery, binding and hosting proofs. All test-directory paths in this row belong to src/Gloaming.Messaging. |
 | `samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs`, new `samples/InboxDemo.Tests/`, existing `samples/OutboxDemo.Tests/` | Tenant/event/reply transaction tests, ordinary EF/HTTP metadata/adoption and real two-module broker failure/recovery proofs. |
 | `tests/ArchitectureTests/` | Assert inbox-only/outbox-only opt-in and module/context boundaries with new projects; template omission remains. |
 | `ModulithFoundry.slnx`, `.github/workflows/ci.yml` | Include new projects and run their proofs in the existing Messaging lane; ensure each broker class runs once. No unrelated CI logging/path-filter cleanup. |
 | Messaging family/package READMEs and `docs/capabilities.md`; sample READMEs and `samples/Wholesale/modules/README.md` | Current setup, ownership, guarantees, error semantics and deferred features after approval/implementation. |
 | `docs/plans/library-extraction.md`, this brief, `docs/design.md`, ADR/report under `docs/adr/` and `docs/reports/` | Record review, resulting settled protocol and separately dated new evidence. Do not mark proposed behavior supported prematurely. |
 
-No new Rootbolt package or package dependency is needed. Existing EF relational/DI/hosting,
+No new Gloaming package or package dependency is needed. Existing EF relational/DI/hosting,
 Npgsql, RabbitMQ.Client, native Kestrel and PostgreSQL/RabbitMQ Testcontainers are sufficient.
 The exact final added/modified file list accompanies line-by-line implementation review.
 

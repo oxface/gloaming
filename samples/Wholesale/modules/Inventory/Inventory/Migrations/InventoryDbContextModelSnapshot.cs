@@ -295,7 +295,7 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Auditing.EntityFrameworkCore.AuditRecord",
+                "Gloaming.Auditing.EntityFrameworkCore.AuditRecord",
                 b =>
                 {
                     b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
@@ -373,12 +373,12 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
                         .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Rootbolt:Audit", true);
+                        .HasAnnotation("Gloaming:Audit", true);
                 }
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Messaging.EntityFrameworkCore.InboxMessageRecord",
+                "Gloaming.Messaging.EntityFrameworkCore.InboxMessageRecord",
                 b =>
                 {
                     b.Property<string>("SubscriptionKey")
@@ -462,13 +462,13 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
                         .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Rootbolt:Inbox", true)
-                        .HasAnnotation("Rootbolt:InboxProvider", "Postgres");
+                        .HasAnnotation("Gloaming:Inbox", true)
+                        .HasAnnotation("Gloaming:InboxProvider", "Postgres");
                 }
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Messaging.EntityFrameworkCore.OutboxMessageRecord",
+                "Gloaming.Messaging.EntityFrameworkCore.OutboxMessageRecord",
                 b =>
                 {
                     b.Property<Guid>("MessageId").HasColumnType("uuid").HasColumnName("message_id");
@@ -566,8 +566,8 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
                         .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Rootbolt:Outbox", true)
-                        .HasAnnotation("Rootbolt:OutboxProvider", "Postgres");
+                        .HasAnnotation("Gloaming:Outbox", true)
+                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres");
                 }
             );
 

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.InboxDemo;
 using ModulithFoundry.Samples.MessagingProducerDemo;
@@ -7,7 +8,6 @@ using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using RabbitMQ.Client;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 

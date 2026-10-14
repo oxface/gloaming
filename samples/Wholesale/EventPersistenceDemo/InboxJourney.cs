@@ -1,13 +1,13 @@
 using System.Text;
 using System.Text.Json;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using RabbitMQ.Client;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo;
 

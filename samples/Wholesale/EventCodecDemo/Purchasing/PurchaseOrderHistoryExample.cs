@@ -1,5 +1,5 @@
-using Rootbolt.Events.History;
-using Rootbolt.Events.Serialization;
+using Gloaming.Events.History;
+using Gloaming.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
 

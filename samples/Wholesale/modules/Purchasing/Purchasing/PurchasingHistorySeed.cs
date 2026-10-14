@@ -1,5 +1,5 @@
+using Gloaming.Events.Serialization;
 using ModulithFoundry.Samples.Wholesale.Purchasing.PurchaseOrders;
-using Rootbolt.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.Purchasing;
 

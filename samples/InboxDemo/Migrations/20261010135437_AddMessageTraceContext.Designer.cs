@@ -48,7 +48,7 @@ namespace InboxDemo.Migrations
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Messaging.EntityFrameworkCore.InboxMessageRecord",
+                "Gloaming.Messaging.EntityFrameworkCore.InboxMessageRecord",
                 b =>
                 {
                     b.Property<string>("SubscriptionKey")
@@ -124,8 +124,8 @@ namespace InboxDemo.Migrations
                         }
                     );
 
-                    b.HasAnnotation("Rootbolt:Inbox", true)
-                        .HasAnnotation("Rootbolt:InboxProvider", "Postgres");
+                    b.HasAnnotation("Gloaming:Inbox", true)
+                        .HasAnnotation("Gloaming:InboxProvider", "Postgres");
                 }
             );
 #pragma warning restore 612, 618

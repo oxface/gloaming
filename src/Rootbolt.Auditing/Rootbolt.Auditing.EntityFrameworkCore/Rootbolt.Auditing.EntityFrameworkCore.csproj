@@ -1,6 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="../../Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-  </ItemGroup>
-</Project>

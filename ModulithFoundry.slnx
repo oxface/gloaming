@@ -1,64 +1,64 @@
 <Solution>
   <Folder Name="/Libraries/Auditing/">
-    <Project Path="src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj" />
-    <Project Path="src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/Rootbolt.Auditing.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
+    <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/Libraries/Auditing/Tests/">
-    <Project Path="src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/">
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj" />
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging/Rootbolt.Messaging.csproj" />
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/Rootbolt.Messaging.EntityFrameworkCore.csproj" />
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj" />
-    <Project Path="src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/Rootbolt.Messaging.OpenTelemetry.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/Tests/">
-    <Project Path="src/Rootbolt.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
-    <Project Path="src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj" />
-    <Project Path="src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj" />
-    <Project Path="src/Rootbolt.Messaging/tests/MessagingTests/MessagingTests.csproj" />
-    <Project Path="src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/MessagingTests/MessagingTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/ActorIdentity/">
-    <Project Path="src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/Rootbolt.ActorIdentity.AspNetCore.csproj" />
-    <Project Path="src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/Gloaming.ActorIdentity.AspNetCore.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
   </Folder>
   <Folder Name="/Libraries/ActorIdentity/Tests/">
-    <Project Path="src/Rootbolt.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj" />
-    <Project Path="src/Rootbolt.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Tenancy/">
-    <Project Path="src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
-    <Project Path="src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/Rootbolt.Tenancy.AspNetCore.csproj" />
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/Gloaming.Tenancy.AspNetCore.csproj" />
   </Folder>
   <Folder Name="/Libraries/Tenancy/Tests/">
-    <Project Path="src/Rootbolt.Tenancy/tests/TenantTests/TenantTests.csproj" />
-    <Project Path="src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Persistence/">
-    <Project Path="src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/Libraries/Persistence/Tests/">
-    <Project Path="src/Rootbolt.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj" />
-    <Project Path="src/Rootbolt.Persistence/tests/PersistenceTests/PersistenceTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Events/">
-    <Project Path="src/Rootbolt.Events/Rootbolt.Events.History/Rootbolt.Events.History.csproj" />
-    <Project Path="src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj" />
+    <Project Path="src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
+    <Project Path="src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
   </Folder>
   <Folder Name="/Libraries/Events/Tests/">
-    <Project Path="src/Rootbolt.Events/tests/EventHistoryTests/EventHistoryTests.csproj" />
-    <Project Path="src/Rootbolt.Events/tests/EventSerializationTests/EventSerializationTests.csproj" />
+    <Project Path="src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj" />
+    <Project Path="src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/">
-    <Project Path="src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/Rootbolt.EventSourcing.csproj" />
-    <Project Path="src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/Rootbolt.EventSourcing.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/Tests/">
-    <Project Path="src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj" />
-    <Project Path="src/Rootbolt.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
   </Folder>
   <Folder Name="/Samples/">
     <Project Path="samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />

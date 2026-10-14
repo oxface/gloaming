@@ -1,6 +1,6 @@
 # Standalone two-family event serialization and history consumer
 
-A finite .NET 10 consumer of [Events.Serialization](../../../src/Rootbolt.Events/Rootbolt.Events.Serialization/README.md).
+A finite .NET 10 consumer of [Events.Serialization](../../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md).
 Its two project references are the independently adoptable serialization and history
 libraries; it has no package, database, HTTP, bus, DI or context-library dependency. It
 demonstrates explicit event registration, native JSON contracts and bounded history
@@ -83,8 +83,8 @@ technical library.
 ## Proofs
 
 ```bash
-dotnet test --project src/Rootbolt.Events/tests/EventSerializationTests/EventSerializationTests.csproj
-dotnet test --project src/Rootbolt.Events/tests/EventHistoryTests/EventHistoryTests.csproj
+dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj
+dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj
 dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj
 ```
 
@@ -125,5 +125,5 @@ original sample's domain fold rather than changing line meaning. Independently a
 literals and [tests](../EventCodecDemo.Tests/UpcastingCompatibilityTests.cs) assert fields,
 strict nested decoding and preserved totals. Currency output is formatted explicitly; numeric
 value is preserved, not incidental JSON decimal scale. Original exact-v1 recipes/default output
-remain intact. The [codec README](../../../src/Rootbolt.Events/Rootbolt.Events.Serialization/README.md)
+remain intact. The [codec README](../../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md)
 also documents the provided PassThrough step for optional-field additions.

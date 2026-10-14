@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
+using Gloaming.ActorIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,6 @@ using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
-using Rootbolt.ActorIdentity;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 

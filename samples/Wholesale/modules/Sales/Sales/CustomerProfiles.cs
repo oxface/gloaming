@@ -1,6 +1,6 @@
+using Gloaming.ActorIdentity;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 

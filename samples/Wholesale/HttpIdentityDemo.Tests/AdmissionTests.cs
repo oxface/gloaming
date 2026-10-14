@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +9,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Access.Contracts;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 

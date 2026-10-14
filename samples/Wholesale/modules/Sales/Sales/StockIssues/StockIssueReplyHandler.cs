@@ -1,10 +1,10 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.StockIssues;
 

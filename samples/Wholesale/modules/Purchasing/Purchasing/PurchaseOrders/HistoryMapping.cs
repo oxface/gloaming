@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Purchasing.PurchaseOrders;
 

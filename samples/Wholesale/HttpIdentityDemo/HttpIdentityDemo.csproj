@@ -6,8 +6,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-    <ProjectReference Include="../../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/Rootbolt.ActorIdentity.AspNetCore.csproj" />
-    <ProjectReference Include="../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/Rootbolt.Tenancy.AspNetCore.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/Gloaming.ActorIdentity.AspNetCore.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/Gloaming.Tenancy.AspNetCore.csproj" />
     <ProjectReference Include="../modules/Access/Access/Access.csproj" />
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />

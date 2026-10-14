@@ -11,7 +11,7 @@ Family jobs already run concurrently and retain their existing path selection an
 
 Changes:
 
-- [Inbox AssemblyInfo.cs](../../src/Rootbolt.Messaging/tests/InboxPostgresTests/AssemblyInfo.cs)
+- [Inbox AssemblyInfo.cs](../../src/Gloaming.Messaging/tests/InboxPostgresTests/AssemblyInfo.cs)
   registers `PostgreSqlFixture` as a native xUnit assembly fixture and explicitly selects
   `ParallelMode.All` with `MaxThreads = 2`.
 - The inbox suite's `InboxConsumer.cs` removes its collection definition; `HostingTests.cs`,
@@ -22,7 +22,7 @@ Changes:
   It no longer restores/builds the complete solution in this job. Repository integrity
   retains the full solution checks.
 - [Development guide](../development.md#ci-lanes) and the
-  [Messaging guide](../../src/Rootbolt.Messaging/README.md) describe the scheduling policy.
+  [Messaging guide](../../src/Gloaming.Messaging/README.md) describe the scheduling policy.
 
 No runtime library interface or implementation changes. The shared PostgreSQL fixture,
 module migrations, template files, fixtures and frozen archive remain unchanged. All

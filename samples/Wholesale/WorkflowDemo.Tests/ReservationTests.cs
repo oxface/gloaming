@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
@@ -6,7 +7,6 @@ using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo.Tests;
 
@@ -447,7 +447,7 @@ public sealed class ReservationTests(PostgreSqlFixture postgres, RabbitMqFixture
         if (mismatch == "quantity")
             outcome = outcome with { Quantity = 3 };
 
-        var invalid = new Rootbolt.Messaging.IncomingMessage(
+        var invalid = new Gloaming.Messaging.IncomingMessage(
             Guid.NewGuid(),
             mismatch == "producer" ? "untrusted" : "inventory",
             actual.MessageName,

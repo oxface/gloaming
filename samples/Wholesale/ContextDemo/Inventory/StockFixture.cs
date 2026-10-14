@@ -1,5 +1,5 @@
 using System.Collections.Frozen;
-using Rootbolt.Tenancy;
+using Gloaming.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.ContextDemo.Inventory;
 

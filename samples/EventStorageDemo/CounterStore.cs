@@ -1,6 +1,6 @@
+using Gloaming.Events.History;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.Events.History;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.EventStorageDemo;
 

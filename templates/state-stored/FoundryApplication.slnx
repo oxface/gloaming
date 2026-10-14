@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/libraries/">
-    <Project Path="libraries/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
-    <Project Path="libraries/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
-    <Project Path="libraries/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
+    <Project Path="libraries/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
+    <Project Path="libraries/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <Project Path="libraries/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/modules/Catalog/">
     <Project Path="modules/Catalog/FoundryApplication.Catalog.Contracts/FoundryApplication.Catalog.Contracts.csproj" />

@@ -1,8 +1,8 @@
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ModulithFoundry.Samples.InboxDemo;
 using ModulithFoundry.Samples.OutboxDemo;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo;
 

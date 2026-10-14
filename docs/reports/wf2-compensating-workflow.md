@@ -45,7 +45,7 @@ obligations without creating speculative abstractions:
 
 | Obligation | Exercised mechanism / ownership |
 | --- | --- |
-| Local transition, next command and completion commit together | Existing Rootbolt inbox processor and typed outbox. |
+| Local transition, next command and completion commit together | Existing Gloaming inbox processor and typed outbox. |
 | Retry, worker death and transport redelivery | Existing retained inbox, outbox lease/fencing and fresh-scope workers; consumer-owned transport acknowledgements. |
 | Different messages update one process or stock aggregate | Native EF process versions and existing event-store version/position constraints. |
 | Repeated business operation across different delivery IDs | Inventory-owned stable reservation identity, retained inputs and original decision. This is independent of inbox retention/deduplication. |
@@ -58,7 +58,7 @@ follow-up identified a narrower candidate: ordered progress, expected-command/ou
 and compensation-attempt bookkeeping. [The concrete sequential-coordinator proposal](../plans/wf2-sequential-saga-coordinator.md)
 now assesses that extraction while leaving business input validation and typed commands local.
 Its interface and exact replacement scope await owner review; no new mechanism is implemented
-or proven by the results below. Existing Rootbolt mechanisms already concentrate transaction,
+or proven by the results below. Existing Gloaming mechanisms already concentrate transaction,
 dispatch and scope behavior. Scheduling and poison handling remain separate future candidates.
 
 ## Review-worthy code

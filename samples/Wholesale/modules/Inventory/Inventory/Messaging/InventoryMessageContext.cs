@@ -1,4 +1,4 @@
-using Rootbolt.Messaging;
+using Gloaming.Messaging;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
 

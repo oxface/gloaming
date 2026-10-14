@@ -18,7 +18,7 @@ unmapped:
   - '**'
   - '!**/*.md'
   - '!archive/**'
-  - '!src/Rootbolt.{Auditing,ActorIdentity,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
+  - '!src/Gloaming.{Auditing,ActorIdentity,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/{EventStorageDemo,EventStorageDemo.Tests,OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - '!samples/Wholesale/**'
   - '!tests/ArchitectureTests/**'
@@ -27,48 +27,48 @@ unmapped:
   - '!tools/template/**'
 
 Auditing:
-  - 'src/Rootbolt.Auditing/**'
-  - 'src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/**'
+  - 'src/Gloaming.Auditing/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
 ActorIdentity:
-  - 'src/Rootbolt.ActorIdentity/**'
+  - 'src/Gloaming.ActorIdentity/**'
   - '!**/*.md'
 
 Tenancy:
-  - 'src/Rootbolt.Tenancy/**'
+  - 'src/Gloaming.Tenancy/**'
   - '!**/*.md'
 
 Persistence:
-  - 'src/Rootbolt.Persistence/**'
+  - 'src/Gloaming.Persistence/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
 Events:
-  - 'src/Rootbolt.Events/**'
+  - 'src/Gloaming.Events/**'
   - 'samples/Wholesale/EventCodecDemo{,.Tests}/**'
   - '!**/*.md'
 
 # EventPersistenceDemo composes event sourcing, messaging and accepted-change audit.
 # Its owning lanes include those dependencies and the module implementation paths.
 EventSourcing:
-  - 'src/Rootbolt.EventSourcing/**'
-  - 'src/Rootbolt.{Events,Messaging,Auditing}/Rootbolt.*/**'
-  - 'src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/**'
-  - 'src/Rootbolt.Tenancy/Rootbolt.Tenancy/**'
-  - 'src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventSourcing/**'
+  - 'src/Gloaming.{Events,Messaging,Auditing}/Gloaming.*/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'samples/EventStorageDemo{,.Tests}/**'
   - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
 Messaging:
-  - 'src/Rootbolt.Messaging/**'
-  - 'src/Rootbolt.{EventSourcing,Events,Auditing}/Rootbolt.*/**'
-  - 'src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/**'
-  - 'src/Rootbolt.Tenancy/Rootbolt.Tenancy/**'
-  - 'src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/**'
+  - 'src/Gloaming.{EventSourcing,Events,Auditing}/Gloaming.*/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'samples/{OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
   - 'samples/Wholesale/ServiceDefaults/**'
@@ -78,7 +78,7 @@ Messaging:
   - '!**/*.md'
 
 wholesale:
-  - 'src/Rootbolt.*/Rootbolt.*/**'
+  - 'src/Gloaming.*/Gloaming.*/**'
   - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,modules,ServiceDefaults}/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - 'samples/Wholesale/WorkflowDemo{,.Tests}/**'
@@ -87,9 +87,9 @@ wholesale:
 template:
   - 'tools/template/**'
   - 'templates/**'
-  - 'src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/**'
-  - 'src/Rootbolt.Tenancy/Rootbolt.Tenancy/**'
-  - 'src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - '!**/*.md'
 
 runtime:

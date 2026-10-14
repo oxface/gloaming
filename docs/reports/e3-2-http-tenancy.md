@@ -163,14 +163,14 @@ See [native exception handling](https://learn.microsoft.com/en-us/aspnet/core/fu
 
 Review public interface/outcomes and policy first:
 
-- [IHttpTenantContextResolver](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/IHttpTenantContextResolver.cs),
-  [candidate lookup/admission interface](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/IHttpTenantCandidateResolver.cs),
-  [requirements/options/attribute](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/TenantRequirementAttribute.cs)
-  and [typed failure](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/HttpTenantResolutionException.cs).
-- [Middleware](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/TenantContextMiddleware.cs),
-  [candidate helpers](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/HttpTenantCandidates.cs)
-  and [explicit registration/metadata helpers](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/HttpTenantContextExtensions.cs),
-  plus [native host-options utility](../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/HttpTenantHostFilteringExtensions.cs).
+- [IHttpTenantContextResolver](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/IHttpTenantContextResolver.cs),
+  [candidate lookup/admission interface](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/IHttpTenantCandidateResolver.cs),
+  [requirements/options/attribute](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/TenantRequirementAttribute.cs)
+  and [typed failure](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantResolutionException.cs).
+- [Middleware](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/TenantContextMiddleware.cs),
+  [candidate helpers](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantCandidates.cs)
+  and [explicit registration/metadata helpers](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantContextExtensions.cs),
+  plus [native host-options utility](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantHostFilteringExtensions.cs).
 - [Consumer composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
   [Organization resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs),
   Organization directory fixture (retained at `cfbac9a`, since replaced by
@@ -179,10 +179,10 @@ Review public interface/outcomes and policy first:
   [explicit startup](../../samples/Wholesale/HttpIdentityDemo/Program.cs),
   [global exception mapping](../../samples/Wholesale/HttpIdentityDemo/ContextExceptionHandler.cs)
   and [Inventory capability](../../samples/Wholesale/modules/Inventory/Inventory/StockCatalog.cs).
-- [HTTP proofs](../../src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/HttpTenantTests.cs),
-  [failure/lifecycle proofs](../../src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/EstablishmentTests.cs),
-  [native pipeline proofs](../../src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/NativePipelineTests.cs),
-  [hostname proofs](../../src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/HostSelectionTests.cs)
+- [HTTP proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/HttpTenantTests.cs),
+  [failure/lifecycle proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/EstablishmentTests.cs),
+  [native pipeline proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/NativePipelineTests.cs),
+  [hostname proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/HostSelectionTests.cs)
   and [sample composition](../../samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs).
 
 The implementation and refinements were owner-reviewed before checkpointing.

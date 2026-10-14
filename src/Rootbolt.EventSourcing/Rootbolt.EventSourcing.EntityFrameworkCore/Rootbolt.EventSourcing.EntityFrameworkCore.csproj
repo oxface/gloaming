@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="../Rootbolt.EventSourcing/Rootbolt.EventSourcing.csproj" />
-    <ProjectReference Include="../../Rootbolt.Events/Rootbolt.Events.History/Rootbolt.Events.History.csproj" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-  </ItemGroup>
-</Project>

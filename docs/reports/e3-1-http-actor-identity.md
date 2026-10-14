@@ -138,19 +138,19 @@ after the commit.
 
 ## Review order and library/template/sample findings
 
-Review [the resolver](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/IHttpActorContextResolver.cs),
-[registration/pipeline helpers](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/HttpActorContextExtensions.cs),
-[failure type](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/HttpActorResolutionException.cs),
-[evaluator](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/ActorContextPolicyEvaluator.cs),
-[middleware](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/ActorContextMiddleware.cs) and
-[shared establishment implementation](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/HttpActorContextEstablishment.cs)
+Review [the resolver](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/IHttpActorContextResolver.cs),
+[registration/pipeline helpers](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/HttpActorContextExtensions.cs),
+[failure type](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/HttpActorResolutionException.cs),
+[evaluator](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/ActorContextPolicyEvaluator.cs),
+[middleware](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/ActorContextMiddleware.cs) and
+[shared establishment implementation](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/HttpActorContextEstablishment.cs)
 line by line. The last file owns cancellation checks, authenticated/anonymous branching,
 principal-reference validation and publication after successful core initialization.
 
 Then review [sample registration/pipeline](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
 [native authentication](../../samples/Wholesale/HttpIdentityDemo/NativeAuthentication.cs),
 [current actor resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/ApplicationActorResolver.cs),
-[standalone proofs](../../src/Rootbolt.ActorIdentity/tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) and
+[standalone proofs](../../src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) and
 [sample proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs).
 
 E3.3 replaced the original configured directory/resolver with persisted Access. The E3.1

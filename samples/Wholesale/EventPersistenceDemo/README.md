@@ -213,7 +213,7 @@ version and timestamps and never rewrites retained facts. Roll back/dispose and 
 fault. These guarantees rely on the explicit native transaction and both save guards, not arbitrary
 SQL or external writers. Module ownership, authorization and final completion remain consumer policy.
 
-[Library contract](../../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md)
+[Library contract](../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
 records setup, native errors and recovery limits. A maintenance worker remains planned and needed
 eventually; consumers can host reconciliation now and own scheduling, scaling and locking/windows.
 Ordinary reads/writes remain strict; no silent repair, snapshot catch-up or automatic retry.
@@ -280,7 +280,7 @@ The three PostgreSQL/RabbitMQ proofs cover confirmed acceptance followed by comp
 failure and repeat delivery, mandatory unroutable failure/recovery and this finite executable.
 Their manually acknowledged receiver is a transport observer, not an inbox business handler.
 The separate `--inbox` journey below demonstrates committed durable intake before ack and
-independently committed business processing. See [Messaging capabilities](../../../src/Rootbolt.Messaging/docs/capabilities.md)
+independently committed business processing. See [Messaging capabilities](../../../src/Gloaming.Messaging/docs/capabilities.md)
 and [new versus historical evidence](../../../docs/reports/outbox1-transactional-dispatch.md).
 
 ## Durable stock-issue command intake
@@ -323,9 +323,9 @@ does not subscribe to a broker or enable a worker. New forward migrations preser
 Fourteen real PostgreSQL/broker cases cover accepted/refused decisions, independent commit
 requirements and header/event/state/audit/reply/completion rollback, fresh recovery, tenant
 admission, populated pre-audit migration preservation and this executable. Read the
-[Inbox contract](../../../src/Rootbolt.Messaging/docs/inbox.md) for native row-lock processing
-and remaining operational limits, and the [audit contract](../../../src/Rootbolt.Auditing/docs/transactional-audit.md)
+[Inbox contract](../../../src/Gloaming.Messaging/docs/inbox.md) for native row-lock processing
+and remaining operational limits, and the [audit contract](../../../src/Gloaming.Auditing/docs/transactional-audit.md)
 for explicit participation and its consumer obligations.
 
 Optional message diagnostic context and native telemetry setup are documented in the
-[Messaging observability contract](../../../src/Rootbolt.Messaging/docs/observability.md).
+[Messaging observability contract](../../../src/Gloaming.Messaging/docs/observability.md).

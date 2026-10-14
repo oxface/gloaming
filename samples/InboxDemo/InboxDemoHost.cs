@@ -1,9 +1,9 @@
 using System.Data;
 using System.Text.Json;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 
 namespace ModulithFoundry.Samples.InboxDemo;
 

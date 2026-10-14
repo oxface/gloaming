@@ -8,7 +8,7 @@ follow-up edits remain unstaged. No commit, push, deployment or archive amendmen
 
 ## Outcome
 
-Rootbolt.Messaging now supplies independent retained intake, callable local processing and an
+Gloaming.Messaging now supplies independent retained intake, callable local processing and an
 optional sequential fresh-scope worker in its existing three packages. Consumer adapters commit
 intake before native transport acknowledgement/HTTP acceptance. Separate processing owns native
 begin/save/completion/commit. It holds one PostgreSQL row lock through bounded local work,
@@ -18,18 +18,18 @@ A new reusable mechanism was proven: deduplicated retained intake and excluded t
 processing remove repeated identity comparison, locking, completion and retry orchestration from
 both a tenant/event-sourced Inventory handler and an ordinary inbox-only EF Rendering handler.
 Business decisions, payload compatibility, tenant admission and transport remain consumer code.
-No generic bus, acknowledgement facade, SQL dialect, module discovery or Rootbolt unit of work
+No generic bus, acknowledgement facade, SQL dialect, module discovery or Gloaming unit of work
 was introduced. O1's outbox claim/lease/fencing lifecycle remains unchanged.
 
 ## Executable adoption and review order
 
-Start with [intake contract](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInbox.cs)
-and [processing contract](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInboxProcessor.cs),
-then [handler contract](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInboxHandler.cs),
-then [intake](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs),
-[processing](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs)
-and their [private native SQL support](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxStorage.cs).
-The [self-contained setup/guarantees](../../src/Rootbolt.Messaging/docs/inbox.md) describe explicit
+Start with [intake contract](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInbox.cs)
+and [processing contract](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInboxProcessor.cs),
+then [handler contract](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInboxHandler.cs),
+then [intake](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs),
+[processing](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs)
+and their [private native SQL support](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxStorage.cs).
+The [self-contained setup/guarantees](../../src/Gloaming.Messaging/docs/inbox.md) describe explicit
 mapping, both save guards, typed/keyed registration and transaction ownership.
 
 - Inventory's [handler](../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs)
@@ -206,43 +206,43 @@ samples/Wholesale/modules/Inventory/Inventory/Migrations/20261008213945_AddDurab
 samples/Wholesale/modules/Inventory/Inventory/Migrations/20261008213945_AddDurableInboxAndMessageMetadata.cs
 samples/Wholesale/modules/Inventory/Inventory/Migrations/InventoryDbContextModelSnapshot.cs
 samples/Wholesale/modules/README.md
-src/Rootbolt.Messaging/README.md
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxModelExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxServiceCollectionExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxStorage.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/README.md
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInbox.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInboxHandler.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/IInboxProcessor.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxMessageRecord.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxModelExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxProcessingOptions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxServiceCollectionExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxWorker.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxWorkerOptions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/InboxWorkerServiceCollectionExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/OutboxMessageRecord.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/OutboxModelExtensions.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/README.md
-src/Rootbolt.Messaging/Rootbolt.Messaging/InboxMessageConflictException.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging/IncomingMessage.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging/OutgoingMessage.cs
-src/Rootbolt.Messaging/Rootbolt.Messaging/README.md
-src/Rootbolt.Messaging/docs/capabilities.md
-src/Rootbolt.Messaging/docs/inbox.md
-src/Rootbolt.Messaging/tests/InboxPostgresTests/HostingTests.cs
-src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxConsumer.cs
-src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj
-src/Rootbolt.Messaging/tests/InboxPostgresTests/IntakeTests.cs
-src/Rootbolt.Messaging/tests/InboxPostgresTests/ProcessingTests.cs
-src/Rootbolt.Messaging/tests/InboxPostgresTests/RegistrationTests.cs
-src/Rootbolt.Messaging/tests/MessagingTests/MessageTests.cs
-src/Rootbolt.Messaging/tests/OutboxPostgresTests/DispatchTests.cs
-src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxConsumer.cs
-src/Rootbolt.Messaging/tests/OutboxPostgresTests/ProducerTests.cs
+src/Gloaming.Messaging/README.md
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxModelExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxServiceCollectionExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxStorage.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInbox.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInboxHandler.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInboxProcessor.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxMessageRecord.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxModelExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxProcessingOptions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxServiceCollectionExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxWorker.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxWorkerOptions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxWorkerServiceCollectionExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxMessageRecord.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxModelExtensions.cs
+src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/README.md
+src/Gloaming.Messaging/Gloaming.Messaging/InboxMessageConflictException.cs
+src/Gloaming.Messaging/Gloaming.Messaging/IncomingMessage.cs
+src/Gloaming.Messaging/Gloaming.Messaging/OutgoingMessage.cs
+src/Gloaming.Messaging/Gloaming.Messaging/README.md
+src/Gloaming.Messaging/docs/capabilities.md
+src/Gloaming.Messaging/docs/inbox.md
+src/Gloaming.Messaging/tests/InboxPostgresTests/HostingTests.cs
+src/Gloaming.Messaging/tests/InboxPostgresTests/InboxConsumer.cs
+src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj
+src/Gloaming.Messaging/tests/InboxPostgresTests/IntakeTests.cs
+src/Gloaming.Messaging/tests/InboxPostgresTests/ProcessingTests.cs
+src/Gloaming.Messaging/tests/InboxPostgresTests/RegistrationTests.cs
+src/Gloaming.Messaging/tests/MessagingTests/MessageTests.cs
+src/Gloaming.Messaging/tests/OutboxPostgresTests/DispatchTests.cs
+src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxConsumer.cs
+src/Gloaming.Messaging/tests/OutboxPostgresTests/ProducerTests.cs
 tests/ArchitectureTests/AdoptionDependencyTests.cs
 tests/ArchitectureTests/ArchitectureTests.csproj
 tests/ArchitectureTests/AssemblyDependencyTests.cs

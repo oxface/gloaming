@@ -16,7 +16,7 @@ remain historical evidence and were not rerun.
 
 The useful distinction is between a small mechanism that removes repeated correctness work
 and a sample/template recipe that makes application choices visible. An external framework's
-capability catalog does not itself demonstrate a Rootbolt extraction candidate.
+capability catalog does not itself demonstrate a Gloaming extraction candidate.
 
 ## DDD and CQRS: start with executable consumer code
 
@@ -27,7 +27,7 @@ explicitly allows simpler CRUD implementations for less complex domains.
 [Microsoft CQRS](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs),
 [Microsoft DDD guidance](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice).
 
-**Inference for Rootbolt.** Command handlers, direct EF projections, domain values and result
+**Inference for Gloaming.** Command handlers, direct EF projections, domain values and result
 types can start as sample/template code. CQRS alone supplies no reason for a mediator, handler
 registry, generic repository, mandatory aggregate inheritance or another unit-of-work layer.
 A pending-event or value helper earns extraction when two concrete consumers expose repeated
@@ -66,7 +66,7 @@ logging and an ActivitySource. That default is a framework policy, not a require
 business correlation equal to tracing identity.
 [Wolverine instrumentation and correlation](https://wolverinefx.net/guide/logging.html#message-correlation).
 
-**Inference for Rootbolt.** Retained optional W3C context and native callable-path
+**Inference for Gloaming.** Retained optional W3C context and native callable-path
 instrumentation are small candidates because an exited producer and a fresh worker lose
 ambient process context. Keep these roles distinct:
 
@@ -110,7 +110,7 @@ transaction start time; `clock_timestamp()` represents invocation time rather th
 [PostgreSQL isolation](https://www.postgresql.org/docs/current/transaction-iso.html),
 [PostgreSQL time functions](https://www.postgresql.org/docs/current/functions-datetime.html).
 
-**Inference for Rootbolt.** A timestamp-only feed is unsafe: an earlier-stamped transaction
+**Inference for Gloaming.** A timestamp-only feed is unsafe: an earlier-stamped transaction
 can commit after a reader has advanced its timestamp, and equal timestamps need deterministic
 tie handling. Adding an ID tie-breaker fixes ties without proving that earlier invisible rows
 cannot later commit. A global allocated sequence or `MAX(position)` has the same late-commit
@@ -150,7 +150,7 @@ listeners, across nodes.
 [PostgreSQL locking reads](https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE),
 [Wolverine leader election and agents](https://wolverinefx.net/tutorials/leader-election).
 
-**Inference for Rootbolt.** A dedicated native worker host that calls an existing processor
+**Inference for Gloaming.** A dedicated native worker host that calls an existing processor
 or dispatcher is initially sample/template composition. It needs explicit registrations,
 fresh scopes, service identity, trusted tenant establishment and shutdown behavior. Moving it
 out of the HTTP host creates no distributed coordination guarantee.
@@ -172,7 +172,7 @@ from concurrency protection needed across nodes. Wolverine owns the handler/pers
 integration for those features.
 [Wolverine sagas](https://wolverinefx.net/guide/durability/sagas.html).
 
-**Inference for Rootbolt.** A first durable Sales/Purchasing process manager can be ordinary
+**Inference for Gloaming.** A first durable Sales/Purchasing process manager can be ordinary
 module-owned state with explicit transition handlers, inbox processing and outgoing work in
 one owning transaction. Test duplicate/reordered replies, concurrent transitions, restart,
 timeout-versus-success races and ambiguous remote outcomes. Compensation, terminal states,
@@ -195,7 +195,7 @@ context must resolve to the same scoped instance. This demonstrates that transac
 selection remains a real obligation even in a larger framework.
 [Wolverine EF transactional middleware](https://wolverinefx.net/guide/durability/efcore/transactional-middleware.html).
 
-**Inference for Rootbolt.** Preserve typed module registrations, mappings, migration histories
+**Inference for Gloaming.** Preserve typed module registrations, mappings, migration histories
 and callable workers. Cross-module consistency is an explicit separate transaction/protocol
 decision. Schemas and separate CLR contexts express ownership; they do not establish database
 authorization by themselves. Additional isolation utilities need a demonstrated repeated

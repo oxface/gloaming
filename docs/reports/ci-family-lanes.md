@@ -4,7 +4,7 @@ Date: 2026-10-08. Base checkpoint: `d63091c`.
 
 ## Outcome and ownership
 
-CI now reports independently named checks for each Rootbolt family, alongside shared
+CI now reports independently named checks for each Gloaming family, alongside shared
 repository integrity, Wholesale consumer composition and template adoption. Tests remain
 with the capability they exercise; cross-module application policy remains in the sample
 composition job. This is CI organization, not a new library interface or runtime mechanism.
@@ -53,11 +53,11 @@ socket. Tests ran with two logical processors.
 
 | Lane | Passed cases |
 | --- | ---: |
-| Rootbolt.ActorIdentity | 34 |
-| Rootbolt.Tenancy | 56 |
-| Rootbolt.Persistence | 29 |
-| Rootbolt.Events | 89 |
-| Rootbolt.EventSourcing | 278 |
+| Gloaming.ActorIdentity | 34 |
+| Gloaming.Tenancy | 56 |
+| Gloaming.Persistence | 29 |
+| Gloaming.Events | 89 |
+| Gloaming.EventSourcing | 278 |
 | Wholesale consumer composition | 148 |
 | Repository architecture | 68 |
 

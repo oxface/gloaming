@@ -6,7 +6,7 @@ replacement; the owner's staged sequential-experiment snapshot remains byte-for-
 
 ## Outcome
 
-Optional `Rootbolt.Messaging.Workflows` and `Rootbolt.Messaging.Workflows.EntityFrameworkCore`
+Optional `Gloaming.Messaging.Workflows` and `Gloaming.Messaging.Workflows.EntityFrameworkCore`
 replace the uncommitted fixed-sequence saga experiment. The runner loads a provided process,
 matches the requested operation, invokes only its saved typed continuation and tracks consumer
 state plus one returned outgoing request in the owning native EF transaction. It does not replay
@@ -45,22 +45,22 @@ and replay engines are not introduced speculatively.
 
 ## Review-worthy code and scope
 
-- [WorkflowBuilder](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/WorkflowBuilder.cs),
-  [WorkflowTurn](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/WorkflowTurn.cs),
-  [IWorkflow](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/IWorkflow.cs): reviewed
+- [WorkflowBuilder](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowBuilder.cs),
+  [WorkflowTurn](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowTurn.cs),
+  [IWorkflow](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/IWorkflow.cs): reviewed
   typed API with XML documentation, copied/frozen options and immutable bindings.
-- [EfWorkflow](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/EfWorkflow.cs):
+- [EfWorkflow](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/EfWorkflow.cs):
   explicit start/continue/resume/read lanes, detached candidates and one accepted turn per instance/scope.
-- [Provided record](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/WorkflowInstanceRecord.cs)
-  and [save validation](../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/WorkflowSaveChangesExtensions.cs):
+- [Provided record](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/WorkflowInstanceRecord.cs)
+  and [save validation](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/WorkflowSaveChangesExtensions.cs):
   scalar version, owned JSON, native transaction/request binding and pooled-scope registry lifetime.
 - [Sales methods](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs),
   [application](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOrders.cs),
   [reply handler](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs)
   and [message helpers](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationMessages.cs):
   consumer rules and transaction/ingress/routing ownership are visible.
-- [Standalone consumer](../../src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkspaceConsumer.cs)
-  and [PG proofs](../../src/Rootbolt.Messaging/tests/WorkflowPostgresTests): ordinary branching
+- [Standalone consumer](../../src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkspaceConsumer.cs)
+  and [PG proofs](../../src/Gloaming.Messaging/tests/WorkflowPostgresTests): ordinary branching
   adoption and executable technical protocol.
 - Only the uncommitted Sales WF2 migration draft/designer/current snapshot were regenerated from
   the last committed snapshot. Same migration identity; new `sales.workflow_instances` table.
@@ -73,7 +73,7 @@ and replay engines are not introduced speculatively.
   Existing family path filtering is retained. Existing Messaging packages acquire no workflow
   dependency. Core depends only on Messaging/BCL; adapter uses existing EF messaging roles,
   EF Relational and DI abstractions. No vendor/transport module dependency is added.
-- Self-sufficient [library contract](../../src/Rootbolt.Messaging/docs/workflows.md), package
+- Self-sufficient [library contract](../../src/Gloaming.Messaging/docs/workflows.md), package
   READMEs, Sales usage, design/roadmap and [ADR 0014](../adr/0014-bounded-durable-continuations.md)
   record the supported model and supersede the sequential experiment. No template preset added.
 
@@ -85,7 +85,7 @@ Reproduce the core protocol with:
 
 ```sh
 dotnet build ModulithFoundry.slnx -m:2
-dotnet test --project src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 ```
 

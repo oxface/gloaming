@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
+using Gloaming.Messaging;
 using RabbitMQ.Client;
-using Rootbolt.Messaging;
 
 namespace ModulithFoundry.Samples.MessagingDemo;
 

@@ -124,7 +124,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Auditing.EntityFrameworkCore.AuditRecord",
+                "Gloaming.Auditing.EntityFrameworkCore.AuditRecord",
                 b =>
                 {
                     b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
@@ -200,7 +200,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
                         .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Rootbolt:Audit", true);
+                        .HasAnnotation("Gloaming:Audit", true);
                 }
             );
 

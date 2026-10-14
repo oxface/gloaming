@@ -91,18 +91,18 @@ runtime results above. Untouched HTTP/state-persistence suites were not repeated
 
 ## Review-worthy files and remaining limits
 
-- [Reader interface](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/IEventHistoryReader.cs)
-  and [implementation](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventHistoryReader.cs)
+- [Reader interface](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IEventHistoryReader.cs)
+  and [implementation](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventHistoryReader.cs)
   define the reviewed bound, complete-key query, validation and decoding boundary.
-- [AggregateRebuilder](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs)
+- [AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs)
   injects the reader without changing state replacement or transaction/concurrency semantics.
 - [Inventory reader](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs)
   and [Purchasing reader](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
   retain temporal selection and reducers. [Counter decoder](../../samples/EventStorageDemo/CounterHistoryReader.cs)
   demonstrates materially different adoption with direct JSON and ordinary keys.
-- [Reader PostgreSQL proofs](../../src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventHistoryReaderTests.cs)
+- [Reader PostgreSQL proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventHistoryReaderTests.cs)
   cover the new mechanism; existing family/consumer tests exercise composition.
-- [Consumer contract](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md)
+- [Consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
   records setup/errors/limits; [approved scope](../plans/event-history-reader-extraction.md) preserves the proposal.
 
 The selected prefix is materialized in full; capacity, paging and streaming are unproven. Initial

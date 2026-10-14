@@ -20,20 +20,20 @@ import koffi from "koffi";
 
 export const root = resolve(import.meta.dirname, "../..");
 export const libraries = [
-  "Rootbolt.ActorIdentity",
-  "Rootbolt.Tenancy",
-  "Rootbolt.Persistence.EntityFrameworkCore",
+  "Gloaming.ActorIdentity",
+  "Gloaming.Tenancy",
+  "Gloaming.Persistence.EntityFrameworkCore",
 ] as const;
 
 export const librarySources: Record<(typeof libraries)[number], string> = {
-  "Rootbolt.ActorIdentity": join(
+  "Gloaming.ActorIdentity": join(
     root,
-    "src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity",
+    "src/Gloaming.ActorIdentity/Gloaming.ActorIdentity",
   ),
-  "Rootbolt.Tenancy": join(root, "src/Rootbolt.Tenancy/Rootbolt.Tenancy"),
-  "Rootbolt.Persistence.EntityFrameworkCore": join(
+  "Gloaming.Tenancy": join(root, "src/Gloaming.Tenancy/Gloaming.Tenancy"),
+  "Gloaming.Persistence.EntityFrameworkCore": join(
     root,
-    "src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore",
+    "src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore",
   ),
 };
 

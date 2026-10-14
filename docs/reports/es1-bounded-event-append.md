@@ -117,7 +117,7 @@ proof costs without evidence from this bounded capability; neither is extracted.
 
 ## New proofs for the replacement
 
-[Pure core tests](../../src/Rootbolt.EventSourcing/tests/EventSourcingTests/AggregateTests.cs) prove ordered multiple
+[Pure core tests](../../src/Gloaming.EventSourcing/tests/EventSourcingTests/AggregateTests.cs) prove ordered multiple
 decisions with a fixed observed version, a read-only pending collection and a snapshot of the
 submitted event list. Final-candidate validation occurs once per batch, including a batch
 whose intermediate state exceeds policy but final state is valid. A later evolution failure,
@@ -206,10 +206,10 @@ rerun here. No new template or archive runtime mechanism is claimed.
 
 ## Review map and remaining limits
 
-Start with [aggregate core](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/EventSourcedAggregate.cs),
-[write contract](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/IEventSourcedAggregate.cs),
+Start with [aggregate core](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/EventSourcedAggregate.cs),
+[write contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/IEventSourcedAggregate.cs),
 [former configured appender](../plans/es2-native-ef-simplification.md),
-[record adapter](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventRecordMapping.cs)
+[record adapter](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventRecordMapping.cs)
 and [former prepared batch](../plans/es2-native-ef-simplification.md).
 Then review [Inventory store](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
 [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),

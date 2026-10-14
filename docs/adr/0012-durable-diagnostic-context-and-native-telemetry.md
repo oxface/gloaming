@@ -26,7 +26,7 @@ Meter. Link retained context at activity creation; use distinct attempts while p
 local ambient parent. Record observed completion outcomes and bounded operation/result
 metrics. Optional native ILogger logging occurs while the attempt activity remains current.
 SDKs, subscriptions, exporters, sampling, transport headers and monitoring policy belong to
-editable hosts/adapters. No shared Rootbolt host/telemetry framework is selected.
+editable hosts/adapters. No shared Gloaming host/telemetry framework is selected.
 
 The internal native trace/metric mechanism resides in the package-free messaging core.
 Explicit friend access lets the PostgreSQL assembly use it without exposing a new public
@@ -34,8 +34,8 @@ API. The operation implementations own generated failure logging and the placeme
 attempt boundaries. ILogger dependencies stay with those operations/hosted workers rather
 than the core. Operation failures and native Npgsql/EF database diagnostics are distinct.
 
-The owner-approved optional `Rootbolt.Messaging.OpenTelemetry` adapter provides
-AddRootboltMessaging overloads on the native trace and metric builders. Its sole dependency
+The owner-approved optional `Gloaming.Messaging.OpenTelemetry` adapter provides
+AddGloamingMessaging overloads on the native trace and metric builders. Its sole dependency
 is OpenTelemetry.Api. It subscribes to the existing names without configuring providers,
 SDKs, exporters, sampling, logging or transport sources. Technical messaging packages
 remain independently adoptable without this convenience adapter.
@@ -48,6 +48,6 @@ across retries without becoming an inbox conflict. Compiled consumers rebuild fo
 constructor additions, and existing databases migrate before using the updated model.
 
 Backlog observations/alerts, dashboard UX, baggage, automatic tenant/actor propagation and
-durable telemetry remain separate capabilities. [Local setup/limits](../../src/Rootbolt.Messaging/docs/observability.md)
+durable telemetry remain separate capabilities. [Local setup/limits](../../src/Gloaming.Messaging/docs/observability.md)
 and [the OBS1 report](../reports/obs1-durable-message-observability.md) distinguish mechanism,
 consumer policy and fresh results from prior worker/archive evidence.

@@ -3,16 +3,16 @@
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Purchasing</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/Rootbolt.EventSourcing.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../Purchasing.Contracts/Purchasing.Contracts.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Events/Rootbolt.Events.History/Rootbolt.Events.History.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/Rootbolt.EventSourcing.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
   </ItemGroup>
 </Project>

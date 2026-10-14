@@ -1,10 +1,10 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.ContextDemo.Inventory;
 using ModulithFoundry.Samples.Wholesale.ContextDemo.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.ContextDemo.Sales;
 using ModulithFoundry.Samples.Wholesale.ContextDemo.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.ContextDemo;
 

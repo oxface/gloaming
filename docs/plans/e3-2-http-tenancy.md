@@ -255,7 +255,7 @@ and tenancy; actor-only independence remains exercised by the separate E3.1 HTTP
 
 ## Focused implementation proofs
 
-Create `src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests` referencing only the new adapter, native framework and
+Create `src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests` referencing only the new adapter, native framework and
 TestHost/xUnit. Extend the existing HTTP sample suite for real actor/tenant composition.
 Do not add registration-descriptor assertions or tests for native metadata/DI in isolation.
 

@@ -5,8 +5,9 @@ complete ES1 change set. That checkpoint is `ab85ec9`. This is the separately re
 folder/documentation follow-up; relocation changes remain unstaged.
 
 This plan records the 2026-10-07 relocation under its original library names. The subsequent
-owner-authorized [Rootbolt rename](../reports/rootbolt-library-renaming.md) changes current
-source/project names; the table below preserves the relocation scope at that checkpoint.
+owner-authorized [initial naming checkpoint](../reports/library-naming-checkpoint.md) and
+[Gloaming rename](../reports/gloaming-library-renaming.md) change current source/project
+names; the table below preserves the relocation scope at that checkpoint.
 
 ## Concrete scope
 

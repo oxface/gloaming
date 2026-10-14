@@ -45,7 +45,7 @@ namespace OutboxDemo.Migrations
             );
 
             modelBuilder.Entity(
-                "Rootbolt.Messaging.EntityFrameworkCore.OutboxMessageRecord",
+                "Gloaming.Messaging.EntityFrameworkCore.OutboxMessageRecord",
                 b =>
                 {
                     b.Property<Guid>("MessageId").HasColumnType("uuid").HasColumnName("message_id");
@@ -119,8 +119,8 @@ namespace OutboxDemo.Migrations
                         }
                     );
 
-                    b.HasAnnotation("Rootbolt:Outbox", true)
-                        .HasAnnotation("Rootbolt:OutboxProvider", "Postgres");
+                    b.HasAnnotation("Gloaming:Outbox", true)
+                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres");
                 }
             );
 #pragma warning restore 612, 618

@@ -39,5 +39,5 @@ first proven database. Parallel joins, scheduling, deadlines, cancellation, dura
 signal receipts, replay/graph engines and generic compensation selection remain deferred.
 
 [Approved scope](../plans/wf2-durable-continuations.md),
-[current package-local contract](../../src/Rootbolt.Messaging/docs/workflows.md), and
+[current package-local contract](../../src/Gloaming.Messaging/docs/workflows.md), and
 [fresh evidence](../reports/wf2-durable-continuations.md).

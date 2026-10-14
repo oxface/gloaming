@@ -1,6 +1,6 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging.Workflows;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging.Workflows;
 using OrderView = ModulithFoundry.Samples.Wholesale.Sales.Contracts.StockReservationOrder;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;

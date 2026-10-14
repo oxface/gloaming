@@ -1,3 +1,5 @@
+using Gloaming.Events.History;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
@@ -6,8 +8,6 @@ using ModulithFoundry.Samples.Wholesale.Purchasing;
 using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
-using Rootbolt.Events.History;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo.Tests;
 

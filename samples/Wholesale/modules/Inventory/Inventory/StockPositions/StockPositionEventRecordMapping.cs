@@ -1,5 +1,5 @@
-using Rootbolt.Events.Serialization;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
+using Gloaming.Events.Serialization;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 

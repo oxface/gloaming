@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.InboxDemo;
 using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Tests.Infrastructure;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 
@@ -140,7 +140,7 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
             async () =>
                 (await collector.SpansAsync(token)).Any(record =>
                     record.Service == "proof-process-recovered"
-                    && Name(record.Record) == "rootbolt.inbox.process"
+                    && Name(record.Record) == "gloaming.inbox.process"
                 ),
             token
         );
@@ -153,14 +153,14 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
                 && Id(record.Record, "spanId") == creation.SpanId.ToString()
         );
 
-        var failedDispatch = Single(spans, "proof-dispatch-failed", "rootbolt.outbox.dispatch");
+        var failedDispatch = Single(spans, "proof-dispatch-failed", "gloaming.outbox.dispatch");
         var recoveredDispatch = Single(
             spans,
             "proof-dispatch-recovered",
-            "rootbolt.outbox.dispatch"
+            "gloaming.outbox.dispatch"
         );
-        var failedProcess = Single(spans, "proof-process-failed", "rootbolt.inbox.process");
-        var recoveredProcess = Single(spans, "proof-process-recovered", "rootbolt.inbox.process");
+        var failedProcess = Single(spans, "proof-process-failed", "gloaming.inbox.process");
+        var recoveredProcess = Single(spans, "proof-process-recovered", "gloaming.inbox.process");
         AssertLink(failedDispatch, creation);
         AssertLink(recoveredDispatch, creation);
         AssertLink(failedProcess, received);
@@ -228,7 +228,7 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
                 metrics,
                 record =>
                     record.Service == service
-                    && Name(record.Record) == "rootbolt.messaging.attempts"
+                    && Name(record.Record) == "gloaming.messaging.attempts"
                     && record
                         .Record.GetProperty("sum")
                         .GetProperty("dataPoints")
@@ -245,7 +245,7 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
                 metrics,
                 record =>
                     record.Service == service
-                    && Name(record.Record) == "rootbolt.messaging.attempt.duration"
+                    && Name(record.Record) == "gloaming.messaging.attempt.duration"
             );
         }
     }
@@ -304,7 +304,7 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
     private static void AssertOutcome(JsonElement span, Guid message, string outcome, int status)
     {
         Assert.Equal(message.ToString(), OtlpCollector.Attribute(span, "messaging.message.id"));
-        Assert.Equal(outcome, OtlpCollector.Attribute(span, "rootbolt.messaging.result"));
+        Assert.Equal(outcome, OtlpCollector.Attribute(span, "gloaming.messaging.result"));
         Assert.Equal(status, span.GetProperty("status").GetProperty("code").GetInt32());
     }
 

@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
-    <ProjectReference Include="../../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
-    <ProjectReference Include="../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
   </ItemGroup>
 </Project>

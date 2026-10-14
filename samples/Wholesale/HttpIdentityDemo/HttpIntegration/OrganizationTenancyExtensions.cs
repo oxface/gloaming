@@ -1,4 +1,4 @@
-using Rootbolt.Tenancy.AspNetCore;
+using Gloaming.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.HttpIntegration;
 

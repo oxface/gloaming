@@ -1,8 +1,8 @@
+using Gloaming.ActorIdentity.AspNetCore;
+using Gloaming.Tenancy;
+using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Rootbolt.ActorIdentity.AspNetCore;
-using Rootbolt.Tenancy;
-using Rootbolt.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
 

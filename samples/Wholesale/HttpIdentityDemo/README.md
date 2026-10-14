@@ -1,11 +1,11 @@
 # Wholesale HTTP Access and Organization demonstration
 
-A runnable consumer composing the optional [actor](../../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/README.md)
-and [tenancy](../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/README.md) adapters with native
+A runnable consumer composing the optional [actor](../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md)
+and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.md) adapters with native
 cookie/OIDC authentication and separate PostgreSQL-backed Access/Inventory/Sales modules.
 Business reads and profile edits use module Contracts and tenant-owned rows.
 
-Accepted Sales profile edits now explicitly stage a [transactional audit](../../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/README.md)
+Accepted Sales profile edits now explicitly stage a [transactional audit](../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/README.md)
 in the same native transaction as the customer/version and address changes. Sales requires an
 established Human actor, retains canonical actor/tenant and the affected address/version transition,
 and deliberately excludes name/address text. The module's new forward migration creates

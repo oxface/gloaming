@@ -1,8 +1,8 @@
+using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModulithFoundry.Samples.Wholesale.Sales;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo;
 

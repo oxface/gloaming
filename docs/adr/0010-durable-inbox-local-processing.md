@@ -6,7 +6,7 @@ line-by-line review. [Reviewed scope](../plans/inbox1-durable-intake-processing.
 Each receiving module owns one typed DbContext, schema/table and explicitly keyed handler
 registration. Inbox intake, processing and hosting are independently selected; an inbox-only
 consumer needs neither an outbox/publisher nor event sourcing, tenancy or actor packages.
-No new package or universal Rootbolt transaction/metadata runtime is introduced.
+No new package or universal Gloaming transaction/metadata runtime is introduced.
 
 Retain the complete admitted incoming envelope in a caller-owned native ReadCommitted
 transaction. Only its committed intake permits transport acknowledgement or successful HTTP
@@ -31,8 +31,8 @@ aggregate. The handler contract is for trusted local code, not a sandbox against
 Optional sequential hosting uses fresh scopes and cooperative cancellation. Transport lifecycle,
 acknowledgements, setup/migrations, poison policy, retention, redrive, scaling and cross-module
 coordination remain explicit or deferred. Native RabbitMQ and HTTP samples demonstrate acceptance
-boundaries without moving transport code into Rootbolt. T1 and the frozen archive are preserved.
+boundaries without moving transport code into Gloaming. T1 and the frozen archive are preserved.
 
-[Library-local contract](../../src/Rootbolt.Messaging/docs/inbox.md) and
+[Library-local contract](../../src/Gloaming.Messaging/docs/inbox.md) and
 [new execution evidence](../reports/inbox1-durable-intake-processing.md) distinguish supported
 mechanisms, consumer policy and remaining proof gaps from archived receipt-only evidence.

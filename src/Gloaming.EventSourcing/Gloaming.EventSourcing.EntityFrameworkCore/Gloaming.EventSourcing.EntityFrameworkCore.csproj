@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
+    <ProjectReference Include="../../Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+</Project>

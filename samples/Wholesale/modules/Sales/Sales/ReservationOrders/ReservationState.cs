@@ -1,6 +1,6 @@
+using Gloaming.Messaging.Workflows;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.Messaging.Workflows;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
 

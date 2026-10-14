@@ -1,7 +1,7 @@
 # WF2: compensating stock reservations
 
 Status: consumer implementation authorized on 2026-10-10, on
-`feat/compensating-workflow` from merged WF1 at `161a33e`. No Rootbolt interface change
+`feat/compensating-workflow` from merged WF1 at `161a33e`. No Gloaming interface change
 was proposed or authorized by the original consumer brief. The owner subsequently requested
 the [sequential coordinator assessment and concrete interface proposal](wf2-sequential-saga-coordinator.md).
 The owner approved that follow-up interface/scope and requested implementation. The optional
@@ -24,7 +24,7 @@ business Contracts. Inventory owns reserve/release messages and outcome codes. S
 business status, correlation and reply validation. The optional coordinator owns requested
 command identities, sequential progress and compensation attempts. There is no
 shared transaction or distributed rollback. Each local transition, inbox completion and
-next outgoing message commit together through the existing Rootbolt inbox processor.
+next outgoing message commit together through the existing Gloaming inbox processor.
 
 Reservation identity is distinct from delivery identity. Inventory retains original inputs
 and reserve outcome, including refusals. Equal retries return that original decision without

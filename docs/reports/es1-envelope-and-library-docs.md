@@ -88,10 +88,10 @@ Archive references and Marten comparisons remain historical/source evidence.
 
 ## Review scope and preserved work
 
-Review [StoredEventRecord](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/StoredEventRecord.cs),
-[InlineProjectionStorage](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/InlineStateReader.cs),
-[EventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStore.cs),
-[save validation](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
+Review [StoredEventRecord](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/StoredEventRecord.cs),
+[InlineProjectionStorage](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateReader.cs),
+[EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
+[save validation](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
 and [default-envelope adoption](../../samples/EventStorageDemo.Tests/AppendTests.DefaultEnvelope.cs).
 The existing append test class becomes partial to host that proof. Inventory/Purchasing inline
 loaders and Inventory's native query use the renamed storage type. No runtime dependency change.

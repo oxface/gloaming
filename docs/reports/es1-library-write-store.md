@@ -122,11 +122,11 @@ prefixes are documented there. Concurrency/transaction assertions require Postgr
 
 ## Review-worthy files and scope
 
-Start with [IEventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/IEventStore.cs),
-[EventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStore.cs),
-[state/projection bindings](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/AggregateStateMapping.cs),
-[native inline state](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/InlineStateReader.cs)
-and [model/save validation](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs).
+Start with [IEventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IEventStore.cs),
+[EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
+[state/projection bindings](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateStateMapping.cs),
+[native inline state](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateReader.cs)
+and [model/save validation](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs).
 The previously reviewed EventRecordAdapter, EventAppender and PreparedEventAppend remain the
 underlying batch mechanism, with their existing public shapes.
 

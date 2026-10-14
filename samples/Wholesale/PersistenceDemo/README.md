@@ -1,7 +1,7 @@
 # Wholesale persistence demonstration
 
-A finite consumer of [EF ownership utilities](../../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/README.md)
-and [Tenancy](../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/README.md), without actor identity or Access.
+A finite consumer of [EF ownership utilities](../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md)
+and [Tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), without actor identity or Access.
 It uses native Npgsql/EF registration, model configuration and save overrides. No HTTP
 endpoints or authentication substitute are introduced. Inventory and Sales own their native
 DbContexts, schemas, migration artifacts and history tables in the same database.
@@ -152,7 +152,7 @@ migration-isolation checker.
 PostgreSQL. They cover cached-model isolation, tenantless/unestablished failures, global saves,
 validation through all save overloads, foreign/missing/changed ownership, detached foreign IDs,
 model classification and first/repeat console invocation. The separate GUID-key consumer in
-`src/Rootbolt.Persistence/tests/PersistenceTests` runs without either context library.
+`src/Gloaming.Persistence/tests/PersistenceTests` runs without either context library.
 
 [Module migration proofs](../PersistenceDemo.Tests/ModuleMigrationTests.cs) initialize either
 module first, verify its tables/history alone, preserve its rows when the other module is

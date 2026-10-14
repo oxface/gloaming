@@ -1,5 +1,5 @@
+using Gloaming.Tenancy;
 using ModulithFoundry.Samples.Wholesale.ContextDemo.Inventory.Contracts;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.ContextDemo.Inventory;
 

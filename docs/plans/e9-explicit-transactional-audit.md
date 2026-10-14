@@ -14,11 +14,11 @@ item/aggregate identity. The implementation now includes these bounded changes:
 
 - AuditEntry's constructor parameter and both envelope/row SubjectKey properties are string?.
   Null means no individual item; non-null blank keys remain invalid. SubjectType stays required.
-- Optional `Rootbolt.Auditing.EntityFrameworkCore.Postgres` references the EF package and
+- Optional `Gloaming.Auditing.EntityFrameworkCore.Postgres` references the EF package and
   Npgsql.EntityFrameworkCore.PostgreSQL. Its only public type is:
 
 ```csharp
-namespace Rootbolt.Auditing.EntityFrameworkCore.Postgres;
+namespace Gloaming.Auditing.EntityFrameworkCore.Postgres;
 
 public static class PostgresAuditModelExtensions
 {
@@ -34,7 +34,7 @@ clock default, transaction orchestration or mandatory provider dependency in the
   long version) and InventoryAudit.StockIssued(Guid stockPositionId, long version, decimal quantity)
   fill source/action/outcome/schema/payload, established actor/tenant, generated UUIDv7 and clock.
   Neither wrapper needs Activity or incoming-message metadata. Correlation, causation and
-  trace IDs are omitted under the owner's subsequent YAGNI decision. No ambient Rootbolt
+  trace IDs are omitted under the owner's subsequent YAGNI decision. No ambient Gloaming
   context is added.
 - Sample mappings index tenant/type/item/time/ID for native activity timeline queries. Global
   entries have nullable item keys; timestamp/ID ordering is display order, not commit order.
@@ -135,11 +135,11 @@ Consumer proofs must establish that these two selected successful workflows actu
 
 ## Reviewed public surface
 
-The provider-independent package is `Rootbolt.Auditing.EntityFrameworkCore`, under
-`src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/`. No separate abstractions or
+The provider-independent package is `Gloaming.Auditing.EntityFrameworkCore`, under
+`src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/`. No separate abstractions or
 non-EF package is earned by these consumers. All following types use that namespace.
 
-Dependencies: existing `Rootbolt.ActorIdentity` for immutable actor/initiator values;
+Dependencies: existing `Gloaming.ActorIdentity` for immutable actor/initiator values;
 native `Microsoft.EntityFrameworkCore.Relational`, using the existing central version.
 The proposed DI-abstractions reference is omitted because the approved surface needs no library
 DI code; native scoped registration remains consumer wiring.
@@ -337,11 +337,11 @@ cross-module commits, denial auditing and initiator propagation remain deferred.
 
 | Files | Authorized purpose upon approval |
 | --- | --- |
-| New `src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/{Rootbolt.Auditing.EntityFrameworkCore.csproj,AuditEntry.cs,IAudit.cs,EfAudit.cs,AuditRecord.cs,AuditModelExtensions.cs,AuditStageRegistry.cs}` | Exactly the surface/protocol above; registry is internal. No unused core package. |
-| New `src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/{Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj,PostgresAuditModelExtensions.cs,README.md}` | Owner-requested JSONB mapping composition. Generic EF package keeps no provider dependency; schema/table and returned native builder remain explicit. |
-| New family/project READMEs and `src/Rootbolt.Auditing/docs/transactional-audit.md` | Self-contained setup, guarantees, ownership and deferred limits. |
+| New `src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/{Gloaming.Auditing.EntityFrameworkCore.csproj,AuditEntry.cs,IAudit.cs,EfAudit.cs,AuditRecord.cs,AuditModelExtensions.cs,AuditStageRegistry.cs}` | Exactly the surface/protocol above; registry is internal. No unused core package. |
+| New `src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/{Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj,PostgresAuditModelExtensions.cs,README.md}` | Owner-requested JSONB mapping composition. Generic EF package keeps no provider dependency; schema/table and returned native builder remain explicit. |
+| New family/project READMEs and `src/Gloaming.Auditing/docs/transactional-audit.md` | Self-contained setup, guarantees, ownership and deferred limits. |
 | New `docs/reports/e9-audit-context-research.md` | Cited primary-source findings about native context, JSON/EF equality and audit guidance. Research adds no executable guarantee or compliance certification. |
-| New `src/Rootbolt.Auditing/tests/AuditPostgresTests/{AuditPostgresTests.csproj,AuditConsumer.cs,EnvelopeTests.cs,TransactionTests.cs,GuardTests.cs}` | Independent ordinary EF consumer and focused envelope/native transaction/guard proofs. Reuse linked existing PostgreSqlFixture. |
+| New `src/Gloaming.Auditing/tests/AuditPostgresTests/{AuditPostgresTests.csproj,AuditConsumer.cs,EnvelopeTests.cs,TransactionTests.cs,GuardTests.cs}` | Independent ordinary EF consumer and focused envelope/native transaction/guard proofs. Reuse linked existing PostgreSqlFixture. |
 | `samples/Wholesale/modules/Sales/Sales/{Sales.csproj,CustomerProfiles.cs,SalesAudit.cs,SalesRegistration.cs,SalesDbContext.cs}` | Explicit profile audit, consumer Human requirement/clock, typed DI, native mapping/save guard. No Contracts change. |
 | Sales `Migrations/*_AddTransactionalAudit{.cs,.Designer.cs}` and `SalesDbContextModelSnapshot.cs` | New consumer-owned audit table only; preserve existing migrations/data. |
 | `samples/Wholesale/modules/Inventory/Inventory/{Inventory.csproj,InventoryRegistration.cs,InventoryDbContext.cs,Messaging/StockIssueInboxHandler.cs,InventoryAudit.cs}` | Explicit accepted inbox audit, trusted per-operation worker identity, native mapping/save guard. Keep StockPositionCommands and wire Contracts unchanged; StockIssueMessages supplies separate direct-operation conversation IDs. |

@@ -93,4 +93,4 @@ Unchanged .NET/database/broker/browser suites were not rerun for scheduling conf
 Their earlier CI passes remain historical evidence. No library interface, domain rule,
 consumer transaction, template source, migration or frozen archive file changed.
 **No new reusable runtime mechanism was proven.** This is repository-owned CI configuration
-using an existing action, not a Rootbolt library or template runtime dependency.
+using an existing action, not a Gloaming library or template runtime dependency.

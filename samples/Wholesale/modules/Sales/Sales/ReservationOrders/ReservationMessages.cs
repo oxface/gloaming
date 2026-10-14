@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.Messaging;
+using Gloaming.Messaging.Workflows;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.Workflows;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
 

@@ -1,11 +1,11 @@
 using System.Data.Common;
 using System.Text.Json;
+using Gloaming.EventSourcing;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
-using Rootbolt.EventSourcing;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
 

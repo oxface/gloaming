@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
     <ProjectReference Include="../OutboxDemo/OutboxDemo.csproj" />
-    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/Rootbolt.Messaging.OpenTelemetry.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
     <ProjectReference Include="../Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

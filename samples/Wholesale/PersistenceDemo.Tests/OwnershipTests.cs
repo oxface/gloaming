@@ -1,10 +1,10 @@
 using System.Diagnostics;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
 using ModulithFoundry.Tests.Infrastructure;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Tests;
 

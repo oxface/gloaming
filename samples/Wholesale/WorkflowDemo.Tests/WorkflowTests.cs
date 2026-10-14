@@ -1,4 +1,7 @@
 using System.Text.Json;
+using Gloaming.Events.Serialization;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
@@ -7,9 +10,6 @@ using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
 using RabbitMQ.Client;
-using Rootbolt.Events.Serialization;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo.Tests;
 

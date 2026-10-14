@@ -253,7 +253,7 @@ obligations: previously irrelevant keys become relevant at different times.
 The discarded [B1 experiment](b1-replayable-integration-feed.md) was a
 selective retained Sales profile after-image pull feed. It proves that source's paging
 and progress protocol; it has no broker publication or historical initial population.
-Existing [Messaging capabilities](../../src/Rootbolt.Messaging/docs/capabilities.md)
+Existing [Messaging capabilities](../../src/Gloaming.Messaging/docs/capabilities.md)
 already supply separately composed outbox/inbox mechanics. Neither implies the new
 sparse hydration protocol above is implemented.
 

@@ -29,7 +29,7 @@ the AppHost SDK attribute: review SDK/package alignment together.
 The AppHost exporter/hosting references no longer repeat the central 1.19.1
 versions through `VersionOverride`. Package versions remain centrally managed and
 the formatter accepts the shorter references. There are no production C# changes,
-Rootbolt interface changes, test exemptions or longer timeouts.
+Gloaming interface changes, test exemptions or longer timeouts.
 
 ## SDK installation
 

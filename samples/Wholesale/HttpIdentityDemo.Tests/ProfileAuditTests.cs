@@ -1,4 +1,7 @@
 using System.Net;
+using Gloaming.ActorIdentity;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -8,9 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 

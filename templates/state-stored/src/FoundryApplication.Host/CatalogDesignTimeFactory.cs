@@ -1,7 +1,7 @@
 using ConsumerRoot.Catalog;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Rootbolt.Tenancy;
 
 namespace ConsumerRoot.Host;
 

@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using Gloaming.Events.History;
+using Gloaming.Events.Serialization;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -9,9 +12,6 @@ using ModulithFoundry.Samples.Wholesale.Purchasing;
 using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
-using Rootbolt.Events.History;
-using Rootbolt.Events.Serialization;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo.Tests;
 

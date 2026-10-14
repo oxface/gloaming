@@ -1,11 +1,11 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Messaging.Workflows.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
-using Rootbolt.Messaging.Workflows.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 

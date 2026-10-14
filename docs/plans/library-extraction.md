@@ -17,12 +17,13 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | ES2 single-stream rebuilding | Owner-approved [native EF replacement](es2-native-ef-simplification.md) and reader checkpoint `91542a6`: write-only store, independent full replay and native stream stamps. [ES2 report](../reports/es2-single-stream-rebuilding.md) retains separately dated proof results. |
 | Bounded event-history reader | Owner-approved and checkpointed as `91542a6`; shared native prefix loading and consumer adoption. [Reader report](../reports/event-history-reader-extraction.md) records fresh checks independently of earlier ES2 evidence. |
 | Explicit JSON payload upcasting | Owner-approved and checkpointed as `b597717`, including PassThrough, Inventory and standalone chained/nested adoption; [new evidence](../reports/event-payload-upcasting.md). |
-| Rootbolt library naming | Owner selected and authorized the rename and checkpoint. All nine reusable projects use `Rootbolt.*`; [scope and verification](../reports/rootbolt-library-renaming.md). No runtime capability added. |
-| Transactional outbox O1 | Owner-reviewed and checkpointed as `2d7a865`; merged through PR #1 as `beafa4e`. [Implementation and executable adoption](../../src/Rootbolt.Messaging/README.md); [fresh proofs and remaining gaps](../reports/outbox1-transactional-dispatch.md). |
+| Initial library naming | Owner-authorized historical checkpoint covering the first nine reusable projects; [dated scope and verification](../reports/library-naming-checkpoint.md). No runtime capability added. |
+| Gloaming library naming | Owner selected Gloaming on 2026-10-14 for all current reusable projects; [scope and current verification](../reports/gloaming-library-renaming.md). Umbrine is the future ERP product built on the template and Gloaming. No runtime capability added. |
+| Transactional outbox O1 | Owner-reviewed and checkpointed as `2d7a865`; merged through PR #1 as `beafa4e`. [Implementation and executable adoption](../../src/Gloaming.Messaging/README.md); [fresh proofs and remaining gaps](../reports/outbox1-transactional-dispatch.md). |
 | Durable inbox I1 | Owner-reviewed implementation checkpoint `ecab884`, followed by CI refinement `863456b`; merged through PR #2 as `0f4d8bf`. [Reviewed scope](inbox1-durable-intake-processing.md); [implementation evidence and remaining gaps](../reports/inbox1-durable-intake-processing.md). |
-| Explicit transactional audit E9 | Owner considers the slice complete; checkpoint `18a76f8` is present in `origin/main`. [Reviewed scope](e9-explicit-transactional-audit.md); [library contract](../../src/Rootbolt.Auditing/README.md); [verification and remaining gaps](../reports/e9-explicit-transactional-audit.md). |
+| Explicit transactional audit E9 | Owner considers the slice complete; checkpoint `18a76f8` is present in `origin/main`. [Reviewed scope](e9-explicit-transactional-audit.md); [library contract](../../src/Gloaming.Auditing/README.md); [verification and remaining gaps](../reports/e9-explicit-transactional-audit.md). |
 | Separate worker hosts W1 | Owner-approved checkpoint `7b43201`, merged into `origin/main` as `94ca57a`. Existing inbox/outbox APIs compose separate native roles with explicit setup; [scope](w1-separate-worker-hosts.md), [usage](../../samples/MessagingWorkerDemo/README.md) and [process proofs](../reports/w1-separate-worker-hosts.md). No new library interface or mechanism. |
-| Durable message observability OBS1 | Owner-approved checkpoint `b44b5d5`, merged into `origin/main` at `4c0e0c5`, including the optional native OTel subscription adapter. [Local contract](../../src/Rootbolt.Messaging/docs/observability.md), [scope/file map](durable-message-observability.md) and [fresh proofs](../reports/obs1-durable-message-observability.md). |
+| Durable message observability OBS1 | Owner-approved checkpoint `b44b5d5`, merged into `origin/main` at `4c0e0c5`, including the optional native OTel subscription adapter. [Local contract](../../src/Gloaming.Messaging/docs/observability.md), [scope/file map](durable-message-observability.md) and [fresh proofs](../reports/obs1-durable-message-observability.md). |
 | Durable inter-module workflow WF1 | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: Sales-owned stock-issue progress, independent Inventory decisions and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism. |
 | Compensating workflow WF2 | Owner-approved [bounded continuation interface/replacement scope](wf2-durable-continuations.md), merged into fetched `origin/main` as `d674e39`. Optional core/EF packages, Sales continuation adoption and standalone branching PostgreSQL proofs; [new evidence](../reports/wf2-durable-continuations.md) supersedes the uncommitted fixed-sequence experiment. |
 | Replayable source B1 | Closed by owner direction on 2026-10-14 as a [retention/contract assessment](../reports/b1-retention-and-contract-assessment.md). Experiment source, tests and patch artifacts removed; dated results and research retained. Revisit only for a later concrete receiver need; no new library mechanism. B2 implementation remains separate. |
@@ -30,7 +31,7 @@ forward from E10; that rehearsal is now complete and owner-approved.
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
 and telemetry concerns. Its optional PostgreSQL mapping and item timeline belong to the
-current [audit contract](../../src/Rootbolt.Auditing/README.md).
+current [audit contract](../../src/Gloaming.Auditing/README.md).
 
 On 2026-10-12 the owner selected bounded explicit continuations over replayed orchestration
 and authorized preparing a concrete replacement of the uncommitted sequential experiment.
@@ -82,17 +83,17 @@ consumer-owned RabbitMQ publication proof. Durable inbox intake, transactional p
 and a full module-to-module acknowledgement sample are implemented in I1.
 Reuse the existing codec/ownership utilities at consumer composition points;
 no event-sourcing dependency or automatic domain-event publication is
-proposed for the outbox. Owner follow-up groups inbox/outbox in `Rootbolt.Messaging` and
-names the provider package `Rootbolt.Messaging.EntityFrameworkCore.Postgres`. The implemented
+proposed for the outbox. Owner follow-up groups inbox/outbox in `Gloaming.Messaging` and
+names the provider package `Gloaming.Messaging.EntityFrameworkCore.Postgres`. The implemented
 small provider-free Messaging package supplies the used envelope/publisher contract;
-`Rootbolt.Messaging.EntityFrameworkCore` contains used row/mapping/enqueue/save validation,
+`Gloaming.Messaging.EntityFrameworkCore` contains used row/mapping/enqueue/save validation,
 typed contracts and optional worker, while PostgreSQL supplies native model specialization
 and claim/completion SQL. No generic SQL dialect or second-provider guarantee is proposed.
 Independent inbox opt-in is implemented in I1. Each module owns its context, tables and
 typed dependencies; receiving work commits separately from sending work. Transport
 implementation/configuration remains consumer-owned. Existing Persistence ownership utilities
 and Events codec remain independently composed, with no relocation or mandatory dependency.
-Native EF coordinates a single owning transaction; no Rootbolt root package or universal delivery/
+Native EF coordinates a single owning transaction; no Gloaming root package or universal delivery/
 transaction framework is proposed.
 
 T1 implements one fixed event-free Catalog/console composition with configurable application
@@ -129,7 +130,7 @@ checks tracked required participants; no generated persistence or hidden save/co
 [New executions](../reports/es1-library-write-store.md) accompany implementation review.
 
 The owner-approved default envelope and projection/store terminology refinements are now
-implemented. [Library-local capability records](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+implemented. [Library-local capability records](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
 retain the supported contract, bounded rebuilding/remaining async/multi-stream context and provider
 adapter investigation. Other packages retain their own local setup/limits/deferred directions.
 The default-envelope refinement did not move projects; see [its proof and scope report](../reports/es1-envelope-and-library-docs.md).
@@ -246,12 +247,12 @@ Exact refinement file/behavior map:
 
 | Files | Change |
 | --- | --- |
-| `src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs` (new) | Scoped concrete/role registration, default clock, idempotence and binding errors. |
-| Same project's `Rootbolt.EventSourcing.EntityFrameworkCore.csproj`; `Directory.Packages.props` | Explicit DI abstractions dependency and central version pin. |
+| `src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs` (new) | Scoped concrete/role registration, default clock, idempotence and binding errors. |
+| Same project's `Gloaming.EventSourcing.EntityFrameworkCore.csproj`; `Directory.Packages.props` | Explicit DI abstractions dependency and central version pin. |
 | Same project's `RequiredInlineStateExtensions.cs`, `EventStore.cs` | Main registration enables rebuilding; validate gate/replay before writes; retain explicit helper compatibility and raw stream behavior. |
 | `samples/Wholesale/modules/{Inventory/Inventory/InventoryRegistration.cs,Purchasing/Purchasing/PurchasingRegistration.cs}` | Replace repeated technical store aliases/default clock with the aggregate helper; retain native history and module Contract registrations. |
 | Both modules' `{StockPositions,PurchaseOrders}/InlineViewMapping.cs` | Remove redundant explicit rebuild opt-in after main registration; preserve table/key/concurrency/JSONB mapping and secondary view declarations. |
-| `src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/{RegistrationTests.cs,GuardTests.cs,RebuildConsumer.cs}` | Prove same scoped instance, different scopes, compatible repeats/conflicting bindings, clock override, typed-context isolation and mandatory registered-store configuration. Update standalone setup to demonstrate the default; preserve raw adoption. |
+| `src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/{RegistrationTests.cs,GuardTests.cs,RebuildConsumer.cs}` | Prove same scoped instance, different scopes, compatible repeats/conflicting bindings, clock override, typed-context isolation and mandatory registered-store configuration. Update standalone setup to demonstrate the default; preserve raw adoption. |
 | EF/family/Postgres READMEs and local capability records; design/ADR 0007; ES2 brief/report; architecture dependency checks | Document default requirements and optional module facades, update allow-list for explicit DI dependency and record new verification separately. |
 
 Existing history readers, seed StageAsync, module maintenance Contracts, reducers, fixtures,
@@ -266,7 +267,7 @@ paths/future versions. The optional Events.Serialization registry is the natural
 independent direct-JSON stores remain valid. Rebuilding consumes upgraded facts through replay;
 projection-meaning changes need a rollout plan, while shape-only upgrades need not force rebuilding.
 No upcaster, event v2 fixture, background job or broader rebuilding capability is authorized here.
-The [library-local catalog](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+The [library-local catalog](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
 retains this priority and proof context beside the package.
 
 The next slice has an owner-approved [payload-upcasting scope](event-payload-upcasting.md)
@@ -527,7 +528,7 @@ Sample-only capability proofs and adapter increments may introduce no new librar
 ### Checkpointed actor identity and tenancy
 
 Before implementing E2, the owner authorized revising E1 into independently adoptable
-`Rootbolt.ActorIdentity` and `Rootbolt.Tenancy` libraries, with no dependency
+`Gloaming.ActorIdentity` and `Gloaming.Tenancy` libraries, with no dependency
 between them. The split was owner-reviewed and checkpointed as `c8cbf64`; see
 [the E1 plan](e1-tenant-actor.md).
 Actor means the identity performing an operation, not an actor-model execution component.
@@ -574,7 +575,7 @@ reviewed strategy change can reorder later increments; neither is silently assum
 
 ### Current layout and extension direction
 
-- `src/Rootbolt.{Family}/`: family README/docs, independently selectable package
+- `src/Gloaming.{Family}/`: family README/docs, independently selectable package
   directories and library tests. ActorIdentity, Tenancy, Persistence, Events and EventSourcing
   are grouped without adding runtime dependencies.
 - `samples/Wholesale/`: API composition root, modules/Contracts, finite Migrator, AppHost,
@@ -892,7 +893,7 @@ that state-stored modules work without event sourcing or messaging.
 
 [The approved E4 scope](e4-event-serialization.md) compares the two archived serializers
 and defines the native JSON codec, standalone two-family consumer, dependency promise and
-relevant proofs. `Rootbolt.Events.Serialization` was owner-reviewed and checkpointed
+relevant proofs. `Gloaming.Events.Serialization` was owner-reviewed and checkpointed
 as `2a49ef3b`; [the report](../reports/e4-event-serialization.md) records actual
 bounded guarantees without claiming event-store behavior.
 

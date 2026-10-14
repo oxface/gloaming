@@ -1,4 +1,4 @@
-using Rootbolt.EventSourcing.EntityFrameworkCore;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.EventStorageDemo;
 

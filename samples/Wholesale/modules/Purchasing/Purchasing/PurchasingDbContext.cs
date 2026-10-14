@@ -1,8 +1,8 @@
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Purchasing.PurchaseOrders;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Purchasing;
 

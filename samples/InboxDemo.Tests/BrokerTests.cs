@@ -1,6 +1,9 @@
 using System.Data.Common;
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +12,6 @@ using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using RabbitMQ.Client;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 using static ModulithFoundry.Samples.InboxDemo.Tests.AdoptionTests;
 
 namespace ModulithFoundry.Samples.InboxDemo.Tests;

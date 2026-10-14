@@ -207,7 +207,7 @@ Appends and repair change the header ConcurrencyStamp. A stale writer/repair fai
 save and must roll back/dispose/reload. Repair preserves facts, event version and recorded times.
 There is no pre-read admission gate, silent catch-up, scheduler or worker. A maintenance worker
 remains planned; consumers can host reconciliation and own authorization, windows/locks, retries,
-scheduling and scaling. [The current library contract](../../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md)
+scheduling and scaling. [The current library contract](../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
 provides self-sufficient setup, errors and limits.
 
 ## Inventory durable incoming stock commands
@@ -223,4 +223,4 @@ not Inventory authorization or stock eligibility.
 Operational selection can span this module's tenant queue, but business access occurs only
 after admission. No peer DbContext, shared cross-module transaction or automatic domain-event
 publisher is introduced. [Executable adoption](../EventPersistenceDemo/README.md#durable-stock-issue-command-intake)
-and [library setup](../../../src/Rootbolt.Messaging/docs/inbox.md) describe the explicit lanes.
+and [library setup](../../../src/Gloaming.Messaging/docs/inbox.md) describe the explicit lanes.

@@ -47,5 +47,5 @@ rejected; mutation in place and identity-changing re-execution are outside this 
 Full remote OIDC/session topology and tenant admission need separate evidence.
 
 See [the approved interface plan](../plans/e3-1-http-actor-identity.md),
-[the adapter recipe](../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/README.md) and
+[the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
 [the execution report](../reports/e3-1-http-actor-identity.md).
