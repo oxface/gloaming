@@ -1,53 +1,38 @@
-# ADR 0015: Producer-owned retained profile-feed progress
+# ADR 0015: Retained profile-feed experiment rejected for adoption
 
-Date: 2026-10-13. Status: experimental source protocol; adoption deferred on 2026-10-14
-when the owner closed B1 as an assessment. Implementation remains uncommitted for code review.
-The decision below records the implemented experiment, not a settled requirement to add
-this feed or its writer gate to normal Sales usage. See the
-[retention and contract assessment](../reports/b1-retention-and-contract-assessment.md).
-No Rootbolt library interface or B2 snapshot protocol is established.
-At the owner's request the experiment is now
-[preserved outside the common sample](../../experiments/b1-retained-profile-feed/README.md).
-The choices below apply only to that snapshot; current Sales has no feed mapping, gate or API.
+Date: 2026-10-13. Disposition: rejected for adoption on 2026-10-14.
+The owner closed B1 as an assessment and requested removal of the implementation, tests,
+snapshot and reconstruction patch. This ADR records the trade-off and rejection;
+it establishes no active Sales persistence requirement or Rootbolt interface.
 
 ## Context
 
-Sales profile edits are state stored and already commit customer/address/audit atomically.
-Selective outbox messages and per-stream event history provide no complete public change
-feed. A sequence allocated before commit can commit out of order; advancing to MAX skips
-late lower positions. Timestamps do not resolve that problem.
+The experiment tested a producer-owned retained pull feed over selected state-stored
+Sales profile changes. Timestamps and allocated sequence positions alone could not
+provide safe ongoing progress when transactions committed out of order.
 
-## Decision
+## Investigated choice
 
-Keep V1 profile changes and feed state in Sales-owned storage, separate from outbox delivery
-lifecycle. Each admitted Organization has a persistent generation, committed head H and
-retention floor F. Native profile transactions acquire the feed-state row lock before
-business loads/changes, allocate from a PostgreSQL sequence only after acquisition and hold
-the lock through final commit. The entry and H share that business/audit transaction.
+A per-Organization feed-state lock, held through the business transaction, ordered
+post-lock allocations and updates to a committed head. Short consistent-snapshot pages
+and atomic prefix deletion/retention-floor advancement provided paging and expiry.
+A diagnostic receiver committed receipts and cursor progress together.
 
-Read bounded ordered suffixes in one short read-only RepeatableRead snapshot of F/H/entries.
-Truncated pages advance only through returned work; exhausted pages advance to captured H.
-Allow sequence gaps, including rollback and other Organizations' allocations. Treat F as
-the last discarded boundary. Explicit locked retention commits prefix deletion and F together;
-C=F is valid, C<F expires, and another generation/future head is invalid. No silent recovery.
+The protocol passed the [dated PostgreSQL/process proofs](../reports/b1-replayable-integration-feed.md)
+for late commits, gaps, duplicates, rollback, retention and restart. Those results apply
+to the discarded implementation and its complete-writer-participation assumptions.
 
-Public module Contracts expose stable business DTOs/cursors/results independently of EF
-and technical library types. Consumer-native receipt/checkpoint transactions demonstrate
-repeated pages and restart. Initial snapshot/population and cutover remain B2.
+## Rejection and consequences
 
-## Consequences
+The experiment did not establish a concrete receiver need or business value for its
+Organization-wide writer serialization. Its journal was diagnostic rather than a useful
+business projection. Initial state population and snapshot/live cutover were not implemented.
 
-Accepted profile edits serialize within one Organization; this trade-off bounds the first
-protocol but provides no throughput claim. Activation must drain old writers; raw SQL or
-mixed deployments can bypass completeness. Tracked feed mutations are rejected, while
-explicit module SQL owns append/activation/retention. Database grants remain consumer policy.
+The owner chose to retain [findings and constraints](../reports/b1-retention-and-contract-assessment.md)
+only. All experiment source, tests, migration, snapshot and patch artifacts are removed.
+Common Sales writes, Contracts, mapping and setup have no feed dependency.
+No library mechanism, template preset or universal bootstrap approach was adopted.
 
-Readers hold no snapshot across requests. Pruning can expire a slower subscriber between
-pages, even after it read some history. B1 reports that loss and stops; it supplies no
-subscriber pinning, deletion export, bootstrap recovery or global multi-source order.
-No new reusable library mechanism is extracted. Exact interfaces and independent adoption
-require further evidence and owner review before promotion.
-
-See [preserved experiment setup](../../experiments/b1-retained-profile-feed/README.md),
-[reviewed scope](../plans/b1-replayable-integration-feed.md) and
-[fresh evidence](../reports/b1-replayable-integration-feed.md).
+A later slice may revisit retention or state transfer when a concrete receiver requirement
+justifies it. That requires a new reviewed implementation/proof scope rather than restoring
+this rejected design by default.

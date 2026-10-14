@@ -3,9 +3,9 @@
 Research date: 2026-10-13. Scope: selective public integration events, lazy reference
 loading, export/import and retained broker state. This report proposes alternatives;
 it authorizes no implementation or change to the staged B1 work.
-Follow-up, 2026-10-14: B1 was closed as an assessment and its experiment was
-[isolated outside Wholesale](../../experiments/b1-retained-profile-feed/README.md).
-Descriptions of its implementation below are dated research context.
+Follow-up, 2026-10-14: B1 was closed as an
+[assessment](b1-retention-and-contract-assessment.md); the owner then requested removing
+experiment code and patch artifacts. Descriptions below are dated research context only.
 
 ## What problem needs solving?
 
@@ -21,8 +21,8 @@ the simplest counterexample: subscribing today cannot reveal it. This is a boots
 requirement only if the consumer needs that existing data. A workflow interested only
 in future orders might need no bootstrap at all.
 
-The current [B1 consumer](../../experiments/b1-retained-profile-feed/README.md)
-already selects accepted Sales profile edits and retains a public full-state V1
+The discarded [B1 experiment](b1-replayable-integration-feed.md)
+selected accepted Sales profile edits and retained a public full-state V1
 payload. It is not generic database change capture. B1 added a direct-pull retained
 log, bounded paging and source progress; it did not add broker publication or initial
 population. Pre-existing profiles have no synthetic entry. Its Organization writer

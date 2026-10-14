@@ -17,18 +17,12 @@ remaining rows are candidates.
 
 WF2 is merged into fetched `origin/main` at `d674e39` on the B1 starting base.
 The current implementation is the [bounded continuation runner](../../src/Rootbolt.Messaging/docs/workflows.md),
-not the earlier sequential coordinator experiment. B1 now has a
-[owner-approved Sales-owned feed scope](b1-replayable-integration-feed.md), implemented
-with [fresh PostgreSQL/process proofs](../reports/b1-replayable-integration-feed.md) for
-code review. It supplies retained changes only; snapshot/bootstrap remains B2.
-The owner closed B1 on 2026-10-14 as the
-[retention and contract assessment](../reports/b1-retention-and-contract-assessment.md)
-with no further implementation. Revisit storage/transfer choices when a later slice supplies
-a concrete receiver requirement. The staged implementation remains protocol evidence;
-its adoption, commit and merge are not approved by assessment closure.
-At the owner's request, the [experiment source and reconstruction patch](../../experiments/b1-retained-profile-feed/README.md)
-are now isolated outside the common sample, solution and CI. Common Sales uses the merged
-baseline; the retained proof results describe the separate experiment only.
+not the earlier sequential coordinator experiment. The owner closed B1 on 2026-10-14 as the
+[retention and contract assessment](../reports/b1-retention-and-contract-assessment.md),
+then rejected keeping its experimental code. Only [dated results](../reports/b1-replayable-integration-feed.md)
+and findings remain; source, tests, migration, snapshot and patch artifacts are removed.
+Common Wholesale has no feed dependency. Revisit storage/transfer choices only when a later
+slice supplies a concrete receiver requirement. B2 implementation remains separate.
 
 Read the actual consumers and owning family documentation before starting a slice. Resolve
 stale descriptions against current code and owner decisions; do not carry an earlier
@@ -50,7 +44,7 @@ references, not selected runtime dependencies or a feature-parity target.
 | OBS1: durable message observability | Complete and merged: [observability scope](durable-message-observability.md) instruments the existing Exports → Rendering process journey. | Fresh process/OTLP/PostgreSQL proofs are recorded in the OBS1 report. Backlog alerts, dashboard inspection and new audit/reply workflows are deferred. |
 | WF1: durable inter-module workflow / saga assessment | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: [stock-issue scope](wf1-durable-inter-module-workflow.md), [usage](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh proofs](../reports/wf1-durable-inter-module-workflow.md). | Persisted module-owned request/reply progress composes existing inbox/outbox. No new reusable mechanism. |
 | WF2: multi-step saga with compensation | Complete and merged at `d674e39`: owner-approved [bounded continuation replacement](wf2-durable-continuations.md), [Sales usage](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md) and [new protocol/adoption evidence](../reports/wf2-durable-continuations.md). | Provided process table, typed selected-method execution, semantic outcomes and atomic request enqueue. Consumer C# owns branching/compensation and native transactions; no workflow scheduler/replay engine. |
-| B1: replayable source assessment | Closed by owner direction, 2026-10-14: [retention/contract findings recorded](../reports/b1-retention-and-contract-assessment.md), no further implementation. The [Sales feed experiment](b1-replayable-integration-feed.md) and dated PostgreSQL/process evidence remain intact. | Adoption deferred until a later slice establishes a real receiver need. No retained-message, state-transfer or custom-feed design selected as a general solution; no new reusable mechanism. |
+| B1: replayable source assessment | Closed by owner direction, 2026-10-14: [retention/contract findings](../reports/b1-retention-and-contract-assessment.md) and dated results retained; experiment code and patch artifacts removed. | Revisit only for a later concrete receiver need. No retained-message, state-transfer or custom-feed design selected as a general solution; no new reusable mechanism. |
 | B2: new-service repopulation | If a chosen receiver needs initial replicated state, select and prove its population and ongoing-update contract. | B1's custom feed is optional. Compare targeted hydration, export with overlap and retained broker state as appropriate. Prove source/receiver boundaries, restart, deletions and readiness for the selected contract; no generic aggregate-revision assumption. Implementation remains outside the current assessment. |
 | ES3: aggregate regeneration orchestration | A simple explicit maintenance host/job around the existing full aggregate rebuilder. | Still needed eventually. Separate from normal fetch/write and from new-service bootstrap. Prove bounded retries, cancellation, restart and conflicts with writers; scheduling, admission and online/offline policy remain explicit. |
 | P1: projection assessment and, if justified, implementation | First prove native EF queries/joins/filters over inline aggregates; add one persisted multi-stream or asynchronous view only for an unmet requirement. | Shared-row concurrency, ordering, checkpoint/restart, backfill and cutover need their own proofs. Consumer live reconstruction is already possible; no general projector engine is selected. |
@@ -71,8 +65,8 @@ implementation and fresh evidence are owner-approved and merged. W1 itself added
 trace fields or OTel runtime. WF1 and WF2 are merged. WF2's owner-approved bounded
 continuation replacement has its own contract/adoption proofs, separate from the earlier
 consumer-only and superseded sequential-coordinator evidence. B1's initially approved protocol
-is retained as evidence. The owner closed B1 with its documentation assessment; adoption is
-deferred until a later concrete receiver need warrants revisiting these findings. B2 remains
+is documented as a discarded experiment. The owner closed B1 with its assessment and removed
+its code. A later concrete receiver need may warrant revisiting the findings. B2 remains
 a separate candidate for population; it does not require the custom B1 feed.
 
 D1 and C1 can be explored independently before adding template choices. They are explicit

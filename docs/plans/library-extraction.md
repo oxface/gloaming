@@ -25,7 +25,7 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Durable message observability OBS1 | Owner-approved checkpoint `b44b5d5`, merged into `origin/main` at `4c0e0c5`, including the optional native OTel subscription adapter. [Local contract](../../src/Rootbolt.Messaging/docs/observability.md), [scope/file map](durable-message-observability.md) and [fresh proofs](../reports/obs1-durable-message-observability.md). |
 | Durable inter-module workflow WF1 | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: Sales-owned stock-issue progress, independent Inventory decisions and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism. |
 | Compensating workflow WF2 | Owner-approved [bounded continuation interface/replacement scope](wf2-durable-continuations.md), merged into fetched `origin/main` as `d674e39`. Optional core/EF packages, Sales continuation adoption and standalone branching PostgreSQL proofs; [new evidence](../reports/wf2-durable-continuations.md) supersedes the uncommitted fixed-sequence experiment. |
-| Replayable source B1 | Closed by owner direction on 2026-10-14 as a [documentation-only retention/contract assessment](../reports/b1-retention-and-contract-assessment.md). The [Sales feed experiment](b1-replayable-integration-feed.md), diagnostic reader and dated proofs remain intact as evidence. Adoption is deferred to a later concrete receiver need; no new library mechanism. B2 implementation remains separate. |
+| Replayable source B1 | Closed by owner direction on 2026-10-14 as a [retention/contract assessment](../reports/b1-retention-and-contract-assessment.md). Experiment source, tests and patch artifacts removed; dated results and research retained. Revisit only for a later concrete receiver need; no new library mechanism. B2 implementation remains separate. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
@@ -46,37 +46,24 @@ patterns, separate worker hosts, observability, durable module workflows, snapsh
 repopulation, aggregate maintenance and a late cross-family isolation review. Its scope/order
 is proposed; no new runtime interface is approved by that list.
 
-## B1 source feed: reviewed scope and implementation
+## B1: closed assessment and discarded implementation
 
 Closed outcome, 2026-10-14: the owner accepted the
 [retention and contract assessment](../reports/b1-retention-and-contract-assessment.md) and
-closed B1 without further implementation. The implementation below records the initial
-experiment, not an adopted default. Revisit adoption in a later slice with a real receiver
+closed B1 without further implementation. The record below describes the initial
+experiment's findings, not an adopted default. Revisit the subject in a later slice with a real receiver
 requirement before selecting storage, replay or state transfer. DDD and private event history
 supply no automatic public integration contract. Closure does not approve commit or merge.
-The owner subsequently requested isolating the experiment from the common sample. Its
-[preserved snapshot and patch](../../experiments/b1-retained-profile-feed/README.md) are
-excluded from the active solution and CI. The descriptions below are dated experiment
-context; current Sales writes, Contracts, mapping and setup have no feed dependency.
+The owner subsequently rejected retaining the experiment code or reconstruction patch.
+Source, tests, experimental migration, snapshot and preservation-specific configuration are
+removed. Current Sales writes, Contracts, mapping and setup have no feed dependency.
 
-The owner requested starting B1 after merged WF2. The
-[concrete proposal](b1-replayable-integration-feed.md) reconciles current module consumers
-and family contracts: neither selective Inventory outbox messages nor per-stream history
-provides a complete replay source. Sales's state-stored profile edit is the reviewed producer.
-The experiment's native transaction included an immutable public change and transactional head;
-an Organization feed gate held through commit makes post-lock sequence allocation safe.
-One-snapshot pages capture the head and retention floor, reject expired/wrong cursors and
-advance only through returned work. Fresh PostgreSQL/process proofs establish the supported
-consumer protocol; this does not promote it into a library guarantee.
-
-The proposal includes the exact Sales.Contracts surface, producer/diagnostic reader usage,
-file map, retention protocol and late-commit/gap/duplicate/restart failure matrix. The owner
-approved implementation on 2026-10-13; gate/paging and receiver receipt policy remain
-consumer-owned. Exact library types/dependencies and standalone adoption
-would receive a separate owner review before any Rootbolt interfaces are introduced.
-Snapshot export/bootstrap/cutover remains B2; historical rows are not silently treated as
-feed history. [The B1 report](../reports/b1-replayable-integration-feed.md) distinguishes
-fresh runtime proofs from historical family evidence and remaining extraction candidates.
+The [closed scope](b1-replayable-integration-feed.md) and
+[dated result report](../reports/b1-replayable-integration-feed.md) retain the protocol's
+late-commit/gap/duplicate/restart findings and limits. Mechanism correctness did not establish
+a business requirement for an Organization writer gate or a useful receiver projection.
+No feed API, library interface or template preset remains. Any later implementation needs a
+new reviewed consumer scope and fresh proofs; B2 snapshot/bootstrap is not automatically next.
 
 ## Retained delivery context
 

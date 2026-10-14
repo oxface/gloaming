@@ -29,10 +29,8 @@ Manual dispatch also requests full coverage. Detection failures fail required Re
 integrity. Changes inside mapped roots follow their explicit filters.
 
 Markdown is documentation, including family-local docs and sample READMEs. Archive-only
-changes require checksum validation but never schedule archived tests. The preserved B1
-experiment snapshot is excluded from active .NET lane selection and formatting. Its
-source/patch is evidence outside the common sample, not an additional test lane. Repository
-integrity always runs commitlint and archive verification. Its .NET checks run for relevant code/build
+changes require checksum validation but never schedule archived tests. Repository integrity
+always runs commitlint and archive verification. Its .NET checks run for relevant code/build
 changes. Update the path map when project dependencies, linked fixtures, new consumers or
 template source snapshots change; dependency discovery is deliberately manual. Wholesale
 runtime retains sample/shared-input
