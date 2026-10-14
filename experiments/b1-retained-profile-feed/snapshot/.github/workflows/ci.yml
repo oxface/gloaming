@@ -1,0 +1,238 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: CI scope
+    uses: ./.github/workflows/changes.yml
+
+  auditing:
+    needs: changes
+    if: needs.changes.outputs.Auditing == 'true'
+    name: Rootbolt.Auditing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: &family-steps
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Test family and independent consumers
+        # Every selected job restores/builds its native dependency graph.
+        run: ${{ env.FAMILY_TEST_COMMANDS }}
+
+  actoridentity:
+    needs: changes
+    if: needs.changes.outputs.ActorIdentity == 'true'
+    name: Rootbolt.ActorIdentity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  tenancy:
+    needs: changes
+    if: needs.changes.outputs.Tenancy == 'true'
+    name: Rootbolt.Tenancy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.Tenancy/tests/TenantTests/TenantTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  persistence:
+    needs: changes
+    if: needs.changes.outputs.Persistence == 'true'
+    name: Rootbolt.Persistence
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  events:
+    needs: changes
+    if: needs.changes.outputs.Events == 'true'
+    name: Rootbolt.Events
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
+    steps: *family-steps
+
+  eventsourcing:
+    needs: changes
+    if: needs.changes.outputs.EventSourcing == 'true'
+    name: Rootbolt.EventSourcing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-not-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  messaging:
+    needs: changes
+    if: needs.changes.outputs.Messaging == 'true'
+    name: Rootbolt.Messaging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Rootbolt.Messaging/tests/MessagingTests/MessagingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/WorkflowTests/WorkflowTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Rootbolt.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  wholesale:
+    needs: changes
+    if: needs.changes.outputs.wholesale == 'true'
+    name: Wholesale consumer composition
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Test context composition
+        run: dotnet test --project samples/Wholesale/ContextDemo.Tests/ContextDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Run context sample
+        run: dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj --no-build --no-restore
+      - name: Test module migrations and persistence ownership
+        run: dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test persisted admission, isolated business operations and native telemetry through HTTP
+        run: dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test retained Sales feed, PostgreSQL progress and reader restart
+        run: dotnet test --project samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+
+  repository:
+    needs: changes
+    if: ${{ !cancelled() }}
+    name: Repository integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Require successful check selection
+        if: needs.changes.result != 'success'
+        run: exit 1
+
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up .NET
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore active projects
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet restore ModulithFoundry.slnx
+
+      - name: Verify active code style
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
+
+      - name: Verify active analyzers
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
+
+      - name: Build active solution
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet build ModulithFoundry.slnx --no-restore
+
+      - name: Test architecture, module schemas and independent adoption
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+
+      - name: Set up Node.js for repository checks
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+
+      - name: Install repository tools
+        working-directory: ${{ github.workspace }}
+        run: npm ci --prefix tools/repository --ignore-scripts
+
+      - name: Verify archive snapshot
+        working-directory: ${{ github.workspace }}
+        run: python3 tools/repository/verify-archive.py
+
+      - name: Restore active formatter
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet tool restore
+
+      - name: Verify root formatting
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet csharpier check . --include-generated
+
+      - name: Check pull-request commits
+        if: github.event_name == 'pull_request'
+        working-directory: ${{ github.workspace }}
+        run: >-
+          npm exec --prefix tools/repository -- commitlint
+          --config tools/repository/commitlint.config.mjs
+          --from ${{ github.event.pull_request.base.sha }}
+          --to ${{ github.event.pull_request.head.sha }}
+          --verbose
+
+      - name: Check pushed commit
+        if: github.event_name == 'push'
+        working-directory: ${{ github.workspace }}
+        run: >-
+          npm exec --prefix tools/repository -- commitlint
+          --config tools/repository/commitlint.config.mjs
+          --last
+          --verbose

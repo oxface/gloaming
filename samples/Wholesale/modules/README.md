@@ -56,6 +56,13 @@ there is no automatic retry/rebase or shared ambient-transaction contract.
 
 Materialized template/CLI output remains E10.
 
+## Closed integration-feed assessment
+
+B1 recorded retention and public-contract constraints without selecting a durable example
+for this sample. The [experiment](../../../experiments/b1-retained-profile-feed/README.md)
+and dated proofs live outside Wholesale. Normal Sales profile writes and setup have no feed
+gate, feed tables or feed Contracts. Revisit transfer/replay only for a concrete consumer need.
+
 ## Durable stock-issue progress
 
 [WF1 executable usage](../WorkflowDemo/README.md) adds a Sales-owned request that sends the

@@ -1,0 +1,3459 @@
+diff --git a/.github/ci-paths.yml b/.github/ci-paths.yml
+index b6bc347..dc96bc9 100644
+--- a/.github/ci-paths.yml
++++ b/.github/ci-paths.yml
+@@ -82,6 +82,8 @@ wholesale:
+   - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,modules,ServiceDefaults}/**'
+   - 'tests/Support/PostgreSqlFixture.cs'
+   - 'samples/Wholesale/WorkflowDemo{,.Tests}/**'
++  - 'samples/Wholesale/IntegrationFeedDemo{,.Tests}/**'
++  - 'samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+   - '!**/*.md'
+ 
+ template:
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 1982a9e..9f15ec6 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -149,6 +149,8 @@ jobs:
+         run: dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+       - name: Test persisted admission, isolated business operations and native telemetry through HTTP
+         run: dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
++      - name: Test retained Sales feed, PostgreSQL progress and reader restart
++        run: dotnet test --project samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+ 
+   repository:
+     needs: changes
+diff --git a/ModulithFoundry.slnx b/ModulithFoundry.slnx
+index 45a85ac..049cf49 100644
+--- a/ModulithFoundry.slnx
++++ b/ModulithFoundry.slnx
+@@ -61,6 +61,8 @@
+     <Project Path="src/Rootbolt.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
+   </Folder>
+   <Folder Name="/Samples/">
++    <Project Path="samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj" />
++    <Project Path="samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj" />
+     <Project Path="samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
+     <Project Path="samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj" />
+     <Project Path="samples/InboxDemo/InboxDemo.csproj" />
+diff --git a/samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs b/samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs
+index 9ca510e..e3f42b1 100644
+--- a/samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs
++++ b/samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs
+@@ -302,7 +302,12 @@ public sealed partial class CompositionTests(PostgreSqlFixture postgres)
+                         .Initialize(TenantContext.ForTenant(new TenantId(organization)));
+                     var sales = seedScope.ServiceProvider.GetRequiredService<SalesDbContext>();
+                     SalesDemoSeed.Stage(sales);
++                    await using var salesTransaction = await sales.Database.BeginTransactionAsync(
++                        Token
++                    );
++                    await CustomerProfileFeedSetup.ActivateAsync(sales, Token);
+                     await sales.SaveChangesAsync(Token);
++                    await salesTransaction.CommitAsync(Token);
+                 }
+                 await ExecuteAsync(
+                     app,
+diff --git a/samples/Wholesale/HttpIdentityDemo.Tests/ProfilePersistenceTests.cs b/samples/Wholesale/HttpIdentityDemo.Tests/ProfilePersistenceTests.cs
+index 9075e9b..0f0c3a6 100644
+--- a/samples/Wholesale/HttpIdentityDemo.Tests/ProfilePersistenceTests.cs
++++ b/samples/Wholesale/HttpIdentityDemo.Tests/ProfilePersistenceTests.cs
+@@ -80,9 +80,12 @@ public sealed partial class CompositionTests
+         );
+     }
+ 
+-    private static async Task WaitForBlockedUpdatesAsync(
++    private static Task WaitForBlockedUpdatesAsync(WebApplication app, string table, int count) =>
++        WaitForBlockedStatementsAsync(app, "%UPDATE sales." + table + "%", count);
++
++    private static async Task WaitForBlockedStatementsAsync(
+         WebApplication app,
+-        string table,
++        string statement,
+         int count
+     )
+     {
+@@ -102,7 +105,7 @@ public sealed partial class CompositionTests
+             """,
+             observer
+         );
+-        command.Parameters.AddWithValue("statement", "%UPDATE sales." + table + "%");
++        command.Parameters.AddWithValue("statement", statement);
+         while (
+             Convert.ToInt64(
+                 await command.ExecuteScalarAsync(deadline.Token),
+diff --git a/samples/Wholesale/HttpIdentityDemo.Tests/ProfileTests.cs b/samples/Wholesale/HttpIdentityDemo.Tests/ProfileTests.cs
+index bb785e1..0331a2f 100644
+--- a/samples/Wholesale/HttpIdentityDemo.Tests/ProfileTests.cs
++++ b/samples/Wholesale/HttpIdentityDemo.Tests/ProfileTests.cs
+@@ -397,7 +397,16 @@ public sealed partial class CompositionTests
+         try
+         {
+             if (concurrent)
+-                await WaitForBlockedUpdatesAsync(app, "customer_profiles", 2);
++            {
++                // One writer holds the feed gate while blocked at its first business save;
++                // the competing request waits at that gate before it may load/change state.
++                await WaitForBlockedUpdatesAsync(app, "customer_profiles", 1);
++                await WaitForBlockedStatementsAsync(
++                    app,
++                    "%customer_profile_feed_state%FOR UPDATE%",
++                    1
++                );
++            }
+         }
+         finally
+         {
+diff --git a/samples/Wholesale/HttpIdentityDemo/DemoSetup.cs b/samples/Wholesale/HttpIdentityDemo/DemoSetup.cs
+index 0898a85..1371ff1 100644
+--- a/samples/Wholesale/HttpIdentityDemo/DemoSetup.cs
++++ b/samples/Wholesale/HttpIdentityDemo/DemoSetup.cs
+@@ -74,6 +74,7 @@ public static class DemoSetup
+                 cancellationToken
+             );
+             SalesDemoSeed.Stage(sales);
++            await CustomerProfileFeedSetup.ActivateAsync(sales, cancellationToken);
+             await sales.SaveChangesAsync(cancellationToken);
+             await salesTransaction.CommitAsync(cancellationToken);
+         }
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/FeedBarrier.cs b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedBarrier.cs
+new file mode 100644
+index 0000000..33bc4a5
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedBarrier.cs
+@@ -0,0 +1,126 @@
++using System.Data.Common;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Npgsql;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo.Tests;
++
++internal sealed class FeedBarrier(NpgsqlConnection owner, string database) : IAsyncDisposable
++{
++    private const int LockKey = 182915;
++
++    internal static async Task<FeedBarrier> HoldAsync(
++        string database,
++        string table,
++        string operation,
++        CancellationToken token
++    )
++    {
++        // Table/operation are constants supplied by this proof suite, never external input.
++        var owner = new NpgsqlConnection(database);
++        await owner.OpenAsync(token);
++        try
++        {
++            await using var command = new NpgsqlCommand(
++                $"""
++                SELECT pg_advisory_lock({LockKey});
++                CREATE FUNCTION public.feed_proof_barrier() RETURNS trigger LANGUAGE plpgsql AS $$
++                BEGIN
++                    PERFORM pg_advisory_xact_lock({LockKey});
++                    IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
++                    RETURN NEW;
++                END;
++                $$;
++                CREATE TRIGGER feed_proof_barrier BEFORE {operation} ON {table}
++                FOR EACH ROW EXECUTE FUNCTION public.feed_proof_barrier();
++                """,
++                owner
++            );
++            await command.ExecuteNonQueryAsync(token);
++            return new(owner, database);
++        }
++        catch
++        {
++            await owner.DisposeAsync();
++            throw;
++        }
++    }
++
++    internal async Task WaitAsync(string lockType, int count, CancellationToken token)
++    {
++        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
++        deadline.CancelAfter(TimeSpan.FromSeconds(10));
++        while (
++            await FeedProof.ScalarAsync(
++                database,
++                $"""
++                SELECT count(*) FROM pg_locks locks JOIN pg_stat_activity activity ON activity.pid = locks.pid
++                WHERE locks.locktype = '{lockType}' AND NOT locks.granted AND activity.datname = current_database()
++                """,
++                deadline.Token
++            ) < count
++        )
++            await Task.Delay(25, deadline.Token);
++    }
++
++    internal async Task ReleaseAsync(CancellationToken token)
++    {
++        await using var command = new NpgsqlCommand($"SELECT pg_advisory_unlock({LockKey})", owner);
++        await command.ExecuteNonQueryAsync(token);
++    }
++
++    public async ValueTask DisposeAsync() => await owner.DisposeAsync();
++}
++
++internal sealed class ReadPause(Func<string, bool> matches) : DbCommandInterceptor
++{
++    private readonly TaskCompletionSource reached = new(
++        TaskCreationOptions.RunContinuationsAsynchronously
++    );
++    private readonly TaskCompletionSource release = new(
++        TaskCreationOptions.RunContinuationsAsynchronously
++    );
++    private int used;
++    internal bool Enabled { get; set; } = true;
++    internal Task Reached => reached.Task;
++
++    internal void Release() => release.TrySetResult();
++
++    public override async ValueTask<DbDataReader> ReaderExecutedAsync(
++        DbCommand command,
++        CommandExecutedEventData eventData,
++        DbDataReader result,
++        CancellationToken cancellationToken = default
++    )
++    {
++        if (
++            Enabled
++            && matches(command.CommandText)
++            && Interlocked.CompareExchange(ref used, 1, 0) == 0
++        )
++        {
++            reached.TrySetResult();
++            await release.Task.WaitAsync(cancellationToken);
++        }
++
++        return result;
++    }
++}
++
++internal sealed class RejectJournalSave : SaveChangesInterceptor
++{
++    internal bool Enabled { get; set; }
++
++    public override ValueTask<int> SavedChangesAsync(
++        SaveChangesCompletedEventData eventData,
++        int result,
++        CancellationToken cancellationToken = default
++    )
++    {
++        if (Enabled)
++            throw new InvalidOperationException(
++                "Proof interruption after receipts/checkpoint save and before commit."
++            );
++
++        return ValueTask.FromResult(result);
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/FeedProof.cs b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedProof.cs
+new file mode 100644
+index 0000000..bdf43d0
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedProof.cs
+@@ -0,0 +1,207 @@
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using ModulithFoundry.Tests.Infrastructure;
++using Npgsql;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo.Tests;
++
++internal sealed class FeedProof(ServiceProvider services, string source, string receiver)
++    : IAsyncDisposable
++{
++    internal static readonly Guid OtherCustomer = Guid.Parse(
++        "10000000-0000-0000-0000-000000000003"
++    );
++    internal static readonly Guid OtherAddress = Guid.Parse("20000000-0000-0000-0000-000000000003");
++    internal ServiceProvider Services => services;
++    internal string Source => source;
++    internal string Receiver => receiver;
++    internal Dictionary<string, string> Environment =>
++        new() { ["ConnectionStrings__Sales"] = source, ["ConnectionStrings__Journal"] = receiver };
++
++    internal static async Task<FeedProof> CreateAsync(
++        PostgreSqlFixture postgres,
++        CancellationToken token,
++        IInterceptor? sourceInterceptor = null,
++        IInterceptor? journalInterceptor = null
++    )
++    {
++        string source = await postgres.CreateDatabaseAsync(token);
++        string journal = await postgres.CreateDatabaseAsync(token);
++        var registrations = new ServiceCollection().AddIntegrationFeedDemo(source, journal);
++        if (sourceInterceptor is not null)
++            registrations.AddDbContext<SalesDbContext>(options =>
++                options.AddInterceptors(sourceInterceptor)
++            );
++
++        if (journalInterceptor is not null)
++            registrations.AddDbContext<FeedJournalDbContext>(options =>
++                options.AddInterceptors(journalInterceptor)
++            );
++
++        var services = registrations.BuildServiceProvider();
++        try
++        {
++            await FeedComposition.SetupAsync(services, token);
++            await ExecuteAsync(
++                source,
++                """
++                INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)
++                VALUES ('10000000-0000-0000-0000-000000000003', 'wholesale-alpha', 'OTHER', 'Other Customer', 1);
++                INSERT INTO sales.customer_addresses (id, organization_key, customer_id, address_line)
++                VALUES ('20000000-0000-0000-0000-000000000003', 'wholesale-alpha', '10000000-0000-0000-0000-000000000003', 'Other Street');
++                """,
++                token
++            );
++            return new(services, source, journal);
++        }
++        catch
++        {
++            await services.DisposeAsync();
++            throw;
++        }
++    }
++
++    internal AsyncServiceScope Scope(string organization = FeedComposition.Alpha)
++    {
++        var scope = services.CreateAsyncScope();
++        FeedComposition.Admit(scope.ServiceProvider, organization);
++        return scope;
++    }
++
++    internal async Task<ProfileChangeResult> WriteAsync(
++        long version,
++        CancellationToken token,
++        string name = "Changed",
++        bool other = false,
++        string organization = FeedComposition.Alpha
++    )
++    {
++        await using var scope = Scope(organization);
++        return await scope
++            .ServiceProvider.GetRequiredService<ICustomerProfiles>()
++            .ChangeAsync(
++                new(
++                    other ? OtherCustomer
++                        : organization == FeedComposition.Alpha ? SalesDemoSeed.AlphaCustomerId
++                        : SalesDemoSeed.BetaCustomerId,
++                    other ? OtherAddress
++                        : organization == FeedComposition.Alpha ? SalesDemoSeed.AlphaAddressId
++                        : SalesDemoSeed.BetaAddressId,
++                    version,
++                    name,
++                    "Changed Street"
++                ),
++                token
++            );
++    }
++
++    internal async Task<CustomerProfileFeedBounds> BoundsAsync(
++        CancellationToken token,
++        string organization = FeedComposition.Alpha
++    )
++    {
++        await using var scope = Scope(organization);
++        return await scope
++            .ServiceProvider.GetRequiredService<ICustomerProfileFeed>()
++            .DescribeAsync(token);
++    }
++
++    internal async Task<CustomerProfileFeedRead> ReadAsync(
++        CustomerProfileFeedCursor cursor,
++        CancellationToken token,
++        int size = 2,
++        string organization = FeedComposition.Alpha
++    )
++    {
++        await using var scope = Scope(organization);
++        return await scope
++            .ServiceProvider.GetRequiredService<ICustomerProfileFeed>()
++            .ReadAsync(cursor, size, token);
++    }
++
++    internal async Task<CustomerProfileFeedRead.Page> PageAsync(
++        CustomerProfileFeedCursor cursor,
++        CancellationToken token,
++        int size = 2
++    ) => Assert.IsType<CustomerProfileFeedRead.Page>(await ReadAsync(cursor, token, size));
++
++    internal async Task InitializeJournalAsync(
++        Guid id,
++        CustomerProfileFeedCursor cursor,
++        CancellationToken token
++    )
++    {
++        await using var scope = Scope();
++        await scope
++            .ServiceProvider.GetRequiredService<FeedJournal>()
++            .InitializeAsync(id, FeedComposition.Alpha, cursor, token);
++    }
++
++    internal async Task RecordAsync(
++        Guid id,
++        CustomerProfileFeedCursor expected,
++        CustomerProfileFeedRead.Page page,
++        CancellationToken token
++    )
++    {
++        await using var scope = Scope();
++        await scope
++            .ServiceProvider.GetRequiredService<FeedJournal>()
++            .RecordAndCheckpointAsync(id, FeedComposition.Alpha, expected, page, token);
++    }
++
++    internal async Task<(CustomerProfileFeedCursor Cursor, long Count)> JournalAsync(
++        Guid id,
++        CancellationToken token
++    )
++    {
++        await using var scope = Scope();
++        var journal = scope.ServiceProvider.GetRequiredService<FeedJournal>();
++        return (
++            await journal.ReadAsync(id, FeedComposition.Alpha, token),
++            await journal.CountAsync(id, token)
++        );
++    }
++
++    internal async Task PruneAsync(CustomerProfileFeedCursor through, CancellationToken token)
++    {
++        await using var scope = Scope();
++        await CustomerProfileFeedSetup.PruneThroughAsync(
++            scope.ServiceProvider.GetRequiredService<SalesDbContext>(),
++            through,
++            token
++        );
++    }
++
++    internal static async Task ExecuteAsync(
++        string connectionString,
++        string sql,
++        CancellationToken token
++    )
++    {
++        await using var connection = new NpgsqlConnection(connectionString);
++        await connection.OpenAsync(token);
++        await using var command = new NpgsqlCommand(sql, connection);
++        await command.ExecuteNonQueryAsync(token);
++    }
++
++    internal static async Task<long> ScalarAsync(
++        string connectionString,
++        string sql,
++        CancellationToken token
++    )
++    {
++        await using var connection = new NpgsqlConnection(connectionString);
++        await connection.OpenAsync(token);
++        await using var command = new NpgsqlCommand(sql, connection);
++        return Convert.ToInt64(
++            await command.ExecuteScalarAsync(token),
++            System.Globalization.CultureInfo.InvariantCulture
++        );
++    }
++
++    public async ValueTask DisposeAsync() => await services.DisposeAsync();
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/FeedTests.cs b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedTests.cs
+new file mode 100644
+index 0000000..41efc81
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/FeedTests.cs
+@@ -0,0 +1,427 @@
++using System.Data;
++using System.Data.Common;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using ModulithFoundry.Tests.Infrastructure;
++using Npgsql;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo.Tests;
++
++public sealed partial class FeedTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
++{
++    private static CancellationToken Token => TestContext.Current.CancellationToken;
++
++    [Fact]
++    public async Task NaiveSequenceMaxCursorLosesAnEarlierAllocatedLateCommit()
++    {
++        string database = await postgres.CreateDatabaseAsync(Token);
++        await FeedProof.ExecuteAsync(
++            database,
++            "CREATE TABLE naive_feed (position bigserial PRIMARY KEY, value text NOT NULL)",
++            Token
++        );
++        await using var a = new NpgsqlConnection(database);
++        await using var b = new NpgsqlConnection(database);
++        await a.OpenAsync(Token);
++        await b.OpenAsync(Token);
++        await using var first = await a.BeginTransactionAsync(Token);
++        await using var second = await b.BeginTransactionAsync(Token);
++        await using var insertA = new NpgsqlCommand(
++            "INSERT INTO naive_feed(value) VALUES ('late') RETURNING position",
++            a,
++            first
++        );
++        long low = (long)(await insertA.ExecuteScalarAsync(Token))!;
++        await using var insertB = new NpgsqlCommand(
++            "INSERT INTO naive_feed(value) VALUES ('early') RETURNING position",
++            b,
++            second
++        );
++        long high = (long)(await insertB.ExecuteScalarAsync(Token))!;
++        await second.CommitAsync(Token);
++        Assert.True(low < high);
++        Assert.Equal(
++            high,
++            await FeedProof.ScalarAsync(database, "SELECT MAX(position) FROM naive_feed", Token)
++        );
++        await first.CommitAsync(Token);
++        Assert.Equal(
++            2,
++            await FeedProof.ScalarAsync(database, "SELECT count(*) FROM naive_feed", Token)
++        );
++        Assert.Equal(
++            0,
++            await FeedProof.ScalarAsync(
++                database,
++                $"SELECT count(*) FROM naive_feed WHERE position > {high}",
++                Token
++            )
++        );
++    }
++
++    [Fact]
++    public async Task AllocatedLateCommitBlocksDifferentCustomerUntilItsPositionIsSafe()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        await using var barrier = await FeedBarrier.HoldAsync(
++            proof.Source,
++            "sales.customer_profile_changes",
++            "INSERT",
++            Token
++        );
++        Task<ProfileChangeResult> first = proof.WriteAsync(1, Token, "First");
++        await barrier.WaitAsync("advisory", 1, Token);
++        Task<ProfileChangeResult> second = proof.WriteAsync(1, Token, "Second", other: true);
++        await barrier.WaitAsync("transactionid", 1, Token);
++        Assert.False(second.IsCompleted);
++        var beforeCommit = await proof.PageAsync(start, Token);
++        Assert.Empty(beforeCommit.Changes);
++        Assert.Equal(start, beforeCommit.Next);
++        await barrier.ReleaseAsync(Token);
++        Assert.IsType<ProfileChangeResult.Updated>(await first);
++        Assert.IsType<ProfileChangeResult.Updated>(await second);
++        var page = await proof.PageAsync(beforeCommit.Next, Token);
++        Assert.Equal(
++            ["First", "Second"],
++            page.Changes.Select(change => change.Profile.DisplayName)
++        );
++        Assert.True(page.Changes[0].Position < page.Changes[1].Position);
++        Assert.Equal(page.Bounds.Head, page.Next);
++    }
++
++    [Fact]
++    public async Task TransactionStartedEarlierButAllocatedLaterAppearsAfterSavedCursor()
++    {
++        var pause = new TransactionPause();
++        await using var proof = await FeedProof.CreateAsync(
++            postgres,
++            Token,
++            sourceInterceptor: pause
++        );
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        pause.Enabled = true;
++        Task<ProfileChangeResult> early = proof.WriteAsync(
++            1,
++            Token,
++            "Started earlier",
++            other: true
++        );
++        await pause.Reached.WaitAsync(TimeSpan.FromSeconds(10), Token);
++        Assert.IsType<ProfileChangeResult.Updated>(
++            await proof.WriteAsync(1, Token, "Committed first")
++        );
++        var captured = await proof.PageAsync(start, Token);
++        Assert.Equal("Committed first", Assert.Single(captured.Changes).Profile.DisplayName);
++        pause.Release();
++        Assert.IsType<ProfileChangeResult.Updated>(await early);
++        var late = await proof.PageAsync(captured.Next, Token);
++        Assert.Equal("Started earlier", Assert.Single(late.Changes).Profile.DisplayName);
++        Assert.True(late.Next.AfterPosition > captured.Next.AfterPosition);
++    }
++
++    [Fact]
++    public async Task GapsPagingNewWritesAndTenantIsolationPreserveCommittedProgress()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Assert.IsType<ProfileChangeResult.Updated>(await proof.WriteAsync(1, Token));
++        // PostgreSQL nextval survives rollback, unlike the committed feed head.
++        await using (var scope = proof.Scope())
++        {
++            var database = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
++            await using var transaction = await database.Database.BeginTransactionAsync(Token);
++            await database
++                .Database.SqlQueryRaw<long>(
++                    "SELECT nextval('sales.customer_profile_feed_positions') AS \"Value\""
++                )
++                .SingleAsync(Token);
++            await transaction.RollbackAsync(Token);
++        }
++
++        Assert.IsType<ProfileChangeResult.Updated>(
++            await proof.WriteAsync(1, Token, organization: FeedComposition.Beta)
++        );
++        Assert.IsType<ProfileChangeResult.Updated>(await proof.WriteAsync(2, Token));
++        var first = await proof.PageAsync(start, Token, 1);
++        Assert.True(first.HasMore);
++        Assert.Equal(1, first.Next.AfterPosition);
++        Assert.Equal(4, first.Bounds.Head.AfterPosition);
++        Assert.IsType<ProfileChangeResult.Updated>(await proof.WriteAsync(3, Token));
++        var middle = await proof.PageAsync(first.Next, Token, 1);
++        Assert.Equal(4, Assert.Single(middle.Changes).Position);
++        Assert.True(middle.HasMore);
++        var last = await proof.PageAsync(middle.Next, Token, 1);
++        Assert.Equal(4, Assert.Single(last.Changes).Profile.Version);
++        Assert.False(last.HasMore);
++        Assert.Equal(last.Bounds.Head, last.Next);
++        var gap = await proof.PageAsync(new(start.Generation, 2), Token);
++        Assert.Equal(new long[] { 4, 5 }, gap.Changes.Select(change => change.Position));
++        Assert.All(
++            gap.Changes,
++            change => Assert.Equal(SalesDemoSeed.AlphaCustomerId, change.Profile.CustomerId)
++        );
++        Assert.IsType<CustomerProfileFeedRead.InvalidCursor>(
++            await proof.ReadAsync(start, Token, organization: FeedComposition.Beta)
++        );
++        var empty = await proof.PageAsync(last.Next, Token);
++        Assert.Empty(empty.Changes);
++        Assert.Equal(last.Next, empty.Next);
++        Assert.False(empty.HasMore);
++    }
++
++    [Theory]
++    [InlineData("entry", "BEFORE INSERT", "sales.customer_profile_changes")]
++    [InlineData("address", "BEFORE UPDATE", "sales.customer_addresses")]
++    [InlineData("audit", "BEFORE INSERT", "sales.audit_entries")]
++    [InlineData("head", "BEFORE UPDATE", "sales.customer_profile_feed_state")]
++    [InlineData("commit", "AFTER INSERT", "sales.customer_profile_changes")]
++    public async Task ProducerParticipantAndCommitFailuresRollbackBusinessAuditEntryAndHead(
++        string failure,
++        string operation,
++        string table
++    )
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        bool commit = failure == "commit";
++        await FeedProof.ExecuteAsync(
++            proof.Source,
++            $"""
++            CREATE FUNCTION public.reject_feed() RETURNS trigger LANGUAGE plpgsql AS $$
++            BEGIN RAISE EXCEPTION 'injected feed participant failure'; END; $$;
++            CREATE {(commit ? "CONSTRAINT " : "")}TRIGGER reject_feed {operation} ON {table}
++            {(
++                commit ? "DEFERRABLE INITIALLY DEFERRED" : ""
++            )} FOR EACH ROW EXECUTE FUNCTION public.reject_feed();
++            """,
++            Token
++        );
++        await Assert.ThrowsAnyAsync<Exception>(() => proof.WriteAsync(1, Token));
++        Assert.Equal(start, (await proof.BoundsAsync(Token)).Head);
++        Assert.Empty((await proof.PageAsync(start, Token)).Changes);
++        Assert.Equal(
++            0,
++            await FeedProof.ScalarAsync(
++                proof.Source,
++                "SELECT count(*) FROM sales.audit_entries",
++                Token
++            )
++        );
++        await using (var scope = proof.Scope())
++        {
++            var profile = await scope
++                .ServiceProvider.GetRequiredService<ICustomerProfiles>()
++                .ReadAsync(SalesDemoSeed.AlphaCustomerId, Token);
++            Assert.Equal("Alpha Customer", profile!.DisplayName);
++            Assert.Equal("Alpha Street", profile.AddressLine);
++            Assert.Equal(1, profile.Version);
++        }
++
++        await FeedProof.ExecuteAsync(proof.Source, $"DROP TRIGGER reject_feed ON {table}", Token);
++        Assert.IsType<ProfileChangeResult.Updated>(await proof.WriteAsync(1, Token, "Recovered"));
++        var recovered = await proof.PageAsync(start, Token);
++        Assert.Equal("Recovered", Assert.Single(recovered.Changes).Profile.DisplayName);
++        Assert.True(recovered.Next.AfterPosition > 1);
++    }
++
++    [Fact]
++    public async Task CancellationAfterCustomerSaveAndAllocationRollsBackAndFreshEditRecovers()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        await using var barrier = await FeedBarrier.HoldAsync(
++            proof.Source,
++            "sales.customer_profile_changes",
++            "INSERT",
++            Token
++        );
++        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(Token);
++        Task<ProfileChangeResult> write = proof.WriteAsync(1, cancellation.Token);
++        await barrier.WaitAsync("advisory", 1, Token);
++        await cancellation.CancelAsync();
++        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => write);
++        Assert.Equal(start, (await proof.BoundsAsync(Token)).Head);
++        await barrier.ReleaseAsync(Token);
++        Assert.IsType<ProfileChangeResult.Updated>(await proof.WriteAsync(1, Token));
++        Assert.Equal(2, Assert.Single((await proof.PageAsync(start, Token)).Changes).Position);
++    }
++
++    [Fact]
++    public async Task RetentionFloorGapBoundaryExpiryAndIdempotenceAreExplicit()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        await proof.WriteAsync(1, Token);
++        await FeedProof.ScalarAsync(
++            proof.Source,
++            "SELECT nextval('sales.customer_profile_feed_positions')",
++            Token
++        );
++        await proof.WriteAsync(2, Token);
++        await proof.PruneAsync(new(start.Generation, 2), Token);
++        Assert.IsType<CustomerProfileFeedRead.CursorExpired>(await proof.ReadAsync(start, Token));
++        var boundary = await proof.PageAsync(new(start.Generation, 2), Token);
++        Assert.Equal(3, Assert.Single(boundary.Changes).Position);
++        Assert.Equal(2, boundary.Bounds.EarliestAvailable.AfterPosition);
++        await proof.PruneAsync(new(start.Generation, 2), Token);
++        await proof.PruneAsync(new(start.Generation, 1), Token);
++        Assert.Equal(2, (await proof.BoundsAsync(Token)).EarliestAvailable.AfterPosition);
++        Assert.IsType<CustomerProfileFeedRead.InvalidCursor>(
++            await proof.ReadAsync(new(start.Generation, 4), Token)
++        );
++        Assert.IsType<CustomerProfileFeedRead.InvalidCursor>(
++            await proof.ReadAsync(new(Guid.NewGuid(), 2), Token)
++        );
++        await Assert.ThrowsAsync<ArgumentException>(() =>
++            proof.PruneAsync(new(start.Generation, 4), Token)
++        );
++        await Assert.ThrowsAsync<ArgumentException>(() =>
++            proof.PruneAsync(new(Guid.NewGuid(), 2), Token)
++        );
++        await proof.PruneAsync(boundary.Next, Token);
++        var empty = await proof.PageAsync(boundary.Next, Token);
++        Assert.Empty(empty.Changes);
++        Assert.Equal(empty.Bounds.Head, empty.Bounds.EarliestAvailable);
++        Assert.Equal(
++            3,
++            await FeedProof.ScalarAsync(
++                proof.Source,
++                "SELECT version FROM sales.customer_profiles WHERE organization_key = 'wholesale-alpha' AND code = 'DEMO-CUSTOMER'",
++                Token
++            )
++        );
++    }
++
++    [Fact]
++    public async Task RetentionFailureRestoresBothFloorAndDeletedPrefix()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        await proof.WriteAsync(1, Token);
++        var before = await proof.PageAsync(start, Token);
++        await FeedProof.ExecuteAsync(
++            proof.Source,
++            """
++            CREATE FUNCTION public.reject_floor() RETURNS trigger LANGUAGE plpgsql AS $$
++            BEGIN RAISE EXCEPTION 'injected floor failure'; END; $$;
++            CREATE TRIGGER reject_floor BEFORE UPDATE ON sales.customer_profile_feed_state
++            FOR EACH ROW EXECUTE FUNCTION public.reject_floor();
++            """,
++            Token
++        );
++        await Assert.ThrowsAsync<PostgresException>(() => proof.PruneAsync(before.Next, Token));
++        var after = await proof.PageAsync(start, Token);
++        Assert.Equal(before.Bounds, after.Bounds);
++        Assert.Equal(before.Changes, after.Changes);
++    }
++
++    [Fact]
++    public async Task PageSnapshotSurvivesPruneBetweenBoundsAndEntriesThenNextCallExpires()
++    {
++        var pause = new ReadPause(sql =>
++            sql.Contains("FROM sales.customer_profile_feed_state AS ", StringComparison.Ordinal)
++            && sql.StartsWith("SELECT", StringComparison.Ordinal)
++        );
++        await using var proof = await FeedProof.CreateAsync(
++            postgres,
++            Token,
++            sourceInterceptor: pause
++        );
++        // Obtain generation without consuming the pause on DescribeAsync.
++        await using var scope = proof.Scope();
++        var database = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
++        Guid generation = await database
++            .Database.SqlQueryRaw<Guid>(
++                "SELECT generation AS \"Value\" FROM sales.customer_profile_feed_state WHERE organization_key = 'wholesale-alpha'"
++            )
++            .SingleAsync(Token);
++        var start = new CustomerProfileFeedCursor(generation, 0);
++        await proof.WriteAsync(1, Token);
++        await proof.WriteAsync(2, Token);
++        Task<CustomerProfileFeedRead.Page> read = proof.PageAsync(start, Token, 1);
++        await pause.Reached.WaitAsync(TimeSpan.FromSeconds(10), Token);
++        await proof.PruneAsync(new(generation, 2), Token);
++        pause.Release();
++        var page = await read;
++        Assert.Equal(1, Assert.Single(page.Changes).Position);
++        Assert.Equal(0, page.Bounds.EarliestAvailable.AfterPosition);
++        Assert.True(page.HasMore);
++        Assert.IsType<CustomerProfileFeedRead.CursorExpired>(
++            await proof.ReadAsync(page.Next, Token)
++        );
++    }
++
++    [Fact]
++    public async Task ActivationIsExplicitAndRepeatedSetupNeverResetsProgress()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var before = await proof.BoundsAsync(Token);
++        await proof.WriteAsync(1, Token);
++        await proof.PruneAsync((await proof.BoundsAsync(Token)).Head, Token);
++        var retained = await proof.BoundsAsync(Token);
++        await FeedComposition.SetupAsync(proof.Services, Token);
++        Assert.Equal(retained, await proof.BoundsAsync(Token));
++        Assert.Equal(before.Head.Generation, retained.Head.Generation);
++        Assert.Equal(
++            2,
++            await FeedProof.ScalarAsync(
++                proof.Source,
++                "SELECT version FROM sales.customer_profiles WHERE code = 'DEMO-CUSTOMER' AND organization_key = 'wholesale-alpha'",
++                Token
++            )
++        );
++        await FeedProof.ExecuteAsync(
++            proof.Source,
++            "DELETE FROM sales.customer_profile_feed_state WHERE organization_key = 'wholesale-alpha'",
++            Token
++        );
++        await Assert.ThrowsAsync<InvalidOperationException>(() => proof.BoundsAsync(Token));
++        await Assert.ThrowsAsync<InvalidOperationException>(() => proof.WriteAsync(2, Token));
++    }
++
++    [Theory]
++    [InlineData(0)]
++    [InlineData(101)]
++    public async Task InvalidPageSizesRejectBeforeReading(int size)
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
++            proof.ReadAsync((new(Guid.NewGuid(), 0)), Token, size)
++        );
++    }
++}
++
++internal sealed class TransactionPause : DbTransactionInterceptor
++{
++    private readonly TaskCompletionSource reached = new(
++        TaskCreationOptions.RunContinuationsAsynchronously
++    );
++    private readonly TaskCompletionSource release = new(
++        TaskCreationOptions.RunContinuationsAsynchronously
++    );
++    private int used;
++    internal bool Enabled { get; set; }
++    internal Task Reached => reached.Task;
++
++    internal void Release() => release.TrySetResult();
++
++    public override async ValueTask<DbTransaction> TransactionStartedAsync(
++        DbConnection connection,
++        TransactionEndEventData eventData,
++        DbTransaction result,
++        CancellationToken cancellationToken = default
++    )
++    {
++        if (Enabled && Interlocked.CompareExchange(ref used, 1, 0) == 0)
++        {
++            reached.TrySetResult();
++            await release.Task.WaitAsync(cancellationToken);
++        }
++
++        return result;
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj b/samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj
+new file mode 100644
+index 0000000..7d0c32b
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj
+@@ -0,0 +1,15 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <PropertyGroup>
++    <OutputType>Exe</OutputType>
++    <IsTestProject>true</IsTestProject>
++    <IsPackable>false</IsPackable>
++  </PropertyGroup>
++  <ItemGroup>
++    <PackageReference Include="xunit.v3.mtp-v2" />
++    <PackageReference Include="Testcontainers.PostgreSql" />
++    <ProjectReference Include="../IntegrationFeedDemo/IntegrationFeedDemo.csproj" />
++    <Compile Include="../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
++    <Compile Include="../../MessagingWorkerDemo.Tests/ChildHost.cs" Link="ChildHost.cs" />
++    <Using Include="Xunit" />
++  </ItemGroup>
++</Project>
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/JournalTests.cs b/samples/Wholesale/IntegrationFeedDemo.Tests/JournalTests.cs
+new file mode 100644
+index 0000000..ed00429
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/JournalTests.cs
+@@ -0,0 +1,219 @@
++using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo.Tests;
++
++public sealed partial class FeedTests
++{
++    [Fact]
++    public async Task RepeatedPagesOldRepliesAndAmbiguousProducerRetryHaveOneDiagnosticEffect()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Guid subscription = Guid.NewGuid();
++        await proof.InitializeJournalAsync(subscription, start, Token);
++        await proof.WriteAsync(1, Token);
++        Assert.IsType<ModulithFoundry.Samples.Wholesale.Sales.Contracts.ProfileChangeResult.Conflict>(
++            await proof.WriteAsync(1, Token)
++        );
++        await proof.WriteAsync(2, Token);
++        var old = await proof.PageAsync(start, Token, 1);
++        var complete = await proof.PageAsync(start, Token);
++        var duplicate = await proof.PageAsync(start, Token);
++        Assert.Equal(complete.Changes, duplicate.Changes);
++        await proof.RecordAsync(subscription, start, complete, Token);
++        await proof.RecordAsync(subscription, start, duplicate, Token);
++        await proof.RecordAsync(subscription, start, old, Token);
++        Assert.Equal((complete.Next, 2L), await proof.JournalAsync(subscription, Token));
++        var changed = complete with
++        {
++            Changes = Array.AsReadOnly(
++                new[]
++                {
++                    complete.Changes[0] with
++                    {
++                        Profile = complete.Changes[0].Profile with
++                        {
++                            DisplayName = "Conflicting duplicate",
++                        },
++                    },
++                    complete.Changes[1],
++                }
++            ),
++        };
++        await Assert.ThrowsAsync<InvalidDataException>(() =>
++            proof.RecordAsync(subscription, start, changed, Token)
++        );
++        Assert.Equal((complete.Next, 2L), await proof.JournalAsync(subscription, Token));
++    }
++
++    [Fact]
++    public async Task JournalFailureAfterSaveBeforeCommitRollsBackReceiptsAndCheckpointTogether()
++    {
++        var fault = new RejectJournalSave();
++        await using var proof = await FeedProof.CreateAsync(
++            postgres,
++            Token,
++            journalInterceptor: fault
++        );
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Guid subscription = Guid.NewGuid();
++        await proof.InitializeJournalAsync(subscription, start, Token);
++        await proof.WriteAsync(1, Token);
++        var page = await proof.PageAsync(start, Token);
++        fault.Enabled = true;
++        await Assert.ThrowsAsync<InvalidOperationException>(() =>
++            proof.RecordAsync(subscription, start, page, Token)
++        );
++        Assert.Equal((start, 0L), await proof.JournalAsync(subscription, Token));
++        fault.Enabled = false;
++        await proof.RecordAsync(subscription, start, await proof.PageAsync(start, Token), Token);
++        Assert.Equal((page.Next, 1L), await proof.JournalAsync(subscription, Token));
++    }
++
++    [Fact]
++    public async Task CompetingReadersUseNativeCheckpointConcurrencyAndFreshRetry()
++    {
++        var pause = new ReadPause(sql =>
++            sql.Contains("FROM feed_journal.subscriptions AS ", StringComparison.Ordinal)
++        )
++        {
++            Enabled = false,
++        };
++        await using var proof = await FeedProof.CreateAsync(
++            postgres,
++            Token,
++            journalInterceptor: pause
++        );
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Guid subscription = Guid.NewGuid();
++        await proof.InitializeJournalAsync(subscription, start, Token);
++        await proof.WriteAsync(1, Token);
++        var page = await proof.PageAsync(start, Token);
++        pause.Enabled = true;
++        Task first = proof.RecordAsync(subscription, start, page, Token);
++        await pause.Reached.WaitAsync(TimeSpan.FromSeconds(10), Token);
++        await proof.RecordAsync(subscription, start, page, Token);
++        pause.Release();
++        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => first);
++        await proof.RecordAsync(subscription, start, page, Token);
++        Assert.Equal((page.Next, 1L), await proof.JournalAsync(subscription, Token));
++    }
++
++    [Fact]
++    public async Task StalePageCannotSkipAheadOfAnUnprocessedSuffix()
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Guid subscription = Guid.NewGuid();
++        await proof.InitializeJournalAsync(subscription, start, Token);
++        await proof.WriteAsync(1, Token);
++        await proof.WriteAsync(2, Token);
++        await proof.WriteAsync(3, Token);
++        var first = await proof.PageAsync(start, Token, 1);
++        var complete = await proof.PageAsync(start, Token, 3);
++        await proof.RecordAsync(subscription, start, first, Token);
++        await Assert.ThrowsAsync<InvalidOperationException>(() =>
++            proof.RecordAsync(subscription, start, complete, Token)
++        );
++        Assert.Equal((first.Next, 1L), await proof.JournalAsync(subscription, Token));
++        await proof.RecordAsync(
++            subscription,
++            first.Next,
++            await proof.PageAsync(first.Next, Token),
++            Token
++        );
++        Assert.Equal((complete.Next, 3L), await proof.JournalAsync(subscription, Token));
++    }
++
++    [Theory]
++    [InlineData("--pause-before-save", "Page read before journal save.")]
++    [InlineData("--pause-before-commit", "Journal saved before commit.")]
++    public async Task ActualReaderProcessDiesBeforeAndAfterCommitThenResumesWithoutDuplicateEffects(
++        string pauseArgument,
++        string marker
++    )
++    {
++        await using var proof = await FeedProof.CreateAsync(postgres, Token);
++        var start = (await proof.BoundsAsync(Token)).EarliestAvailable;
++        Guid subscription = Guid.NewGuid();
++        await proof.InitializeJournalAsync(subscription, start, Token);
++        await proof.WriteAsync(1, Token);
++        await proof.WriteAsync(2, Token);
++        await using (
++            var reader = new ChildHost(
++                typeof(FeedComposition).Assembly,
++                proof.Environment,
++                "read",
++                FeedComposition.Alpha,
++                subscription.ToString("D"),
++                pauseArgument
++            )
++        )
++        {
++            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
++            deadline.CancelAfter(TimeSpan.FromSeconds(15));
++            await reader.WaitForOutputAsync(marker, deadline.Token);
++            Assert.Equal((start, 0L), await proof.JournalAsync(subscription, Token));
++            await reader.KillAsync(deadline.Token);
++        }
++
++        Assert.Equal((start, 0L), await proof.JournalAsync(subscription, Token));
++        var page = await proof.PageAsync(start, Token);
++        await using (
++            var reader = new ChildHost(
++                typeof(FeedComposition).Assembly,
++                proof.Environment,
++                "read",
++                FeedComposition.Alpha,
++                subscription.ToString("D"),
++                "--pause-after-commit"
++            )
++        )
++        {
++            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
++            deadline.CancelAfter(TimeSpan.FromSeconds(15));
++            await reader.WaitForOutputAsync("Journal committed:", deadline.Token);
++            await reader.KillAsync(deadline.Token);
++        }
++
++        Assert.Equal((page.Next, 2L), await proof.JournalAsync(subscription, Token));
++        await proof.WriteAsync(3, Token);
++        await using (
++            var reader = new ChildHost(
++                typeof(FeedComposition).Assembly,
++                proof.Environment,
++                "read",
++                FeedComposition.Alpha,
++                subscription.ToString("D")
++            )
++        )
++            Assert.Equal(0, await reader.WaitForExitAsync(Token));
++
++        Assert.Equal(
++            ((await proof.BoundsAsync(Token)).Head, 3L),
++            await proof.JournalAsync(subscription, Token)
++        );
++        await proof.PruneAsync((await proof.BoundsAsync(Token)).Head, Token);
++        // An already checkpointed subscriber stays valid at the floor; a lagging one stops.
++        Guid lagging = Guid.NewGuid();
++        await proof.InitializeJournalAsync(lagging, start, Token);
++        await using (
++            var reader = new ChildHost(
++                typeof(FeedComposition).Assembly,
++                proof.Environment,
++                "read",
++                FeedComposition.Alpha,
++                lagging.ToString("D")
++            )
++        )
++        {
++            Assert.NotEqual(0, await reader.WaitForExitAsync(Token));
++            Assert.Contains("Cursor expired", reader.Output, StringComparison.Ordinal);
++        }
++
++        Assert.Equal((start, 0L), await proof.JournalAsync(lagging, Token));
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo.Tests/MigrationTests.cs b/samples/Wholesale/IntegrationFeedDemo.Tests/MigrationTests.cs
+new file mode 100644
+index 0000000..de16165
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo.Tests/MigrationTests.cs
+@@ -0,0 +1,133 @@
++using System.Text.Json;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using Rootbolt.ActorIdentity;
++using Rootbolt.Auditing.EntityFrameworkCore;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo.Tests;
++
++public sealed partial class FeedTests
++{
++    [Fact]
++    public async Task ForwardMigrationPreservesExistingProfilesAuditWorkflowAndOutboxWithoutInventingHistory()
++    {
++        string source = await postgres.CreateDatabaseAsync(Token);
++        string receiver = await postgres.CreateDatabaseAsync(Token);
++        await using var services = new ServiceCollection()
++            .AddIntegrationFeedDemo(source, receiver)
++            .AddStockReservationOrders()
++            .BuildServiceProvider();
++        Guid order = Guid.NewGuid();
++        await using (var scope = services.CreateAsyncScope())
++        {
++            FeedComposition.Admit(scope.ServiceProvider, FeedComposition.Alpha);
++            var database = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
++            await database
++                .GetService<IMigrator>()
++                .MigrateAsync("20261010164619_AddCompensatingReservationOrders", Token);
++            await using var transaction = await database.Database.BeginTransactionAsync(Token);
++            SalesDemoSeed.Stage(database);
++            scope
++                .ServiceProvider.GetRequiredService<IAudit<SalesDbContext>>()
++                .Stage(
++                    new AuditEntry(
++                        Guid.NewGuid(),
++                        DateTimeOffset.UtcNow,
++                        scope.ServiceProvider.GetRequiredService<IActorContextAccessor>().Current,
++                        "sales",
++                        "previous-change",
++                        "customer",
++                        SalesDemoSeed.AlphaCustomerId.ToString("D"),
++                        "accepted",
++                        1,
++                        JsonSerializer.SerializeToElement(new { Version = 1 }),
++                        tenantKey: FeedComposition.Alpha
++                    )
++                );
++            await database.SaveChangesAsync(Token);
++            await transaction.CommitAsync(Token);
++        }
++
++        StockReservationOrder before;
++        await using (var scope = services.CreateAsyncScope())
++        {
++            FeedComposition.Admit(scope.ServiceProvider, FeedComposition.Alpha);
++            before = await scope
++                .ServiceProvider.GetRequiredService<IStockReservationOrders>()
++                .StartAsync(
++                    new(order, new(Guid.NewGuid(), 1, 1), new(Guid.NewGuid(), 1, 1)),
++                    Token
++                );
++        }
++
++        long audits = await FeedProof.ScalarAsync(
++            source,
++            "SELECT count(*) FROM sales.audit_entries",
++            Token
++        );
++        long outgoing = await FeedProof.ScalarAsync(
++            source,
++            "SELECT count(*) FROM sales.outbox_messages",
++            Token
++        );
++        await using (var scope = services.CreateAsyncScope())
++        {
++            FeedComposition.Admit(scope.ServiceProvider, FeedComposition.Alpha);
++            var database = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
++            string[] prior = (await database.Database.GetAppliedMigrationsAsync(Token)).ToArray();
++            await database.Database.MigrateAsync(Token);
++            Assert.False(database.Database.HasPendingModelChanges());
++            Assert.Equal(
++                prior,
++                (await database.Database.GetAppliedMigrationsAsync(Token)).Take(prior.Length)
++            );
++            Assert.Equal(
++                database.Database.GetMigrations(),
++                await database.Database.GetAppliedMigrationsAsync(Token)
++            );
++            await using var transaction = await database.Database.BeginTransactionAsync(Token);
++            await CustomerProfileFeedSetup.ActivateAsync(database, Token);
++            await transaction.CommitAsync(Token);
++            var bounds = await scope
++                .ServiceProvider.GetRequiredService<ICustomerProfileFeed>()
++                .DescribeAsync(Token);
++            Assert.Equal(0, bounds.Head.AfterPosition);
++            Assert.Empty(
++                Assert
++                    .IsType<CustomerProfileFeedRead.Page>(
++                        await scope
++                            .ServiceProvider.GetRequiredService<ICustomerProfileFeed>()
++                            .ReadAsync(bounds.Head, 2, Token)
++                    )
++                    .Changes
++            );
++            Assert.Equal(
++                before,
++                await scope
++                    .ServiceProvider.GetRequiredService<IStockReservationOrders>()
++                    .ReadAsync(order, Token)
++            );
++            Assert.Equal(
++                "Alpha Customer",
++                (
++                    await scope
++                        .ServiceProvider.GetRequiredService<ICustomerProfiles>()
++                        .ReadAsync(SalesDemoSeed.AlphaCustomerId, Token)
++                )!.DisplayName
++            );
++        }
++
++        Assert.Equal(
++            audits,
++            await FeedProof.ScalarAsync(source, "SELECT count(*) FROM sales.audit_entries", Token)
++        );
++        Assert.Equal(
++            outgoing,
++            await FeedProof.ScalarAsync(source, "SELECT count(*) FROM sales.outbox_messages", Token)
++        );
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo/FeedComposition.cs b/samples/Wholesale/IntegrationFeedDemo/FeedComposition.cs
+new file mode 100644
+index 0000000..5b64f8e
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/FeedComposition.cs
+@@ -0,0 +1,95 @@
++using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using Rootbolt.ActorIdentity;
++using Rootbolt.Tenancy;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo;
++
++public static class FeedComposition
++{
++    public const string Alpha = "wholesale-alpha";
++    public const string Beta = "wholesale-beta";
++
++    public static IServiceCollection AddIntegrationFeedDemo(
++        this IServiceCollection services,
++        string sourceConnection,
++        string journalConnection
++    )
++    {
++        services.AddScoped<TenantContextAccessor>();
++        services.AddScoped<ITenantContextAccessor>(provider =>
++            provider.GetRequiredService<TenantContextAccessor>()
++        );
++        services.AddScoped<ITenantContextInitializer>(provider =>
++            provider.GetRequiredService<TenantContextAccessor>()
++        );
++        services.AddScoped<ActorContextAccessor>();
++        services.AddScoped<IActorContextAccessor>(provider =>
++            provider.GetRequiredService<ActorContextAccessor>()
++        );
++        services.AddScoped<IActorContextInitializer>(provider =>
++            provider.GetRequiredService<ActorContextAccessor>()
++        );
++        services.AddDbContext<SalesDbContext>(options =>
++            SalesDatabase.Configure(options, sourceConnection)
++        );
++        services.AddCustomerProfiles();
++        services.AddCustomerProfileFeed();
++        services.AddDbContext<FeedJournalDbContext>(options =>
++            options.UseNpgsql(journalConnection)
++        );
++        services.AddScoped<FeedJournal>();
++        return services;
++    }
++
++    public static void Admit(IServiceProvider services, string organization)
++    {
++        if (organization is not (Alpha or Beta))
++            throw new ArgumentException(
++                "The finite demo admits Alpha and Beta only.",
++                nameof(organization)
++            );
++
++        services
++            .GetRequiredService<ITenantContextInitializer>()
++            .Initialize(TenantContext.ForTenant(new TenantId(organization)));
++        services
++            .GetRequiredService<IActorContextInitializer>()
++            .Initialize(new ActorContext(Actor.Human(new ActorId("feed-demo-owner"))));
++    }
++
++    public static async Task SetupAsync(IServiceProvider services, CancellationToken token)
++    {
++        await using (var migration = services.CreateAsyncScope())
++        {
++            await migration
++                .ServiceProvider.GetRequiredService<SalesDbContext>()
++                .Database.MigrateAsync(token);
++            // Only this disposable diagnostic journal uses EnsureCreated, never the Sales source.
++            await migration
++                .ServiceProvider.GetRequiredService<FeedJournalDbContext>()
++                .Database.EnsureCreatedAsync(token);
++        }
++
++        foreach (string organization in new[] { Alpha, Beta })
++        {
++            await using var scope = services.CreateAsyncScope();
++            Admit(scope.ServiceProvider, organization);
++            var database = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
++            await using var transaction = await database.Database.BeginTransactionAsync(token);
++            await CustomerProfileFeedSetup.ActivateAsync(database, token);
++            bool seeded =
++                await database
++                    .Database.SqlQuery<long>(
++                        $"SELECT count(*) AS \"Value\" FROM sales.customer_profiles WHERE organization_key = {organization}"
++                    )
++                    .SingleAsync(token) != 0;
++            if (!seeded)
++                SalesDemoSeed.Stage(database);
++
++            await database.SaveChangesAsync(token);
++            await transaction.CommitAsync(token);
++        }
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo/FeedJournal.cs b/samples/Wholesale/IntegrationFeedDemo/FeedJournal.cs
+new file mode 100644
+index 0000000..af73e47
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/FeedJournal.cs
+@@ -0,0 +1,199 @@
++using System.Text.Json;
++using System.Transactions;
++using Microsoft.EntityFrameworkCore;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo;
++
++public sealed class FeedJournal(FeedJournalDbContext database)
++{
++    public async Task InitializeAsync(
++        Guid id,
++        string organization,
++        CustomerProfileFeedCursor start,
++        CancellationToken token
++    )
++    {
++        ArgumentOutOfRangeException.ThrowIfEqual(id, Guid.Empty);
++        ArgumentException.ThrowIfNullOrWhiteSpace(organization);
++        ValidateCursor(start);
++
++        RequireIndependent();
++        await using var transaction = await database.Database.BeginTransactionAsync(token);
++        var existing = await database.Subscriptions.FindAsync([id], token);
++        if (existing is not null)
++        {
++            if (existing.Organization != organization || existing.Generation != start.Generation)
++                throw new InvalidDataException(
++                    "The journal subscription is already bound to another source."
++                );
++
++            return;
++        }
++
++        database.Subscriptions.Add(
++            new()
++            {
++                Id = id,
++                Organization = organization,
++                Generation = start.Generation,
++                Position = start.AfterPosition,
++            }
++        );
++        await database.SaveChangesAsync(token);
++        await transaction.CommitAsync(token);
++    }
++
++    public async Task<CustomerProfileFeedCursor> ReadAsync(
++        Guid id,
++        string organization,
++        CancellationToken token
++    )
++    {
++        var row = await database
++            .Subscriptions.AsNoTracking()
++            .SingleAsync(row => row.Id == id && row.Organization == organization, token);
++        return new(row.Generation, row.Position);
++    }
++
++    public async Task<long> CountAsync(Guid id, CancellationToken token) =>
++        await database.Receipts.LongCountAsync(row => row.SubscriptionId == id, token);
++
++    public async Task RecordAndCheckpointAsync(
++        Guid id,
++        string organization,
++        CustomerProfileFeedCursor expected,
++        CustomerProfileFeedRead.Page page,
++        CancellationToken token
++    )
++    {
++        ValidateCursor(expected);
++        ValidatePage(expected, page);
++
++        RequireIndependent();
++        await using var transaction = await database.Database.BeginTransactionAsync(token);
++        var subscription = await database.Subscriptions.SingleAsync(
++            row => row.Id == id && row.Organization == organization,
++            token
++        );
++        if (subscription.Generation != expected.Generation)
++            throw new InvalidDataException("Journal source generation changed.");
++
++        bool duplicate = subscription.Position >= page.Next.AfterPosition;
++        if (!duplicate && subscription.Position != expected.AfterPosition)
++            throw new InvalidOperationException(
++                "Stale page: reload the committed checkpoint and read again."
++            );
++
++        foreach (var change in page.Changes)
++        {
++            var receipt = await database.Receipts.FindAsync(
++                [id, expected.Generation, change.ChangeId],
++                token
++            );
++            if (receipt is not null)
++            {
++                if (
++                    receipt.Position != change.Position
++                    || receipt.Payload.Deserialize<CustomerProfileChangedV1>() != change.Profile
++                )
++                    throw new InvalidDataException(
++                        "A retained change identity has conflicting content."
++                    );
++            }
++            else
++            {
++                if (duplicate)
++                    throw new InvalidDataException(
++                        "Checkpoint advanced without this change's receipt."
++                    );
++
++                database.Receipts.Add(
++                    new()
++                    {
++                        SubscriptionId = id,
++                        Generation = expected.Generation,
++                        ChangeId = change.ChangeId,
++                        Position = change.Position,
++                        Payload = JsonSerializer.SerializeToElement(change.Profile),
++                    }
++                );
++            }
++        }
++
++        if (!duplicate)
++        {
++            subscription.Position = page.Next.AfterPosition;
++            subscription.Version = checked(subscription.Version + 1);
++            await database.SaveChangesAsync(token);
++        }
++
++        await transaction.CommitAsync(token);
++    }
++
++    private void RequireIndependent()
++    {
++        if (
++            database.Database.CurrentTransaction is not null
++            || System.Transactions.Transaction.Current is not null
++            || database.Database.GetEnlistedTransaction() is not null
++            || database.ChangeTracker.HasChanges()
++        )
++            throw new InvalidOperationException(
++                "Journal operations require a fresh context without a transaction or pending changes."
++            );
++    }
++
++    private static void ValidateCursor(CustomerProfileFeedCursor cursor)
++    {
++        ArgumentNullException.ThrowIfNull(cursor);
++        ArgumentOutOfRangeException.ThrowIfEqual(cursor.Generation, Guid.Empty);
++        ArgumentOutOfRangeException.ThrowIfNegative(cursor.AfterPosition);
++    }
++
++    private static void ValidatePage(
++        CustomerProfileFeedCursor expected,
++        CustomerProfileFeedRead.Page page
++    )
++    {
++        ArgumentNullException.ThrowIfNull(page);
++        ValidateCursor(page.Next);
++        ValidateCursor(page.Bounds.EarliestAvailable);
++        ValidateCursor(page.Bounds.Head);
++
++        if (
++            page.Next.Generation != expected.Generation
++            || page.Bounds.Head.Generation != expected.Generation
++            || page.Bounds.EarliestAvailable.Generation != expected.Generation
++            || page.Bounds.EarliestAvailable.AfterPosition > expected.AfterPosition
++            || page.Next.AfterPosition < expected.AfterPosition
++            || page.Next.AfterPosition > page.Bounds.Head.AfterPosition
++            || page.Changes.Count > 100
++            || (!page.HasMore && page.Next != page.Bounds.Head)
++            || (
++                page.HasMore
++                && (page.Changes.Count == 0 || page.Next.AfterPosition != page.Changes[^1].Position)
++            )
++        )
++            throw new InvalidDataException("Invalid source page bounds.");
++
++        long previous = expected.AfterPosition;
++        var identities = new HashSet<Guid>();
++        foreach (var change in page.Changes)
++        {
++            if (
++                change.Position <= previous
++                || change.Position > page.Next.AfterPosition
++                || change.ChangeId == Guid.Empty
++                || !identities.Add(change.ChangeId)
++                || change.Profile is null
++                || change.Profile.Version < 1
++                || change.Profile.CustomerId == Guid.Empty
++                || change.Profile.AddressId == Guid.Empty
++            )
++                throw new InvalidDataException("Invalid source page change.");
++
++            previous = change.Position;
++        }
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo/FeedJournalDbContext.cs b/samples/Wholesale/IntegrationFeedDemo/FeedJournalDbContext.cs
+new file mode 100644
+index 0000000..a203ae4
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/FeedJournalDbContext.cs
+@@ -0,0 +1,74 @@
++using System.Text.Json;
++using Microsoft.EntityFrameworkCore;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo;
++
++// Consumer-owned diagnostic records; no customer snapshot or serving view is constructed.
++public sealed class FeedJournalDbContext(DbContextOptions<FeedJournalDbContext> options)
++    : DbContext(options)
++{
++    internal DbSet<SubscriptionRow> Subscriptions => Set<SubscriptionRow>();
++    internal DbSet<ReceiptRow> Receipts => Set<ReceiptRow>();
++
++    protected override void OnModelCreating(ModelBuilder modelBuilder)
++    {
++        modelBuilder.HasDefaultSchema("feed_journal");
++        var subscription = modelBuilder.Entity<SubscriptionRow>();
++        subscription.ToTable(
++            "subscriptions",
++            table =>
++                table.HasCheckConstraint(
++                    "journal_progress",
++                    "\"Position\" >= 0 AND \"Version\" > 0"
++                )
++        );
++        subscription.HasKey(row => row.Id);
++        subscription.Property(row => row.Id).ValueGeneratedNever();
++        subscription.Property(row => row.Organization).HasMaxLength(256);
++        subscription.Property(row => row.Version).IsConcurrencyToken();
++
++        var receipt = modelBuilder.Entity<ReceiptRow>();
++        receipt.ToTable(
++            "receipts",
++            table => table.HasCheckConstraint("journal_position", "\"Position\" > 0")
++        );
++        receipt.HasKey(row => new
++        {
++            row.SubscriptionId,
++            row.Generation,
++            row.ChangeId,
++        });
++        receipt
++            .HasIndex(row => new
++            {
++                row.SubscriptionId,
++                row.Generation,
++                row.Position,
++            })
++            .IsUnique();
++        receipt.Property(row => row.Payload).HasColumnType("jsonb");
++        receipt
++            .HasOne<SubscriptionRow>()
++            .WithMany()
++            .HasForeignKey(row => row.SubscriptionId)
++            .OnDelete(DeleteBehavior.Restrict);
++    }
++}
++
++internal sealed class SubscriptionRow
++{
++    public Guid Id { get; set; }
++    public required string Organization { get; set; }
++    public Guid Generation { get; set; }
++    public long Position { get; set; }
++    public long Version { get; set; } = 1;
++}
++
++internal sealed class ReceiptRow
++{
++    public Guid SubscriptionId { get; set; }
++    public Guid Generation { get; set; }
++    public Guid ChangeId { get; set; }
++    public long Position { get; set; }
++    public JsonElement Payload { get; set; }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj b/samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj
+new file mode 100644
+index 0000000..ed0125c
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj
+@@ -0,0 +1,10 @@
++<Project Sdk="Microsoft.NET.Sdk">
++  <PropertyGroup>
++    <OutputType>Exe</OutputType>
++  </PropertyGroup>
++  <ItemGroup>
++    <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
++    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
++    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
++  </ItemGroup>
++</Project>
+diff --git a/samples/Wholesale/IntegrationFeedDemo/JournalCommitPause.cs b/samples/Wholesale/IntegrationFeedDemo/JournalCommitPause.cs
+new file mode 100644
+index 0000000..7cd4d2d
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/JournalCommitPause.cs
+@@ -0,0 +1,20 @@
++using System.Data.Common;
++using Microsoft.EntityFrameworkCore.Diagnostics;
++
++namespace ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo;
++
++// Opt-in finite diagnostic mode for abrupt process-death proofs; never selected by normal reads.
++internal sealed class JournalCommitPause : DbTransactionInterceptor
++{
++    public override async ValueTask<InterceptionResult> TransactionCommittingAsync(
++        DbTransaction transaction,
++        TransactionEventData eventData,
++        InterceptionResult result,
++        CancellationToken cancellationToken = default
++    )
++    {
++        Console.WriteLine("Journal saved before commit.");
++        await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
++        return result;
++    }
++}
+diff --git a/samples/Wholesale/IntegrationFeedDemo/Program.cs b/samples/Wholesale/IntegrationFeedDemo/Program.cs
+new file mode 100644
+index 0000000..e9b0a77
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/Program.cs
+@@ -0,0 +1,123 @@
++using System.Globalization;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.Extensions.DependencyInjection;
++using ModulithFoundry.Samples.Wholesale.IntegrationFeedDemo;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
++string source =
++    Environment.GetEnvironmentVariable("ConnectionStrings__Sales")
++    ?? throw new InvalidOperationException("Configure ConnectionStrings__Sales.");
++string receiver =
++    Environment.GetEnvironmentVariable("ConnectionStrings__Journal")
++    ?? throw new InvalidOperationException("Configure ConnectionStrings__Journal.");
++var registrations = new ServiceCollection().AddIntegrationFeedDemo(source, receiver);
++if (args.Contains("--pause-before-commit", StringComparer.Ordinal))
++    registrations.AddDbContext<FeedJournalDbContext>(options =>
++        options.AddInterceptors(new JournalCommitPause())
++    );
++
++await using var services = registrations.BuildServiceProvider();
++string command = args.FirstOrDefault() ?? "help";
++if (command == "setup")
++{
++    await FeedComposition.SetupAsync(services, deadline.Token);
++    Console.WriteLine("Feed setup complete.");
++    return;
++}
++
++await using var scope = services.CreateAsyncScope();
++string organization = args.Length > 1 ? args[1] : FeedComposition.Alpha;
++FeedComposition.Admit(scope.ServiceProvider, organization);
++var feed = scope.ServiceProvider.GetRequiredService<ICustomerProfileFeed>();
++var journal = scope.ServiceProvider.GetRequiredService<FeedJournal>();
++if (command == "write")
++{
++    var profiles = scope.ServiceProvider.GetRequiredService<ICustomerProfiles>();
++    Guid id =
++        organization == FeedComposition.Alpha
++            ? SalesDemoSeed.AlphaCustomerId
++            : SalesDemoSeed.BetaCustomerId;
++    var profile =
++        await profiles.ReadAsync(id, deadline.Token)
++        ?? throw new InvalidOperationException("Seed profile missing.");
++    var result = await profiles.ChangeAsync(
++        new(
++            id,
++            profile.AddressId,
++            profile.Version,
++            "Feed edit " + (profile.Version + 1).ToString(CultureInfo.InvariantCulture),
++            profile.AddressLine
++        ),
++        deadline.Token
++    );
++    Console.WriteLine(
++        result is ProfileChangeResult.Updated ? "Profile edit committed." : "Profile edit refused."
++    );
++}
++else if (command is "subscribe" or "read")
++{
++    Guid subscription = Guid.Parse(args[2]);
++    if (command == "subscribe")
++    {
++        var bounds = await feed.DescribeAsync(deadline.Token);
++        if (bounds.EarliestAvailable.AfterPosition != 0)
++            throw new InvalidOperationException(
++                "The demo subscribes only from genesis; expired history requires explicit reconciliation."
++            );
++
++        await journal.InitializeAsync(
++            subscription,
++            organization,
++            bounds.EarliestAvailable,
++            deadline.Token
++        );
++        Console.WriteLine("Subscription initialized.");
++    }
++    else
++    {
++        var cursor = await journal.ReadAsync(subscription, organization, deadline.Token);
++        var read = await feed.ReadAsync(cursor, 2, deadline.Token);
++        if (read is not CustomerProfileFeedRead.Page page)
++            throw new InvalidOperationException(
++                read is CustomerProfileFeedRead.CursorExpired
++                    ? "Cursor expired: stop and reconcile."
++                    : "Invalid feed cursor."
++            );
++
++        // An optional diagnostic barrier lets process proofs kill this actual executable before/after commit.
++        if (args.Contains("--pause-before-save", StringComparer.Ordinal))
++        {
++            Console.WriteLine("Page read before journal save.");
++            await Task.Delay(Timeout.InfiniteTimeSpan, deadline.Token);
++        }
++
++        await journal.RecordAndCheckpointAsync(
++            subscription,
++            organization,
++            cursor,
++            page,
++            deadline.Token
++        );
++        Console.WriteLine(
++            $"Journal committed: {page.Next.AfterPosition.ToString(CultureInfo.InvariantCulture)}."
++        );
++        if (args.Contains("--pause-after-commit", StringComparer.Ordinal))
++            await Task.Delay(Timeout.InfiniteTimeSpan, deadline.Token);
++    }
++}
++else if (command == "prune")
++{
++    var bounds = await feed.DescribeAsync(deadline.Token);
++    await CustomerProfileFeedSetup.PruneThroughAsync(
++        scope.ServiceProvider.GetRequiredService<SalesDbContext>(),
++        new(bounds.Head.Generation, long.Parse(args[2], CultureInfo.InvariantCulture)),
++        deadline.Token
++    );
++    Console.WriteLine("Retained prefix pruned.");
++}
++else
++    Console.WriteLine(
++        "Commands: setup | write [organization] | subscribe organization subscription-uuid | read organization subscription-uuid | prune organization position"
++    );
+diff --git a/samples/Wholesale/IntegrationFeedDemo/README.md b/samples/Wholesale/IntegrationFeedDemo/README.md
+new file mode 100644
+index 0000000..2f06797
+--- /dev/null
++++ b/samples/Wholesale/IntegrationFeedDemo/README.md
+@@ -0,0 +1,138 @@
++# Retained Sales profile feed
++
++Status, 2026-10-14: protocol experiment retained as evidence; adoption is deferred.
++The [retention and contract assessment](../../../docs/reports/b1-retention-and-contract-assessment.md)
++closes B1 by owner direction without further implementation. Revisit adoption only when a
++later slice establishes a concrete receiver need. The guarantees below describe this experiment;
++they do not establish a requirement for its writer gate or approve committing or merging it.
++
++B1 demonstrates one producer-owned integration feed over ordinary state-stored customer
++profiles. Sales publishes accepted `ICustomerProfiles.ChangeAsync` edits after explicit
++activation. A finite reader records diagnostic receipts in a separate PostgreSQL database
++and checkpoints each page transactionally. This is retained change history, not an initial
++customer snapshot or a serving customer view. Seeded/pre-existing profiles have no synthetic
++feed entry. Snapshot/bootstrap/cutover remains B2.
++
++## Run the finite consumer
++
++Use .NET from the repository's `global.json`, two disposable PostgreSQL databases and the
++native Npgsql connection format. Set `ConnectionStrings__Sales` and
++`ConnectionStrings__Journal` in your environment; do not commit credentials. Setup explicitly
++applies Sales migrations and creates the diagnostic journal in its own empty database.
++It admits only the sample's `wholesale-alpha` and `wholesale-beta` Organizations. Setup
++is repeatable without resetting feed generations/progress or re-seeding existing profiles.
++Normal reads/writes never apply migrations or bootstrap data.
++
++```bash
++dotnet build samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj
++dotnet run --project samples/Wholesale/IntegrationFeedDemo --no-build -- setup
++dotnet run --project samples/Wholesale/IntegrationFeedDemo --no-build -- subscribe wholesale-alpha 11111111-1111-1111-1111-111111111111
++dotnet run --project samples/Wholesale/IntegrationFeedDemo --no-build -- write wholesale-alpha
++dotnet run --project samples/Wholesale/IntegrationFeedDemo --no-build -- read wholesale-alpha 11111111-1111-1111-1111-111111111111
++```
++
++Each `read` handles one page of at most two changes. Repeat it to drain retained work; exit
++and restart it to resume from the same committed journal. `write` changes the existing
++demonstration profile with its current expected version. `prune organization position`
++explicitly discards a committed prefix; it changes neither customer state nor audit/outbox.
++The genesis-only `subscribe` command refuses a pruned source rather than quietly starting
++with missing history. Subscriber IDs are journal-owned; generation and Organization bindings
++cannot be changed through repeated initialization.
++
++The executable has a 30-second operation deadline. Three explicit diagnostic read modes,
++`--pause-before-save`, `--pause-before-commit` and `--pause-after-commit`, report their boundary
++and wait for that deadline. Process proofs kill the child at these boundaries; normal commands
++do not enable the pauses. No daemon, personal database or broker is required by the proofs.
++
++## Producer contract and setup
++
++Public [Sales.Contracts](../modules/Sales/Sales.Contracts/ICustomerProfileFeed.cs) exposes
++`DescribeAsync` and `ReadAsync(after, pageSize, token)`. DTOs contain only Sales-owned public
++profile values, immutable change identity/position and typed page/cursor outcomes. Contracts
++reference no EF, Npgsql or Rootbolt types. Fields include customer name/address; trusted
++consumer admission and permitted disclosure belong to the composing host. No public feed
++HTTP endpoint or blanket export permission is installed.
++
++```csharp
++services.AddCustomerProfiles();
++services.AddCustomerProfileFeed();
++// Register SalesDbContext/provider and establish immutable admitted tenant/actor separately.
++
++await using var transaction = await database.Database.BeginTransactionAsync(token);
++await CustomerProfileFeedSetup.ActivateAsync(database, token);
++// Optional ordinary business seeding in this finite setup; never invent feed history.
++await database.SaveChangesAsync(token);
++await transaction.CommitAsync(token);
++```
++
++Activation is idempotent and never resets an existing generation, head or floor. Apply the
++new forward migration first and drain old profile writers before activating a deployment.
++Mixed old/new writers or direct SQL business edits cannot inherit feed completeness. The
++existing HTTP sample's finite setup and proof setup explicitly activate both Organizations;
++API startup still performs no migrations/seeding. Earlier migrations/fixtures remain unchanged.
++
++## Committed progress and paging
++
++- The admitted Organization owns one persistent feed generation, committed head H and
++  retention floor F. Position 0 is genesis. Generation binds a cursor to that source
++  incarnation; it grants no authority. A cursor from another Organization/generation is invalid.
++- A profile operation begins its own native ReadCommitted transaction and locks this feed's
++  state row before loading/changing business state. Only after that lock is acquired may it
++  allocate a PostgreSQL sequence position. Retained change, H, profile/address and audit
++  share the existing native transaction. Lock ownership lasts through commit/rollback.
++- That gate prevents a higher position in this feed from committing ahead of an unresolved
++  lower one. A transaction that began earlier but acquires the gate later receives a later
++  position. Different Organizations have separate gates; no global feed order is promised.
++- Sequence gaps from rollback or another Organization are valid. Positions are ordered,
++  not contiguous stream versions. Timestamps and outbox dispatch order are never cursors.
++  Arbitrary deletion above F is corruption; B1 does not detect or repair such bypasses.
++- Each read requires a context without an existing/ambient/enlisted transaction or pending
++  writes. One short read-only RepeatableRead transaction captures generation, F, H and
++  entries. It returns `C < position <= H`, ascending, bounded to 1–100 changes, with one
++  look-ahead row. Detached results retain no open connection, lock or snapshot.
++- If the page is truncated, `Next` is its last returned position. Otherwise `Next=H`,
++  including empty pages. Checkpoint Next; checkpointing H from a truncated page loses work.
++  `HasMore=false` means caught up through this page's H, and later calls may see newer writes.
++- Negative positions, empty generations and invalid page sizes throw argument errors.
++  Wrong generation/future position returns `InvalidCursor`; `C<F` returns `CursorExpired`.
++  Missing activation, cancellation, integrity and database faults are explicit failures.
++  The operation does not retry automatically; dispose/reload after failure.
++
++## Retention and receiver restart
++
++`CustomerProfileFeedSetup.PruneThroughAsync` owns a native transaction on a fresh admitted
++Sales context. It takes the same feed gate, deletes through K and sets F=max(F,K) atomically.
++Wrong generation/future cutoff fails. Repeated/older cutoffs never regress F. A cutoff within
++a sequence gap is valid. C=F works; C<F expires even if the receiver once read that history.
++A page already reading its old snapshot can finish consistently during pruning. The next
++call observes the new floor. Retention does not pin subscribers or automatically recover them.
++
++`FeedJournal` binds a subscription to an Organization/generation. The receiver keeps one
++receipt per change identity, checks duplicate position/content, and commits receipts with
++Next in its own local transaction. Native checkpoint Version predicates fence competing
++readers. Stale pages cannot skip unprocessed suffixes or regress checkpoints. Equal already
++applied pages have no second diagnostic effect; altered identities/content fail. Restart
++reopens the journal, re-reads the committed cursor and repeats any rolled-back page.
++Expired/invalid cursors stop without changing the journal. B1 supplies no initial population,
++live-view availability rule, snapshot recovery or external exactly-once effect guarantee.
++
++## Verification and extraction boundary
++
++```bash
++dotnet test --project samples/Wholesale/IntegrationFeedDemo.Tests/IntegrationFeedDemo.Tests.csproj
++```
++
++The suite uses the existing Testcontainers PostgreSQL 18.6 fixture with per-case databases
++and native connections. Rootless Podman setup is in [development](../../../docs/development.md).
++Proofs include the unsafe sequence/MAX counterexample, blocked/early-start late commits,
++gaps, bounded pages, tenant isolation, participant/commit/cancellation rollback, retention
++floor/races/rollback, duplicates, competing readers, and actual reader-process death/restart.
++Forward migration adoption preserves existing profiles, audit, WF2 process and outbox.
++CI runs this suite in Wholesale consumer composition.
++
++The source mechanism and receipt policy remain consumer code. No Rootbolt feed package,
++interface, template preset or second source is added. Gate/committed-head and snapshot page
++checks are future extraction candidates; one sample's proof does not establish independently
++adoptable library guarantees. [The B1 report](../../../docs/reports/b1-replayable-integration-feed.md)
++records fresh results and limits; [the reviewed scope](../../../docs/plans/b1-replayable-integration-feed.md)
++retains the contract/file/proof review.
+diff --git a/samples/Wholesale/modules/Sales/Sales.Contracts/CustomerProfileFeed.cs b/samples/Wholesale/modules/Sales/Sales.Contracts/CustomerProfileFeed.cs
+new file mode 100644
+index 0000000..637939a
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales.Contracts/CustomerProfileFeed.cs
+@@ -0,0 +1,43 @@
++using System.Text.Json.Serialization;
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++public sealed record CustomerProfileFeedCursor(Guid Generation, long AfterPosition);
++
++public sealed record CustomerProfileFeedBounds(
++    CustomerProfileFeedCursor EarliestAvailable,
++    CustomerProfileFeedCursor Head
++);
++
++/// <summary>Sales public change schema V1, independent of private rows and domain events.</summary>
++public sealed record CustomerProfileChangedV1(
++    [property: JsonRequired] Guid CustomerId,
++    [property: JsonRequired] Guid AddressId,
++    [property: JsonRequired] string Code,
++    [property: JsonRequired] string DisplayName,
++    [property: JsonRequired] string AddressLine,
++    [property: JsonRequired] long Version
++);
++
++public sealed record CustomerProfileFeedChange(
++    long Position,
++    Guid ChangeId,
++    CustomerProfileChangedV1 Profile
++);
++
++public abstract record CustomerProfileFeedRead
++{
++    /// <summary>Checkpoint Next, not Bounds.Head when HasMore is true.</summary>
++    public sealed record Page(
++        CustomerProfileFeedBounds Bounds,
++        IReadOnlyList<CustomerProfileFeedChange> Changes,
++        CustomerProfileFeedCursor Next,
++        bool HasMore
++    ) : CustomerProfileFeedRead;
++
++    /// <summary>Lost retained history; the subscriber must stop and reconcile explicitly.</summary>
++    public sealed record CursorExpired(CustomerProfileFeedBounds Bounds) : CustomerProfileFeedRead;
++
++    /// <summary>Wrong source generation or a position beyond the captured committed head.</summary>
++    public sealed record InvalidCursor : CustomerProfileFeedRead;
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerProfileFeed.cs b/samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerProfileFeed.cs
+new file mode 100644
+index 0000000..5653580
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerProfileFeed.cs
+@@ -0,0 +1,15 @@
++namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++/// <summary>Retained Sales profile edits for the already admitted Organization.</summary>
++public interface ICustomerProfileFeed
++{
++    /// <summary>Describes retained history; does not certify a complete customer catalog.</summary>
++    Task<CustomerProfileFeedBounds> DescribeAsync(CancellationToken cancellationToken);
++
++    /// <summary>Reads 1–100 changes from one committed snapshot, strictly after the cursor.</summary>
++    Task<CustomerProfileFeedRead> ReadAsync(
++        CustomerProfileFeedCursor after,
++        int pageSize,
++        CancellationToken cancellationToken
++    );
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/CustomerProfileFeedSetup.cs b/samples/Wholesale/modules/Sales/Sales/CustomerProfileFeedSetup.cs
+new file mode 100644
+index 0000000..a91b5aa
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/CustomerProfileFeedSetup.cs
+@@ -0,0 +1,70 @@
++using Microsoft.EntityFrameworkCore;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed;
++
++namespace ModulithFoundry.Samples.Wholesale.Sales;
++
++/// <summary>Explicit module composition/maintenance, never application startup or public ingress.</summary>
++public static class CustomerProfileFeedSetup
++{
++    /// <summary>Activates the admitted Organization in the caller's native transaction; never saves, commits or resets existing progress.</summary>
++    public static async Task ActivateAsync(
++        SalesDbContext database,
++        CancellationToken cancellationToken
++    )
++    {
++        ArgumentNullException.ThrowIfNull(database);
++
++        FeedStorage.RequireWriterTransaction(database);
++        string organization = database.RequiredOrganizationKey;
++        Guid generation = Guid.NewGuid();
++        await database.Database.ExecuteSqlInterpolatedAsync(
++            $"""
++            INSERT INTO sales.customer_profile_feed_state (organization_key, generation, head, floor)
++            VALUES ({organization}, {generation}, 0, 0) ON CONFLICT (organization_key) DO NOTHING
++            """,
++            cancellationToken
++        );
++    }
++
++    /// <summary>Atomically discards a retained prefix and advances its floor. Caller supplies a fresh admitted context.</summary>
++    public static async Task PruneThroughAsync(
++        SalesDbContext database,
++        CustomerProfileFeedCursor through,
++        CancellationToken cancellationToken
++    )
++    {
++        ArgumentNullException.ThrowIfNull(database);
++        FeedStorage.ValidateCursor(through);
++
++        FeedStorage.RequireIndependent(database);
++        await using var transaction = await database.Database.BeginTransactionAsync(
++            cancellationToken
++        );
++        await FeedStorage.LockAsync(database, cancellationToken);
++        var state = await database
++            .Set<FeedStateRow>()
++            .AsNoTracking()
++            .SingleAsync(cancellationToken);
++        if (state.Generation != through.Generation || through.AfterPosition > state.Head)
++            throw new ArgumentException(
++                "Retention cutoff does not belong to the committed feed.",
++                nameof(through)
++            );
++
++        string organization = database.RequiredOrganizationKey;
++        await database.Database.ExecuteSqlInterpolatedAsync(
++            $"""
++            DELETE FROM sales.customer_profile_changes WHERE organization_key = {organization} AND position <= {through.AfterPosition}
++            """,
++            cancellationToken
++        );
++        await database.Database.ExecuteSqlInterpolatedAsync(
++            $"""
++            UPDATE sales.customer_profile_feed_state SET floor = GREATEST(floor, {through.AfterPosition}) WHERE organization_key = {organization}
++            """,
++            cancellationToken
++        );
++        await transaction.CommitAsync(cancellationToken);
++    }
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs b/samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs
+index aea0d57..2a67499 100644
+--- a/samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs
++++ b/samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs
+@@ -1,5 +1,6 @@
+ using Microsoft.EntityFrameworkCore;
+ using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed;
+ using Rootbolt.ActorIdentity;
+ 
+ namespace ModulithFoundry.Samples.Wholesale.Sales;
+@@ -59,6 +60,7 @@ internal sealed class CustomerProfiles(
+         );
+         try
+         {
++            await FeedStorage.LockAsync(database, cancellationToken);
+             var customer = await database.Customers.SingleOrDefaultAsync(
+                 row => row.Id == change.CustomerId,
+                 cancellationToken
+@@ -81,6 +83,18 @@ internal sealed class CustomerProfiles(
+             database.Entry(customer).Property(row => row.Version).IsModified = true;
+             await database.SaveChangesAsync(cancellationToken);
+             address.AddressLine = change.AddressLine;
++            await FeedStorage.AppendAsync(
++                database,
++                new(
++                    customer.Id,
++                    address.Id,
++                    customer.Code,
++                    customer.DisplayName,
++                    address.AddressLine,
++                    customer.Version
++                ),
++                cancellationToken
++            );
+             audit.ProfileChanged(customer.Id, address.Id, change.ExpectedVersion, customer.Version);
+             await database.SaveChangesAsync(cancellationToken);
+             await transaction.CommitAsync(cancellationToken);
+diff --git a/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.Designer.cs b/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.Designer.cs
+new file mode 100644
+index 0000000..3671066
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.Designer.cs
+@@ -0,0 +1,645 @@
++﻿// <auto-generated />
++using System;
++using System.Text.Json;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++using ModulithFoundry.Samples.Wholesale.Sales;
++using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
++
++#nullable disable
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
++{
++    [DbContext(typeof(SalesDbContext))]
++    [Migration("20261013150330_AddCustomerProfileFeed")]
++    partial class AddCustomerProfileFeed
++    {
++        /// <inheritdoc />
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasDefaultSchema("sales")
++                .HasAnnotation("ProductVersion", "10.0.12")
++                .HasAnnotation("Relational:MaxIdentifierLength", 63);
++
++            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
++
++            modelBuilder.HasSequence("customer_profile_feed_positions", "sales");
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
++                b =>
++                {
++                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
++
++                    b.Property<string>("AddressLine")
++                        .IsRequired()
++                        .HasMaxLength(512)
++                        .HasColumnType("character varying(512)")
++                        .HasColumnName("address_line");
++
++                    b.Property<Guid>("CustomerId")
++                        .HasColumnType("uuid")
++                        .HasColumnName("customer_id");
++
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .IsRequired()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("OrganizationKey", "CustomerId").IsUnique();
++
++                    b.ToTable("customer_addresses", "sales");
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.CustomerRow",
++                b =>
++                {
++                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
++
++                    b.Property<string>("Code")
++                        .IsRequired()
++                        .HasMaxLength(128)
++                        .HasColumnType("character varying(128)")
++                        .HasColumnName("code");
++
++                    b.Property<string>("DisplayName")
++                        .IsRequired()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("display_name");
++
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .IsRequired()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.Property<long>("Version")
++                        .IsConcurrencyToken()
++                        .HasColumnType("bigint")
++                        .HasColumnName("version");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("OrganizationKey", "Code").IsUnique();
++
++                    b.ToTable(
++                        "customer_profiles",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint("positive_version", "version >= 1");
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.FeedStateRow",
++                b =>
++                {
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.Property<long>("Floor").HasColumnType("bigint").HasColumnName("floor");
++
++                    b.Property<Guid>("Generation")
++                        .HasColumnType("uuid")
++                        .HasColumnName("generation");
++
++                    b.Property<long>("Head").HasColumnType("bigint").HasColumnName("head");
++
++                    b.HasKey("OrganizationKey");
++
++                    b.HasIndex("Generation").IsUnique();
++
++                    b.ToTable(
++                        "customer_profile_feed_state",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint("feed_bounds", "floor >= 0 AND head >= floor");
++
++                            t.HasCheckConstraint(
++                                "feed_generation",
++                                "generation <> '00000000-0000-0000-0000-000000000000'::uuid"
++                            );
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.ProfileChangeRow",
++                b =>
++                {
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.Property<long>("Position").HasColumnType("bigint").HasColumnName("position");
++
++                    b.Property<Guid>("ChangeId").HasColumnType("uuid").HasColumnName("change_id");
++
++                    b.Property<JsonElement>("Payload")
++                        .HasColumnType("jsonb")
++                        .HasColumnName("payload_v1");
++
++                    b.Property<long>("ProfileVersion")
++                        .HasColumnType("bigint")
++                        .HasColumnName("profile_version");
++
++                    b.HasKey("OrganizationKey", "Position");
++
++                    b.HasIndex("OrganizationKey", "ChangeId").IsUnique();
++
++                    b.ToTable(
++                        "customer_profile_changes",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint(
++                                "feed_change_identity",
++                                "change_id <> '00000000-0000-0000-0000-000000000000'::uuid"
++                            );
++
++                            t.HasCheckConstraint("feed_position", "position > 0");
++
++                            t.HasCheckConstraint("feed_profile_version", "profile_version > 0");
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.StockIssues.StockIssueRequestRow",
++                b =>
++                {
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)");
++
++                    b.Property<Guid>("Id").HasColumnType("uuid");
++
++                    b.Property<decimal?>("AvailableQuantity").HasColumnType("numeric");
++
++                    b.Property<Guid>("CommandMessageId").HasColumnType("uuid");
++
++                    b.Property<long>("ExpectedStockVersion").HasColumnType("bigint");
++
++                    b.Property<decimal>("Quantity").HasColumnType("numeric");
++
++                    b.Property<DateTimeOffset?>("RecordedAt")
++                        .HasColumnType("timestamp with time zone");
++
++                    b.Property<long?>("RecordedStockVersion").HasColumnType("bigint");
++
++                    b.Property<int?>("Refusal").HasColumnType("integer");
++
++                    b.Property<decimal?>("RemainingQuantity").HasColumnType("numeric");
++
++                    b.Property<DateTimeOffset>("ReplyDeadline")
++                        .HasColumnType("timestamp with time zone");
++
++                    b.Property<decimal?>("RequestedQuantity").HasColumnType("numeric");
++
++                    b.Property<int>("Status").HasColumnType("integer");
++
++                    b.Property<Guid>("StockPositionId").HasColumnType("uuid");
++
++                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
++
++                    b.HasKey("OrganizationKey", "Id");
++
++                    b.HasIndex("CommandMessageId").IsUnique();
++
++                    b.HasIndex("OrganizationKey", "Status", "ReplyDeadline");
++
++                    b.ToTable(
++                        "stock_issue_requests",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint(
++                                "valid_request",
++                                "\"Quantity\" > 0 AND \"ExpectedStockVersion\" >= 1 AND \"Version\" >= 1 AND \"Status\" BETWEEN 1 AND 4"
++                            );
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "Rootbolt.Auditing.EntityFrameworkCore.AuditRecord",
++                b =>
++                {
++                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
++
++                    b.Property<string>("Action")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("action");
++
++                    b.Property<string>("ActorKey").HasColumnType("text").HasColumnName("actor_key");
++
++                    b.Property<int>("ActorKind")
++                        .HasColumnType("integer")
++                        .HasColumnName("actor_kind");
++
++                    b.Property<JsonElement>("Details")
++                        .HasColumnType("jsonb")
++                        .HasColumnName("details");
++
++                    b.Property<string>("InitiatorKey")
++                        .HasColumnType("text")
++                        .HasColumnName("initiator_key");
++
++                    b.Property<int?>("InitiatorKind")
++                        .HasColumnType("integer")
++                        .HasColumnName("initiator_kind");
++
++                    b.Property<DateTimeOffset>("OccurredAt")
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("occurred_at");
++
++                    b.Property<string>("Outcome")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("outcome");
++
++                    b.Property<string>("ReasonCode")
++                        .HasColumnType("text")
++                        .HasColumnName("reason_code");
++
++                    b.Property<int>("SchemaVersion")
++                        .HasColumnType("integer")
++                        .HasColumnName("schema_version");
++
++                    b.Property<string>("Source")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("source");
++
++                    b.Property<string>("SubjectKey")
++                        .HasColumnType("text")
++                        .HasColumnName("subject_key");
++
++                    b.Property<string>("SubjectType")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("subject_type");
++
++                    b.Property<string>("TenantKey")
++                        .IsConcurrencyToken()
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("tenant_key");
++
++                    b.HasKey("Id");
++
++                    b.HasIndex("TenantKey", "SubjectType", "SubjectKey", "OccurredAt", "Id")
++                        .HasDatabaseName("ix_audit_subject_timeline");
++
++                    b.ToTable("audit_entries", "sales");
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
++                        .HasAnnotation("Rootbolt:Audit", true);
++                }
++            );
++
++            modelBuilder.Entity(
++                "Rootbolt.Messaging.EntityFrameworkCore.InboxMessageRecord",
++                b =>
++                {
++                    b.Property<string>("SubscriptionKey")
++                        .HasColumnType("text")
++                        .HasColumnName("subscription_key");
++
++                    b.Property<string>("ProducerKey")
++                        .HasColumnType("text")
++                        .HasColumnName("producer_key");
++
++                    b.Property<Guid>("MessageId").HasColumnType("uuid").HasColumnName("message_id");
++
++                    b.Property<DateTimeOffset>("AvailableAt")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("available_at")
++                        .HasDefaultValueSql("clock_timestamp()");
++
++                    b.Property<string>("CausationId")
++                        .HasColumnType("text")
++                        .HasColumnName("causation_id");
++
++                    b.Property<string>("CorrelationId")
++                        .HasColumnType("text")
++                        .HasColumnName("correlation_id");
++
++                    b.Property<string>("MessageName")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("message_name");
++
++                    b.Property<JsonElement>("Payload")
++                        .HasColumnType("jsonb")
++                        .HasColumnName("payload");
++
++                    b.Property<DateTimeOffset?>("ProcessedAt")
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("processed_at");
++
++                    b.Property<DateTimeOffset>("ReceivedAt")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("received_at")
++                        .HasDefaultValueSql("clock_timestamp()");
++
++                    b.Property<int>("SchemaVersion")
++                        .HasColumnType("integer")
++                        .HasColumnName("schema_version");
++
++                    b.Property<string>("TenantKey")
++                        .IsConcurrencyToken()
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("tenant_key");
++
++                    b.Property<string>("TraceParent")
++                        .HasColumnType("text")
++                        .HasColumnName("trace_parent");
++
++                    b.Property<string>("TraceState")
++                        .HasColumnType("text")
++                        .HasColumnName("trace_state");
++
++                    b.HasKey("SubscriptionKey", "ProducerKey", "MessageId");
++
++                    b.HasIndex("SubscriptionKey", "AvailableAt", "ReceivedAt")
++                        .HasFilter("processed_at IS NULL");
++
++                    b.ToTable(
++                        "inbox_messages",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint("ck_inbox_schema", "schema_version > 0");
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
++                        .HasAnnotation("Rootbolt:Inbox", true)
++                        .HasAnnotation("Rootbolt:InboxProvider", "Postgres");
++                }
++            );
++
++            modelBuilder.Entity(
++                "Rootbolt.Messaging.EntityFrameworkCore.OutboxMessageRecord",
++                b =>
++                {
++                    b.Property<Guid>("MessageId").HasColumnType("uuid").HasColumnName("message_id");
++
++                    b.Property<long>("Attempts").HasColumnType("bigint").HasColumnName("attempts");
++
++                    b.Property<DateTimeOffset>("AvailableAt")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("available_at")
++                        .HasDefaultValueSql("clock_timestamp()");
++
++                    b.Property<string>("CausationId")
++                        .HasColumnType("text")
++                        .HasColumnName("causation_id");
++
++                    b.Property<string>("CorrelationId")
++                        .HasColumnType("text")
++                        .HasColumnName("correlation_id");
++
++                    b.Property<DateTimeOffset?>("DispatchedAt")
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("dispatched_at");
++
++                    b.Property<Guid?>("LeaseToken")
++                        .HasColumnType("uuid")
++                        .HasColumnName("lease_token");
++
++                    b.Property<DateTimeOffset?>("LeaseUntil")
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("lease_until");
++
++                    b.Property<string>("MessageName")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("message_name");
++
++                    b.Property<JsonElement>("Payload")
++                        .HasColumnType("jsonb")
++                        .HasColumnName("payload");
++
++                    b.Property<DateTimeOffset>("QueuedAt")
++                        .ValueGeneratedOnAdd()
++                        .HasColumnType("timestamp with time zone")
++                        .HasColumnName("queued_at")
++                        .HasDefaultValueSql("clock_timestamp()");
++
++                    b.Property<string>("RouteKey")
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("destination");
++
++                    b.Property<int>("SchemaVersion")
++                        .HasColumnType("integer")
++                        .HasColumnName("schema_version");
++
++                    b.Property<string>("TenantKey")
++                        .IsConcurrencyToken()
++                        .IsRequired()
++                        .HasColumnType("text")
++                        .HasColumnName("owner_key");
++
++                    b.Property<string>("TraceParent")
++                        .HasColumnType("text")
++                        .HasColumnName("trace_parent");
++
++                    b.Property<string>("TraceState")
++                        .HasColumnType("text")
++                        .HasColumnName("trace_state");
++
++                    b.HasKey("MessageId");
++
++                    b.HasIndex("AvailableAt", "LeaseUntil", "MessageId")
++                        .HasFilter("dispatched_at IS NULL");
++
++                    b.ToTable(
++                        "outbox_messages",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint("ck_outbox_attempts", "attempts >= 0");
++
++                            t.HasCheckConstraint(
++                                "ck_outbox_lease",
++                                "(lease_token IS NULL) = (lease_until IS NULL)"
++                            );
++
++                            t.HasCheckConstraint("ck_outbox_schema", "schema_version > 0");
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
++                        .HasAnnotation("Rootbolt:Outbox", true)
++                        .HasAnnotation("Rootbolt:OutboxProvider", "Postgres");
++                }
++            );
++
++            modelBuilder.Entity(
++                "Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowInstanceRecord",
++                b =>
++                {
++                    b.Property<string>("WorkflowType")
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)");
++
++                    b.Property<Guid>("Id").HasColumnType("uuid");
++
++                    b.Property<string>("ContinuationName")
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)");
++
++                    b.Property<int>("DefinitionVersion").HasColumnType("integer");
++
++                    b.Property<JsonElement>("InitialInput").HasColumnType("jsonb");
++
++                    b.Property<JsonElement>("Operations").HasColumnType("jsonb");
++
++                    b.Property<Guid?>("PendingCommandId").HasColumnType("uuid");
++
++                    b.Property<JsonElement>("State").HasColumnType("jsonb");
++
++                    b.Property<int>("Status").HasColumnType("integer");
++
++                    b.Property<string>("TenantKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)");
++
++                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
++
++                    b.HasKey("WorkflowType", "Id");
++
++                    b.ToTable("workflow_instances", "sales");
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
++                b =>
++                {
++                    b.HasOne("ModulithFoundry.Samples.Wholesale.Sales.CustomerRow", null)
++                        .WithMany()
++                        .HasForeignKey("OrganizationKey", "CustomerId")
++                        .HasPrincipalKey("OrganizationKey", "Id")
++                        .OnDelete(DeleteBehavior.Restrict)
++                        .IsRequired();
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.ProfileChangeRow",
++                b =>
++                {
++                    b.HasOne(
++                            "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.FeedStateRow",
++                            null
++                        )
++                        .WithMany()
++                        .HasForeignKey("OrganizationKey")
++                        .OnDelete(DeleteBehavior.Restrict)
++                        .IsRequired();
++                }
++            );
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.cs b/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.cs
+new file mode 100644
+index 0000000..707ac01
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/Migrations/20261013150330_AddCustomerProfileFeed.cs
+@@ -0,0 +1,108 @@
++using System;
++using System.Text.Json;
++using Microsoft.EntityFrameworkCore.Migrations;
++
++#nullable disable
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations;
++
++/// <inheritdoc />
++public partial class AddCustomerProfileFeed : Migration
++{
++    private static readonly string[] ChangeIdentityColumns = ["organization_key", "change_id"];
++
++    /// <inheritdoc />
++    protected override void Up(MigrationBuilder migrationBuilder)
++    {
++        migrationBuilder.CreateSequence(name: "customer_profile_feed_positions", schema: "sales");
++
++        migrationBuilder.CreateTable(
++            name: "customer_profile_feed_state",
++            schema: "sales",
++            columns: table => new
++            {
++                organization_key = table.Column<string>(
++                    type: "character varying(256)",
++                    maxLength: 256,
++                    nullable: false
++                ),
++                generation = table.Column<Guid>(type: "uuid", nullable: false),
++                head = table.Column<long>(type: "bigint", nullable: false),
++                floor = table.Column<long>(type: "bigint", nullable: false),
++            },
++            constraints: table =>
++            {
++                table.PrimaryKey("PK_customer_profile_feed_state", x => x.organization_key);
++                table.CheckConstraint("feed_bounds", "floor >= 0 AND head >= floor");
++                table.CheckConstraint(
++                    "feed_generation",
++                    "generation <> '00000000-0000-0000-0000-000000000000'::uuid"
++                );
++            }
++        );
++
++        migrationBuilder.CreateTable(
++            name: "customer_profile_changes",
++            schema: "sales",
++            columns: table => new
++            {
++                organization_key = table.Column<string>(
++                    type: "character varying(256)",
++                    maxLength: 256,
++                    nullable: false
++                ),
++                position = table.Column<long>(type: "bigint", nullable: false),
++                change_id = table.Column<Guid>(type: "uuid", nullable: false),
++                profile_version = table.Column<long>(type: "bigint", nullable: false),
++                payload_v1 = table.Column<JsonElement>(type: "jsonb", nullable: false),
++            },
++            constraints: table =>
++            {
++                table.PrimaryKey(
++                    "PK_customer_profile_changes",
++                    x => new { x.organization_key, x.position }
++                );
++                table.CheckConstraint(
++                    "feed_change_identity",
++                    "change_id <> '00000000-0000-0000-0000-000000000000'::uuid"
++                );
++                table.CheckConstraint("feed_position", "position > 0");
++                table.CheckConstraint("feed_profile_version", "profile_version > 0");
++                table.ForeignKey(
++                    name: "FK_customer_profile_changes_customer_profile_feed_state_organi~",
++                    column: x => x.organization_key,
++                    principalSchema: "sales",
++                    principalTable: "customer_profile_feed_state",
++                    principalColumn: "organization_key",
++                    onDelete: ReferentialAction.Restrict
++                );
++            }
++        );
++
++        migrationBuilder.CreateIndex(
++            name: "IX_customer_profile_changes_organization_key_change_id",
++            schema: "sales",
++            table: "customer_profile_changes",
++            columns: ChangeIdentityColumns,
++            unique: true
++        );
++
++        migrationBuilder.CreateIndex(
++            name: "IX_customer_profile_feed_state_generation",
++            schema: "sales",
++            table: "customer_profile_feed_state",
++            column: "generation",
++            unique: true
++        );
++    }
++
++    /// <inheritdoc />
++    protected override void Down(MigrationBuilder migrationBuilder)
++    {
++        migrationBuilder.DropTable(name: "customer_profile_changes", schema: "sales");
++
++        migrationBuilder.DropTable(name: "customer_profile_feed_state", schema: "sales");
++
++        migrationBuilder.DropSequence(name: "customer_profile_feed_positions", schema: "sales");
++    }
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/Migrations/SalesDbContextModelSnapshot.cs b/samples/Wholesale/modules/Sales/Sales/Migrations/SalesDbContextModelSnapshot.cs
+index 4f0d0ab..676602a 100644
+--- a/samples/Wholesale/modules/Sales/Sales/Migrations/SalesDbContextModelSnapshot.cs
++++ b/samples/Wholesale/modules/Sales/Sales/Migrations/SalesDbContextModelSnapshot.cs
+@@ -24,6 +24,8 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
+ 
+             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+ 
++            modelBuilder.HasSequence("customer_profile_feed_positions", "sales");
++
+             modelBuilder.Entity(
+                 "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
+                 b =>
+@@ -120,6 +122,108 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
+                 }
+             );
+ 
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.FeedStateRow",
++                b =>
++                {
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.Property<long>("Floor").HasColumnType("bigint").HasColumnName("floor");
++
++                    b.Property<Guid>("Generation")
++                        .HasColumnType("uuid")
++                        .HasColumnName("generation");
++
++                    b.Property<long>("Head").HasColumnType("bigint").HasColumnName("head");
++
++                    b.HasKey("OrganizationKey");
++
++                    b.HasIndex("Generation").IsUnique();
++
++                    b.ToTable(
++                        "customer_profile_feed_state",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint("feed_bounds", "floor >= 0 AND head >= floor");
++
++                            t.HasCheckConstraint(
++                                "feed_generation",
++                                "generation <> '00000000-0000-0000-0000-000000000000'::uuid"
++                            );
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.ProfileChangeRow",
++                b =>
++                {
++                    b.Property<string>("OrganizationKey")
++                        .IsConcurrencyToken()
++                        .HasMaxLength(256)
++                        .HasColumnType("character varying(256)")
++                        .HasColumnName("organization_key");
++
++                    b.Property<long>("Position").HasColumnType("bigint").HasColumnName("position");
++
++                    b.Property<Guid>("ChangeId").HasColumnType("uuid").HasColumnName("change_id");
++
++                    b.Property<JsonElement>("Payload")
++                        .HasColumnType("jsonb")
++                        .HasColumnName("payload_v1");
++
++                    b.Property<long>("ProfileVersion")
++                        .HasColumnType("bigint")
++                        .HasColumnName("profile_version");
++
++                    b.HasKey("OrganizationKey", "Position");
++
++                    b.HasIndex("OrganizationKey", "ChangeId").IsUnique();
++
++                    b.ToTable(
++                        "customer_profile_changes",
++                        "sales",
++                        t =>
++                        {
++                            t.HasCheckConstraint(
++                                "feed_change_identity",
++                                "change_id <> '00000000-0000-0000-0000-000000000000'::uuid"
++                            );
++
++                            t.HasCheckConstraint("feed_position", "position > 0");
++
++                            t.HasCheckConstraint("feed_profile_version", "profile_version > 0");
++                        }
++                    );
++
++                    b.HasAnnotation(
++                            "ModulithFoundry:TenantContextMember",
++                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
++                        )
++                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
++                        .HasAnnotation(
++                            "ModulithFoundry:TenantOwnershipProperty",
++                            "OrganizationKey"
++                        );
++                }
++            );
++
+             modelBuilder.Entity(
+                 "ModulithFoundry.Samples.Wholesale.Sales.StockIssues.StockIssueRequestRow",
+                 b =>
+@@ -517,6 +621,21 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
+                         .IsRequired();
+                 }
+             );
++
++            modelBuilder.Entity(
++                "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.ProfileChangeRow",
++                b =>
++                {
++                    b.HasOne(
++                            "ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed.FeedStateRow",
++                            null
++                        )
++                        .WithMany()
++                        .HasForeignKey("OrganizationKey")
++                        .OnDelete(DeleteBehavior.Restrict)
++                        .IsRequired();
++                }
++            );
+ #pragma warning restore 612, 618
+         }
+     }
+diff --git a/samples/Wholesale/modules/Sales/Sales/ProfileFeed/CustomerProfileFeed.cs b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/CustomerProfileFeed.cs
+new file mode 100644
+index 0000000..5702eae
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/CustomerProfileFeed.cs
+@@ -0,0 +1,76 @@
++using System.Data;
++using System.Text.Json;
++using Microsoft.EntityFrameworkCore;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed;
++
++internal sealed class CustomerProfileFeed(SalesDbContext database) : ICustomerProfileFeed
++{
++    public async Task<CustomerProfileFeedBounds> DescribeAsync(CancellationToken cancellationToken)
++    {
++        FeedStorage.RequireIndependent(database);
++        return FeedStorage.Bounds(await ReadStateAsync(cancellationToken));
++    }
++
++    public async Task<CustomerProfileFeedRead> ReadAsync(
++        CustomerProfileFeedCursor after,
++        int pageSize,
++        CancellationToken cancellationToken
++    )
++    {
++        FeedStorage.ValidateCursor(after);
++        ArgumentOutOfRangeException.ThrowIfLessThan(pageSize, 1);
++        ArgumentOutOfRangeException.ThrowIfGreaterThan(pageSize, 100);
++
++        FeedStorage.RequireIndependent(database);
++        await using var transaction = await database.Database.BeginTransactionAsync(
++            IsolationLevel.RepeatableRead,
++            cancellationToken
++        );
++        await database.Database.ExecuteSqlRawAsync("SET TRANSACTION READ ONLY", cancellationToken);
++        var state = await ReadStateAsync(cancellationToken);
++        var bounds = FeedStorage.Bounds(state);
++        if (after.Generation != state.Generation || after.AfterPosition > state.Head)
++            return new CustomerProfileFeedRead.InvalidCursor();
++
++        if (after.AfterPosition < state.Floor)
++            return new CustomerProfileFeedRead.CursorExpired(bounds);
++
++        var rows = await database
++            .Set<ProfileChangeRow>()
++            .AsNoTracking()
++            .Where(row => row.Position > after.AfterPosition && row.Position <= state.Head)
++            .OrderBy(row => row.Position)
++            .Take(pageSize + 1)
++            .ToArrayAsync(cancellationToken);
++        bool more = rows.Length > pageSize;
++        var changes = rows.Take(pageSize)
++            .Select(row =>
++            {
++                var profile =
++                    row.Payload.Deserialize<CustomerProfileChangedV1>()
++                    ?? throw new InvalidDataException("Missing Sales feed V1 payload.");
++                FeedStorage.ValidateProfile(profile);
++                if (row.ProfileVersion != profile.Version || row.ChangeId == Guid.Empty)
++                    throw new InvalidDataException(
++                        "Sales feed envelope disagrees with its payload."
++                    );
++
++                return new CustomerProfileFeedChange(row.Position, row.ChangeId, profile);
++            })
++            .ToArray();
++        long next = more ? changes[^1].Position : state.Head;
++        await transaction.CommitAsync(cancellationToken);
++        return new CustomerProfileFeedRead.Page(
++            bounds,
++            Array.AsReadOnly(changes),
++            new(state.Generation, next),
++            more
++        );
++    }
++
++    private async Task<FeedStateRow> ReadStateAsync(CancellationToken token) =>
++        await database.Set<FeedStateRow>().AsNoTracking().SingleOrDefaultAsync(token)
++        ?? throw new InvalidOperationException("The Sales profile feed has not been activated.");
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedRows.cs b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedRows.cs
+new file mode 100644
+index 0000000..c84d946
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedRows.cs
+@@ -0,0 +1,20 @@
++using System.Text.Json;
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed;
++
++internal sealed class FeedStateRow
++{
++    public required string OrganizationKey { get; set; }
++    public Guid Generation { get; set; }
++    public long Head { get; set; }
++    public long Floor { get; set; }
++}
++
++internal sealed class ProfileChangeRow
++{
++    public required string OrganizationKey { get; set; }
++    public long Position { get; set; }
++    public Guid ChangeId { get; set; }
++    public long ProfileVersion { get; set; }
++    public JsonElement Payload { get; set; }
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedStorage.cs b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedStorage.cs
+new file mode 100644
+index 0000000..75eefb6
+--- /dev/null
++++ b/samples/Wholesale/modules/Sales/Sales/ProfileFeed/FeedStorage.cs
+@@ -0,0 +1,189 @@
++using System.Data;
++using System.Linq.Expressions;
++using System.Text.Json;
++using System.Transactions;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Storage;
++using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
++using Rootbolt.Persistence.EntityFrameworkCore;
++using IsolationLevel = System.Data.IsolationLevel;
++
++namespace ModulithFoundry.Samples.Wholesale.Sales.ProfileFeed;
++
++// Every write is explicit module SQL in the owning transaction. Tracked writes are rejected.
++internal static class FeedStorage
++{
++    internal static void Configure(ModelBuilder model, Expression<Func<string>> organization)
++    {
++        model.HasSequence<long>("customer_profile_feed_positions", "sales");
++        var state = model.Entity<FeedStateRow>();
++        state.ToTable(
++            "customer_profile_feed_state",
++            table =>
++            {
++                table.HasCheckConstraint("feed_bounds", "floor >= 0 AND head >= floor");
++                table.HasCheckConstraint(
++                    "feed_generation",
++                    "generation <> '00000000-0000-0000-0000-000000000000'::uuid"
++                );
++            }
++        );
++        state.HasKey(row => row.OrganizationKey);
++        state.HasIndex(row => row.Generation).IsUnique();
++        state
++            .Property(row => row.OrganizationKey)
++            .HasColumnName("organization_key")
++            .HasMaxLength(256);
++        state.Property(row => row.Generation).HasColumnName("generation").ValueGeneratedNever();
++        state.Property(row => row.Head).HasColumnName("head");
++        state.Property(row => row.Floor).HasColumnName("floor");
++        state.HasTenantOwnership(row => row.OrganizationKey, organization, "OrganizationScope");
++
++        var entry = model.Entity<ProfileChangeRow>();
++        entry.ToTable(
++            "customer_profile_changes",
++            table =>
++            {
++                table.HasCheckConstraint("feed_position", "position > 0");
++                table.HasCheckConstraint("feed_profile_version", "profile_version > 0");
++                table.HasCheckConstraint(
++                    "feed_change_identity",
++                    "change_id <> '00000000-0000-0000-0000-000000000000'::uuid"
++                );
++            }
++        );
++        entry.HasKey(row => new { row.OrganizationKey, row.Position });
++        entry.HasIndex(row => new { row.OrganizationKey, row.ChangeId }).IsUnique();
++        entry
++            .Property(row => row.OrganizationKey)
++            .HasColumnName("organization_key")
++            .HasMaxLength(256);
++        entry.Property(row => row.Position).HasColumnName("position").ValueGeneratedNever();
++        entry.Property(row => row.ChangeId).HasColumnName("change_id").ValueGeneratedNever();
++        entry.Property(row => row.ProfileVersion).HasColumnName("profile_version");
++        entry.Property(row => row.Payload).HasColumnName("payload_v1").HasColumnType("jsonb");
++        entry
++            .HasOne<FeedStateRow>()
++            .WithMany()
++            .HasForeignKey(row => row.OrganizationKey)
++            .OnDelete(DeleteBehavior.Restrict);
++        entry.HasTenantOwnership(row => row.OrganizationKey, organization, "OrganizationScope");
++    }
++
++    internal static void ValidateTrackedChanges(SalesDbContext database)
++    {
++        foreach (var entry in database.ChangeTracker.Entries())
++        {
++            if (
++                entry.Entity is FeedStateRow or ProfileChangeRow
++                && entry.State is not (EntityState.Unchanged or EntityState.Detached)
++            )
++                throw new InvalidOperationException(
++                    "Sales feed writes require the explicit locked SQL protocol."
++                );
++        }
++    }
++
++    internal static void RequireIndependent(SalesDbContext database)
++    {
++        if (
++            database.Database.CurrentTransaction is not null
++            || System.Transactions.Transaction.Current is not null
++            || database.Database.GetEnlistedTransaction() is not null
++            || database.ChangeTracker.HasChanges()
++        )
++            throw new InvalidOperationException(
++                "Feed reads/maintenance require a fresh context without a transaction or pending changes."
++            );
++
++        _ = database.RequiredOrganizationKey;
++    }
++
++    internal static void RequireWriterTransaction(SalesDbContext database)
++    {
++        if (
++            database.Database.CurrentTransaction?.GetDbTransaction().IsolationLevel
++                != IsolationLevel.ReadCommitted
++            || System.Transactions.Transaction.Current is not null
++            || database.Database.GetEnlistedTransaction() is not null
++        )
++            throw new InvalidOperationException(
++                "Profile feed writes require the owning native ReadCommitted transaction."
++            );
++    }
++
++    internal static void ValidateCursor(CustomerProfileFeedCursor cursor)
++    {
++        ArgumentNullException.ThrowIfNull(cursor);
++        ArgumentOutOfRangeException.ThrowIfEqual(cursor.Generation, Guid.Empty);
++        ArgumentOutOfRangeException.ThrowIfNegative(cursor.AfterPosition);
++    }
++
++    internal static async Task LockAsync(SalesDbContext database, CancellationToken token)
++    {
++        RequireWriterTransaction(database);
++        await using var command = database.Database.GetDbConnection().CreateCommand();
++        command.Transaction = database.Database.CurrentTransaction!.GetDbTransaction();
++        command.CommandTimeout = database.Database.GetCommandTimeout() ?? 30;
++        command.CommandText =
++            "SELECT organization_key FROM sales.customer_profile_feed_state WHERE organization_key = @organization FOR UPDATE";
++        var parameter = command.CreateParameter();
++        parameter.ParameterName = "organization";
++        parameter.Value = database.RequiredOrganizationKey;
++        command.Parameters.Add(parameter);
++        if (await command.ExecuteScalarAsync(token) is null)
++            throw new InvalidOperationException(
++                "Activate the Sales profile feed explicitly before editing profiles."
++            );
++    }
++
++    // Called only after LockAsync; the native row lock remains held through final commit.
++    internal static async Task AppendAsync(
++        SalesDbContext database,
++        CustomerProfileChangedV1 profile,
++        CancellationToken token
++    )
++    {
++        ValidateProfile(profile);
++        string json = JsonSerializer.Serialize(profile);
++        long position = await database
++            .Database.SqlQueryRaw<long>(
++                "SELECT nextval('sales.customer_profile_feed_positions') AS \"Value\""
++            )
++            .SingleAsync(token);
++        string organization = database.RequiredOrganizationKey;
++        Guid identity = Guid.NewGuid();
++        await database.Database.ExecuteSqlInterpolatedAsync(
++            $"""
++            INSERT INTO sales.customer_profile_changes (organization_key, position, change_id, profile_version, payload_v1)
++            VALUES ({organization}, {position}, {identity}, {profile.Version}, CAST({json} AS jsonb))
++            """,
++            token
++        );
++        await database.Database.ExecuteSqlInterpolatedAsync(
++            $"""
++            UPDATE sales.customer_profile_feed_state SET head = {position} WHERE organization_key = {organization}
++            """,
++            token
++        );
++    }
++
++    internal static void ValidateProfile(CustomerProfileChangedV1 profile)
++    {
++        if (
++            profile.CustomerId == Guid.Empty
++            || profile.AddressId == Guid.Empty
++            || profile.Version < 1
++            || string.IsNullOrWhiteSpace(profile.Code)
++            || profile.Code.Length > 128
++            || string.IsNullOrWhiteSpace(profile.DisplayName)
++            || profile.DisplayName.Length > 256
++            || string.IsNullOrWhiteSpace(profile.AddressLine)
++            || profile.AddressLine.Length > 512
++        )
++            throw new InvalidDataException("Invalid Sales profile feed V1 payload.");
++    }
++
++    internal static CustomerProfileFeedBounds Bounds(FeedStateRow state) =>
++        new(new(state.Generation, state.Floor), new(state.Generation, state.Head));
++}
+diff --git a/samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs b/samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs
+index 49df583..567a066 100644
+--- a/samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs
++++ b/samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs
+@@ -21,6 +21,7 @@ public sealed class SalesDbContext(
+     protected override void OnModelCreating(ModelBuilder modelBuilder)
+     {
+         modelBuilder.HasDefaultSchema("sales");
++        ProfileFeed.FeedStorage.Configure(modelBuilder, () => RequiredOrganizationKey);
+         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
+         StockIssues.StockIssueRequestMapping.Configure(
+             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),
+@@ -104,6 +105,7 @@ public sealed class SalesDbContext(
+         this.ValidateInboxChanges();
+         this.ValidateOutboxChanges();
+         this.ValidateWorkflowChanges();
++        ProfileFeed.FeedStorage.ValidateTrackedChanges(this);
+         return base.SaveChanges(acceptAllChangesOnSuccess);
+     }
+ 
+@@ -117,6 +119,7 @@ public sealed class SalesDbContext(
+         this.ValidateInboxChanges();
+         this.ValidateOutboxChanges();
+         this.ValidateWorkflowChanges();
++        ProfileFeed.FeedStorage.ValidateTrackedChanges(this);
+         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+     }
+ }
+diff --git a/samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs b/samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs
+index 134a540..d6c08e5 100644
+--- a/samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs
++++ b/samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs
+@@ -11,6 +11,9 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
+ 
+ public static class SalesRegistration
+ {
++    public static IServiceCollection AddCustomerProfileFeed(this IServiceCollection services) =>
++        services.AddScoped<ICustomerProfileFeed, ProfileFeed.CustomerProfileFeed>();
++
+     /// <summary>Registers the compensating two-line process, leaving transport and worker hosting explicit.</summary>
+     public static IServiceCollection AddStockReservationOrders(this IServiceCollection services)
+     {
+diff --git a/tests/ArchitectureTests/ArchitectureTests.csproj b/tests/ArchitectureTests/ArchitectureTests.csproj
+index 2d8d996..b20f33a 100644
+--- a/tests/ArchitectureTests/ArchitectureTests.csproj
++++ b/tests/ArchitectureTests/ArchitectureTests.csproj
+@@ -5,6 +5,7 @@
+     <IsPackable>false</IsPackable>
+   </PropertyGroup>
+   <ItemGroup>
++    <ProjectReference Include="../../samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj" />
+     <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
+     <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj" />
+     <ProjectReference Include="../../samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
+diff --git a/tests/ArchitectureTests/SampleModuleBoundaryTests.cs b/tests/ArchitectureTests/SampleModuleBoundaryTests.cs
+index 723e4f9..0eb94ba 100644
+--- a/tests/ArchitectureTests/SampleModuleBoundaryTests.cs
++++ b/tests/ArchitectureTests/SampleModuleBoundaryTests.cs
+@@ -65,6 +65,7 @@ public sealed class SampleModuleBoundaryTests
+             .. Contracts,
+             .. Libraries,
+             typeof(Samples.Wholesale.WorkflowDemo.WorkflowComposition).Assembly,
++            typeof(Samples.Wholesale.IntegrationFeedDemo.FeedComposition).Assembly,
+             typeof(DemoComposition).Assembly,
+             typeof(DbContext).Assembly,
+             typeof(HttpContext).Assembly,
+@@ -110,6 +111,14 @@ public sealed class SampleModuleBoundaryTests
+             NoDependency(ReflectionAssembly.Load(contract), forbidden);
+     }
+ 
++    [Fact]
++    public void FeedCompositionIsNotADependencyOfModulesContractsOrLibraries()
++    {
++        var host = typeof(Samples.Wholesale.IntegrationFeedDemo.FeedComposition).Assembly;
++        foreach (var source in Modules.Concat(Contracts).Concat(Libraries))
++            NoDependency(source, host);
++    }
++
+     [Fact]
+     public void TechnicalLibrariesDoNotDependOnSampleModuleTypes()
+     {

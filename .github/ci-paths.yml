@@ -11,6 +11,7 @@ shared:
   - 'NuGet.Config'
   - '!**/*.md'
   - '!archive/**'
+  - '!experiments/b1-retained-profile-feed/**'
   - '!templates/**'
 
 # New inputs outside the mapped roots conservatively request full coverage.
@@ -18,6 +19,7 @@ unmapped:
   - '**'
   - '!**/*.md'
   - '!archive/**'
+  - '!experiments/b1-retained-profile-feed/**'
   - '!src/Rootbolt.{Auditing,ActorIdentity,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/{EventStorageDemo,EventStorageDemo.Tests,OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - '!samples/Wholesale/**'

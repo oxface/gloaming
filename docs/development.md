@@ -375,6 +375,15 @@ segment alone with custom table names and mixed stream types; its tests use actu
 
 ## Wholesale runtime verification
 
+### Closed integration-feed experiment
+
+The [B1 experiment](../experiments/b1-retained-profile-feed/README.md) preserves source and
+dated PostgreSQL/process evidence outside the active sample. It is absent from the current
+solution and CI test lanes. Investigate it only in a separate baseline checkout using the
+preserved patch; common Wholesale setup and profile writes have no feed dependency.
+
+### Existing host topology
+
 The [runtime guide](../samples/Wholesale/AppHost/README.md) documents required parameters,
 native start/wait/setup/stop commands, dynamic endpoints and retained local data. The graph
 starts PostgreSQL and the API; migrations/seeding happen only when you explicitly start

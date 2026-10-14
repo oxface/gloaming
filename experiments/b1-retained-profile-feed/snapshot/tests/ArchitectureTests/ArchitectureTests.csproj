@@ -1,0 +1,156 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../samples/Wholesale/IntegrationFeedDemo/IntegrationFeedDemo.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/Rootbolt.Auditing.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging/Rootbolt.Messaging.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/Rootbolt.Messaging.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../samples/OutboxDemo/OutboxDemo.csproj" />
+    <ProjectReference Include="../../samples/InboxDemo/InboxDemo.csproj" />
+    <ProjectReference Include="../../samples/MessagingDemo/MessagingDemo.csproj" />
+    <ProjectReference Include="../../samples/MessagingProducerDemo/MessagingProducerDemo.csproj" />
+    <ProjectReference Include="../../samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/Rootbolt.EventSourcing.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Events/Rootbolt.Events.History/Rootbolt.Events.History.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />
+    <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <ProjectReference Include="../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/Rootbolt.ActorIdentity.AspNetCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/Rootbolt.Tenancy.AspNetCore.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/ContextDemo/ContextDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj" />
+    <ProjectReference Include="../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/Rootbolt.EventSourcing.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../samples/EventStorageDemo/EventStorageDemo.csproj" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows/Rootbolt.Messaging.Workflows.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.Workflows.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/Rootbolt.Messaging.OpenTelemetry.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.OpenTelemetry.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/Rootbolt.Auditing.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Auditing.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj"
+      Link="ProjectDeclarations/AuditPostgresTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../samples/InboxDemo/InboxDemo.csproj"
+      Link="ProjectDeclarations/InboxDemo.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging/Rootbolt.Messaging.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/Rootbolt.Messaging.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../samples/OutboxDemo/OutboxDemo.csproj"
+      Link="ProjectDeclarations/OutboxDemo.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj"
+      Link="ProjectDeclarations/EventSourcingPostgresTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <None
+      Include="../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing/Rootbolt.EventSourcing.csproj"
+      Link="ProjectDeclarations/Rootbolt.EventSourcing.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/Rootbolt.EventSourcing.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.EventSourcing.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../samples/EventStorageDemo/EventStorageDemo.csproj"
+      Link="ProjectDeclarations/EventStorageDemo.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Events/Rootbolt.Events.History/Rootbolt.Events.History.csproj"
+      Link="ProjectDeclarations/Rootbolt.Events.History.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj"
+      Link="ProjectDeclarations/Rootbolt.Events.Serialization.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Tenancy/Rootbolt.Tenancy.AspNetCore/Rootbolt.Tenancy.AspNetCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Tenancy.AspNetCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.AspNetCore/Rootbolt.ActorIdentity.AspNetCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.ActorIdentity.AspNetCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj"
+      Link="ProjectDeclarations/Rootbolt.ActorIdentity.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj"
+      Link="ProjectDeclarations/Rootbolt.Tenancy.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Rootbolt.Persistence.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+</Project>

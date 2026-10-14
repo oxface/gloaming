@@ -1,0 +1,2 @@
+# Preserve required unified-diff context markers in the historical reconstruction patch.
+experiments/b1-retained-profile-feed/implementation.patch -whitespace
