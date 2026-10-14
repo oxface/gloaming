@@ -12,7 +12,7 @@ their existing inbox/outbox; implementations still communicate only through Cont
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |
-| Sales | Versioned customer profile edits, one demonstration address per customer and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
+| Sales | Versioned customer profile edits, one demonstration address per customer, relational draft orders/lines and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
 | Inventory | Availability reads, stock-position history and inline state, opening and receipt commands within the selected Organization. | Schema `inventory`, native InventoryDbContext, separate history; ordinary queries use the registered E2 ownership filter. |
 | Purchasing | Purchase-order history, inline aggregate state and query-derived summary, drafting and line replacement. | Schema `purchasing`, native PurchasingDbContext, separate history; explicit tenant ownership. |
 
@@ -71,6 +71,26 @@ its existing optional event library; the caller still saves/commits. These are d
 consumer recipes, not a shared aggregate hierarchy. Business Contracts and migrations are
 unchanged. The [D1 report](../../../docs/reports/d1-ddd-sample-patterns.md) records fresh proofs
 and the decision that no new reusable mechanism or template preset was established.
+
+## Rich state-stored Sales draft
+
+[RichAggregateDemo](../RichAggregateDemo/README.md) adds a Sales-owned draft order with relational
+line children and an immutable total limit supplied by a trusted caller. The root controls child
+add/change/remove and validates the complete candidate. A customer identity references the separate
+Sales profile; a catalog SKU references Inventory through its Contracts, with no private peer query
+or cross-module FK. The summary joins current customer information without copying it into the root.
+
+Draft commands stage in the caller's already active native Sales transaction. Every accepted batch,
+including a child-only change, advances the root version once. Explicit single-query graph loading,
+root-version UPDATE predicates and an owning-context tracked-save guard preserve complete-graph
+decisions; explicit deletion staging owns child removal. Bulk/native SQL bypasses that protocol.
+The forward migration adds only `draft_orders` and `draft_order_lines`, with same-tenant root/child
+and customer FKs. Prior migrations and customer/profile/workflow behavior remain intact.
+
+This is a state-stored domain example, not an event stream, projection engine, reservation workflow
+or domain-event dispatcher. The existing two-line reservation workflow is a separate business
+process and is not automatically started by draft creation. [The D1.1 report](../../../docs/reports/d1-1-rich-state-stored-aggregate.md)
+records fresh proofs, scoped guarantees and the decision that no new reusable mechanism was proven.
 
 ## Closed integration-feed assessment
 

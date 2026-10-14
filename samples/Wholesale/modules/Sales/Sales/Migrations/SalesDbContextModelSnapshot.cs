@@ -25,171 +25,6 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity(
-                "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
-                b =>
-                {
-                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
-
-                    b.Property<string>("AddressLine")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
-                        .HasColumnName("address_line");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("customer_id");
-
-                    b.Property<string>("OrganizationKey")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("organization_key");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationKey", "CustomerId").IsUnique();
-
-                    b.ToTable("customer_addresses", "sales");
-
-                    b.HasAnnotation(
-                            "ModulithFoundry:TenantContextMember",
-                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
-                        )
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation(
-                            "ModulithFoundry:TenantOwnershipProperty",
-                            "OrganizationKey"
-                        );
-                }
-            );
-
-            modelBuilder.Entity(
-                "ModulithFoundry.Samples.Wholesale.Sales.CustomerRow",
-                b =>
-                {
-                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
-                        .HasColumnName("code");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("display_name");
-
-                    b.Property<string>("OrganizationKey")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)")
-                        .HasColumnName("organization_key");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint")
-                        .HasColumnName("version");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrganizationKey", "Code").IsUnique();
-
-                    b.ToTable(
-                        "customer_profiles",
-                        "sales",
-                        t =>
-                        {
-                            t.HasCheckConstraint("positive_version", "version >= 1");
-                        }
-                    );
-
-                    b.HasAnnotation(
-                            "ModulithFoundry:TenantContextMember",
-                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
-                        )
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation(
-                            "ModulithFoundry:TenantOwnershipProperty",
-                            "OrganizationKey"
-                        );
-                }
-            );
-
-            modelBuilder.Entity(
-                "ModulithFoundry.Samples.Wholesale.Sales.StockIssues.StockIssueRequestRow",
-                b =>
-                {
-                    b.Property<string>("OrganizationKey")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<Guid>("Id").HasColumnType("uuid");
-
-                    b.Property<decimal?>("AvailableQuantity").HasColumnType("numeric");
-
-                    b.Property<Guid>("CommandMessageId").HasColumnType("uuid");
-
-                    b.Property<long>("ExpectedStockVersion").HasColumnType("bigint");
-
-                    b.Property<decimal>("Quantity").HasColumnType("numeric");
-
-                    b.Property<DateTimeOffset?>("RecordedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("RecordedStockVersion").HasColumnType("bigint");
-
-                    b.Property<int?>("Refusal").HasColumnType("integer");
-
-                    b.Property<decimal?>("RemainingQuantity").HasColumnType("numeric");
-
-                    b.Property<DateTimeOffset>("ReplyDeadline")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal?>("RequestedQuantity").HasColumnType("numeric");
-
-                    b.Property<int>("Status").HasColumnType("integer");
-
-                    b.Property<Guid>("StockPositionId").HasColumnType("uuid");
-
-                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
-
-                    b.HasKey("OrganizationKey", "Id");
-
-                    b.HasIndex("CommandMessageId").IsUnique();
-
-                    b.HasIndex("OrganizationKey", "Status", "ReplyDeadline");
-
-                    b.ToTable(
-                        "stock_issue_requests",
-                        "sales",
-                        t =>
-                        {
-                            t.HasCheckConstraint(
-                                "valid_request",
-                                "\"Quantity\" > 0 AND \"ExpectedStockVersion\" >= 1 AND \"Version\" >= 1 AND \"Status\" BETWEEN 1 AND 4"
-                            );
-                        }
-                    );
-
-                    b.HasAnnotation(
-                            "ModulithFoundry:TenantContextMember",
-                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
-                        )
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation(
-                            "ModulithFoundry:TenantOwnershipProperty",
-                            "OrganizationKey"
-                        );
-                }
-            );
-
-            modelBuilder.Entity(
                 "Gloaming.Auditing.EntityFrameworkCore.AuditRecord",
                 b =>
                 {
@@ -262,13 +97,13 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
 
                     b.ToTable("audit_entries", "sales");
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Audit", true)
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Audit", true);
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 
@@ -351,14 +186,14 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         }
                     );
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Inbox", true)
+                        .HasAnnotation("Gloaming:InboxProvider", "Postgres")
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Inbox", true)
-                        .HasAnnotation("Gloaming:InboxProvider", "Postgres");
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 
@@ -455,14 +290,14 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         }
                     );
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Outbox", true)
+                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres")
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Outbox", true)
-                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres");
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 
@@ -509,12 +344,336 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                 "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
                 b =>
                 {
+                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+
+                    b.Property<string>("AddressLine")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("address_line");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationKey", "CustomerId").IsUnique();
+
+                    b.ToTable("customer_addresses", "sales");
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.CustomerRow",
+                b =>
+                {
+                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("display_name");
+
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationKey", "Code").IsUnique();
+
+                    b.ToTable(
+                        "customer_profiles",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint("positive_version", "version >= 1");
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderLineRow",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.Property<Guid>("OrderId").HasColumnType("uuid").HasColumnName("order_id");
+
+                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("sku");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("OrganizationKey", "OrderId", "Id").HasName("pk_draft_order_lines");
+
+                    b.ToTable(
+                        "draft_order_lines",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint("ck_draft_line_price", "unit_price >= 0");
+
+                            t.HasCheckConstraint("ck_draft_line_quantity", "quantity > 0");
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderRow",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.Property<Guid>("Id").HasColumnType("uuid").HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<decimal>("TotalLimit")
+                        .HasColumnType("numeric")
+                        .HasColumnName("total_limit");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("version");
+
+                    b.HasKey("OrganizationKey", "Id").HasName("pk_draft_orders");
+
+                    b.HasIndex("OrganizationKey", "Code")
+                        .IsUnique()
+                        .HasDatabaseName("ux_draft_orders_code");
+
+                    b.HasIndex("OrganizationKey", "CustomerId");
+
+                    b.ToTable(
+                        "draft_orders",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint("ck_draft_order_limit", "total_limit > 0");
+
+                            t.HasCheckConstraint("ck_draft_order_version", "version > 0");
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.StockIssues.StockIssueRequestRow",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("Id").HasColumnType("uuid");
+
+                    b.Property<decimal?>("AvailableQuantity").HasColumnType("numeric");
+
+                    b.Property<Guid>("CommandMessageId").HasColumnType("uuid");
+
+                    b.Property<long>("ExpectedStockVersion").HasColumnType("bigint");
+
+                    b.Property<decimal>("Quantity").HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset?>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("RecordedStockVersion").HasColumnType("bigint");
+
+                    b.Property<int?>("Refusal").HasColumnType("integer");
+
+                    b.Property<decimal?>("RemainingQuantity").HasColumnType("numeric");
+
+                    b.Property<DateTimeOffset>("ReplyDeadline")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("RequestedQuantity").HasColumnType("numeric");
+
+                    b.Property<int>("Status").HasColumnType("integer");
+
+                    b.Property<Guid>("StockPositionId").HasColumnType("uuid");
+
+                    b.Property<long>("Version").IsConcurrencyToken().HasColumnType("bigint");
+
+                    b.HasKey("OrganizationKey", "Id");
+
+                    b.HasIndex("CommandMessageId").IsUnique();
+
+                    b.HasIndex("OrganizationKey", "Status", "ReplyDeadline");
+
+                    b.ToTable(
+                        "stock_issue_requests",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint(
+                                "valid_request",
+                                "\"Quantity\" > 0 AND \"ExpectedStockVersion\" >= 1 AND \"Version\" >= 1 AND \"Status\" BETWEEN 1 AND 4"
+                            );
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.AddressRow",
+                b =>
+                {
                     b.HasOne("ModulithFoundry.Samples.Wholesale.Sales.CustomerRow", null)
                         .WithMany()
                         .HasForeignKey("OrganizationKey", "CustomerId")
                         .HasPrincipalKey("OrganizationKey", "Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderLineRow",
+                b =>
+                {
+                    b.HasOne(
+                            "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderRow",
+                            null
+                        )
+                        .WithMany("Lines")
+                        .HasForeignKey("OrganizationKey", "OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_draft_order_lines_order");
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderRow",
+                b =>
+                {
+                    b.HasOne("ModulithFoundry.Samples.Wholesale.Sales.CustomerRow", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationKey", "CustomerId")
+                        .HasPrincipalKey("OrganizationKey", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_draft_orders_customer");
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderRow",
+                b =>
+                {
+                    b.Navigation("Lines");
                 }
             );
 #pragma warning restore 612, 618

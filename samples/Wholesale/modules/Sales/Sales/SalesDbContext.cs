@@ -6,6 +6,7 @@ using Gloaming.Messaging.Workflows.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
+using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 
@@ -16,11 +17,14 @@ public sealed class SalesDbContext(
 {
     internal DbSet<CustomerRow> Customers => Set<CustomerRow>();
     internal DbSet<AddressRow> Addresses => Set<AddressRow>();
+    internal DbSet<DraftOrderRow> DraftOrders => Set<DraftOrderRow>();
+    internal DbSet<DraftOrderLineRow> DraftOrderLines => Set<DraftOrderLineRow>();
     internal string RequiredOrganizationKey => tenancy.Current.RequireTenant().Value;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("sales");
+        DraftOrderMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(
             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),
@@ -100,6 +104,7 @@ public sealed class SalesDbContext(
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         this.ValidateTenantChanges(() => RequiredOrganizationKey);
+        this.ValidateDraftOrderChanges();
         this.ValidateAuditChanges();
         this.ValidateInboxChanges();
         this.ValidateOutboxChanges();
@@ -113,6 +118,7 @@ public sealed class SalesDbContext(
     )
     {
         this.ValidateTenantChanges(() => RequiredOrganizationKey);
+        this.ValidateDraftOrderChanges();
         this.ValidateAuditChanges();
         this.ValidateInboxChanges();
         this.ValidateOutboxChanges();

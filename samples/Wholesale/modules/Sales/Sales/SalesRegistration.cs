@@ -11,6 +11,12 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 
 public static class SalesRegistration
 {
+    public static IServiceCollection AddDraftOrderCommands(this IServiceCollection services) =>
+        services.AddScoped<IDraftOrderCommands, DraftOrders.DraftOrderCommands>();
+
+    public static IServiceCollection AddDraftOrderQueries(this IServiceCollection services) =>
+        services.AddScoped<IDraftOrderQueries, DraftOrders.DraftOrderQueries>();
+
     /// <summary>Registers the compensating two-line process, leaving transport and worker hosting explicit.</summary>
     public static IServiceCollection AddStockReservationOrders(this IServiceCollection services)
     {

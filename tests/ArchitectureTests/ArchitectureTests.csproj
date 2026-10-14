@@ -35,6 +35,7 @@
     <ProjectReference Include="../../samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../../samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../samples/EventStorageDemo/EventStorageDemo.csproj" />
     <Using Include="Xunit" />

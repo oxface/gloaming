@@ -482,6 +482,22 @@ use the socket environment above. [The D1 report](reports/d1-ddd-sample-patterns
 new domain/consumer proofs, existing regression checks and the decision to retain sample patterns
 without extracting another library or changing T1's template.
 
+## Rich state-stored aggregate
+
+[RichAggregateDemo](../samples/Wholesale/RichAggregateDemo/README.md) creates and edits a Sales
+draft with relational children and a joined customer summary, without a broker or event replay.
+Use a fresh disposable PostgreSQL database; fixed finite setup is not repeatable application setup.
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=rich_draft_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj
+dotnet test --project samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj
+```
+
+Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environment above.
+[The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
+proofs from earlier evidence and records native-write bypass limitations.
+
 ## Archived backend
 
 The archived solution and tests remain historical reference material. Active CI and commit
