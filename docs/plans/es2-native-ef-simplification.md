@@ -304,7 +304,7 @@ its required real EF/consumer tests. No new reusable library mechanism is proven
 
 ## Exact replacement map for review
 
-EF/ means src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/.
+EF/ means src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/.
 
 | Files | Proposed replacement |
 | --- | --- |
@@ -316,7 +316,7 @@ EF/ means src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/
 | EF/AggregateRebuilder.cs; EF/PreparedAggregateRebuild.cs; EF/EventStreamReplay.cs; EF/IAggregateRebuilder.cs | Independent typed-row base above; protected reader/reducer integration; remove prepared replacement and extra replay adapter; retain role/result and ReplayedEvent. |
 | EF/RequiredInlineStateExtensions.cs; EF/EventStreamRebuildState.cs; EF/EventStreamWriteGate.cs | Ordinary guard plus tiny exact maintenance-write association; remove admission state/gate/rebuild opt-in. |
 | EF/EventStoreServiceCollectionExtensions.cs | Separate scoped roles and reviewed helper signatures; standard registration semantics. |
-| src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.Postgres/ (project, implementation and local docs) | Remove the unused admission package; preserve old design/proof context in dated reports, not an empty runtime seam. |
+| src/Gloaming.EventSourcing/Gloaming.EventSourcing.Postgres/ (project, implementation and local docs) | Remove the unused admission package; preserve old design/proof context in dated reports, not an empty runtime seam. |
 | ModulithFoundry.slnx; sample Inventory/Purchasing project references; family test project; ArchitectureTests project/dependency policies | Remove gate-package references; provider tests reference native Npgsql EF directly. No new provider version/dependency family. |
 | Inventory/Purchasing HistoryRows.cs; EventStorageDemo/StorageRows.cs; all test IEventStreamRecord implementations | Add technical stamp; update fixture/header construction without changing literal fact payloads. |
 | Inventory/Purchasing stores, InlineViewMapping, queries/filters, registration, rebuilding facades; new per-module StateMapping and Rebuilder bindings | Writing no longer depends on history/provider; maintenance supplies history/reducer separately. Rename mapped CurrentRow types/files to StateRow, remove one-method InlineProjection wrappers, use explicit typed-context reader registration. Business Contracts remain stable. |

@@ -69,10 +69,10 @@ Executed against **PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2)** in one disposable 
 container. No host ports were published. The container was removed on completion. Reproduce:
 
 ```sh
-node src/Rootbolt.EventSourcing/docs/proofs/es2-coordination.ts
+node src/Gloaming.EventSourcing/docs/proofs/es2-coordination.ts
 ```
 
-The [standalone script](../../src/Rootbolt.EventSourcing/docs/proofs/es2-coordination.ts)
+The [standalone script](../../src/Gloaming.EventSourcing/docs/proofs/es2-coordination.ts)
 uses separate persistent psql sessions and observes advisory waits through pg_stat_activity.
 This is native SQL design evidence, not EF, domain/codec, proposed-interface or integration proof.
 The initial tables contain one stream header at version 1, history deriving amount 10 and a

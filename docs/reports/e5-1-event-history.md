@@ -129,15 +129,15 @@ follows from either the focused 101 cases or the checkpoint's container-free sui
 
 ## Review and remaining gaps
 
-Review [the validator](../../src/Rootbolt.Events/Rootbolt.Events.History/EventHistory.cs),
-[metadata position](../../src/Rootbolt.Events/Rootbolt.Events.History/HistoryPosition.cs),
-[failure enum](../../src/Rootbolt.Events/Rootbolt.Events.History/EventHistoryFailure.cs) and
-[exception](../../src/Rootbolt.Events/Rootbolt.Events.History/EventHistoryException.cs) with
-[the usage guide](../../src/Rootbolt.Events/Rootbolt.Events.History/README.md).
+Review [the validator](../../src/Gloaming.Events/Gloaming.Events.History/EventHistory.cs),
+[metadata position](../../src/Gloaming.Events/Gloaming.Events.History/HistoryPosition.cs),
+[failure enum](../../src/Gloaming.Events/Gloaming.Events.History/EventHistoryFailure.cs) and
+[exception](../../src/Gloaming.Events/Gloaming.Events.History/EventHistoryException.cs) with
+[the usage guide](../../src/Gloaming.Events/Gloaming.Events.History/README.md).
 
 Review [Inventory selection](../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
 and [Purchasing selection](../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
-with [range proofs](../../src/Rootbolt.Events/tests/EventHistoryTests/HistoryTests.cs) and
+with [range proofs](../../src/Gloaming.Events/tests/EventHistoryTests/HistoryTests.cs) and
 [consumer proofs](../../samples/Wholesale/EventCodecDemo.Tests/HistoryCompatibilityTests.cs).
 The shared [row shape](../../samples/Wholesale/EventCodecDemo/RecordedEvent.cs) remains sample code.
 

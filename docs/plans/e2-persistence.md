@@ -58,7 +58,7 @@ found in the archive. These are source observations, not new database proof resu
 
 ## Candidate library and dependencies
 
-First-increment project: `src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/`.
+First-increment project: `src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/`.
 
 Use native EF types, without a repository, unit-of-work or base DbContext abstraction. The
 first increment uses EF Core Relational for explicit relational mapping validation;

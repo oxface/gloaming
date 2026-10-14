@@ -1,10 +1,10 @@
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
@@ -16,8 +16,8 @@ builder
             serviceInstanceId: Guid.NewGuid().ToString()
         )
     )
-    .WithTracing(tracing => tracing.AddRootboltMessaging())
-    .WithMetrics(metrics => metrics.AddRootboltMessaging());
+    .WithTracing(tracing => tracing.AddGloamingMessaging())
+    .WithMetrics(metrics => metrics.AddGloamingMessaging());
 
 string connection =
     builder.Configuration.GetConnectionString("Exports")

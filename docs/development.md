@@ -1,6 +1,6 @@
 # Development and verification
 
-Library projects and their tests live under `src/Rootbolt.{Family}/`; each family has
+Library projects and their tests live under `src/Gloaming.{Family}/`; each family has
 a README and local capability documentation. Repository architecture tests and shared support
 remain under `tests/`. The active solution, hooks and CI use the family paths below.
 See [the layout scope](plans/library-family-layout.md).
@@ -68,7 +68,7 @@ archived suites are excluded from hooks.
 
 ## CI lanes
 
-The [main workflow](../.github/workflows/ci.yml) exposes seven separately named Rootbolt
+The [main workflow](../.github/workflows/ci.yml) exposes seven separately named Gloaming
 family checks, plus Wholesale consumer composition and repository integrity. Workflows
 start on PRs/main pushes, but expensive jobs run only for relevant changed paths. Family
 selection uses SHA-pinned `dorny/paths-filter` and the explicit
@@ -85,13 +85,13 @@ fixture: measured parallel candidates did not establish a speed improvement.
 
 | Check | Responsibility |
 | --- | --- |
-| Rootbolt.Auditing | Explicit transactional accepted-change audit and PostgreSQL mapping proofs. |
-| Rootbolt.ActorIdentity | Core identity and native HTTP adapter proofs. |
-| Rootbolt.Tenancy | Core tenant context and independent HTTP adapter proofs. |
-| Rootbolt.Persistence | EF model/write validation and real PostgreSQL GUID ownership consumer. |
-| Rootbolt.Events | Serialization/upcasting, ordered history integrity and independent event-codec consumer tests/executable. |
-| Rootbolt.EventSourcing | Aggregate core, PostgreSQL history/rebuilding/concurrency, independent event-storage consumer and Wholesale event-sourcing adoption. |
-| Rootbolt.Messaging | Provider-free envelopes, PostgreSQL enqueue/claims/inbox processing, HTTP/RabbitMQ adopters, real separate-worker process proofs and focused Inventory broker proofs. |
+| Gloaming.Auditing | Explicit transactional accepted-change audit and PostgreSQL mapping proofs. |
+| Gloaming.ActorIdentity | Core identity and native HTTP adapter proofs. |
+| Gloaming.Tenancy | Core tenant context and independent HTTP adapter proofs. |
+| Gloaming.Persistence | EF model/write validation and real PostgreSQL GUID ownership consumer. |
+| Gloaming.Events | Serialization/upcasting, ordered history integrity and independent event-codec consumer tests/executable. |
+| Gloaming.EventSourcing | Aggregate core, PostgreSQL history/rebuilding/concurrency, independent event-storage consumer and Wholesale event-sourcing adoption. |
+| Gloaming.Messaging | Provider-free envelopes, PostgreSQL enqueue/claims/inbox processing, HTTP/RabbitMQ adopters, real separate-worker process proofs and focused Inventory broker proofs. |
 | Wholesale consumer composition | Context tests/executable, module migrations/ownership and persisted HTTP admission/business/telemetry tests. |
 | Repository integrity | Always: commitlint and frozen archive checksums. Relevant code/build changes also run whole-solution restore/style/analyzers/build, architecture boundaries and CSharpier. |
 | Template integrity and adoption | TypeScript generator checks and two external generated consumers against PostgreSQL. |
@@ -221,15 +221,15 @@ dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.Tenancy/tests/TenantTests/TenantTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/ContextDemo.Tests/ContextDemo.Tests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-build --no-restore
 dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj --no-build --no-restore
 dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
@@ -284,9 +284,9 @@ antiforgery, tenant-owned Sales profile changes and explicit versioned transacti
 
 ## Standalone event serialization and history
 
-The sixth technical library, `Rootbolt.Events.Serialization`, is independently
+The sixth technical library, `Gloaming.Events.Serialization`, is independently
 adoptable. Its finite [two-family consumer](../samples/Wholesale/EventCodecDemo/README.md)
-now composes it with the seventh library, `Rootbolt.Events.History`, through two project
+now composes it with the seventh library, `Gloaming.Events.History`, through two project
 references. Each library remains package-free and independent of the other. Build and run
 the consumer directly:
 
@@ -332,12 +332,12 @@ container engine. Tests start disposable PostgreSQL 18.6 instances and keep the 
 reaper enabled; no application process or personal database credentials are required.
 
 ```bash
-dotnet test --project src/Rootbolt.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-build --no-restore
-dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-build --no-restore
 ```
 
 For this repository's rootless Podman setup, prefix each command with:
@@ -351,7 +351,7 @@ DOTNET_PROCESSOR_COUNT=4
 Use your actual user socket path when it differs. The console smoke proof starts its own
 finite child process from the source checkout and passes the disposable connection through
 its environment. The sample executable must have been built in the same configuration.
-CI runs these suites in Rootbolt.Persistence, Rootbolt.EventSourcing and Wholesale consumer
+CI runs these suites in Gloaming.Persistence, Gloaming.EventSourcing and Wholesale consumer
 composition according to ownership. Per-case databases disable
 connection pooling so their idle pools do not exhaust the shared container; production connection
 configuration is unaffected. The event-history suite
@@ -449,21 +449,21 @@ Family-local tests exercise native stamp conflicts between writers and independe
 aggregate-state-only maintenance saves, cancellation, rollback and fresh recovery on PostgreSQL
 18.6. Wholesale exercises both module maintenance Contracts and the executable journey. A local
 supported Docker/Podman runtime is required; absence is a failure, not a skipped proof.
-CI's Rootbolt.EventSourcing lane and pre-commit's event-rebuilding-postgres-tests job run this suite.
+CI's Gloaming.EventSourcing lane and pre-commit's event-rebuilding-postgres-tests job run this suite.
 
 ~~~sh
-dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore
 ~~~
 
 For rootless Podman set DOCKER_HOST=unix:///run/user/1000/podman/podman.sock and
 TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock.
 The retained TypeScript diagnostic
-[node proof](../src/Rootbolt.EventSourcing/docs/proofs/es2-coordination.ts) uses Node
+[node proof](../src/Gloaming.EventSourcing/docs/proofs/es2-coordination.ts) uses Node
 24.21+ and rootless Podman to replay **historical gate design** observations in a disposable
 container. It is not a current library regression test and supplies no stamp-concurrency claim.
 Current executable coverage lives in the family/consumer test projects above. See
-[the supported EF contract](../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md).
+[the supported EF contract](../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
 
 ## Archived backend
 

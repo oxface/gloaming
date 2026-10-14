@@ -1,7 +1,7 @@
 # Event-sourcing capabilities
 
 The canonical current capabilities, limits and deferred directions now live
-[beside the EF event-sourcing library](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
+[beside the EF event-sourcing library](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
 That document records async and multi-stream projections, rebuilding, snapshots, upcasting,
 provider-specific adapter candidates and the current family layout. It preserves the
 owner's decisions and separates supported behavior from future work.

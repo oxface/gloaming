@@ -1,14 +1,14 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using Gloaming.Events.Serialization;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using RabbitMQ.Client;
-using Rootbolt.Events.Serialization;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo;
 

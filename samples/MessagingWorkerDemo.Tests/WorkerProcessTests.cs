@@ -1,7 +1,7 @@
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Tests.Infrastructure;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 

@@ -1,5 +1,5 @@
+using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Rootbolt.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
 

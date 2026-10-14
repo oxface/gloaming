@@ -5,9 +5,13 @@ and the identity of work performed in those applications.
 
 ## Language
 
-**Rootbolt**:
+**Gloaming**:
 The independently adoptable .NET libraries developed in this repository. Modulith Foundry
 remains the repository, template and reference-sample identity.
+
+**Umbrine**:
+The ERP product to be built on the application template and Gloaming libraries developed
+here. Its name derives from Umbral; Umbrine and Gloaming share a darkness theme.
 
 **Library segment**:
 A selected reusable capability presented to a consumer through its documented contract.

@@ -121,17 +121,17 @@ presented as a fresh E4 all-project result.
 
 ## Review files and remaining boundary
 
-Start line-by-line review with the [registration factory](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/EventRegistration.cs)
-and [codec](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/JsonEventCodec.cs), then the
-[output record](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/SerializedEvent.cs),
-[decoding exception](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/EventDecodingException.cs)
-and [failure enum](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/EventDecodingFailure.cs).
-The [library guide](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/README.md) describes
+Start line-by-line review with the [registration factory](../../src/Gloaming.Events/Gloaming.Events.Serialization/EventRegistration.cs)
+and [codec](../../src/Gloaming.Events/Gloaming.Events.Serialization/JsonEventCodec.cs), then the
+[output record](../../src/Gloaming.Events/Gloaming.Events.Serialization/SerializedEvent.cs),
+[decoding exception](../../src/Gloaming.Events/Gloaming.Events.Serialization/EventDecodingException.cs)
+and [failure enum](../../src/Gloaming.Events/Gloaming.Events.Serialization/EventDecodingFailure.cs).
+The [library guide](../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md) describes
 the consumer obligations.
 
 Review the actual [Inventory recipe](../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionExample.cs)
 and [Purchasing recipe](../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
-with [library proofs](../../src/Rootbolt.Events/tests/EventSerializationTests/CodecTests.cs) and
+with [library proofs](../../src/Gloaming.Events/tests/EventSerializationTests/CodecTests.cs) and
 [consumer proofs](../../samples/Wholesale/EventCodecDemo.Tests/CompatibilityTests.cs).
 The [architecture changes](../../tests/ArchitectureTests/AssemblyDependencyTests.cs),
 [CI](../../.github/workflows/ci.yml) and [hooks](../../lefthook.yml) accompany the capability.

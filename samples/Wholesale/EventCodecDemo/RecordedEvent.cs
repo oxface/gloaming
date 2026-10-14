@@ -1,4 +1,4 @@
-using Rootbolt.Events.Serialization;
+using Gloaming.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo;
 

@@ -1,6 +1,6 @@
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
 

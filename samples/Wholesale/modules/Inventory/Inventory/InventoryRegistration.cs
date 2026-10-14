@@ -1,13 +1,13 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
 using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory;
 

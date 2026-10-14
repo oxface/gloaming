@@ -1,7 +1,7 @@
 using ConsumerRoot.Catalog;
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
 
 namespace ConsumerRoot.Host;
 

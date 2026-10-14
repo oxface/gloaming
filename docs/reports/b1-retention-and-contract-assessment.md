@@ -11,12 +11,12 @@ slice identifies a concrete consumer requirement; no immediate implementation fo
 
 ## What the current code actually supports
 
-- [OutgoingMessage](../../src/Rootbolt.Messaging/Rootbolt.Messaging/OutgoingMessage.cs)
+- [OutgoingMessage](../../src/Gloaming.Messaging/Gloaming.Messaging/OutgoingMessage.cs)
   supplies delivery identity, wire name/schema and consumer-selected JSON. It does not
   supply an aggregate revision, publication offset or historical replay contract.
-- [OutboxMessageRecord](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/OutboxMessageRecord.cs)
+- [OutboxMessageRecord](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxMessageRecord.cs)
   retains the original payload and delivery lifecycle. The
-  [dispatcher](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
+  [dispatcher](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
   marks accepted rows dispatched rather than deleting them. There is no implemented
   cleanup/replay API or defined history availability window. QueuedAt is insertion time;
   DispatchedAt is recorded transport acceptance, not source commit order.

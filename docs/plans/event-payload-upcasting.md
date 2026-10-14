@@ -170,13 +170,13 @@ logic, tenant admission, reducers, transaction/save/commit and maintenance autho
 ## Exact file and behavior scope
 
 Paths are relative to the repository root. Serialization denotes
-src/Rootbolt.Events/Rootbolt.Events.Serialization.
+src/Gloaming.Events/Gloaming.Events.Serialization.
 
 | File | Approved change |
 | --- | --- |
 | Serialization/JsonEventUpcaster.cs (new) | Add the reviewed metadata/transform abstraction and PassThrough factory with a private identity implementation. |
 | Serialization/JsonEventCodec.cs | Optional upcasters, deterministic registration/path validation, owned JSON transformations and terminal decode; unchanged write dispatch/default exact reads. |
-| src/Rootbolt.Events/tests/EventSerializationTests/UpcastingTests.cs (new); CodecTests.cs | Native routing/error/ownership/concurrency proofs; preserve exact-registration tests including distinct CLR types under different schemas. |
+| src/Gloaming.Events/tests/EventSerializationTests/UpcastingTests.cs (new); CodecTests.cs | Native routing/error/ownership/concurrency proofs; preserve exact-registration tests including distinct CLR types under different schemas. |
 | samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionEvents.cs | Change only receipt JSON field annotation to receivedQuantity; retain CLR/domain shape. |
 | Same StockPositionCodec.cs; ReceiptV1ToV2.cs (new) | Current receipt write schema 2 and explicit module-owned v1 transform; opened/issued remain schema 1. |
 | samples/Wholesale/EventCodecDemo/SchemaEvolutionJourneys.cs (new); Purchasing/PurchaseOrderSchemaEvolutionExample.cs (new) | Standalone nested-v3/two-step consumer; no new library/EF dependencies or business Contracts. |

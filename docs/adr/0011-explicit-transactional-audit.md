@@ -3,7 +3,7 @@
 Status: interface and bounded scope owner-approved, 2026-10-09; implementation remains
 unstaged for line-by-line review. [Reviewed scope](../plans/e9-explicit-transactional-audit.md).
 
-Use an independently adoptable `Rootbolt.Auditing.EntityFrameworkCore` package. Consumers
+Use an independently adoptable `Gloaming.Auditing.EntityFrameworkCore` package. Consumers
 explicitly construct AuditEntry and call typed IAudit<TDbContext>.Stage within the native
 transaction that owns the selected business effect. The library captures owned JSON and
 immutable ActorIdentity attribution, maps one provided row and validates exact context/
@@ -19,7 +19,7 @@ Reuse existing ActorIdentity values to preserve Human/System/Anonymous distincti
 optional initiator without an audit-specific identity model. The package depends on that core
 and EF Relational only. Native DI wiring belongs to consumers; no unused DI dependency or
 standalone core package is introduced. The owner-requested optional
-`Rootbolt.Auditing.EntityFrameworkCore.Postgres` package composes relational mapping with
+`Gloaming.Auditing.EntityFrameworkCore.Postgres` package composes relational mapping with
 JSONB details; it depends on the EF package and Npgsql, keeping provider setup separate.
 
 Guarded inserts retain the staged envelope and active native transaction; tracked edits/deletes
@@ -46,5 +46,5 @@ SaveChanges interceptor, shared transaction runtime or template preset is added.
 initiator propagation, tamper evidence, retention/query services and other providers remain
 separate review/proof gates.
 
-[Library-local contract](../../src/Rootbolt.Auditing/docs/transactional-audit.md) and
+[Library-local contract](../../src/Gloaming.Auditing/docs/transactional-audit.md) and
 [execution report](../reports/e9-explicit-transactional-audit.md) record the practical limits.

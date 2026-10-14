@@ -1,9 +1,9 @@
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.PersistenceDemo;
 using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
 using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
-using Rootbolt.Tenancy;
 
 string connection =
     Environment.GetEnvironmentVariable("WHOLESALE_DEMO_CONNECTION_STRING")

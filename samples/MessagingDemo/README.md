@@ -24,7 +24,7 @@ dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj
 The sample owns a private durable queue for its finite run and removes it after acknowledged
 delivery. It dispatches/processes at most one eligible retained row, which may be older work
 when run on databases with a backlog. Use disposable databases for the demonstrated single-job
-output. No broker/transport runtime moves into Rootbolt.
+output. No broker/transport runtime moves into Gloaming.
 
 The adapters bind the known exports producer and exact schema. Broker permissions/trusted
 producer mapping are consumer obligations, not authenticated by a producer header. Production
@@ -34,11 +34,11 @@ Real broker proofs close the channel after committed intake but before native ac
 before commit, fail sender completion after confirmed publication, and fail local processing
 after acknowledged intake. Redelivery retains identity; fresh processing recovers without
 repeating a completed job. Tests terminate no production infrastructure.
-[Supported protocol](../../src/Rootbolt.Messaging/docs/inbox.md).
+[Supported protocol](../../src/Gloaming.Messaging/docs/inbox.md).
 
 For a long-running API plus separate dispatch/intake/processing processes using these same
 adapters, see [the worker host](../MessagingWorkerDemo/README.md). The finite journey remains
 available; it is not the new worker startup path.
 
 Optional message diagnostic context and native telemetry setup are documented in the
-[Messaging observability contract](../../src/Rootbolt.Messaging/docs/observability.md).
+[Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).

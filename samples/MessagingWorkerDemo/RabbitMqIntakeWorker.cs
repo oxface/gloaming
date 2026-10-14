@@ -1,8 +1,8 @@
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ModulithFoundry.Samples.MessagingDemo;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo;
 

@@ -1,4 +1,4 @@
-using Rootbolt.ActorIdentity;
+using Gloaming.ActorIdentity;
 
 namespace ModulithFoundry.Samples.Wholesale.ContextDemo.Sales.Contracts;
 

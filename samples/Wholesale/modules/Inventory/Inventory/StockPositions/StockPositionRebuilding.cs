@@ -1,5 +1,5 @@
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 

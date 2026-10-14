@@ -1,12 +1,12 @@
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Auditing.EntityFrameworkCore.Postgres;
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Auditing.EntityFrameworkCore.Postgres;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory;
 

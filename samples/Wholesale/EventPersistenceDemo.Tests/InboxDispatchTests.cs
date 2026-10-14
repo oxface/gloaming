@@ -1,5 +1,10 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -10,11 +15,6 @@ using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo.Tests;
 
@@ -154,7 +154,7 @@ public sealed class InboxDispatchTests(PostgreSqlFixture postgres, RabbitMqFixtu
         await IntakeAsync(provider, request);
         var spans = new List<Activity>();
         using var telemetry = Sdk.CreateTracerProviderBuilder()
-            .AddSource("Rootbolt.Messaging")
+            .AddSource("Gloaming.Messaging")
             .AddInMemoryExporter(spans)
             .Build();
         Assert.Equal(InboxProcessingResult.Processed, await ProcessAsync(provider));

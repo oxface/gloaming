@@ -1,11 +1,11 @@
 using System.Text.Json;
+using Gloaming.Events.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Purchasing;
 using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
-using Rootbolt.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo.Tests;
 

@@ -2,12 +2,12 @@ using System.Diagnostics;
 using ConsumerRoot.Catalog;
 using ConsumerRoot.Catalog.Contracts;
 using ConsumerRoot.Host;
+using Gloaming.ActorIdentity;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ConsumerRoot.Adoption.Tests;
 

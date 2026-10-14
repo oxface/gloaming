@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Rootbolt.Events.Serialization;
+using Gloaming.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo;
 

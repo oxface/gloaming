@@ -1,7 +1,7 @@
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo.Tests;
 

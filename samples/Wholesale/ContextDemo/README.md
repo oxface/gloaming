@@ -1,7 +1,7 @@
 # Wholesale context demonstration
 
-A finite console consumer of independent [actor identity](../../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/README.md)
-and [tenancy](../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/README.md) libraries.
+A finite console consumer of independent [actor identity](../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
+and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy/README.md) libraries.
 It uses project references and standard Microsoft DI, with no EF, ASP.NET Core, Rebus,
 Aspire or Access.Contracts. It supplies demonstration identities explicitly and opens no
 HTTP endpoints. Authentication and durable business behavior enter later slices.

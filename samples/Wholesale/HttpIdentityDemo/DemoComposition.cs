@@ -1,3 +1,6 @@
+using Gloaming.ActorIdentity;
+using Gloaming.ActorIdentity.AspNetCore;
+using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +12,6 @@ using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints;
 using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.HttpIntegration;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Sales;
-using Rootbolt.ActorIdentity;
-using Rootbolt.ActorIdentity.AspNetCore;
-using Rootbolt.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
 

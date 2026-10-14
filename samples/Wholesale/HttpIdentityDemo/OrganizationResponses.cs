@@ -1,5 +1,5 @@
+using Gloaming.ActorIdentity;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using Rootbolt.ActorIdentity;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
 

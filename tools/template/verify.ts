@@ -32,7 +32,7 @@ import {
 } from "./create.ts";
 
 const forbidden =
-  /Wholesale|archive[/\\]proof-sample|FoundryApplication|ConsumerRoot|EventSourcing|(?:Rootbolt|ModulithFoundry)\.Events|Rebus|RabbitMQ|ServiceBus|Marten|Outbox|Inbox|AddHostedService|BackgroundService/i;
+  /Wholesale|archive[/\\]proof-sample|FoundryApplication|ConsumerRoot|EventSourcing|(?:Gloaming|ModulithFoundry)\.Events|Rebus|RabbitMQ|ServiceBus|Marten|Outbox|Inbox|AddHostedService|BackgroundService/i;
 const creator = join(import.meta.dirname, "create.ts");
 
 function run(

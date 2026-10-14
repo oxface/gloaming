@@ -1,5 +1,5 @@
+using Gloaming.Events.Serialization;
 using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
-using Rootbolt.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory;
 

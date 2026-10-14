@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../MessagingTelemetryProbe.cs" Link="MessagingTelemetryProbe.cs" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

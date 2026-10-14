@@ -12,7 +12,7 @@ Sales now owns persistent stock-issue request progress. Start commits one stable
 command with its request. Inventory uses its existing stock decision, event/inline-state/audit
 transaction and success/refusal replies. Sales processes the reply with its inbox completion
 in another native transaction. The executable uses separate module databases, real RabbitMQ
-and the existing Rootbolt inbox/outbox workers. A separate Sales deadline lane marks overdue
+and the existing Gloaming inbox/outbox workers. A separate Sales deadline lane marks overdue
 requests NeedsAttention; valid late replies resolve them to Issued or Declined.
 
 Request identity is scoped by Organization. Command MessageId remains stable across start
@@ -29,7 +29,7 @@ Timestamps are normalized to UTC microseconds so a .NET value remains semantical
 PostgreSQL persistence. The first retry proof found this precision obligation and the final
 suite exercises it.
 
-**No new reusable mechanism was proven or extracted.** Existing Rootbolt enqueue, lease,
+**No new reusable mechanism was proven or extracted.** Existing Gloaming enqueue, lease,
 retained intake, row-locked processing, telemetry and hosted-worker mechanisms compose the
 workflow. Request transitions, semantic idempotency, timeout meaning and admission remain
 consumer policy. There is no saga base class, handler registry, scheduler, common unit of work

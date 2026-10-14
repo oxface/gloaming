@@ -1,3 +1,7 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,10 +14,6 @@ using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
 using ModulithFoundry.Samples.Wholesale.WorkflowDemo;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
-using Rootbolt.Tenancy;
 
 var builder = Host.CreateApplicationBuilder(args);
 string role = builder.Configuration["role"] ?? "run";
@@ -160,10 +160,10 @@ builder
     .Services.AddOpenTelemetry()
     .WithTracing(tracing =>
         tracing
-            .AddRootboltMessaging()
+            .AddGloamingMessaging()
             .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber")
     )
-    .WithMetrics(metrics => metrics.AddRootboltMessaging());
+    .WithMetrics(metrics => metrics.AddGloamingMessaging());
 builder.Services.AddPostgresOutboxDispatcher<SalesDbContext, SalesCommandPublisher>(
     new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
 );

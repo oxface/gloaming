@@ -1,7 +1,7 @@
 using System.Text.Json;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Auditing.EntityFrameworkCore;
-using Rootbolt.Tenancy;
+using Gloaming.ActorIdentity;
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory;
 

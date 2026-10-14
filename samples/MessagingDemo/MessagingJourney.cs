@@ -1,10 +1,10 @@
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.InboxDemo;
 using ModulithFoundry.Samples.OutboxDemo;
 using RabbitMQ.Client;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 
 namespace ModulithFoundry.Samples.MessagingDemo;
 

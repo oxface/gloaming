@@ -12,7 +12,7 @@ existing delivery/transaction primitives removed all worthwhile saga bookkeeping
 
 ## Decision
 
-Provide optional Rootbolt.Messaging.Sagas for one fixed ordered sequence. Persist its copied
+Provide optional Gloaming.Messaging.Sagas for one fixed ordered sequence. Persist its copied
 plan and requested attempts with their outcomes in an explicit versioned state document.
 Derive technical progress from that ledger. Equal old outcomes do nothing; conflicting outcomes
 fail. Only an explicit business refusal initiates reverse compensation of earlier accepted
@@ -43,5 +43,5 @@ workflow migrations, retention or operator tooling. Missing replies never imply 
 
 [Reviewed scope](../plans/wf2-sequential-saga-coordinator.md),
 [fresh evidence](../reports/wf2-sequential-saga-coordinator.md), and
-[current replacement contract](../../src/Rootbolt.Messaging/docs/workflows.md) distinguish the
+[current replacement contract](../../src/Gloaming.Messaging/docs/workflows.md) distinguish the
 historical experiment from the supported continuation composition.

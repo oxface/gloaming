@@ -5,8 +5,8 @@
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <ProjectReference Include="../FoundryApplication.Catalog.Contracts/FoundryApplication.Catalog.Contracts.csproj" />
-    <ProjectReference Include="../../../libraries/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
-    <ProjectReference Include="../../../libraries/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
-    <ProjectReference Include="../../../libraries/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../libraries/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
+    <ProjectReference Include="../../../libraries/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <ProjectReference Include="../../../libraries/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
   </ItemGroup>
 </Project>

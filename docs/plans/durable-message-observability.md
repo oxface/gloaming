@@ -61,7 +61,7 @@ Outgoing context identifies the producer activity selected when staging. Incomin
 identifies the received upstream activity selected by the transport adapter. Both are
 diagnostic relationships, separate from delivery/conversation/cause identity and admission.
 The library does not implicitly capture Activity.Current or initialize business IDs.
-Raw W3C strings match transport/persistence without a new Rootbolt context type or generic
+Raw W3C strings match transport/persistence without a new Gloaming context type or generic
 argument flowing through dispatch/handlers.
 
 Add an optional native logger to the existing callable dispatch constructor:
@@ -108,16 +108,16 @@ Editable native host configuration subscribes to the sources and meter:
 ```csharp
 builder.AddServiceDefaults(); // Editable native host wiring.
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddRootboltMessaging()
+    .WithTracing(tracing => tracing.AddGloamingMessaging()
         .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber"))
-    .WithMetrics(metrics => metrics.AddRootboltMessaging());
+    .WithMetrics(metrics => metrics.AddGloamingMessaging());
 ```
 
 The hosts reuse the existing editable sample ServiceDefaults for logging, HTTP/runtime/DB
 instrumentation and configured OTLP export. Program files add messaging subscriptions and
 resources. API, dispatch, receive and process roles have distinct
 service names/instances. The producer gains no broker/receiver/worker-project reference.
-No template preset or Rootbolt host configuration framework is added.
+No template preset or Gloaming host configuration framework is added.
 
 ## Follow-up: optional native OTel subscriptions
 
@@ -127,29 +127,29 @@ They are implemented for final owner code review:
 
 ```csharp
 // Namespace OpenTelemetry.Trace
-public static class RootboltMessagingTracerProviderBuilderExtensions
+public static class GloamingMessagingTracerProviderBuilderExtensions
 {
-    public static TracerProviderBuilder AddRootboltMessaging(this TracerProviderBuilder builder);
+    public static TracerProviderBuilder AddGloamingMessaging(this TracerProviderBuilder builder);
 }
 
 // Namespace OpenTelemetry.Metrics
-public static class RootboltMessagingMeterProviderBuilderExtensions
+public static class GloamingMessagingMeterProviderBuilderExtensions
 {
-    public static MeterProviderBuilder AddRootboltMessaging(this MeterProviderBuilder builder);
+    public static MeterProviderBuilder AddGloamingMessaging(this MeterProviderBuilder builder);
 }
 ```
 
 Both return the supplied native builder for normal chaining. They respectively subscribe
-to the existing `Rootbolt.Messaging` activity source and meter. Null builders throw
+to the existing `Gloaming.Messaging` activity source and meter. Null builders throw
 ArgumentNullException. They do not construct a provider, alter resources/sampling, enable
 export, select transport instrumentation or change logging. Each can be used independently.
 Scopes, transactions, retries, process shutdown and delivery guarantees are unchanged.
 
-They reside in independently optional `Rootbolt.Messaging.OpenTelemetry`, with the sole direct
+They reside in independently optional `Gloaming.Messaging.OpenTelemetry`, with the sole direct
 package dependency `OpenTelemetry.Api` 1.19.1 (already present transitively in the pinned host
 stack; now explicitly centrally pinned). Native TracerProviderBuilder.AddSource and
 MeterProviderBuilder.AddMeter are declared in that API assembly, so no SDK, EF, PostgreSQL,
-RabbitMQ, hosting or other Rootbolt project dependency is needed. Existing technical
+RabbitMQ, hosting or other Gloaming project dependency is needed. Existing technical
 packages retain their dependency boundaries. This package hides repeated instrumentation
 names in the two actual hosts without becoming a host configuration facade.
 
@@ -158,13 +158,13 @@ Consumer usage:
 ```csharp
 builder.AddServiceDefaults();
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddRootboltMessaging()
+    .WithTracing(tracing => tracing.AddGloamingMessaging()
         .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber"))
-    .WithMetrics(metrics => metrics.AddRootboltMessaging());
+    .WithMetrics(metrics => metrics.AddGloamingMessaging());
 ```
 
 Exact additional scope: new project/README and two XML-documented extension files under
-`src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/`; explicit central API pin;
+`src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/`; explicit central API pin;
 solution library entry; project references and registration replacements in both messaging
 hosts; an independent-dependency assertion in ArchitectureTests; native helper usage in the
 family docs/READMEs, ADR 0012 and this slice report. The existing Messaging CI lane already
@@ -182,21 +182,21 @@ No archival evidence establishes this new helper; its proof comes from current a
   committed intake's context; changed business content remains a conflict.
 - Envelopes accept diagnostic strings without making them business validation. Native
   `ActivityContext.TryParse` supplies links; absent/invalid parents produce no link.
-  Tracestate is opaque to that API, not fully W3C-validated by Rootbolt. Wrong diagnostic
+  Tracestate is opaque to that API, not fully W3C-validated by Gloaming. Wrong diagnostic
   header types are ignored. Transport size limits and collection policy are adapter-owned.
 - Create an activity per selected attempt, with a link to retained context supplied **at
   creation**. Preserve a local ambient parent when applicable rather than force every
   delayed retry under the old producer.
-- `rootbolt.outbox.dispatch` is an Internal operation covering publication and fenced
-  completion after claim. `rootbolt.inbox.process` is a Consumer operation covering
+- `gloaming.outbox.dispatch` is an Internal operation covering publication and fenced
+  completion after claim. `gloaming.inbox.process` is a Consumer operation covering
   handling and observed commit after selection. Claim acquisition/selection remain native
   DB operations outside these activities. NoWork polls produce no message activity.
 - Published/Processed are recorded only after existing completion/commit returns.
   ClaimLost means external acceptance may have occurred without recorded completion.
   Exceptions remain exceptions; requested cancellation is distinct from failure.
   No transaction, lock/lease, retry or disposal ownership changes.
-- Native meter `Rootbolt.Messaging` provides `rootbolt.messaging.attempts` and
-  `rootbolt.messaging.attempt.duration` (seconds). Count selected attempts by bounded
+- Native meter `Gloaming.Messaging` provides `gloaming.messaging.attempts` and
+  `gloaming.messaging.attempt.duration` (seconds). Count selected attempts by bounded
   `operation` and `result`, including failure/cancellation; exclude NoWork polls. Duration
   covers the same attempt boundary. IDs, routes, tenants, payloads and arbitrary exception
   text are not metric dimensions.
@@ -219,7 +219,7 @@ the core instrumentation has no ILogger dependency or new public API.
 
 The two executable hosts reference the existing sample ServiceDefaults project, which owns
 already-pinned OTel hosting/OTLP packages, and the independently optional API-only
-Rootbolt.Messaging.OpenTelemetry subscription adapter. Messaging-specific resource and
+Gloaming.Messaging.OpenTelemetry subscription adapter. Messaging-specific resource and
 transport-source configuration stays in Program.cs. Tests use native listeners and
 the pinned in-memory exporter. A test-owned official Collector container accepts actual
 OTLP from child processes and writes signals for structural assertions. Pin its release
@@ -239,22 +239,22 @@ the reviewed operation is explicitly adding nullable columns to populated databa
 
 | Files | Planned change |
 | --- | --- |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging/{IncomingMessage,OutgoingMessage}.cs` | Optional parameters/properties, factory forwarding and XML docs. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/{InboxMessageRecord,OutboxMessageRecord}.cs` | Readable retained fields and outgoing capture. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/{InboxModelExtensions,OutboxModelExtensions}.cs` | Nullable mappings and outgoing immutable-envelope validation. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/{PostgresInbox,PostgresInboxStorage,PostgresOutboxDispatcher}.cs` | Insert/select/hydrate context, validate mapped columns; preserve duplicate business comparison. |
-| `src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/{PostgresInboxProcessor,PostgresInboxServiceCollectionExtensions,PostgresOutboxServiceCollectionExtensions}.cs` | Callable instrumentation and optional logger resolution. |
+| `src/Gloaming.Messaging/Gloaming.Messaging/{IncomingMessage,OutgoingMessage}.cs` | Optional parameters/properties, factory forwarding and XML docs. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/{InboxMessageRecord,OutboxMessageRecord}.cs` | Readable retained fields and outgoing capture. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/{InboxModelExtensions,OutboxModelExtensions}.cs` | Nullable mappings and outgoing immutable-envelope validation. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/{PostgresInbox,PostgresInboxStorage,PostgresOutboxDispatcher}.cs` | Insert/select/hydrate context, validate mapped columns; preserve duplicate business comparison. |
+| `src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/{PostgresInboxProcessor,PostgresInboxServiceCollectionExtensions,PostgresOutboxServiceCollectionExtensions}.cs` | Callable instrumentation and optional logger resolution. |
 | New core `MessagingTelemetry.cs`; core `.csproj`; provider operation classes and `.csproj` | BCL-only internal activity/meter tracking, explicit friend access for the PostgreSQL assembly, and operation-owned generated failure logs with an explicit logging-abstractions reference. |
-| New `src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/` project, README and two extension files; `Directory.Packages.props`; `ModulithFoundry.slnx` | Owner-approved optional trace/meter subscription helpers, sole OpenTelemetry.Api dependency and explicit version pin; add one library solution entry. |
+| New `src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/` project, README and two extension files; `Directory.Packages.props`; `ModulithFoundry.slnx` | Owner-approved optional trace/meter subscription helpers, sole OpenTelemetry.Api dependency and explicit version pin; add one library solution entry. |
 | `samples/OutboxDemo/ExportRequestCommands.cs`; `samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueMessages.cs` | Explicit consumer context capture; no business or audit changes. |
 | `samples/MessagingDemo/{RabbitMqExportPublisher,RabbitMqRenderReceiver}.cs`; `samples/Wholesale/EventPersistenceDemo/{InventoryRabbitMqPublisher,InventoryRabbitMqReceiver}.cs` | Pass diagnostic headers, tolerant diagnostic parsing. Native send instrumentation may replace context on each publication. |
 | `samples/MessagingProducerDemo/{Program.cs,MessagingProducerDemo.csproj}`; `samples/MessagingWorkerDemo/{Program.cs,MessagingWorkerDemo.csproj}`; `samples/Wholesale/ServiceDefaults/README.md` | Reuse existing editable native ServiceDefaults; add messaging subscriptions and distinct role resources in Program.cs. Remove the proposed AddTelemetry helpers; no lifecycle changes. |
 | `.github/ci-paths.yml` | Include shared ServiceDefaults source in the Messaging lane's dependent input paths. |
 | `samples/OutboxDemo/Migrations/`, `samples/InboxDemo/Migrations/`, `samples/Wholesale/modules/Inventory/Inventory/Migrations/` | Add one migration/designer and update snapshot per context; preserve merged migrations. |
-| `src/Rootbolt.Messaging/tests/MessagingTests/MessageTests.cs`; new `TelemetryTests.cs` in each PostgreSQL suite | Envelope forwarding, retention/dedup and native activity/link/log/meter proofs on real PostgreSQL. |
+| `src/Gloaming.Messaging/tests/MessagingTests/MessageTests.cs`; new `TelemetryTests.cs` in each PostgreSQL suite | Envelope forwarding, retention/dedup and native activity/link/log/meter proofs on real PostgreSQL. |
 | New `samples/MessagingWorkerDemo.Tests/{ObservabilityTests,OtlpCollector}.cs`; existing `{ChildHost,WorkerTopology}.cs` and test `.csproj` | Real process/export proofs and narrowly scoped telemetry configuration; keep existing W1 proofs. |
 | `samples/OutboxDemo.Tests/`, `samples/InboxDemo.Tests/`, `samples/Wholesale/EventPersistenceDemo.Tests/` | Populated migration upgrades and native diagnostic/duplicate coverage in existing suites. |
-| Messaging family/package READMEs, new `src/Rootbolt.Messaging/docs/observability.md`, sample READMEs | Self-sufficient supported setup, limits and troubleshooting after implementation. |
+| Messaging family/package READMEs, new `src/Gloaming.Messaging/docs/observability.md`, sample READMEs | Self-sufficient supported setup, limits and troubleshooting after implementation. |
 | `tests/ArchitectureTests/{AdoptionDependencyTests.cs,ArchitectureTests.csproj}` | Admit the explicitly used, owner-reviewed logging-abstractions dependency; assert the optional subscription adapter depends only on OpenTelemetry.Api using its copied project declaration. Retain other package boundaries. |
 | This plan, `docs/plans/{library-extraction,remaining-capability-roadmap}.md`, new `docs/reports/obs1-durable-message-observability.md` and `docs/adr/0012-durable-diagnostic-context-and-native-telemetry.md` | Reviewed status/decision and fresh evidence separated from W1/archive evidence. |
 
@@ -292,7 +292,7 @@ separately, including the final native listeners, in-memory exporter and real OT
 
 Backlog/oldest-age observation, alerts, durable telemetry, dashboard UX proof, additional
 audit/reply scenarios, baggage, automatic tenant/actor propagation, business workflow
-engines and Rootbolt-wide telemetry wrappers. Existing OTLP configuration can target an
+engines and Gloaming-wide telemetry wrappers. Existing OTLP configuration can target an
 Aspire dashboard, but Collector export tests do not prove a dashboard inspection. Planned
 messaging operations, worker scaling and repopulation remain separate slices.
 

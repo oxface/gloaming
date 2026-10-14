@@ -2,15 +2,15 @@ using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent.Syntax.Elements.Types;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnitV3;
-using Rootbolt.ActorIdentity;
-using Rootbolt.ActorIdentity.AspNetCore;
-using Rootbolt.Events.History;
-using Rootbolt.Events.Serialization;
-using Rootbolt.EventSourcing;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
-using Rootbolt.Tenancy.AspNetCore;
+using Gloaming.ActorIdentity;
+using Gloaming.ActorIdentity.AspNetCore;
+using Gloaming.Events.History;
+using Gloaming.Events.Serialization;
+using Gloaming.EventSourcing;
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
+using Gloaming.Tenancy.AspNetCore;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
@@ -18,34 +18,34 @@ namespace ModulithFoundry.ArchitectureTests;
 
 public sealed class AssemblyDependencyTests
 {
-    private const string Actor = "Rootbolt.ActorIdentity";
-    private const string Audit = "Rootbolt.Auditing.EntityFrameworkCore";
-    private const string AuditPostgres = "Rootbolt.Auditing.EntityFrameworkCore.Postgres";
-    private const string ActorHttp = "Rootbolt.ActorIdentity.AspNetCore";
-    private const string Tenancy = "Rootbolt.Tenancy";
-    private const string TenancyHttp = "Rootbolt.Tenancy.AspNetCore";
-    private const string Persistence = "Rootbolt.Persistence.EntityFrameworkCore";
+    private const string Actor = "Gloaming.ActorIdentity";
+    private const string Audit = "Gloaming.Auditing.EntityFrameworkCore";
+    private const string AuditPostgres = "Gloaming.Auditing.EntityFrameworkCore.Postgres";
+    private const string ActorHttp = "Gloaming.ActorIdentity.AspNetCore";
+    private const string Tenancy = "Gloaming.Tenancy";
+    private const string TenancyHttp = "Gloaming.Tenancy.AspNetCore";
+    private const string Persistence = "Gloaming.Persistence.EntityFrameworkCore";
     private const string ContextSample = "ContextDemo";
     private const string PersistenceSample = "PersistenceDemo";
     private const string HttpSample = "HttpIdentityDemo";
-    private const string EventSerialization = "Rootbolt.Events.Serialization";
-    private const string History = "Rootbolt.Events.History";
+    private const string EventSerialization = "Gloaming.Events.Serialization";
+    private const string History = "Gloaming.Events.History";
     private const string EventPersistenceSample = "EventPersistenceDemo";
-    private const string AggregateCore = "Rootbolt.EventSourcing";
-    private const string Storage = "Rootbolt.EventSourcing.EntityFrameworkCore";
+    private const string AggregateCore = "Gloaming.EventSourcing";
+    private const string Storage = "Gloaming.EventSourcing.EntityFrameworkCore";
     private const string StorageSample = "EventStorageDemo";
     private const string CodecSample = "EventCodecDemo";
 
     private static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies(
             typeof(ActorId).Assembly,
-            typeof(Rootbolt.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
-            typeof(Rootbolt.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
-            typeof(Rootbolt.Messaging.OutgoingMessage).Assembly,
-            typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly,
-            typeof(Rootbolt.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
-            typeof(Rootbolt.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
-            typeof(Rootbolt.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
+            typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
+            typeof(Gloaming.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
+            typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
+            typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
+            typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
+            typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
+            typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
             typeof(Samples.OutboxDemo.DemoJourneys).Assembly,
             typeof(Samples.InboxDemo.InboxDemoHost).Assembly,
             typeof(Samples.MessagingDemo.MessagingJourney).Assembly,
@@ -74,8 +74,8 @@ public sealed class AssemblyDependencyTests
         foreach (
             string library in new[]
             {
-                "Rootbolt.Messaging.Workflows",
-                "Rootbolt.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.Messaging.Workflows",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
             }
         )
         {
@@ -89,14 +89,14 @@ public sealed class AssemblyDependencyTests
                     History,
                     AggregateCore,
                     Storage,
-                    "Rootbolt.Messaging.EntityFrameworkCore.Postgres",
+                    "Gloaming.Messaging.EntityFrameworkCore.Postgres",
                 }
             )
                 NoDependency(library, forbidden).Check(Architecture);
         }
 
         Assert.DoesNotContain(
-            typeof(Rootbolt.Messaging.Workflows.WorkflowStatus).Assembly.GetReferencedAssemblies(),
+            typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly.GetReferencedAssemblies(),
             reference =>
                 reference.Name!.StartsWith(
                     "Microsoft.EntityFrameworkCore",
@@ -105,8 +105,8 @@ public sealed class AssemblyDependencyTests
                 || reference.Name.StartsWith("Npgsql", StringComparison.Ordinal)
                 || reference.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)
         );
-        NoDependency("Rootbolt.Messaging", "Rootbolt.Messaging.Workflows").Check(Architecture);
-        NoDependency("Rootbolt.Messaging.EntityFrameworkCore", "Rootbolt.Messaging.Workflows")
+        NoDependency("Gloaming.Messaging", "Gloaming.Messaging.Workflows").Check(Architecture);
+        NoDependency("Gloaming.Messaging.EntityFrameworkCore", "Gloaming.Messaging.Workflows")
             .Check(Architecture);
     }
 
@@ -167,9 +167,9 @@ public sealed class AssemblyDependencyTests
                 CodecSample,
                 EventPersistenceSample,
                 StorageSample,
-                "Rootbolt.Messaging",
-                "Rootbolt.Messaging.EntityFrameworkCore",
-                "Rootbolt.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
                 "OutboxDemo",
                 "InboxDemo",
                 "MessagingDemo",
@@ -178,7 +178,7 @@ public sealed class AssemblyDependencyTests
         {
             NoDependency(Audit, forbidden).Check(Architecture);
             NoDependency(AuditPostgres, forbidden).Check(Architecture);
-            if (forbidden.StartsWith("Rootbolt.", StringComparison.Ordinal))
+            if (forbidden.StartsWith("Gloaming.", StringComparison.Ordinal))
             {
                 NoDependency(forbidden, Audit).Check(Architecture);
                 NoDependency(forbidden, AuditPostgres).Check(Architecture);
@@ -187,7 +187,7 @@ public sealed class AssemblyDependencyTests
 
         NoDependency(Audit, AuditPostgres).Check(Architecture);
         Assert.DoesNotContain(
-            typeof(Rootbolt.Auditing.EntityFrameworkCore.AuditRecord).Assembly.GetReferencedAssemblies(),
+            typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly.GetReferencedAssemblies(),
             assembly =>
                 assembly.Name!.StartsWith("Npgsql", StringComparison.Ordinal)
                 || assembly.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)
@@ -224,9 +224,9 @@ public sealed class AssemblyDependencyTests
     {
         string[] layers =
         [
-            "Rootbolt.Messaging",
-            "Rootbolt.Messaging.EntityFrameworkCore",
-            "Rootbolt.Messaging.EntityFrameworkCore.Postgres",
+            "Gloaming.Messaging",
+            "Gloaming.Messaging.EntityFrameworkCore",
+            "Gloaming.Messaging.EntityFrameworkCore.Postgres",
         ];
         foreach (string layer in layers)
         {
@@ -259,7 +259,7 @@ public sealed class AssemblyDependencyTests
         NoDependency(layers[0], layers[2]).Check(Architecture);
         NoDependency(layers[1], layers[2]).Check(Architecture);
         Assert.DoesNotContain(
-            typeof(Rootbolt.Messaging.EntityFrameworkCore.IOutbox<>).Assembly.GetReferencedAssemblies(),
+            typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly.GetReferencedAssemblies(),
             assembly =>
                 assembly.Name!.StartsWith("Npgsql", StringComparison.Ordinal)
                 || assembly.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)

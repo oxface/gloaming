@@ -21,7 +21,7 @@ but this is not a claim that the entire hosted readiness failure was reproduced.
 
 The repair upgrades the stable Aspire packages and AppHost SDK to 13.6.1. CI derives
 the matching CLI version from the native `AspireHostingSDKVersion` property.
-No Rootbolt interface, application behavior, health-check requirement,
+No Gloaming interface, application behavior, health-check requirement,
 test timeout or test assertion changes. The existing Keycloak preview integration,
 PostgreSQL/Keycloak images and Playwright version remain unchanged. The initial
 Aspire-only candidate retained the OpenTelemetry versions; the owner-requested
@@ -118,5 +118,5 @@ the Dependabot branch so its proposal incorporates or drops the already-updated
 Aspire dependencies.
 
 No new reusable mechanism was proven. This is sample/toolchain dependency maintenance;
-Rootbolt libraries and consumer ownership boundaries are unchanged. The OpenTelemetry
+Gloaming libraries and consumer ownership boundaries are unchanged. The OpenTelemetry
 formatting diagnosis is recorded in [its report](dependabot-otel-formatting.md).

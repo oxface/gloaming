@@ -3,18 +3,18 @@
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Sales</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../../../src/Rootbolt.Messaging/Rootbolt.Messaging.Workflows.EntityFrameworkCore/Rootbolt.Messaging.Workflows.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/Rootbolt.Messaging.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Events/Rootbolt.Events.Serialization/Rootbolt.Events.Serialization.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/Rootbolt.Auditing.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity/Rootbolt.ActorIdentity.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../Sales.Contracts/Sales.Contracts.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
-    <ProjectReference Include="../../../../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
   </ItemGroup>
 </Project>

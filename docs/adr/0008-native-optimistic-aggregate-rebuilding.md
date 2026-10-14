@@ -30,6 +30,6 @@ PostgreSQL is the tested runtime. A future concrete pessimistic-locking obligati
 policy, upcasting, catch-up, secondary/multi-stream projections and a maintenance worker remain
 separate capabilities with their own proof obligations. T1 remains event-free.
 
-[Current consumer contract](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md)
+[Current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
 and [dated executions](../reports/es2-single-stream-rebuilding.md) distinguish this contract from
 historical gate/SQL diagnostics.

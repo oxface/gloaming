@@ -1,6 +1,6 @@
 # W1: separate worker hosts
 
-Status: owner authorized implementation on 2026-10-09. No Rootbolt interface changes.
+Status: owner authorized implementation on 2026-10-09. No Gloaming interface changes.
 Implementation is ready for owner review, uncommitted on `feat/separate-worker-hosts`;
 [execution evidence and limits](../reports/w1-separate-worker-hosts.md).
 Base: merged `origin/main`; this remote has no `origin/master`.
@@ -10,7 +10,7 @@ Base: merged `origin/main`; this remote has no `origin/master`.
 Compose the existing Exports and Rendering modules in separate native .NET processes.
 The producer API owns Exports only and commits accepted commands into its native outbox.
 Independent worker roles dispatch that outbox, retain/acknowledge RabbitMQ deliveries,
-and process Rendering's inbox. Existing Rootbolt workers, row locks, leases and fresh scopes
+and process Rendering's inbox. Existing Gloaming workers, row locks, leases and fresh scopes
 remain the mechanisms. Transport and host lifecycle remain consumer code.
 
 Run setup explicitly before starting the hosts. It applies the two existing migration sets

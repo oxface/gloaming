@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.StockIssues;
 

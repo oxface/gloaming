@@ -1,7 +1,7 @@
 using ConsumerRoot.Catalog.Contracts;
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
 
 namespace ConsumerRoot.Catalog;
 

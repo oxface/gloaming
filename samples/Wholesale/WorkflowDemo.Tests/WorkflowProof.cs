@@ -1,4 +1,9 @@
 using System.Text.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
@@ -7,11 +12,6 @@ using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.WorkflowDemo.Tests;
 

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
+using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Rootbolt.Persistence.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.StockIssues;
 

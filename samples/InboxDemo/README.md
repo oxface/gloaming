@@ -1,6 +1,6 @@
 # Ordinary EF durable incoming render jobs
 
-An independent inbox-only receiver using Rootbolt.Messaging's PostgreSQL runtime, native EF
+An independent inbox-only receiver using Gloaming.Messaging's PostgreSQL runtime, native EF
 and Kestrel. No outbox table/publisher, Events, EventSourcing, Tenancy, ActorIdentity, Persistence
 or peer implementation dependency. The wire contract is exports.render v1, matching the
 [OutboxDemo sender](../OutboxDemo/README.md) through an explicit receiver-local DTO.
@@ -36,7 +36,7 @@ or a broker. Native save guard is wired in both overrides.
 Tests run real PostgreSQL/Kestrel and native RabbitMQ through the composition sample. They
 prove commit-before-response, conflict handling, SQL-failure recovery, metadata preservation,
 semantic job deduplication, worker opt-in and the separate broker acknowledgement windows.
-[Family contract](../../src/Rootbolt.Messaging/docs/inbox.md) documents ownership and limitations.
+[Family contract](../../src/Gloaming.Messaging/docs/inbox.md) documents ownership and limitations.
 
 Optional message diagnostic context and native telemetry setup are documented in the
-[Messaging observability contract](../../src/Rootbolt.Messaging/docs/observability.md).
+[Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).

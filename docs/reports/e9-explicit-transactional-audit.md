@@ -90,7 +90,7 @@ The registry implementation is unchanged; event contract registration remains st
 lookup by durable name/version. This refinement proves the shared index setup, not an event
 registry, transaction cache or broader schema-management mechanism.
 
-ConfigurePostgresAudit in Rootbolt.Auditing.EntityFrameworkCore.Postgres specializes Details
+ConfigurePostgresAudit in Gloaming.Auditing.EntityFrameworkCore.Postgres specializes Details
 as JSONB. Its only dependencies are the EF audit package and Npgsql EF provider. Generic EF
 mapping and staging remain free of the provider, tenancy, events, messaging and HTTP.
 Module mappings retain their own ownership and native subject timeline index.
@@ -166,7 +166,7 @@ not results for the simplified current implementation.
 
 Reproduction uses the repository's native commands. Local resource limits require
 `DOTNET_PROCESSOR_COUNT=2`; the solution build used `--disable-build-servers -m:1 --no-restore`.
-Test projects are `src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj`,
+Test projects are `src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj`,
 `samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj`,
 `samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj` and
 `tests/ArchitectureTests/ArchitectureTests.csproj`. Run `dotnet test --project <path>` with
@@ -213,26 +213,26 @@ mechanism is proven by this slice.
 
 ## Review-worthy files
 
-- [Public envelope](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/AuditEntry.cs),
-  [typed interface](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/IAudit.cs),
-  [staging implementation](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/EfAudit.cs),
-  [provided row](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/AuditRecord.cs),
-  [mapping/save guard](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/AuditModelExtensions.cs)
-  and [internal evidence registry](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore/AuditStageRegistry.cs).
-- [PostgreSQL helper](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/PostgresAuditModelExtensions.cs),
-  its optional project/dependency declarations and [provider setup](../../src/Rootbolt.Auditing/Rootbolt.Auditing.EntityFrameworkCore.Postgres/README.md).
+- [Public envelope](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditEntry.cs),
+  [typed interface](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/IAudit.cs),
+  [staging implementation](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/EfAudit.cs),
+  [provided row](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditRecord.cs),
+  [mapping/save guard](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditModelExtensions.cs)
+  and [internal evidence registry](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditStageRegistry.cs).
+- [PostgreSQL helper](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/PostgresAuditModelExtensions.cs),
+  its optional project/dependency declarations and [provider setup](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md).
 - [Sales wrapper](../../samples/Wholesale/modules/Sales/Sales/SalesAudit.cs) and
   [Inventory wrapper](../../samples/Wholesale/modules/Inventory/Inventory/InventoryAudit.cs);
   [Human consumer](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs) and
   [worker consumer](../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs),
   their module registrations/DbContexts, StockIssueMessages, the finite InboxJourney and two
   new forward audit migrations/snapshots.
-- [Independent proofs](../../src/Rootbolt.Auditing/tests/AuditPostgresTests/TransactionTests.cs),
+- [Independent proofs](../../src/Gloaming.Auditing/tests/AuditPostgresTests/TransactionTests.cs),
   [Sales proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/ProfileAuditTests.cs) and
   [Inventory proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs)
   and [outbox retry proof](../../samples/Wholesale/EventPersistenceDemo.Tests/OutboxDispatchTests.cs).
   Two supporting older Sales migration assertions now compare all declared migrations.
-- [Library-local contract](../../src/Rootbolt.Auditing/docs/transactional-audit.md),
+- [Library-local contract](../../src/Gloaming.Auditing/docs/transactional-audit.md),
   [reviewed scope](../plans/e9-explicit-transactional-audit.md) and
   [ADR 0011](../adr/0011-explicit-transactional-audit.md); architecture/CI/hook integration.
 

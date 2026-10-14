@@ -171,7 +171,7 @@ Historical schema reading/upcasting remains a priority. Assess native EF joins/f
 extracting secondary/multi-stream projection orchestration; no such runtime is present today.
 Discovery, revisions/cutover, global feeds, messaging/audit, RLS, cross-module transactions and
 template event presets remain excluded. See the self-sufficient
-[local capability catalog](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
+[local capability catalog](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
 
 [Earlier native SQL diagnostics](../reports/es2-rebuild-design.md) explain why repair-only
 locking was rejected. The retained TypeScript reproducer is design evidence alongside the

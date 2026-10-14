@@ -5,7 +5,7 @@ Owner authorized the revised interface/scope before implementation. The initial 
 unstaged for line-by-line review; this agent has not committed, pushed or merged this slice.
 [Scope/interface history](../plans/outbox1-transactional-dispatch.md),
 [ADR 0009](../adr/0009-module-owned-transactional-outbox.md),
-[current consumer contract](../../src/Rootbolt.Messaging/docs/capabilities.md).
+[current consumer contract](../../src/Gloaming.Messaging/docs/capabilities.md).
 
 ## Outcome and mechanism concentrated
 
@@ -27,7 +27,7 @@ actual consumer decisions, rather than asserting code resembles the archive.
 The EF layer contains used functionality and has no Npgsql dependency. PostgreSQL owns
 JSONB, database-time defaults, partial pending index and native SKIP LOCKED SQL. The middle
 package does not certify another provider or introduce a generic dialect/repository. Business
-Contracts remain technical-library-free. No Rootbolt root runtime or compulsory dependency
+Contracts remain technical-library-free. No Gloaming root runtime or compulsory dependency
 on Events, EventSourcing, Persistence, Tenancy or ActorIdentity is added.
 
 ## Executable adoption and consumer-owned policy
@@ -43,7 +43,7 @@ The explicit --outbox journey owns native RabbitMQ topology, channel/connection 
 publisher. Persistent mandatory publication waits for confirmation tracking; unroutable
 returns propagate. The receiving test observer manually acknowledges transport delivery;
 it does not represent durable receiver intake/business effects. No transport runtime was
-promoted into Rootbolt, and no archived broker/topology suite was reactivated.
+promoted into Gloaming, and no archived broker/topology suite was reactivated.
 
 The independent OutboxDemo adopts ordinary versioned EF state and direct JSON. A draft export
 with pages may be submitted once, staging RenderExportV1 in the caller's transaction.
@@ -144,7 +144,7 @@ make non-cooperative code cancellable.
 
 ## Review-worthy files and next slice
 
-Read the [family contract](../../src/Rootbolt.Messaging/README.md), then core OutgoingMessage/
+Read the [family contract](../../src/Gloaming.Messaging/README.md), then core OutgoingMessage/
 IMessagePublisher; EF IOutbox/IOutboxDispatcher/options, provided record, model/save guard,
 enqueue and worker; PostgreSQL mapping, DI and dispatcher. Inspect
 [consumer mapping](../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueMessages.cs),

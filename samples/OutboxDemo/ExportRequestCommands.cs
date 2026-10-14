@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.OutboxDemo;
 

@@ -7,7 +7,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
-    <ProjectReference Include="../../../src/Rootbolt.Persistence/Rootbolt.Persistence.EntityFrameworkCore/Rootbolt.Persistence.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="../../../src/Rootbolt.Tenancy/Rootbolt.Tenancy/Rootbolt.Tenancy.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
   </ItemGroup>
 </Project>

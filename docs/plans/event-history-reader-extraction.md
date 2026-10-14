@@ -255,7 +255,7 @@ unbounded history lengths. SQL selection happens before materialization; decode 
 ## Exact file and behavior scope
 
 Paths below are relative to the repository root; EF denotes
-src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore.
+src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.
 
 | File | Proposed change |
 | --- | --- |
@@ -266,7 +266,7 @@ src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore.
 | Corresponding StockPositionRebuilder.cs; PurchaseOrderRebuilder.cs | Pass existing reader to base; remove the one-line history hook. |
 | samples/EventStorageDemo/CounterHistoryReader.cs | Add a thin typed-context decoder using direct JSON, without tenancy/codec registration. |
 | samples/EventStorageDemo/CounterStore.cs | Delegate captured history loading to provided implementation; retain domain evolution and local error classification. |
-| src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/RebuildConsumer.cs | Adopt shared reader in tenant-free ledger; preserve independent maintenance composition. |
+| src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildConsumer.cs | Adopt shared reader in tenant-free ledger; preserve independent maintenance composition. |
 | Same tests/EventHistoryReaderTests.cs; RegistrationTests.cs; RebuildTests.cs | Add actual reader proof coverage and update consumer constructor composition. |
 | samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs; samples/EventStorageDemo.Tests/AppendTests.cs | Extend adoption checks only where existing cases do not cover the extracted behavior. |
 | tests/ArchitectureTests/AdoptionDependencyTests.cs; AssemblyDependencyTests.cs | Update both project and assembly dependency assertions for the approved Events.History dependency and consumer error translation; retain other independent consumer/T1 exclusions. |

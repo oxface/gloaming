@@ -6,7 +6,7 @@ through PR #1 as `beafa4e`. [Reviewed scope](../plans/outbox1-transactional-disp
 Each adopting module owns its typed native DbContext, schema/table, business contracts and
 transaction. Explicit enqueue joins that context's existing transaction; business changes,
 events/required aggregate state where applicable, and outgoing work share the caller's
-save/commit. No universal Rootbolt unit of work or mandatory context/event dependency is added.
+save/commit. No universal Gloaming unit of work or mandatory context/event dependency is added.
 Different modules receive/commit independently, preserving a future service boundary without
 assuming a distributed or shared cross-module transaction.
 
@@ -32,6 +32,6 @@ own reviewed interface and real two-module broker/database recovery proof; the
 delivery; correlation groups related work and causation identifies immediate cause. They must
 not conflate delivery deduplication with semantic business-operation idempotency.
 
-See [the library-local contract](../../src/Rootbolt.Messaging/docs/capabilities.md) and
+See [the library-local contract](../../src/Gloaming.Messaging/docs/capabilities.md) and
 [dated executions](../reports/outbox1-transactional-dispatch.md). T1 remains event/messaging-free;
 the archive, previous migrations, fixtures and existing event checkpoints are preserved.

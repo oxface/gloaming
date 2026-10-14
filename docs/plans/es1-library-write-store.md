@@ -208,7 +208,7 @@ fixture or archived file is deleted. This maps the store revision beyond the pri
 
 | Files | Behavior |
 | --- | --- |
-| `src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/IEventStore.cs` (new) | Aggregate-only write interface and staged metadata. |
+| `src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IEventStore.cs` (new) | Aggregate-only write interface and staged metadata. |
 | Same directory: `EventStore.cs` (new) | Native lookup, version/observation protocol and configured append/state coordination. |
 | Same directory: `InlineAggregateAdapter.cs` (new) | State encoding/reconstitution, secondary evolution and row metadata contracts. |
 | Same directory: `InlineProjectionStorage.cs` (renamed from `InlineState.cs`) | Complete-key native loading, metadata checks and internal state preparation/staging. |

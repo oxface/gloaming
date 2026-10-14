@@ -3,7 +3,7 @@
 Date: 2026-10-13. Disposition: rejected for adoption on 2026-10-14.
 The owner closed B1 as an assessment and requested removal of the implementation, tests,
 snapshot and reconstruction patch. This ADR records the trade-off and rejection;
-it establishes no active Sales persistence requirement or Rootbolt interface.
+it establishes no active Sales persistence requirement or Gloaming interface.
 
 ## Context
 

@@ -150,15 +150,15 @@ durable regression coverage lives in the family and executable consumer test pro
 
 ### Review-worthy files and remaining limits
 
-Review [EventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStore.cs),
-[batch encoding](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventBatchEncoder.cs),
-[AggregateRebuilder](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs),
-[InlineStateWriter](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/InlineStateWriter.cs),
-[native save guard](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs),
-[registration](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs),
-[actual stamp races](../../src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/ConcurrencyTests.cs)
+Review [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
+[batch encoding](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventBatchEncoder.cs),
+[AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs),
+[InlineStateWriter](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateWriter.cs),
+[native save guard](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs),
+[registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs),
+[actual stamp races](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/ConcurrencyTests.cs)
 and the separate module bindings/migrations in the reviewed map. Public mapping/reader/header
-contracts are explicit and self-sufficient in [the package README](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md).
+contracts are explicit and self-sufficient in [the package README](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
 
 No automatic retry/rebase, catch-up, snapshot, async/multi-stream or secondary persisted projection,
 job table, upcaster, messaging/audit integration, cross-module transaction or template event preset.
@@ -260,10 +260,10 @@ execution is claimed. Archived source integrity was freshly checked instead.
 
 ### Review and remaining gaps
 
-Review [EventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStore.cs),
-[AggregateRebuilder](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs),
+Review [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
+[AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs),
 [former PreparedAggregateRebuild](../plans/es2-native-ef-simplification.md)
-and [the native save guard](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
+and [the native save guard](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
 with [the exact reduction map](../plans/es2-aggregate-only-reduction.md#exact-filebehavior-map).
 Purchasing's query/store/mapping and replacement tests show the changed consumer behavior.
 Current setup, capabilities, limits and future context are recorded in family/EF/provider-local
@@ -371,7 +371,7 @@ fixture bytes, historical positions/times and migration files are unchanged.
 ## Historical evidence and rejected alternatives
 
 [The earlier design report](es2-rebuild-design.md) records archive inspection and four native
-SQL diagnostics, with a reproducible [script](../../src/Rootbolt.EventSourcing/docs/proofs/es2-coordination.ts).
+SQL diagnostics, with a reproducible [script](../../src/Gloaming.EventSourcing/docs/proofs/es2-coordination.ts).
 Those executions preceded implementation and are distinct from the new EF/provider/consumer
 proofs above. Repair-only SELECT FOR UPDATE on the header was rejected: a previously loaded
 writer still overwrote repaired state because repair deliberately preserved its version.
@@ -388,12 +388,12 @@ writing, as AGENTS.md requires recording settled architectural choices; no new i
 The [reviewed brief](../plans/es2-aggregate-only-reduction.md#exact-filebehavior-map)
 lists the complete file/behavior map. Start line-by-line review with:
 
-- [EventStore](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStore.cs): configuration, pre-read shared admission, full replay and all-projection preparation/staging.
+- [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs): configuration, pre-read shared admission, full replay and all-projection preparation/staging.
 - [former EventStreamWriteGate](../plans/es2-native-ef-simplification.md) and [former private state](../plans/es2-native-ef-simplification.md): complete key, transaction/access lifecycle and exact prepared repair association.
-- [RequiredInlineStateExtensions](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs), [InlineProjectionStorage](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/InlineStateReader.cs), EventAppender and PreparedEventAppend in the same project: registered aggregate rebuilding, native guards, raw repair loading, observed-token staging and lower-level admission enforcement.
-- [former Replay surface](../plans/es2-native-ef-simplification.md), [maintenance interface/result](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/IAggregateRebuilder.cs) and [former provider implementation](../plans/es2-native-ef-simplification.md).
-- [Aggregate DI registration](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs) and [registration proofs](../../src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/RegistrationTests.cs): same scoped roles, clock overrides, incompatible binding rejection, typed context isolation and explicit declaration compatibility.
-- [Standalone proofs](../../src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/RebuildTests.cs), [real consumer proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.Rebuilding.cs) and [executable maintenance journey](../../samples/Wholesale/EventPersistenceDemo/RebuildJourney.cs).
+- [RequiredInlineStateExtensions](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs), [InlineProjectionStorage](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateReader.cs), EventAppender and PreparedEventAppend in the same project: registered aggregate rebuilding, native guards, raw repair loading, observed-token staging and lower-level admission enforcement.
+- [former Replay surface](../plans/es2-native-ef-simplification.md), [maintenance interface/result](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IAggregateRebuilder.cs) and [former provider implementation](../plans/es2-native-ef-simplification.md).
+- [Aggregate DI registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs) and [registration proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegistrationTests.cs): same scoped roles, clock overrides, incompatible binding rejection, typed context isolation and explicit declaration compatibility.
+- [Standalone proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildTests.cs), [real consumer proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.Rebuilding.cs) and [executable maintenance journey](../../samples/Wholesale/EventPersistenceDemo/RebuildJourney.cs).
 
 Modules select the provider, alias one concrete scoped store to both interfaces and reuse the
 same concrete history reader for existing reads and captured replay. Command-only composition
@@ -425,7 +425,7 @@ production privilege/operational claim or other-provider certification was teste
 
 Async projections/global progress, snapshots/tails, upcasting, multi-stream grouping/batches,
 discovery/jobs/admin UI, shadow revisions/cutover, messaging, audit, RLS and cross-module
-transactions remain deferred in the [library-local catalog](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
+transactions remain deferred in the [library-local catalog](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
 Aspire/browser, archived backend and broker suites were not rerun; this slice changes no such
 runtime/transport capability. Stop here for complete unstaged owner review.
 

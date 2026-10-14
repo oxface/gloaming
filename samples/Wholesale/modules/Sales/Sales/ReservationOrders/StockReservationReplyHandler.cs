@@ -1,9 +1,9 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.Workflows;
+using Gloaming.Tenancy;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Messaging;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.Workflows;
-using Rootbolt.Tenancy;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
 

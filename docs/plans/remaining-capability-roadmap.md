@@ -16,7 +16,7 @@ at `4c0e0c5`.
 remaining rows are candidates.
 
 WF2 is merged into fetched `origin/main` at `d674e39` on the B1 starting base.
-The current implementation is the [bounded continuation runner](../../src/Rootbolt.Messaging/docs/workflows.md),
+The current implementation is the [bounded continuation runner](../../src/Gloaming.Messaging/docs/workflows.md),
 not the earlier sequential coordinator experiment. The owner closed B1 on 2026-10-14 as the
 [retention and contract assessment](../reports/b1-retention-and-contract-assessment.md),
 then rejected keeping its experimental code. Only [dated results](../reports/b1-replayable-integration-feed.md)
@@ -139,7 +139,7 @@ report distinguish the new mechanism from existing messaging and consumer-owned 
 Messaging already retains MessageId, CorrelationId and CausationId. Optional diagnostic context and native
 spans are implemented by the separately reviewed OBS1 work; the current audit API deliberately excludes
 these identifiers. Host OTel setup/exporters and native transport configuration remain editable
-sample/template composition. No Rootbolt root runtime or universal transaction context is
+sample/template composition. No Gloaming root runtime or universal transaction context is
 planned simply to connect these families.
 
 Each implementation handoff must name supported versus deferred behavior, provide executable

@@ -60,7 +60,7 @@ var current = await orders.ReadAsync(started.OrderId, cancellationToken);
 lines, stable reservation identities and business status. Ordinary
 [ReservationWorkflow methods](../modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs)
 choose the next reservation, completion, compensating release or operator intervention.
-The optional [durable continuation runner](../../../src/Rootbolt.Messaging/docs/workflows.md)
+The optional [durable continuation runner](../../../src/Gloaming.Messaging/docs/workflows.md)
 loads the provided process row, matches retained operations/replies, invokes only the saved
 method and enqueues its returned request. The [reply handler](../modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs)
 retains producer/tenant/actor admission. Existing inbox processing commits state, next command
@@ -102,7 +102,7 @@ consuming reservations, expiry, cancellation, parallel lines, scheduling and poi
 are deferred. No timeout automatically reverses stock. Deployment owns producer authentication,
 queue permissions and DLQ policy; shared demo credentials do not authenticate modules.
 
-Rootbolt supplies local processing, durable delivery and an optional typed continuation runner.
+Gloaming supplies local processing, durable delivery and an optional typed continuation runner.
 The [new report](../../../docs/reports/wf2-durable-continuations.md) distinguishes fresh protocol
 and consumer proofs from the [initial consumer-only run](../../../docs/reports/wf2-compensating-workflow.md)
 and discarded [sequential experiment](../../../docs/reports/wf2-sequential-saga-coordinator.md).

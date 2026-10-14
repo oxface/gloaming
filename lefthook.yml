@@ -2,7 +2,7 @@ pre-commit:
   jobs:
     - name: audit-postgres-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-restore
     - name: csharpier
       glob: "*.{cs,csx,config,csproj,props,targets,slnx,xml}"
       run: dotnet csharpier check . --include-generated
@@ -14,37 +14,37 @@ pre-commit:
       run: dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
     - name: actor-identity-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-restore
     - name: actor-http-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-restore
     - name: tenancy-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Tenancy/tests/TenantTests/TenantTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-restore
     - name: tenancy-http-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-restore
     - name: context-composition-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project samples/Wholesale/ContextDemo.Tests/ContextDemo.Tests.csproj --no-restore
     - name: ef-model-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-restore
     - name: active-architecture-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-restore
     - name: event-serialization-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-restore
     - name: event-codec-consumer-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-restore
     - name: event-history-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-restore
     - name: event-rebuilding-postgres-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-restore
 
 commit-msg:
   jobs:

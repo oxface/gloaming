@@ -2,6 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
+using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -22,9 +25,6 @@ using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
-using Rootbolt.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 

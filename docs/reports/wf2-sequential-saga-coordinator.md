@@ -12,12 +12,12 @@ all follow-up edits are in the working tree. No push or pull request was created
 
 ## Outcome and complexity removed
 
-The optional package-free `Rootbolt.Messaging.Sagas` now owns fixed sequential progress,
+The optional package-free `Gloaming.Messaging.Sagas` now owns fixed sequential progress,
 requested command identities, retained business outcome codes, duplicate/conflict handling,
 reverse compensation and explicit retry of a refused undo. It requests one action at a time
 and waits for each acknowledged result. Exceptions and missing replies never imply refusal.
 
-The optional `Rootbolt.Messaging.Sagas.EntityFrameworkCore` supplies a used native property
+The optional `Gloaming.Messaging.Sagas.EntityFrameworkCore` supplies a used native property
 converter, independent tracker snapshots and optimistic concurrency on the original document.
 PostgreSQL JSONB equality is proven. Neither package supplies a store, worker, transport,
 SaveChanges override, domain base class or implicit transaction. Existing inbox/outbox workers
@@ -53,7 +53,7 @@ reviewed forward migration. Fresh test databases exercise the revised native mig
 | Refused undo and later retry | Core retains old attempt result and returns a new command ID for the same step; consumer chooses when retry is authorized. |
 | Mutable object change detection | New EF adapter uses an independent snapshot of serialized progress. |
 | Competing process updates | Adapter's original-document concurrency token; native EF exception and fresh operation retry. |
-| Progress, next command and inbox completion atomicity | Existing Rootbolt inbox processor, typed outbox and native owning transaction. |
+| Progress, next command and inbox completion atomicity | Existing Gloaming inbox processor, typed outbox and native owning transaction. |
 | Reserve/release business effects and repeated external commands | Inventory-owned resource IDs, retained original inputs/results and current-state decision rules. |
 | Transport delivery, producer trust, tenancy and routing | Existing messaging mechanisms plus explicit consumer native adapters/admission. |
 
@@ -83,7 +83,7 @@ workflow uses earlier mechanisms as well; it does not turn them into new saga-en
 - Revised uncommitted Sales migration, metadata and snapshot; workflow fault/concurrency probes
   now inspect the stored attempt ledger. Business assertions remain unchanged.
 - Optional project references, central EF version pin, architecture rules and Messaging CI lane
-  register only used dependencies/tests. [The local contract](../../src/Rootbolt.Messaging/docs/workflows.md)
+  register only used dependencies/tests. [The local contract](../../src/Gloaming.Messaging/docs/workflows.md)
   records supported setup and gaps without requiring root design documents.
 
 ## Fresh verification

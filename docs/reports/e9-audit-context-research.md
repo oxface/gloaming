@@ -15,7 +15,7 @@ source was changed.
 asynchronous calls. W3C identifiers are the default for new traces in .NET 5 and later:
 `TraceId` identifies the trace, `SpanId` identifies the current operation, and `ParentSpanId`
 identifies its parent span. ASP.NET Core and `HttpClient` understand HTTP trace propagation
-without a custom Rootbolt context. [Microsoft distributed tracing concepts](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing-concepts),
+without a custom Gloaming context. [Microsoft distributed tracing concepts](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/distributed-tracing-concepts),
 [Activity.Current API](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity.current?view=net-10.0).
 
 Tracing does not supply application actor or tenant identity. The W3C specification permits
@@ -66,7 +66,7 @@ preserving the existing exact-text guard. It would still require deliberate fiel
 Changing to `DeepEquals` is a separate choice to weaken text identity to JSON value equality;
 it should not occur as an incidental record refactor. The existing outbox pending-envelope
 guard also uses exact `GetRawText()` comparison in
-[OutboxModelExtensions](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore/OutboxModelExtensions.cs).
+[OutboxModelExtensions](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxModelExtensions.cs).
 Any shared helper should be justified by actual repeated mechanics and reviewed independently
 of unrelated messaging behavior.
 

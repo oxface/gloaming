@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Text;
+using Gloaming.Messaging;
 using RabbitMQ.Client;
-using Rootbolt.Messaging;
 
 namespace ModulithFoundry.Samples.Wholesale.EventPersistenceDemo;
 
-/// <summary>Consumer-owned native RabbitMQ acceptance and route policy; no transport code lives in Rootbolt.</summary>
+/// <summary>Consumer-owned native RabbitMQ acceptance and route policy; no transport code lives in Gloaming.</summary>
 public sealed class InventoryRabbitMqPublisher(IChannel channel) : IMessagePublisher
 {
     public async Task PublishAsync(OutgoingMessage message, CancellationToken cancellationToken)

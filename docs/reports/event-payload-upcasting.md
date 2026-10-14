@@ -108,12 +108,12 @@ unrelated edit is changed.
 
 ## Review-worthy files
 
-- [Public upcaster](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/JsonEventUpcaster.cs) and [codec orchestration](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/JsonEventCodec.cs).
-- [Pure codec proofs](../../src/Rootbolt.Events/tests/EventSerializationTests/UpcastingTests.cs).
+- [Public upcaster](../../src/Gloaming.Events/Gloaming.Events.Serialization/JsonEventUpcaster.cs) and [codec orchestration](../../src/Gloaming.Events/Gloaming.Events.Serialization/JsonEventCodec.cs).
+- [Pure codec proofs](../../src/Gloaming.Events/tests/EventSerializationTests/UpcastingTests.cs).
 - [Inventory transform](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs), [codec registration](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCodec.cs) and [event annotation](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionEvents.cs).
 - [Independent chained/nested adopter](../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs), [standalone journey](../../samples/Wholesale/EventCodecDemo/SchemaEvolutionJourneys.cs) and [literal tests](../../samples/Wholesale/EventCodecDemo.Tests/UpcastingCompatibilityTests.cs).
 - [Native PostgreSQL journey](../../samples/Wholesale/EventPersistenceDemo/SchemaEvolutionJourney.cs) and [mixed-schema failure/recovery proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.Upcasting.cs).
-- [Self-sufficient codec README](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/README.md), [local capability record](../../src/Rootbolt.Events/Rootbolt.Events.Serialization/docs/capabilities.md) and [reviewed complete scope](../plans/event-payload-upcasting.md).
+- [Self-sufficient codec README](../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md), [local capability record](../../src/Gloaming.Events/Gloaming.Events.Serialization/docs/capabilities.md) and [reviewed complete scope](../plans/event-payload-upcasting.md).
 
 ## Limits and historical evidence
 

@@ -31,11 +31,11 @@ parallel lines or an archived runtime. Existing archive files and fixtures remai
 
 ## Two packages, one capability
 
-- `Rootbolt.Messaging.Workflows` replaces the uncommitted `Rootbolt.Messaging.Sagas` core.
-  It depends only on existing `Rootbolt.Messaging` and BCL System.Text.Json. It supplies
+- `Gloaming.Messaging.Workflows` replaces the uncommitted `Gloaming.Messaging.Sagas` core.
+  It depends only on existing `Gloaming.Messaging` and BCL System.Text.Json. It supplies
   immutable definitions, typed bindings, return instructions and execution metadata.
-- `Rootbolt.Messaging.Workflows.EntityFrameworkCore` replaces the uncommitted saga mapping
-  adapter. It depends on the workflow core, existing `Rootbolt.Messaging.EntityFrameworkCore`
+- `Gloaming.Messaging.Workflows.EntityFrameworkCore` replaces the uncommitted saga mapping
+  adapter. It depends on the workflow core, existing `Gloaming.Messaging.EntityFrameworkCore`
   and EF Core Relational. It supplies a provided process row, model/save validation and a
   typed runner that uses the owning context and its existing typed outbox.
 
@@ -211,7 +211,7 @@ resume a process still awaiting a reply.
 
 ## Proposed public surface
 
-Core namespace: Rootbolt.Messaging.Workflows. All public members receive XML documentation.
+Core namespace: Gloaming.Messaging.Workflows. All public members receive XML documentation.
 Names below form the proposed interface; implementation helpers remain internal.
 
 ```csharp
@@ -294,7 +294,7 @@ frozen when building the definition. Serialization/required-field validation rem
 consumer's selected System.Text.Json policy. Incoming reply envelopes are owned existing
 Messaging values; adapters establish producer trust before HandleReplyAsync.
 
-EF namespace: Rootbolt.Messaging.Workflows.EntityFrameworkCore.
+EF namespace: Gloaming.Messaging.Workflows.EntityFrameworkCore.
 
 ```csharp
 public sealed class EfWorkflow<TDbContext, TStart, TState> : IWorkflow<TStart, TState>
@@ -457,10 +457,10 @@ external resource provisioning. Sales retains the real PostgreSQL/RabbitMQ proce
 
 | Files | Change |
 | --- | --- |
-| Every tracked/untracked file in `src/Rootbolt.Messaging/Rootbolt.Messaging.Sagas/` | Replace the uncommitted project/README and seven sequential types with `Rootbolt.Messaging.Workflows/`: key, context, status, turn, builder, immutable definition, snapshot and workflow interface; internal bindings only. No old API compatibility layer. |
-| Every file in `src/Rootbolt.Messaging/Rootbolt.Messaging.Sagas.EntityFrameworkCore/` | Replace the uncommitted mapping project/README with `Rootbolt.Messaging.Workflows.EntityFrameworkCore/`: provided row, model validation, native runner, scoped registration and save guard/registry. |
-| `src/Rootbolt.Messaging/tests/SagaTests/{SagaTests.csproj,SequentialSagaTests.cs}` | Replace with WorkflowTests project and pure binding/turn/serialization/definition cases. |
-| `src/Rootbolt.Messaging/tests/SagaPostgresTests/{SagaPostgresTests.csproj,SagaConsumer.cs,ProgressTests.cs}` | Replace with WorkflowPostgresTests project, tenantless branching consumer and real PG protocol/recovery proofs. Preserve transferred failure assertions; report which old sequential-policy tests no longer apply. |
+| Every tracked/untracked file in `src/Gloaming.Messaging/Gloaming.Messaging.Sagas/` | Replace the uncommitted project/README and seven sequential types with `Gloaming.Messaging.Workflows/`: key, context, status, turn, builder, immutable definition, snapshot and workflow interface; internal bindings only. No old API compatibility layer. |
+| Every file in `src/Gloaming.Messaging/Gloaming.Messaging.Sagas.EntityFrameworkCore/` | Replace the uncommitted mapping project/README with `Gloaming.Messaging.Workflows.EntityFrameworkCore/`: provided row, model validation, native runner, scoped registration and save guard/registry. |
+| `src/Gloaming.Messaging/tests/SagaTests/{SagaTests.csproj,SequentialSagaTests.cs}` | Replace with WorkflowTests project and pure binding/turn/serialization/definition cases. |
+| `src/Gloaming.Messaging/tests/SagaPostgresTests/{SagaPostgresTests.csproj,SagaConsumer.cs,ProgressTests.cs}` | Replace with WorkflowPostgresTests project, tenantless branching consumer and real PG protocol/recovery proofs. Preserve transferred failure assertions; report which old sequential-policy tests no longer apply. |
 | `samples/Wholesale/modules/Sales/Sales/ReservationOrders/{StockReservationOrder.cs,StockReservationOrderMapping.cs}` | Replace the uncommitted EF process entity/mapping with typed ReservationState and ReservationWorkflow continuation/binding code. No business aggregate is required by the runtime. |
 | `.../ReservationOrders/{StockReservationOrders.cs,StockReservationReplyHandler.cs,StockReservationReplyAdmission.cs}` | Start/read/authorized-retry call typed runner; message helper returns envelopes; ingress retains admission, library handles continuation lookup/decode/bookkeeping/enqueue. |
 | `samples/Wholesale/modules/Sales/Sales/{Sales.csproj,SalesDbContext.cs,SalesRegistration.cs}` | Select new optional workflow adapter; configure provided process table/JSONB/save guard and typed definition. Other Sales behaviors unchanged. |
@@ -468,7 +468,7 @@ external resource provisioning. Sales retains the real PostgreSQL/RabbitMQ proce
 | `samples/Wholesale/WorkflowDemo.Tests/{ReservationTests.cs,ReservationFailureTests.cs,ReservationRecoveryTests.cs}` | Adapt native table/ledger probes and barriers, retain public behavior/failure/kill/restart tests; add no-replay and binding mismatch proofs. |
 | `tests/ArchitectureTests/{ArchitectureTests.csproj,AdoptionDependencyTests.cs,AssemblyDependencyTests.cs,SampleModuleBoundaryTests.cs}` | Replace optional saga identities with workflow dependency/independent-adoption checks. |
 | `ModulithFoundry.slnx`, `.github/workflows/ci.yml` | Replace the two optional projects and their two test lanes/paths; existing family path filtering remains. |
-| `src/Rootbolt.Messaging/{README.md,docs/capabilities.md,docs/sagas.md}` | Update optional package list/current contract; replace the uncommitted saga guide with `docs/workflows.md`. |
+| `src/Gloaming.Messaging/{README.md,docs/capabilities.md,docs/sagas.md}` | Update optional package list/current contract; replace the uncommitted saga guide with `docs/workflows.md`. |
 | `samples/Wholesale/WorkflowDemo/{README.md,compensating-reservations.md}` | Explain new execution usage and existing transport/local-transaction ownership. |
 | `samples/Wholesale/WorkflowDemo/Program.cs` | Implementation follow-through: update the existing startup SQL probe to the replacement Sales table. No hosting/worker protocol changes. |
 | `docs/{design.md,plans/library-extraction.md,plans/remaining-capability-roadmap.md,adr/0013-fixed-sequential-saga-progress.md}` | After interface approval, record replacement/supersession, current capability and deferred features; retain earlier proposal/report evidence as historical. |

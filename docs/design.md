@@ -6,10 +6,12 @@ review proposals.
 
 ## Purpose and ownership
 
-The reusable libraries are named Rootbolt. Their namespaces, project/assembly names and
-default package IDs use `Rootbolt.*`; the repository, sample and template identities remain
-Modulith Foundry. [The rename report](reports/rootbolt-library-renaming.md) records the
-mechanical scope and preserved persistence identities.
+The reusable libraries are named Gloaming. Their namespaces, project/assembly names and
+default package IDs use `Gloaming.*`; the repository, sample and template identities remain
+Modulith Foundry. [The rename report](reports/gloaming-library-renaming.md) records the
+mechanical scope and preserved persistence identities. Umbrine is the future ERP product
+built on the application template and Gloaming libraries. Its name derives from Umbral
+and shares Gloaming's darkness theme.
 
 Build useful .NET libraries, a consumer-owned repository template, and a working sample.
 Use the archived wholesale sample to identify guarantees and failure cases; reimplement
@@ -109,9 +111,9 @@ checkpointed as `c8cbf64`. See [the split report](reports/e1-identity-split.md) 
 
 ## Scope and HTTP integration review
 
-`Rootbolt.ActorIdentity` covers executing actor kind/key, optional initiator, its
+`Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
-not the actor concurrency model. `Rootbolt.Tenancy` covers selected tenant or deliberate
+not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate
 tenantless execution, its accessor lifecycle and selected-tenant checks. Both are package-free
 and independent. Transaction, trace, HTTP and module-persistence contexts have their own seams.
 Authentication, membership and authorization remain consumer behavior.
@@ -287,7 +289,7 @@ The owner-authorized [Messaging outbox](plans/outbox1-transactional-dispatch.md)
 implementations in consumer source. Used core/EF/provider layers concentrate enqueue/save
 guards, PostgreSQL claims and optional sequential worker hosting. Each module owns its typed
 context/table and final producer commit; dispatch commits its claim before publication and
-fences completion with an unexpired token. No shared Rootbolt transaction runtime is introduced.
+fences completion with an unexpired token. No shared Gloaming transaction runtime is introduced.
 [ADR 0009](adr/0009-module-owned-transactional-outbox.md) records this direction. Outbox O1
 is merged through PR #1 as `beafa4e`; durable inbox I1 is merged through PR #2 as `0f4d8bf`,
 including intake-before-ack and separate local transactional processing described below.
@@ -300,7 +302,7 @@ sourcing does not require messaging; messaging does not require event sourcing; 
 modules do not depend on event-sourcing types or registrations. Technical libraries do not
 reference sample module Contracts. Use project references during local development.
 
-[E4](plans/e4-event-serialization.md) implements `Rootbolt.Events.Serialization`
+[E4](plans/e4-event-serialization.md) implements `Gloaming.Events.Serialization`
 with native JSON and explicit durable name/version registrations, independently of every
 other segment. Consumer event definitions, JSON requirements/defaults and domain meaning
 stay outside the codec. [Its report](reports/e4-event-serialization.md) records fresh
@@ -318,7 +320,7 @@ and Events.History gain no Serialization dependency. [New evidence](reports/even
 is separate from the earlier codec/history/store checkpoints.
 
 [E5.1](plans/e5-1-event-history.md) implements independently adoptable
-`Rootbolt.Events.History` for consumer-selected ordered-range validation. The owner
+`Gloaming.Events.History` for consumer-selected ordered-range validation. The owner
 approved removing the initial complete-history snapshot/selection object. The utility has
 no payload generic, JSON or other segment dependency; consumers explicitly select/materialize
 rows, validate metadata, decode and hydrate. The strict range policy requires contiguous
@@ -406,7 +408,7 @@ are unstaged and existing staged entries are preserved. The
 The owner requests self-sufficient documentation alongside each library. Local READMEs and
 capability records define current behavior, dependencies, limits and deferred context; root
 plans/ADRs/reports record review and historical executions. The
-[event-store capability record](../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+[event-store capability record](../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
 carries the supported write-only store, independent full-replay rebuilder and native header
 Version/ConcurrencyStamp contract. [ADR 0008](adr/0008-native-optimistic-aggregate-rebuilding.md)
 replaces [the historical pre-read gate](adr/0007-pre-read-admission-for-inline-rebuilding.md).
@@ -470,9 +472,9 @@ infrastructure, not a required library runtime.
 
 [ADR 0012](adr/0012-durable-diagnostic-context-and-native-telemetry.md) records optional retained
 W3C messaging context, links at native attempt creation and diagnostic-independent inbox
-deduplication. [Local observability setup](../src/Rootbolt.Messaging/docs/observability.md)
+deduplication. [Local observability setup](../src/Gloaming.Messaging/docs/observability.md)
 keeps SDK/exporter, sampling and transport decisions in consumers; transaction ownership is unchanged.
-The optional `Rootbolt.Messaging.OpenTelemetry` adapter supplies native trace/meter builder
+The optional `Gloaming.Messaging.OpenTelemetry` adapter supplies native trace/meter builder
 subscription helpers, with an API-only dependency and no host/provider/exporter policy.
 
 [E3.6](plans/e3-6-runtime-composition.md), checkpointed as `28ee797`, adds sample-owned AppHost
@@ -513,7 +515,7 @@ B1 closed on 2026-10-14 as the
 The owner rejected retaining the experiment code, tests, migration or reconstruction patch.
 Only research and [dated execution results](reports/b1-replayable-integration-feed.md) remain;
 [ADR 0015](adr/0015-producer-owned-retained-profile-feed.md) records the rejection.
-Common Sales has no feed API, gate, mapping or activation. No Rootbolt feed interface or
+Common Sales has no feed API, gate, mapping or activation. No Gloaming feed interface or
 template preset was extracted. Public-state revisions require explicit producer semantics;
 DDD and private event history do not establish generic integration-event replay or ordering.
 Revisit state transfer only for a later concrete receiver need; B2 implementation remains separate.
@@ -525,12 +527,12 @@ ordinary consumer methods choose branching and compensation. The runner enqueues
 request in the owning transaction. Admission, Contracts, business validation and native save/commit
 remain consumer-owned. Existing inbox/outbox workers execute delivery; no workflow scheduler,
 replay engine or generated harness is introduced. [ADR 0014](adr/0014-bounded-durable-continuations.md)
-supersedes the uncommitted sequential experiment; [the local contract](../src/Rootbolt.Messaging/docs/workflows.md)
+supersedes the uncommitted sequential experiment; [the local contract](../src/Gloaming.Messaging/docs/workflows.md)
 records supported behavior and limits.
 
 Active ActorIdentity, Tenancy, Persistence, Events and EventSourcing families group their
 independently selectable projects, README, local capability/deferred context and library tests
-under `src/Rootbolt.{Family}/`. Detailed package setup remains with each project. Root
+under `src/Gloaming.{Family}/`. Detailed package setup remains with each project. Root
 ADRs/plans/reports keep cross-cutting decisions and dated evidence; consumers can discover
 essential integration obligations beside the library. Shared architecture/support and sample
 proofs stay with their owners. See [the relocation scope](plans/library-family-layout.md).
@@ -543,19 +545,19 @@ acknowledgement or successful HTTP acceptance. Delivery identity is subscription
 incompatible reuse fails explicitly. Independently invoked processing holds a PostgreSQL row
 lock through bounded local handler work, native save, completion and commit; outgoing effects
 are explicitly queued in that transaction. This avoids inbox leases without changing the outbox's
-external-publication lease protocol. No transport/ack facade or common Rootbolt unit of work is
+external-publication lease protocol. No transport/ack facade or common Gloaming unit of work is
 introduced. [ADR 0010](adr/0010-durable-inbox-local-processing.md) records the settled boundary;
-[the family contract](../src/Rootbolt.Messaging/docs/inbox.md) gives standalone setup and limits.
+[the family contract](../src/Gloaming.Messaging/docs/inbox.md) gives standalone setup and limits.
 
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)
-on 2026-10-09. `Rootbolt.Auditing.EntityFrameworkCore` explicitly captures consumer-supplied
+on 2026-10-09. `Gloaming.Auditing.EntityFrameworkCore` explicitly captures consumer-supplied
 ActorIdentity attribution and owned JSON, maps a provided row and validates staged envelopes
 against their owning native context/transaction. No hidden save/commit, context fallback,
 automatic entity auditing or product classification is introduced. Native DI stays consumer
 wiring; only ActorIdentity and EF Relational are dependencies of the provider-independent EF
-package. The optional `Rootbolt.Auditing.EntityFrameworkCore.Postgres` package composes its
+package. The optional `Gloaming.Auditing.EntityFrameworkCore.Postgres` package composes its
 mapping with JSONB details. Sample wrappers capture actor/tenant, generated ID and clock;
 business calls provide accepted changes. SubjectKey is
 nullable for events without an individual item. ConfigureAudit supplies the portable subject
@@ -569,5 +571,5 @@ Sales profile changes and Inventory inbox stock issues exercise accepted-change 
 in their existing transactions. Business selection, Human/System trust, action/reason vocabulary,
 detail disclosure, query visibility and retention stay consumer-owned. Denial auditing and
 cross-module atomicity remain separate proof gates. [ADR 0011](adr/0011-explicit-transactional-audit.md)
-records this boundary; [the library-local contract](../src/Rootbolt.Auditing/docs/transactional-audit.md)
+records this boundary; [the library-local contract](../src/Gloaming.Auditing/docs/transactional-audit.md)
 and [E9 report](reports/e9-explicit-transactional-audit.md) document current evidence and limits.

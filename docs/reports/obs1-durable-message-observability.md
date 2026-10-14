@@ -13,8 +13,8 @@ activities with retained links at creation, native bounded attempt metrics and o
 failure logging while the activity remains current. SDK/exporter configuration stays in
 editable hosts. The producer never gains a broker/receiver/worker reference.
 
-The owner-approved optional `Rootbolt.Messaging.OpenTelemetry` adapter supplies two native
-AddRootboltMessaging overloads, for tracing and metrics independently. It depends only on
+The owner-approved optional `Gloaming.Messaging.OpenTelemetry` adapter supplies two native
+AddGloamingMessaging overloads, for tracing and metrics independently. It depends only on
 OpenTelemetry.Api and configures no provider, exporter, sampler, resource, logging or
 transport. Both executable hosts use it alongside the existing editable ServiceDefaults.
 
@@ -32,24 +32,24 @@ business workflow or telemetry framework was extracted.
 
 ## Review-worthy implementation
 
-- [Envelope surface](../../src/Rootbolt.Messaging/Rootbolt.Messaging/OutgoingMessage.cs) and
-  [incoming metadata](../../src/Rootbolt.Messaging/Rootbolt.Messaging/IncomingMessage.cs):
+- [Envelope surface](../../src/Gloaming.Messaging/Gloaming.Messaging/OutgoingMessage.cs) and
+  [incoming metadata](../../src/Gloaming.Messaging/Gloaming.Messaging/IncomingMessage.cs):
   optional raw W3C fields, typed-factory forwarding and XML documentation; no ambient capture.
-- [Internal native trace/metric tracking](../../src/Rootbolt.Messaging/Rootbolt.Messaging/MessagingTelemetry.cs),
-  [dispatch](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
-  and [processing](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs):
+- [Internal native trace/metric tracking](../../src/Gloaming.Messaging/Gloaming.Messaging/MessagingTelemetry.cs),
+  [dispatch](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
+  and [processing](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs):
   selected-attempt boundaries, outcomes, links at sampling, optional native logger and bounded
   meter dimensions. BCL-only tracking resides in core; PostgreSQL uses internal friend
   access and owns its operation failure logs. NoWork polls have no message activity/attempt measurement.
-- [Native intake](../../src/Rootbolt.Messaging/Rootbolt.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs),
+- [Native intake](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs),
   shared storage, row mappings and guards: retain diagnostics without adding them to business
   duplicate comparison. First committed intake wins, including competing writers.
 - [Producer setup](../../samples/MessagingProducerDemo/Program.cs) and
   [worker setup](../../samples/MessagingWorkerDemo/Program.cs): reuse existing editable
   [ServiceDefaults](../../samples/Wholesale/ServiceDefaults/README.md), adding native role
-  resources and source/meter subscriptions. No shared Rootbolt host package or duplicate
+  resources and source/meter subscriptions. No shared Gloaming host package or duplicate
   AddTelemetry helper. CI Messaging includes ServiceDefaults as a dependent source input.
-- [Optional trace/meter subscription adapter](../../src/Rootbolt.Messaging/Rootbolt.Messaging.OpenTelemetry/README.md):
+- [Optional trace/meter subscription adapter](../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/README.md):
   two XML-documented extensions and one API-only dependency. The technical messaging packages
   retain their existing dependencies and need not adopt the adapter.
 - [Real process/export proof](../../samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs)
@@ -59,7 +59,7 @@ business workflow or telemetry framework was extracted.
   [standalone sender upgrade](../../samples/OutboxDemo.Tests/TraceMigrationTests.cs),
   [receiver upgrade](../../samples/InboxDemo.Tests/TraceMigrationTests.cs) and
   [Inventory upgrade/adoption](../../samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs).
-- [Self-sufficient library contract](../../src/Rootbolt.Messaging/docs/observability.md),
+- [Self-sufficient library contract](../../src/Gloaming.Messaging/docs/observability.md),
   [executable setup](../../samples/MessagingWorkerDemo/README.md),
   [approved scope/file map](../plans/durable-message-observability.md) and
   [ADR 0012](../adr/0012-durable-diagnostic-context-and-native-telemetry.md).
@@ -127,7 +127,7 @@ there is no SDK or exporter transitive dependency on .NET 10. Generated XML docu
 includes both public extension methods and their host-owned configuration limits.
 
 The owner-requested layering refinement places internal native trace/metric tracking in
-Rootbolt.Messaging and generated failure logging beside each callable PostgreSQL operation.
+Gloaming.Messaging and generated failure logging beside each callable PostgreSQL operation.
 The core grants internal friend access to the PostgreSQL assembly without exposing a new
 public API or adding a package dependency; its restored dependency graph remains empty.
 Operation failures include publisher/handler errors and are distinct from native database

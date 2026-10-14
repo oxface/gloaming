@@ -40,11 +40,11 @@ generated handlers or bus runtime. Wolverine remains a reference, not a dependen
 
 ## Proposed packages and public types
 
-`Rootbolt.Messaging.Sagas` is optional and package-free. It uses platform
+`Gloaming.Messaging.Sagas` is optional and package-free. It uses platform
 System.Text.Json only for its own durable progress document. It does not depend on the
 Messaging envelope, EF, PostgreSQL, Events, EventSourcing, tenancy, DI or a transport.
 
-`Rootbolt.Messaging.Sagas.EntityFrameworkCore` is an optional mapping adapter, depending on
+`Gloaming.Messaging.Sagas.EntityFrameworkCore` is an optional mapping adapter, depending on
 the saga core and Microsoft.EntityFrameworkCore. It converts and snapshots that document
 and installs native optimistic concurrency on the mapped property. PostgreSQL JSONB remains
 explicit consumer configuration. No provider package, store registry or new worker is needed.
@@ -52,7 +52,7 @@ explicit consumer configuration. No provider package, store registry or new work
 Reviewed public surface, with member summaries retained from interface review:
 
 ```csharp
-namespace Rootbolt.Messaging.Sagas;
+namespace Gloaming.Messaging.Sagas;
 
 public enum SagaCompensation
 {
@@ -126,7 +126,7 @@ message mapping. Migrating a running plan is deferred. Stored progress uses an e
 format version and validates identities, enum values and ledger consistency when restored.
 
 ```csharp
-namespace Rootbolt.Messaging.Sagas.EntityFrameworkCore;
+namespace Gloaming.Messaging.Sagas.EntityFrameworkCore;
 
 public static class SequentialSagaPropertyBuilderExtensions
 {
@@ -223,18 +223,18 @@ outbox/inbox registration and hosted workers remain in use.
 
 | Files | Change |
 | --- | --- |
-| New `src/Rootbolt.Messaging/Rootbolt.Messaging.Sagas/{Rootbolt.Messaging.Sagas.csproj,SequentialSaga.cs,SagaStep.cs,SagaAction.cs,SagaOutcome.cs,SagaCompensation.cs,SagaActionKind.cs,SagaStatus.cs,README.md}` | Package-free bounded engine and versioned state serialization. Any serializer/ledger helpers stay internal. XML documentation on every public member. |
-| New `src/Rootbolt.Messaging/Rootbolt.Messaging.Sagas.EntityFrameworkCore/{Rootbolt.Messaging.Sagas.EntityFrameworkCore.csproj,SequentialSagaPropertyBuilderExtensions.cs,README.md}` | Used native property conversion, independent change-tracker snapshot and optimistic concurrency; no store or transaction facade. |
+| New `src/Gloaming.Messaging/Gloaming.Messaging.Sagas/{Gloaming.Messaging.Sagas.csproj,SequentialSaga.cs,SagaStep.cs,SagaAction.cs,SagaOutcome.cs,SagaCompensation.cs,SagaActionKind.cs,SagaStatus.cs,README.md}` | Package-free bounded engine and versioned state serialization. Any serializer/ledger helpers stay internal. XML documentation on every public member. |
+| New `src/Gloaming.Messaging/Gloaming.Messaging.Sagas.EntityFrameworkCore/{Gloaming.Messaging.Sagas.EntityFrameworkCore.csproj,SequentialSagaPropertyBuilderExtensions.cs,README.md}` | Used native property conversion, independent change-tracker snapshot and optimistic concurrency; no store or transaction facade. |
 | `samples/Wholesale/modules/Sales/Sales/ReservationOrders/{StockReservationOrder.cs,StockReservationOrders.cs,StockReservationReplyHandler.cs,StockReservationOrderMapping.cs}` | Replace technical status/command/attempt bookkeeping with Progress; retain request validation, business IDs and explicit typed message mapping. Remove StockReleaseAttempt and ReservationOrderAction when their roles are replaced. |
 | `samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs`; same project's `Sales.csproj` | Update mapping and opt into the two optional packages. Inventory and Sales Contracts remain unchanged. |
 | New, uncommitted WF2 Sales migration `20261010164619_AddCompensatingReservationOrders.cs`, its designer, and current `SalesDbContextModelSnapshot.cs` | Owner-approved replacement of this slice's draft schema: one Progress JSONB column replaces technical root fields and the draft release-attempt table. Keep business fields. No earlier/checkpointed migration or Inventory migration is rewritten. |
 | `samples/Wholesale/WorkflowDemo.Tests/{ReservationTests.cs,ReservationFailureTests.cs,ReservationRecoveryTests.cs,ReservationProof.cs}` | Preserve external behavior/assertions; update implementation-specific probes/barriers for the new Sales progress column. All existing WF1 cases remain. |
-| New `src/Rootbolt.Messaging/tests/SagaTests/{SagaTests.csproj,SequentialSagaTests.cs}` | Core contract: rejection leaves state unchanged, duplicate/conflict behavior, reverse compensation, unsupported undo, explicit retry, state round-trip and plan retention. |
-| New `src/Rootbolt.Messaging/tests/SagaPostgresTests/{SagaPostgresTests.csproj,SagaConsumer.cs,ProgressTests.cs}` | Standalone typed-context adopter without Inventory, EventSourcing, tenancy or RabbitMQ: refusal of a third resource operation requires two acknowledged reverse undos; a separate variant skips an explicitly NotRequired step. Real PostgreSQL proves converter tracking, competing replies, rollback, fresh-context resume and atomic next outbox work. It is a contract adopter, not another full product workflow. |
+| New `src/Gloaming.Messaging/tests/SagaTests/{SagaTests.csproj,SequentialSagaTests.cs}` | Core contract: rejection leaves state unchanged, duplicate/conflict behavior, reverse compensation, unsupported undo, explicit retry, state round-trip and plan retention. |
+| New `src/Gloaming.Messaging/tests/SagaPostgresTests/{SagaPostgresTests.csproj,SagaConsumer.cs,ProgressTests.cs}` | Standalone typed-context adopter without Inventory, EventSourcing, tenancy or RabbitMQ: refusal of a third resource operation requires two acknowledged reverse undos; a separate variant skips an explicitly NotRequired step. Real PostgreSQL proves converter tracking, competing replies, rollback, fresh-context resume and atomic next outbox work. It is a contract adopter, not another full product workflow. |
 | `ModulithFoundry.slnx`; `tests/ArchitectureTests/{ArchitectureTests.csproj,AssemblyDependencyTests.cs,AdoptionDependencyTests.cs,SampleModuleBoundaryTests.cs}` | Include used projects; prove package dependencies, module isolation and independent adoption. |
 | `Directory.Packages.props` | Pin the adapter's actually used Microsoft.EntityFrameworkCore dependency to the existing EF version 10.0.12. |
 | `.github/workflows/ci.yml` | Add both saga suites to the existing Messaging lane. Existing `.github/ci-paths.yml` family glob already covers these paths; no new script or runtime lane. |
-| `src/Rootbolt.Messaging/{README.md,docs/capabilities.md,docs/sagas.md}`; WorkflowDemo usage; WF2 plan/report; extraction plan/roadmap | Self-contained setup/guarantees/deferred context and new evidence, clearly separate from the earlier 474-case consumer-only run. |
+| `src/Gloaming.Messaging/{README.md,docs/capabilities.md,docs/sagas.md}`; WorkflowDemo usage; WF2 plan/report; extraction plan/roadmap | Self-contained setup/guarantees/deferred context and new evidence, clearly separate from the earlier 474-case consumer-only run. |
 
 The draft Sales migration replacement is confined to the uncommitted WF2 increment. It does
 not authorize resetting an installed demo database. An existing database that has applied

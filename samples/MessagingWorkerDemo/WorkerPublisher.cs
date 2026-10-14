@@ -1,6 +1,6 @@
+using Gloaming.Messaging;
 using Microsoft.Extensions.Logging;
 using ModulithFoundry.Samples.MessagingDemo;
-using Rootbolt.Messaging;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo;
 

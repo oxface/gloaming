@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using Rootbolt.Messaging;
+using Gloaming.Messaging;
 
 namespace ModulithFoundry.Samples.OutboxDemo;
 

@@ -1,8 +1,8 @@
 using System.Text.Json;
+using Gloaming.Events.Serialization;
+using Gloaming.Messaging;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using Rootbolt.Events.Serialization;
-using Rootbolt.Messaging;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 

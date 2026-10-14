@@ -76,7 +76,7 @@ source documents and verifies nested/Unicode/decimal payloads in a fresh context
 column type. Wholesale separately proves required-state save enforcement. See
 [the store report](../../docs/reports/es1-library-write-store.md).
 
-[Library](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/README.md),
+[Library](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md),
 [plan](../../docs/plans/e5-3-event-storage-registration.md),
 [findings](../../docs/reports/e5-3-event-storage-registration.md).
 The [ES1 brief](../../docs/plans/es1-bounded-event-append.md) records the reviewed append scope.
@@ -85,5 +85,5 @@ The library also supplies an optional StoredEventRecord for ordinary envelopes. 
 [default-envelope proof](../EventStorageDemo.Tests/AppendTests.DefaultEnvelope.cs) writes two
 concrete payload shapes through the provided store with that type, then reads them through
 this retained consumer mapping and migrations. Provider JSONB mapping and durable decoding
-remain explicit. [Local capability context](../../src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+remain explicit. [Local capability context](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
 records async/multi-stream/rebuild/provider gaps independently of repository review plans.

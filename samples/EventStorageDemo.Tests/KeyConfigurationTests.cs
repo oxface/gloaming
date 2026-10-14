@@ -1,6 +1,6 @@
 using System.Text.Json;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
 

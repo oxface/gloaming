@@ -3,7 +3,7 @@
 A native .NET Generic Host composing the existing Exports outbox and Rendering inbox.
 Each invocation selects one explicit role. The producer API, dispatcher, broker intake and
 inbox processor can have separate deployment lifetimes and replica counts. These are editable
-consumer entry points, using existing Rootbolt APIs; there is no new worker runtime package.
+consumer entry points, using existing Gloaming APIs; there is no new worker runtime package.
 
 | Role | Dependencies and behavior |
 | --- | --- |
@@ -78,7 +78,7 @@ renewal, leader election, batching, deployment manifests and resource limits are
 Permissions/TLS and trusted producer mapping remain deployment/consumer obligations. A
 malformed head delivery can require operator intervention; this sample does not silently discard it.
 Optional retained W3C context, native attempt spans/logs/metrics and RabbitMQ transport
-tracing are supported by OBS1. No root Rootbolt runtime is required.
+tracing are supported by OBS1. No root Gloaming runtime is required.
 
 ## Executable proofs
 
@@ -102,9 +102,9 @@ for dated results and the exact supported boundary.
 
 The producer and each worker role call the existing editable
 [ServiceDefaults](../Wholesale/ServiceDefaults/README.md), then add role resources and
-Rootbolt subscriptions through optional AddRootboltMessaging extensions on native trace
+Gloaming subscriptions through optional AddGloamingMessaging extensions on native trace
 and metric builders in Program.cs. RabbitMQ sources remain explicitly selected there. There
-is no separate AddTelemetry helper or Rootbolt host package. Set these for processes that
+is no separate AddTelemetry helper or Gloaming host package. Set these for processes that
 should export to an existing Collector or Aspire dashboard OTLP endpoint:
 
 ```bash
@@ -117,11 +117,11 @@ messaging-process, with a new instance ID per process. OTEL_SERVICE_NAME can ove
 name per deployment. Setup remains finite and configures no exporter. Hosts own sampling,
 filtering, collection endpoints and retention. There is no required dashboard or Collector.
 
-Follow the producer activity linked by each rootbolt.outbox.dispatch attempt, its native
-RabbitMQ send child, then the send context linked by rootbolt.inbox.process. Different retry
+Follow the producer activity linked by each gloaming.outbox.dispatch attempt, its native
+RabbitMQ send child, then the send context linked by gloaming.inbox.process. Different retry
 spans preserve the same MessageId. Inspect error logs by trace/span ID and native attempt
 counters/duration by operation/result. Metrics do not provide pending-work gauges or alerts.
-The [family contract](../../src/Rootbolt.Messaging/docs/observability.md) describes schema
+The [family contract](../../src/Gloaming.Messaging/docs/observability.md) describes schema
 upgrades and exact span/measurement boundaries.
 
 The process suite now also uses a test-owned official OTel Collector 0.162.0 to assert actual

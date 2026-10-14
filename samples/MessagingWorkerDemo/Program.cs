@@ -1,3 +1,5 @@
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,8 +12,6 @@ using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using Rootbolt.Messaging.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore.Postgres;
 
 var builder = Host.CreateApplicationBuilder(args);
 string role =
@@ -35,10 +35,10 @@ builder
     )
     .WithTracing(tracing =>
         tracing
-            .AddRootboltMessaging()
+            .AddGloamingMessaging()
             .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber")
     )
-    .WithMetrics(metrics => metrics.AddRootboltMessaging());
+    .WithMetrics(metrics => metrics.AddGloamingMessaging());
 
 // Each long-lived transport belongs to this process. Scoped dispatch/intake operations
 // reuse its channel sequentially; they do not create a broker connection per message.

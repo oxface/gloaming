@@ -2,7 +2,7 @@
 
 Status: owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`.
 The original `feat/durable-inter-module-workflow` branch started from `4c0e0c5`, containing
-owner-approved OBS1. No Rootbolt interface was changed.
+owner-approved OBS1. No Gloaming interface was changed.
 The [slice report](../reports/wf1-durable-inter-module-workflow.md) records fresh verification.
 
 ## Actual consumers and bounded outcome
@@ -52,20 +52,20 @@ The late-reply/deadline race must converge to the actual accepted outcome in eit
 
 ## Dependencies and ownership
 
-Reuse `Rootbolt.Messaging`, its EF/PostgreSQL packages, ActorIdentity, Tenancy and the existing
+Reuse `Gloaming.Messaging`, its EF/PostgreSQL packages, ActorIdentity, Tenancy and the existing
 consumer codec where needed. Sales may reference Inventory.Contracts, never Inventory's
 implementation. Each module retains its own typed context, schema, migrations and local
 transaction. Cross-module messages use RabbitMQ in the proof composition; routing, permissions,
 producer bindings and manual acknowledgement remain sample-owned.
 
 Keep provided inbox/outbox hosted workers and callable processors. The small deadline poller
-is Sales policy, not a Rootbolt scheduler. Startup does not migrate or seed: finite setup
+is Sales policy, not a Gloaming scheduler. Startup does not migrate or seed: finite setup
 remains explicit. No common transaction context, saga base class, registry or worker framework.
 
 [Wolverine's saga documentation](https://wolverinefx.net/guide/durability/sagas.html), checked
 2026-10-10, describes persisted state, identity and message-driven transitions. That supports
 the shape of this assessment; its generated handlers and runtime persistence integration are
-not dependencies or proof of Rootbolt behavior.
+not dependencies or proof of Gloaming behavior.
 
 ## Proposed file and behavior map
 
@@ -82,9 +82,9 @@ Paths below are repository-relative and describe the implemented change set.
 | `samples/Wholesale/WorkflowDemo/` | Executable setup/journey and native RabbitMQ publication/intake adapters for the two directions. Explicit worker host composition using existing library workers plus the deadline lane. |
 | `samples/Wholesale/WorkflowDemo.Tests/` | Real PostgreSQL/RabbitMQ journey, rollback, semantic identity, competing transitions, deadline and process-restart proofs. |
 | `tests/ArchitectureTests/`, `ModulithFoundry.slnx`, `.github/ci-paths.yml`, `.github/workflows/ci.yml` | Enforce Contracts-only module coupling, include projects and select the workflow proof with relevant Messaging/Wholesale changes. |
-| Sample/module READMEs, `src/Rootbolt.Messaging/docs/capabilities.md`, root plan/status documents and WF1 report | Record executable usage, consumer/library split, fresh results and unsupported operations. |
+| Sample/module READMEs, `src/Gloaming.Messaging/docs/capabilities.md`, root plan/status documents and WF1 report | Record executable usage, consumer/library split, fresh results and unsupported operations. |
 
-No archived files, template preset, existing migration replacement or Rootbolt public API
+No archived files, template preset, existing migration replacement or Gloaming public API
 change is in scope. Existing standalone inbox-only/outbox-only adoption remains independent.
 
 ## Proof obligations and extraction decision

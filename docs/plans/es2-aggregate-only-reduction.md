@@ -98,7 +98,7 @@ regenerate migrations or change archived evidence.
 ## Exact file/behavior map
 
 Paths beginning EF/ are within
-src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/.
+src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/.
 
 | Files | Reviewed replacement scope |
 | --- | --- |
@@ -116,7 +116,7 @@ src/Rootbolt.EventSourcing/Rootbolt.EventSourcing.EntityFrameworkCore/.
 | samples/Wholesale/modules/{Inventory/Inventory/StockPositions/StockPositionRebuilding.cs,Purchasing/Purchasing/PurchaseOrders/PurchaseOrderRebuilding.cs} | Select IAggregateRebuilder; keep public module maintenance Contracts and explicit admission/staging. |
 | samples/Wholesale/EventPersistenceDemo/{RebuildJourney.cs,README.md}; samples/Wholesale/modules/README.md | Preserve executable entry points; describe aggregate regeneration and query-derived summary, rather than library-managed secondary replacement. |
 | samples/Wholesale/EventPersistenceDemo.Tests/{AppendTests.cs,AppendTests.InlineViews.cs,AppendTests.RequiredInlineState.cs,AppendTests.Rebuilding.cs,AppendTests.StateDependent.cs,HistoryReadTests.cs} | Preserve append/history/consumer guarantees; replace secondary-specific expectations with new aggregate/query behavior, retaining failure/rollback/fresh-context proofs. |
-| src/Rootbolt.EventSourcing/tests/EventSourcingPostgresTests/{RebuildConsumer.cs,RebuildTests.cs,GuardTests.cs,RegistrationTests.cs,GateTests.cs} | Update public role and one-state proof setup; preserve real PostgreSQL writer/maintenance coordination, prefix, rollback and recovery coverage. |
+| src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/{RebuildConsumer.cs,RebuildTests.cs,GuardTests.cs,RegistrationTests.cs,GateTests.cs} | Update public role and one-state proof setup; preserve real PostgreSQL writer/maintenance coordination, prefix, rollback and recovery coverage. |
 | Family/EF/Postgres READMEs and capability docs; docs/design.md; ADR 0006/0007; ES2 brief, extraction plan and ES2 slice report | Distinguish removed secondary guarantees, retained mechanisms, new executions and checkpoint history. Link the reviewed reduction; document strict loads, raw adoption, live consumer reconstruction and deferred worker/catch-up/multi-stream directions. |
 
 Do not delete secondary rows, migrate schemas, alter fixture bytes, remove demos, reset

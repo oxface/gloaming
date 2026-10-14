@@ -62,7 +62,7 @@ runner-wide network changes. If the error recurs, retain the failed test output 
 inspect network events before broadening this fix.
 
 No new reusable mechanism was proven. This is sample test-harness configuration;
-Rootbolt libraries, generated template behavior and archived source remain unchanged.
+Gloaming libraries, generated template behavior and archived source remain unchanged.
 
 The [throughput follow-up](ci-test-throughput.md) records bounded inbox test parallelism
 and the narrower runtime CI build graph delivered alongside this isolation change.

@@ -1,6 +1,6 @@
 # Ordinary EF state and transactional outgoing commands
 
-An independent, tenantless consumer of Rootbolt.Messaging's EF/PostgreSQL outbox. No Events,
+An independent, tenantless consumer of Gloaming.Messaging's EF/PostgreSQL outbox. No Events,
 EventSourcing, ActorIdentity, Tenancy, Persistence or module-layout dependency.
 
 A draft export with pages can be submitted once. Native expected-version checks and EF's
@@ -32,8 +32,8 @@ exists; it does not promise global ordering. Tests run actual Kestrel HTTP and P
 including acceptance-before-completion failure followed by identity-preserving redelivery.
 They also prove eligibility, competing submissions, rollback and fresh-context recovery.
 
-See [the family contract](../../src/Rootbolt.Messaging/docs/capabilities.md) for setup/errors
+See [the family contract](../../src/Gloaming.Messaging/docs/capabilities.md) for setup/errors
 and independent inbox composition, workers and deferred ordering policy. PostgreSQL is currently the supported provider.
 
 Optional message diagnostic context and native telemetry setup are documented in the
-[Messaging observability contract](../../src/Rootbolt.Messaging/docs/observability.md).
+[Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).

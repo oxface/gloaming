@@ -6,18 +6,18 @@ public sealed class AdoptionDependencyTests
 {
     [Theory]
     [InlineData(
-        "Rootbolt.Auditing.EntityFrameworkCore",
-        "Rootbolt.ActorIdentity",
+        "Gloaming.Auditing.EntityFrameworkCore",
+        "Gloaming.ActorIdentity",
         "Microsoft.EntityFrameworkCore.Relational"
     )]
     [InlineData(
-        "Rootbolt.Auditing.EntityFrameworkCore.Postgres",
-        "Rootbolt.Auditing.EntityFrameworkCore",
+        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
+        "Gloaming.Auditing.EntityFrameworkCore",
         "Npgsql.EntityFrameworkCore.PostgreSQL"
     )]
     [InlineData(
         "AuditPostgresTests",
-        "Rootbolt.Auditing.EntityFrameworkCore.Postgres",
+        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
         "Npgsql.EntityFrameworkCore.PostgreSQL",
         "Testcontainers.PostgreSql",
         "xunit.v3.mtp-v2"
@@ -50,8 +50,8 @@ public sealed class AdoptionDependencyTests
     }
 
     [Theory]
-    [InlineData("Rootbolt.ActorIdentity.AspNetCore", "Rootbolt.ActorIdentity")]
-    [InlineData("Rootbolt.Tenancy.AspNetCore", "Rootbolt.Tenancy")]
+    [InlineData("Gloaming.ActorIdentity.AspNetCore", "Gloaming.ActorIdentity")]
+    [InlineData("Gloaming.Tenancy.AspNetCore", "Gloaming.Tenancy")]
     public void HttpAdaptersDeclareOnlyTheirCoreAndNativeFramework(string adapter, string core)
     {
         XDocument declaration = XDocument.Load(
@@ -75,17 +75,17 @@ public sealed class AdoptionDependencyTests
     }
 
     [Theory]
-    [InlineData("Rootbolt.ActorIdentity", null)]
-    [InlineData("Rootbolt.Tenancy", null)]
-    [InlineData("Rootbolt.Events.Serialization", null)]
-    [InlineData("Rootbolt.Events.History", null)]
-    [InlineData("Rootbolt.Messaging", null)]
-    [InlineData("Rootbolt.Messaging.OpenTelemetry", "OpenTelemetry.Api")]
+    [InlineData("Gloaming.ActorIdentity", null)]
+    [InlineData("Gloaming.Tenancy", null)]
+    [InlineData("Gloaming.Events.Serialization", null)]
+    [InlineData("Gloaming.Events.History", null)]
+    [InlineData("Gloaming.Messaging", null)]
+    [InlineData("Gloaming.Messaging.OpenTelemetry", "OpenTelemetry.Api")]
     [InlineData(
-        "Rootbolt.Persistence.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
         "Microsoft.EntityFrameworkCore.Relational"
     )]
-    [InlineData("Rootbolt.EventSourcing", null)]
+    [InlineData("Gloaming.EventSourcing", null)]
     public void RuntimeLibrariesDeclareOnlyTheirIntendedDependencies(
         string library,
         string? package
@@ -110,11 +110,11 @@ public sealed class AdoptionDependencyTests
             Path.Combine(
                 AppContext.BaseDirectory,
                 "ProjectDeclarations",
-                "Rootbolt.EventSourcing.EntityFrameworkCore.csproj"
+                "Gloaming.EventSourcing.EntityFrameworkCore.csproj"
             )
         );
         Assert.Equal(
-            ["Rootbolt.EventSourcing", "Rootbolt.Events.History"],
+            ["Gloaming.EventSourcing", "Gloaming.Events.History"],
             declaration
                 .Descendants("ProjectReference")
                 .Select(reference =>
@@ -136,18 +136,18 @@ public sealed class AdoptionDependencyTests
     [Fact]
     public void MessagingLayersDeclareOnlyUsedContractsAndNativeDependencies()
     {
-        Check("Rootbolt.Messaging.Workflows", ["Rootbolt.Messaging"], []);
+        Check("Gloaming.Messaging.Workflows", ["Gloaming.Messaging"], []);
         Check(
-            "Rootbolt.Messaging.Workflows.EntityFrameworkCore",
-            ["Rootbolt.Messaging.Workflows", "Rootbolt.Messaging.EntityFrameworkCore"],
+            "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+            ["Gloaming.Messaging.Workflows", "Gloaming.Messaging.EntityFrameworkCore"],
             [
                 "Microsoft.EntityFrameworkCore.Relational",
                 "Microsoft.Extensions.DependencyInjection.Abstractions",
             ]
         );
         Check(
-            "Rootbolt.Messaging.EntityFrameworkCore",
-            ["Rootbolt.Messaging"],
+            "Gloaming.Messaging.EntityFrameworkCore",
+            ["Gloaming.Messaging"],
             [
                 "Microsoft.EntityFrameworkCore.Relational",
                 "Microsoft.Extensions.DependencyInjection.Abstractions",
@@ -156,18 +156,18 @@ public sealed class AdoptionDependencyTests
             ]
         );
         Check(
-            "Rootbolt.Messaging.EntityFrameworkCore.Postgres",
-            ["Rootbolt.Messaging.EntityFrameworkCore"],
+            "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+            ["Gloaming.Messaging.EntityFrameworkCore"],
             ["Microsoft.Extensions.Logging.Abstractions", "Npgsql.EntityFrameworkCore.PostgreSQL"]
         );
         Check(
             "OutboxDemo",
-            ["Rootbolt.Messaging.EntityFrameworkCore.Postgres"],
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
             ["Microsoft.EntityFrameworkCore.Design"]
         );
         Check(
             "InboxDemo",
-            ["Rootbolt.Messaging.EntityFrameworkCore.Postgres"],
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
             ["Microsoft.EntityFrameworkCore.Design"]
         );
 
@@ -203,7 +203,7 @@ public sealed class AdoptionDependencyTests
             Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", "EventStorageDemo.csproj")
         );
         Assert.Equal(
-            ["Rootbolt.EventSourcing", "Rootbolt.EventSourcing.EntityFrameworkCore"],
+            ["Gloaming.EventSourcing", "Gloaming.EventSourcing.EntityFrameworkCore"],
             declaration
                 .Descendants("ProjectReference")
                 .Select(reference =>
@@ -231,7 +231,7 @@ public sealed class AdoptionDependencyTests
             )
         );
         Assert.Equal(
-            ["Rootbolt.EventSourcing.EntityFrameworkCore"],
+            ["Gloaming.EventSourcing.EntityFrameworkCore"],
             consumer
                 .Descendants("ProjectReference")
                 .Select(reference =>

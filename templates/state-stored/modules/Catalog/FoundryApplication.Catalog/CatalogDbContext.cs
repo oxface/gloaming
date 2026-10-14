@@ -1,6 +1,6 @@
+using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.Persistence.EntityFrameworkCore;
-using Rootbolt.Tenancy;
 
 namespace ConsumerRoot.Catalog;
 

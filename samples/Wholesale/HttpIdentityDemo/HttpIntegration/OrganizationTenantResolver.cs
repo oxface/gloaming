@@ -1,7 +1,7 @@
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
+using Gloaming.Tenancy.AspNetCore;
 using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using Rootbolt.ActorIdentity;
-using Rootbolt.Tenancy;
-using Rootbolt.Tenancy.AspNetCore;
 
 namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.HttpIntegration;
 

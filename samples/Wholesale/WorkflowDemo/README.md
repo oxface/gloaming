@@ -4,7 +4,7 @@ The same host also runs [WF2's two-line reservation saga with compensation](comp
 Its separate commands and business state preserve the WF1 journey below.
 
 WF1 demonstrates Sales-owned progress across an independently committed Inventory command.
-The modules communicate through their versioned Contracts using the existing Rootbolt
+The modules communicate through their versioned Contracts using the existing Gloaming
 inbox/outbox. The executable owns transport and hosting. WF2 opts into the typed continuation
 runner; WF1 keeps its own business process without that dependency in its usage. No graph/replay
 engine or workflow scheduler is supplied.
@@ -120,7 +120,7 @@ mandatory routing. Intake commits before acknowledgement. Sender identity is bou
 configured lane and checked against metadata; production must enforce corresponding broker
 permissions/credentials. Shared demo credentials are not an authenticated producer boundary.
 
-ServiceDefaults and the optional Rootbolt OTel adapter subscribe to native messaging spans,
+ServiceDefaults and the optional Gloaming OTel adapter subscribe to native messaging spans,
 metrics and RabbitMQ sources. Adapters preserve diagnostic context. This slice proves workflow
 behavior, not another dashboard/export contract; OBS1 contains those separate proofs.
 
@@ -134,7 +134,7 @@ The host colocates roles for a small executable journey. Workers can be placed s
 demonstrated in W1; WF1 adds no generic host framework, scheduler, saga base class or replica
 partitioning. It proves delivery identity and one workflow's semantic idempotency, not exactly
 once publication, distributed rollback, arbitrary compensation or ordered global delivery.
-There is no new template preset or Rootbolt dependency on Sales/Inventory.
+There is no new template preset or Gloaming dependency on Sales/Inventory.
 
 ## Executable proofs
 

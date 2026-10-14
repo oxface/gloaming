@@ -1,8 +1,8 @@
+using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using Rootbolt.Messaging.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 

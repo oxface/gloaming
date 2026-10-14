@@ -1,5 +1,5 @@
+using Gloaming.EventSourcing;
 using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
-using Rootbolt.EventSourcing;
 
 namespace ModulithFoundry.Samples.Wholesale.Purchasing.PurchaseOrders;
 

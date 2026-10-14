@@ -1,8 +1,8 @@
 using System.Text.Json;
+using Gloaming.EventSourcing;
+using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Rootbolt.EventSourcing;
-using Rootbolt.EventSourcing.EntityFrameworkCore;
-using DefaultEnvelope = Rootbolt.EventSourcing.EntityFrameworkCore.StoredEventRecord;
+using DefaultEnvelope = Gloaming.EventSourcing.EntityFrameworkCore.StoredEventRecord;
 
 namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
 
