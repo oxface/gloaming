@@ -375,12 +375,12 @@ segment alone with custom table names and mixed stream types; its tests use actu
 
 ## Wholesale runtime verification
 
-### Closed integration-feed experiment
+### Closed integration-feed assessment
 
-The [B1 experiment](../experiments/b1-retained-profile-feed/README.md) preserves source and
-dated PostgreSQL/process evidence outside the active sample. It is absent from the current
-solution and CI test lanes. Investigate it only in a separate baseline checkout using the
-preserved patch; common Wholesale setup and profile writes have no feed dependency.
+The [B1 assessment](reports/b1-retention-and-contract-assessment.md) retains research and
+dated results only. Experiment code, tests, migration, snapshot and patch artifacts are
+removed. There is no feed suite to run; common Wholesale setup and profile writes have
+no feed dependency. Revisit implementation only for a concrete receiver requirement.
 
 ### Existing host topology
 

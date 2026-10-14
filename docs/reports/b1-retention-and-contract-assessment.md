@@ -2,12 +2,12 @@
 
 Date: 2026-10-14. Status: closed by owner direction as a documentation-only assessment.
 Recorded retention, ordering and integration-contract constraints are the slice outcome.
-No replacement implementation or library interface is selected. The staged feed experiment
-remains intact as evidence; adoption is deferred until a concrete consumer requirement arises
-in a later slice. Closure does not approve committing or merging the experiment.
-The owner subsequently requested excluding experiment files from the common Wholesale
-sample. They are preserved in a [separate source/patch snapshot](../../experiments/b1-retained-profile-feed/README.md).
-The active sample has no feed dependency; the existing staged review snapshot is unchanged.
+No replacement implementation or library interface is selected. The owner rejected retaining
+the experiment code and reconstruction patch. Source, tests, experimental migration, snapshot,
+manifest and preservation-specific configuration have been removed. Only findings, research
+and [dated execution results](b1-replayable-integration-feed.md) remain.
+The active Wholesale sample has no feed dependency. Revisit the subject only when a later
+slice identifies a concrete consumer requirement; no immediate implementation follows.
 
 ## What the current code actually supports
 
@@ -115,45 +115,31 @@ The [bootstrap research](integration-event-bootstrap-research.md) and
 [sparse-consumer examples](sparse-consumer-hydration-research.md) supply alternatives, not an
 automatic build plan. No real receiver requirement has yet justified the Sales writer gate.
 
-The staged [B1 proofs](b1-replayable-integration-feed.md) remain dated evidence for that specific
-retained feed: late commits, gaps, paging, duplicates, expiry and restart. Its diagnostic journal
-does not demonstrate business adoption or a generally safe versioned snapshot merge. Runtime
-code, migrations, archive and index were preserved at the initial assessment handoff. That
-handoff changed only documentation; no runtime tests were rerun and **no new reusable mechanism
-was proven**. No library interface,
-template preset, retention engine or replacement sample was introduced. Adopting or removing
-the existing experiment requires a separate concrete scope. The owner subsequently authorized
-the isolation described below, preserving the findings without adopting the experiment.
+The [dated B1 results](b1-replayable-integration-feed.md) record the specific feed's late-commit,
+gap, paging, duplicate, expiry and restart proofs. The diagnostic journal did not demonstrate
+business adoption or a generally safe versioned snapshot merge. These results describe deleted
+code; the current tree provides no executable feed suite. **No new reusable mechanism was proven.**
+No library interface, template preset, retention engine or replacement sample was introduced.
 
-Documentation verification: local links in the changed documents resolve and `git diff --check`
-passes. The staged snapshot remains byte-for-byte unchanged. Revisit these findings only when
-a later slice supplies a concrete receiver need; no immediate follow-up is required for B1 closure.
+## Final disposition and verification
 
-## Experiment isolation
+Normal Sales writes, mapping, registration, Contracts, HTTP setup and concurrency proofs were
+already restored to merged WF2 before code removal. The owner now requested deleting the
+separate experiment source, tests, migration, snapshot, manifest and reconstruction patch too.
+The patch-only Git attribute and formatting/CI exclusions were removed with them. Earlier
+common migrations and archived fixtures are unchanged. The rejected implementation is not
+kept as a runnable example or prescribed starting point for later work.
 
-The experiment's source, tests, native migration and modified integration files were preserved
-byte-for-byte with hashes and a reconstruction patch against merged WF2 at `d674e39`.
-Normal Sales profile writes, mapping, registration, Contracts, HTTP setup and concurrency
-proofs were restored to that merged baseline. The unmerged feed migration and model additions
-exist only in the experiment snapshot; earlier migrations and archived fixtures are unchanged.
-Active solution/architecture references and the feed CI step were removed. Snapshot files are
-excluded from normal formatting and CI selection. They are historical evidence, not a standalone
-maintained executable sample. The current staging snapshot remains unchanged; all isolation
-changes are unstaged. Fresh isolation verification is recorded below, separately from the
-original feed executions. No new reusable mechanism was proven.
+Historical restoration verification on 2026-10-14 passed: active solution build with zero
+warnings/errors, 105 real PostgreSQL HTTP tests, 36 persistence/migration tests and 82
+architecture tests, with zero failures/skips; CSharpier/style/analyzer checks also passed.
+These were checks of common-sample restoration, not executions after final artifact removal.
 
-Fresh verification on 2026-10-14 for this isolation:
-
-- Active solution build passed with zero warnings/errors.
-- Real PostgreSQL HTTP proofs: 105 passed, zero failed/skipped; persistence/migration proofs:
-  36 passed, zero failed/skipped. Active architecture checks: 82 passed, zero failed/skipped.
-- CSharpier checked 625 active files. Style/analyzer verification and `git diff --check`
-  passed. Changed-document local links resolve; snapshot documentation retains original paths.
-- All 34 preserved files match their manifest hashes. Applying the stored patch to baseline
-  files in a disposable directory reconstructs every preserved file exactly. This is a file
-  reconstruction proof, not a fresh execution of the original feed tests.
-- Every affected active runtime/test/solution/workflow file matches merged WF2 or is absent;
-  no feed API, gate, model mapping, activation or active migration remains. All 800 archived
-  originals and existing migration bytes are preserved. The staged snapshot is unchanged.
-
-No feed test, broker, Aspire/browser topology or unrelated family suite was rerun for isolation.
+Final removal affects inactive experiment artifacts and documentation/configuration only.
+No runtime tests were rerun for this removal. Documentation links, whitespace, formatting,
+unchanged active implementation/migrations, archive integrity and index preservation are
+verified separately at handoff. Final checks passed: all 333 local links in the 13 changed
+current documents resolve, whitespace checks are clean, CSharpier checked 625 files, and all
+800 archived originals remain unchanged. Active runtime/build/CI/formatting files match the
+pre-experiment merged baseline. The index is unchanged; all removal edits remain unstaged.
+No new commit or push is authorized.

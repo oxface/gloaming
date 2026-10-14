@@ -5,8 +5,8 @@ referenced Product information, remain responsive during producer outages, and a
 snapshot/event races? Primary examples were investigated before mapping them to the
 suggested approaches. This is research and proposed application design, not an ADR,
 implementation authorization or proof of a new library capability.
-Follow-up: B1 was closed as an assessment and its experiment was
-[isolated outside Wholesale](../../experiments/b1-retained-profile-feed/README.md).
+Follow-up: B1 was closed as an [assessment](b1-retention-and-contract-assessment.md);
+experiment code and patch artifacts were removed at the owner's request.
 Its implementation descriptions below are dated context, not current sample capabilities.
 
 ## First establish which information Order actually needs
@@ -250,7 +250,7 @@ obligations: previously irrelevant keys become relevant at different times.
 
 ## Repository outcome and remaining evidence
 
-The existing [B1 demo](../../experiments/b1-retained-profile-feed/README.md) is a
+The discarded [B1 experiment](b1-replayable-integration-feed.md) was a
 selective retained Sales profile after-image pull feed. It proves that source's paging
 and progress protocol; it has no broker publication or historical initial population.
 Existing [Messaging capabilities](../../src/Rootbolt.Messaging/docs/capabilities.md)

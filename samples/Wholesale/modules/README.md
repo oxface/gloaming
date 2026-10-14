@@ -59,9 +59,10 @@ Materialized template/CLI output remains E10.
 ## Closed integration-feed assessment
 
 B1 recorded retention and public-contract constraints without selecting a durable example
-for this sample. The [experiment](../../../experiments/b1-retained-profile-feed/README.md)
-and dated proofs live outside Wholesale. Normal Sales profile writes and setup have no feed
-gate, feed tables or feed Contracts. Revisit transfer/replay only for a concrete consumer need.
+for this sample. The [assessment](../../../docs/reports/b1-retention-and-contract-assessment.md)
+and dated results are retained; experiment code and patch artifacts are removed. Normal
+Sales profile writes and setup have no feed gate, feed tables or feed Contracts.
+Revisit transfer/replay only for a concrete consumer need.
 
 ## Durable stock-issue progress
 
