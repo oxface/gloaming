@@ -40,6 +40,8 @@ references, not selected runtime dependencies or a feature-parity target.
 | --- | --- | --- |
 | D1: DDD building blocks and template patterns | Compare a state-stored aggregate and an event-sourced aggregate; demonstrate creation, invariants, domain values and accepted/rejected decisions. | Domain rules stay in modules. Assess reusable identity/value/bookkeeping helpers against actual duplication; no mandatory aggregate hierarchy or generic repository. Useful editable patterns are a valid result even if no library is extracted. |
 | C1: CQRS patterns and optional helpers | Explicit command/query contracts, handlers and native `{Aggregate}Queries` / `{Aggregate}Filters` in real consumers, including filtering a joined EF read view. | Separate read/write logic can share storage. Preserve direct calls, typed DI and caller-owned save/commit. A mediator, pipeline or handler registry needs demonstrated value rather than CQRS naming alone. |
+| A1: Access/resource authorization research | [Umbrine-driven authority, role and query assessment](a1-access-resource-authorization-research.md), queued after current DDD/domain-reaction/C1 work and before Access-specific template/readiness decisions. | Assessment/backlog only. Compare OpenFGA with native resource handlers and focused relational predicates; source-of-truth, scoped grants, revocation and complete authorized queries decide fit. No engine/interface selected. |
+| A2: tenant-aware authorization and optional RLS research | [Verified tenancy/persistence baseline and PostgreSQL protection assessment](a2-tenant-resource-authorization-rls-research.md); baseline may accompany A1, final composition follows its authority/scope decisions. | Assessment/backlog only. Tenant admission, within-tenant permissions and database isolation are separate boundaries. Propose native transaction/pooling/role/order proofs; keep tenancy core independent. |
 | W1: separately hosted workers | Complete and merged: separate API, dispatch/intake/processing roles and finite setup. | Real PostgreSQL/RabbitMQ process proofs cover API independence, competing processors, shutdown, death and recovery using existing locks/leases. See the W1 report; no new library mechanism. |
 | OBS1: durable message observability | Complete and merged: [observability scope](durable-message-observability.md) instruments the existing Exports → Rendering process journey. | Fresh process/OTLP/PostgreSQL proofs are recorded in the OBS1 report. Backlog alerts, dashboard inspection and new audit/reply workflows are deferred. |
 | WF1: durable inter-module workflow / saga assessment | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: [stock-issue scope](wf1-durable-inter-module-workflow.md), [usage](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh proofs](../reports/wf1-durable-inter-module-workflow.md). | Persisted module-owned request/reply progress composes existing inbox/outbox. No new reusable mechanism. |
@@ -75,6 +77,14 @@ existing event aggregate bookkeeping where appropriate; avoid copying it into a 
 package or making event sourcing mandatory for state-stored domains.
 DDD does not imply domain-event persistence. D1 neither supplies retained integration history
 nor authorizes automatic mapping of private facts to public messages.
+
+A1 and A2 are the next consumer-driven authorization research block after the current
+DDD/domain-reaction and C1 work, ahead of Access-specific T2 choices and P2 readiness. A1
+settles authority, permission scopes and query semantics before recommending an engine. A2
+can audit existing composition in parallel, then assess tenant-aware enforcement and optional
+RLS against that contract. Neither item authorizes runtime changes, a custom engine or a new
+Gloaming interface. [The preliminary intake](../reports/access-authorization-research-intake.md)
+records source facts and open questions; the comparative research remains queued.
 
 WF1 follows the basic messaging path and benefits from W1/OBS1. B1 and B2 are a distinct
 source/receiver correctness track, not prerequisites for every workflow. ES3 remains planned;
