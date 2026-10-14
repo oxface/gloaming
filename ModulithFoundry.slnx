@@ -75,6 +75,8 @@
     <Project Path="samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj" />
     <Project Path="samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/DddDemo/DddDemo.csproj" />
+    <Project Path="samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />
     <Project Path="samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj" />

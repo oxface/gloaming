@@ -79,7 +79,7 @@ Messaging:
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
-  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,modules,ServiceDefaults}/**'
+  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,modules,ServiceDefaults}/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - 'samples/Wholesale/WorkflowDemo{,.Tests}/**'
   - '!**/*.md'

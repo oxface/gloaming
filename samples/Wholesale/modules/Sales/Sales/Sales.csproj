@@ -1,4 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <InternalsVisibleTo Include="DddDemo.Tests" />
+  </ItemGroup>
   <PropertyGroup>
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Sales</RootNamespace>
   </PropertyGroup>

@@ -56,6 +56,22 @@ there is no automatic retry/rebase or shared ambient-transaction contract.
 
 Materialized template/CLI output remains E10.
 
+## DDD sample patterns
+
+[DddDemo](../DddDemo/README.md) compares Sales's immutable state-stored customer profile with
+Purchasing's existing event-sourced purchase order. Sales owns a validated profile-details
+value and builds a complete replacement candidate before changing either native row. Finite
+setup constructs a valid version-1 profile before tracking; it is not a production creation API.
+Invalid input leaves accepted state untouched. A mismatched observed profile version returns
+Conflict before staging; native EF still detects commits racing after the read. Trusted-human
+admission and the service-owned customer/address/audit transaction are retained.
+
+Purchasing keeps complete-batch candidate validation and pending-event bookkeeping through
+its existing optional event library; the caller still saves/commits. These are different
+consumer recipes, not a shared aggregate hierarchy. Business Contracts and migrations are
+unchanged. The [D1 report](../../../docs/reports/d1-ddd-sample-patterns.md) records fresh proofs
+and the decision that no new reusable mechanism or template preset was established.
+
 ## Closed integration-feed assessment
 
 B1 recorded retention and public-contract constraints without selecting a durable example

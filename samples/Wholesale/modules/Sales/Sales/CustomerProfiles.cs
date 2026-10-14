@@ -43,10 +43,9 @@ internal sealed class CustomerProfiles(
         ArgumentOutOfRangeException.ThrowIfEqual(change.AddressId, Guid.Empty);
         ArgumentOutOfRangeException.ThrowIfLessThan(change.ExpectedVersion, 1);
         ArgumentOutOfRangeException.ThrowIfEqual(change.ExpectedVersion, long.MaxValue);
-        ArgumentException.ThrowIfNullOrWhiteSpace(change.DisplayName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(change.AddressLine);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(change.DisplayName.Length, 256);
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(change.AddressLine.Length, 512);
+
+        var details = CustomerProfileDetails.Create(change.DisplayName, change.AddressLine);
+
         _ = database.RequiredOrganizationKey;
         var attribution = actor.Current;
         if (attribution.Actor.Kind != ActorKind.Human)
@@ -72,19 +71,14 @@ internal sealed class CustomerProfiles(
                 await transaction.RollbackAsync(CancellationToken.None);
                 return new ProfileChangeResult.NotFound();
             }
-            // Use the caller's version even when this request reloaded a newer database row.
-            database.Entry(customer).Property(row => row.Version).OriginalValue =
-                change.ExpectedVersion;
-            customer.Version = checked(change.ExpectedVersion + 1);
-            customer.DisplayName = change.DisplayName;
-            // Force a versioned UPDATE even if a stale caller submitted the current text/version.
-            database.Entry(customer).Property(row => row.Version).IsModified = true;
-            await database.SaveChangesAsync(cancellationToken);
-            address.AddressLine = change.AddressLine;
-            audit.ProfileChanged(customer.Id, address.Id, change.ExpectedVersion, customer.Version);
-            await database.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-            return new ProfileChangeResult.Updated(
+
+            if (customer.Version != change.ExpectedVersion)
+            {
+                await transaction.RollbackAsync(CancellationToken.None);
+                return new ProfileChangeResult.Conflict();
+            }
+
+            var observed = CustomerProfileAggregate.FromState(
                 new CustomerProfile(
                     customer.Id,
                     address.Id,
@@ -94,6 +88,21 @@ internal sealed class CustomerProfiles(
                     customer.Version
                 )
             );
+            var candidate = observed.Change(details);
+
+            // A concurrent commit after loading is still checked by the native UPDATE predicate.
+            database.Entry(customer).Property(row => row.Version).OriginalValue =
+                change.ExpectedVersion;
+            customer.Version = candidate.Version;
+            customer.DisplayName = candidate.Details.DisplayName;
+            // Every accepted edit advances the version, including an unchanged text submission.
+            database.Entry(customer).Property(row => row.Version).IsModified = true;
+            await database.SaveChangesAsync(cancellationToken);
+            address.AddressLine = candidate.Details.AddressLine;
+            audit.ProfileChanged(customer.Id, address.Id, change.ExpectedVersion, customer.Version);
+            await database.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return new ProfileChangeResult.Updated(candidate.ToProfile());
         }
         catch (DbUpdateConcurrencyException)
         {

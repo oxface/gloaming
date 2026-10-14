@@ -272,6 +272,18 @@ does not silently commit, retry, compensate, or dispatch domain events.
 Domain events are collected and processed deliberately. Integration contracts and their
 mapping remain consumer-owned. Replay produces no historical external effects.
 
+On 2026-10-14, during D1 owner review, the owner agreed follow-ups for
+[rich state-stored aggregates](plans/d1-1-rich-state-stored-aggregate.md) and
+[domain events/required reactions](plans/d2-domain-events-and-required-reactions.md).
+The latter reopens owning-context SaveChanges dispatch as a candidate alongside explicit
+application coordination, given the existing tracked-save validation obligations. This is
+an assessment direction, not an adopted dispatcher or universal write guard. Direct bulk/SQL
+writes bypass that save boundary; a successful save may still precede transaction rollback.
+The follow-up must define supported write paths, event consumption, reentrancy, multiple saves,
+validation order and local versus durable deferred effects before changing runtime guarantees.
+Earlier slice exclusions describe their bounded implementations rather than forbidding this
+owner-directed assessment. Existing library contracts and D1 runtime behavior are unchanged.
+
 Supply callable delivery/maintenance operations separately from a simple optional hosted
 worker. Consumers may host those operations themselves. Competing-consumer mechanisms need
 their own claim, ordering, concurrency, and recovery evidence; leader election is excluded.

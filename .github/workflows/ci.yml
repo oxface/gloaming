@@ -147,6 +147,8 @@ jobs:
         run: dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj --no-build --no-restore
       - name: Test module migrations and persistence ownership
         run: dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test state-stored and event-sourced domain decisions
+        run: dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
       - name: Test persisted admission, isolated business operations and native telemetry through HTTP
         run: dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 

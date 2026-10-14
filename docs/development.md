@@ -465,6 +465,23 @@ container. It is not a current library regression test and supplies no stamp-con
 Current executable coverage lives in the family/consumer test projects above. See
 [the supported EF contract](../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
 
+## DDD sample decisions
+
+[DddDemo](../samples/Wholesale/DddDemo/README.md) is a finite comparison of state-stored Sales
+profiles and event-sourced Purchasing orders. It requires a fresh disposable PostgreSQL database,
+applies existing module migrations and runs without a broker or HTTP host:
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=ddd_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/DddDemo/DddDemo.csproj
+dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj
+```
+
+The tests create disposable PostgreSQL 18.6 databases through Testcontainers. For rootless Podman
+use the socket environment above. [The D1 report](reports/d1-ddd-sample-patterns.md) separates
+new domain/consumer proofs, existing regression checks and the decision to retain sample patterns
+without extracting another library or changing T1's template.
+
 ## Archived backend
 
 The archived solution and tests remain historical reference material. Active CI and commit

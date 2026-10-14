@@ -38,7 +38,9 @@ references, not selected runtime dependencies or a feature-parity target.
 
 | Candidate | Bounded first outcome | Boundary and required evidence |
 | --- | --- | --- |
-| D1: DDD building blocks and template patterns | Compare a state-stored aggregate and an event-sourced aggregate; demonstrate creation, invariants, domain values and accepted/rejected decisions. | Domain rules stay in modules. Assess reusable identity/value/bookkeeping helpers against actual duplication; no mandatory aggregate hierarchy or generic repository. Useful editable patterns are a valid result even if no library is extracted. |
+| D1: DDD building blocks and template patterns | Prepared for owner review: [Sales/Purchasing executable comparison](../../samples/Wholesale/DddDemo/README.md) demonstrates creation, domain values and accepted/rejected decisions; [scope](d1-ddd-sample-patterns.md) and [fresh proof/extraction report](../reports/d1-ddd-sample-patterns.md). | Domain rules stay in modules. Immutable Sales candidates need no event bookkeeping; Purchasing uses its existing reviewed aggregate. No new reusable mechanism, general aggregate base or template preset. |
+| D1.1: rich state-stored aggregate | Agreed follow-up: [relational children and aggregate-wide decisions](d1-1-rich-state-stored-aggregate.md), with add/change/remove operations and references to a separate aggregate. | Select the owning operation before implementation; prove loading, root-version concurrency for child changes, ownership and rollback. No generic mapper/repository or event-sourcing dependency selected. |
+| D2: domain events and required reactions | Agreed follow-up: [local transactional handling and durable deferred handling](d2-domain-events-and-required-reactions.md), delivered as separate D2.1/D2.2 increments. Reconsider owning-context SaveChanges dispatch alongside explicit coordination. | Assess all save overloads, direct-write bypasses, multiple saves versus commit, event lifecycle, reentrancy and faults. Reuse existing delivery mechanics for deferred work; no dispatcher/interface or automatic event mapping selected. |
 | C1: CQRS patterns and optional helpers | Explicit command/query contracts, handlers and native `{Aggregate}Queries` / `{Aggregate}Filters` in real consumers, including filtering a joined EF read view. | Separate read/write logic can share storage. Preserve direct calls, typed DI and caller-owned save/commit. A mediator, pipeline or handler registry needs demonstrated value rather than CQRS naming alone. |
 | W1: separately hosted workers | Complete and merged: separate API, dispatch/intake/processing roles and finite setup. | Real PostgreSQL/RabbitMQ process proofs cover API independence, competing processors, shutdown, death and recovery using existing locks/leases. See the W1 report; no new library mechanism. |
 | OBS1: durable message observability | Complete and merged: [observability scope](durable-message-observability.md) instruments the existing Exports → Rendering process journey. | Fresh process/OTLP/PostgreSQL proofs are recorded in the OBS1 report. Backlog alerts, dashboard inspection and new audit/reply workflows are deferred. |
@@ -69,10 +71,14 @@ is documented as a discarded experiment. The owner closed B1 with its assessment
 its code. A later concrete receiver need may warrant revisiting the findings. B2 remains
 a separate candidate for population; it does not require the custom B1 feed.
 
-D1 and C1 can be explored independently before adding template choices. They are explicit
-roadmap items, with a library extraction decision at the end of each assessment. Reuse the
-existing event aggregate bookkeeping where appropriate; avoid copying it into a general DDD
-package or making event sourcing mandatory for state-stored domains.
+D1 now has a bounded executable comparison prepared for owner review and a decision to keep
+the new profile model consumer-owned. The owner agreed D1.1 for relational child collections
+and D2 for domain facts/required reactions; neither is implemented or covered by D1's proof counts.
+D1.1 should establish the richer state-stored example, then D2 selects a concrete reaction and
+assesses its dispatch/transaction boundary before introducing helpers. C1 remains independently
+useful for query/command organization before template choices. Reuse existing event aggregate
+bookkeeping where appropriate; avoid copying it into a general DDD package or making event
+sourcing mandatory for state-stored domains.
 DDD does not imply domain-event persistence. D1 neither supplies retained integration history
 nor authorizes automatic mapping of private facts to public messages.
 
