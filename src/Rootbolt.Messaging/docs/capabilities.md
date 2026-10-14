@@ -158,8 +158,20 @@ Backlog observation, alert thresholds and dashboard UX remain deferred.
 New-service snapshot/feed repopulation is a distinct planned capability. Current dispatch
 ordering and retained delivery rows do not provide a safe replay cursor or snapshot boundary.
 A producer-owned replay/export contract, retention rules and transactional receiver progress
-need separate proof; no bootstrap runtime is supplied. Durable workflows begin with
-module-owned state and the existing messaging contracts. The
+need separate proof; no bootstrap runtime is supplied. The
+[closed B1 experiment](../../../experiments/b1-retained-profile-feed/README.md) proved
+retained changes, committed paging/retention and diagnostic reader restart independently
+of outbox dispatch. Its mechanics remain consumer-owned; it adds no supported Messaging API.
+B2 snapshot/bootstrap remains separate. The owner closed B1 as the
+[retention/contract assessment](../../../docs/reports/b1-retention-and-contract-assessment.md)
+without further implementation; adoption is deferred to a later concrete receiver need.
+Neither generic state revisions nor
+historical replay follow from the existing envelope/outbox.
+The source/tests/migration are preserved outside the common Wholesale sample and active
+solution/CI. Current Sales writes and setup have no feed dependency; the experiment's dated
+proofs are not a supported Messaging API or a current sample bootstrap example.
+
+Durable workflows begin with module-owned state and the existing messaging contracts. The
 [WF1 stock-issue consumer](../../../samples/Wholesale/WorkflowDemo/README.md) demonstrates
 persisted request/reply progress, native EF request concurrency, semantic idempotency and
 overdue-state recovery. These are consumer policies composed with inbox/outbox, not a supplied

@@ -508,6 +508,27 @@ recovery are separate proof gates, not consequences of local extraction.
 
 ## Library documentation and family ownership
 
+The preserved B1 experiment implemented a Sales-owned retained integration feed over state-stored
+profile edits, with a separately owned diagnostic receiver journal. A per-Organization gate
+held through commit orders post-lock sequence allocations and transactional committed head.
+One-snapshot bounded pages and explicit retained-prefix floor/expiry form the source protocol.
+Seeds/pre-existing rows are not an initial export. [ADR 0015](adr/0015-producer-owned-retained-profile-feed.md)
+records these experimental choices; [preserved usage](../experiments/b1-retained-profile-feed/README.md)
+and [dated evidence](reports/b1-replayable-integration-feed.md) define limits. No Rootbolt feed
+interface/template preset is extracted. Snapshot/bootstrap and any library promotion remain
+separate reviewed work.
+
+On 2026-10-14 the owner closed B1 as the
+[retention and contract assessment](reports/b1-retention-and-contract-assessment.md), with
+adoption deferred until a later concrete receiver need. Existing proof establishes
+this particular protocol, not the business value of its writer gate. Public-state revisions
+are optional producer-defined semantics; no generic integration-event ordering or automatic
+domain-event replay follows from DDD or event sourcing. The owner requested removing the
+experiment from the common Wholesale sample. Its
+[source/patch snapshot](../experiments/b1-retained-profile-feed/README.md) is retained outside
+the active solution; Sales writes, mapping, Contracts, migrations and setup use the merged
+baseline. No feed protocol is a current Wholesale capability.
+
 The owner-approved WF2 replacement provides optional bounded durable continuations and a typed
 native EF runner. The provided process row retains initial input, consumer state and requested
 operations/outcomes, with scalar version concurrency. Only the saved continuation executes;
