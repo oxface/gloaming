@@ -1,3 +1,4 @@
+using ModulithFoundry.Samples.Wholesale.Access.Contracts;
 using ModulithFoundry.Samples.Wholesale.Access.Persistence;
 
 namespace ModulithFoundry.Samples.Wholesale.Access;
@@ -36,18 +37,23 @@ public static class AccessDemoSeed
             new OrganizationRow { Id = "wholesale-beta", Slug = "south-supply" }
         );
         database.AddRange(
-            Membership("application-alpha", "wholesale-alpha"),
+            Membership("application-alpha", "wholesale-alpha", administrator: true),
             Membership("application-alpha", "wholesale-beta"),
-            Membership("application-beta", "wholesale-beta")
+            Membership("application-beta", "wholesale-beta", administrator: true)
         );
     }
 
-    private static MembershipRow Membership(string user, string organization) =>
+    private static MembershipRow Membership(
+        string user,
+        string organization,
+        bool administrator = false
+    ) =>
         new()
         {
             Id = Guid.NewGuid(),
             UserId = user,
             OrganizationId = organization,
             Status = MembershipStatus.Active,
+            CanAdministerMemberships = administrator,
         };
 }

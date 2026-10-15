@@ -1,3 +1,5 @@
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Auditing.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
@@ -9,9 +11,27 @@ public sealed class AccessDbContext(DbContextOptions<AccessDbContext> options) :
     internal DbSet<OrganizationRow> Organizations => Set<OrganizationRow>();
     internal DbSet<MembershipRow> Memberships => Set<MembershipRow>();
 
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        this.ValidateAuditChanges();
+
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default
+    )
+    {
+        this.ValidateAuditChanges();
+
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("access");
+        modelBuilder.ConfigurePostgresAudit("access", "audit_entries");
         var user = modelBuilder.Entity<UserRow>();
         user.ToTable("users");
         user.HasKey(row => row.Id);
@@ -50,16 +70,30 @@ public sealed class AccessDbContext(DbContextOptions<AccessDbContext> options) :
         var membership = modelBuilder.Entity<MembershipRow>();
         membership.ToTable(
             "memberships",
-            table => table.HasCheckConstraint("ck_memberships_status", "status IN (1, 2, 3)")
+            table =>
+            {
+                table.HasCheckConstraint("ck_memberships_status", "status IN (1, 2, 3)");
+                table.HasCheckConstraint("ck_memberships_revision", "revision >= 1");
+            }
         );
         membership.HasKey(row => row.Id);
         membership.Property(row => row.Id).HasColumnName("id").ValueGeneratedNever();
         membership
             .Property(row => row.OrganizationId)
             .HasColumnName("organization_id")
-            .HasMaxLength(256);
+            .HasMaxLength(256)
+            .IsConcurrencyToken();
         membership.Property(row => row.UserId).HasColumnName("user_id").HasMaxLength(256);
         membership.Property(row => row.Status).HasColumnName("status").HasConversion<int>();
+        membership
+            .Property(row => row.Revision)
+            .HasColumnName("revision")
+            .HasDefaultValue(1L)
+            .IsConcurrencyToken();
+        membership
+            .Property(row => row.CanAdministerMemberships)
+            .HasColumnName("can_administer_memberships")
+            .HasDefaultValue(false);
         membership
             .HasIndex(row => new { row.OrganizationId, row.UserId })
             .IsUnique()

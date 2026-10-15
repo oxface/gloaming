@@ -122,6 +122,13 @@ This is a recommendation for review, not a new accepted architecture decision, e
 interface or implementation. [A2](plans/a2-tenant-resource-authorization-rls-research.md#a1-assessment-input-2026-10-16)
 receives the authority/query boundaries without RLS or Tenancy-to-Access/FGA coupling.
 
+The owner subsequently authorized the [A1.1 consumer implementation](plans/a1-1-membership-suspension.md):
+blocked self-suspension, last-active-administrator protection and retained grants eligible
+under current checks after reactivation. The [proof report](reports/a1-1-membership-suspension.md)
+records native Organization serialization, revision/ownership concurrency, explicit accepted
+audit and HTTP/non-HTTP adoption. Existing active-membership admission and immutable admitted
+context remain. This adds no general permission engine or public Gloaming interface.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

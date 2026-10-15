@@ -294,9 +294,16 @@ public sealed partial class CompositionTests
             ["20261005204257_InitialAccess"],
             await accessDb.Database.GetAppliedMigrationsAsync(Token)
         );
-        Assert.Empty(await accessDb.Database.GetPendingMigrationsAsync(Token));
+        Assert.Equal(
+            ["20261015212953_MembershipAdministration"],
+            await accessDb.Database.GetPendingMigrationsAsync(Token)
+        );
         Assert.False(accessDb.Database.HasPendingModelChanges());
         await accessDb.Database.MigrateAsync(Token);
+        string[] accessHistory = (
+            await accessDb.Database.GetAppliedMigrationsAsync(Token)
+        ).ToArray();
+        Assert.Equal(accessDb.Database.GetMigrations(), accessHistory);
         var inventoryDb = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
         await inventoryDb.Database.MigrateAsync(Token);
         Assert.Equal(
@@ -320,9 +327,6 @@ public sealed partial class CompositionTests
                 Token
             )
         );
-        Assert.Equal(
-            ["20261005204257_InitialAccess"],
-            await accessDb.Database.GetAppliedMigrationsAsync(Token)
-        );
+        Assert.Equal(accessHistory, await accessDb.Database.GetAppliedMigrationsAsync(Token));
     }
 }

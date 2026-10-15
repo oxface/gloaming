@@ -529,6 +529,26 @@ Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environm
 [The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
 proofs from earlier evidence and records native-write bypass limitations.
 
+## Organization membership administration
+
+The [A1.1 Access scope](plans/a1-1-membership-suspension.md),
+[consumer setup and limits](../samples/Wholesale/modules/Access/README.md) and
+[implementation report](reports/a1-1-membership-suspension.md) cover the focused
+suspend/reactivate/audit journey. The existing HTTP suite runs its PostgreSQL, concurrency,
+same-cookie and migration proofs; no additional CI project or service is required.
+
+```bash
+dotnet build ModulithFoundry.slnx --no-restore
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-build --no-restore
+```
+
+Use the documented Podman socket for this workstation or your reachable Docker-compatible
+engine. Testcontainers owns disposable PostgreSQL 18.6 databases and keeps its resource reaper
+enabled. No runtime endpoint starts migrations/seeding or changes customer IdP accounts.
+
 ## CQRS consumer patterns
 
 [CqrsDemo](../samples/Wholesale/CqrsDemo/README.md) reads Inventory availability through

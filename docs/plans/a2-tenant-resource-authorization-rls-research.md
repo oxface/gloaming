@@ -31,6 +31,12 @@ calls in one operation retain immutable context. Company-owned system work and c
 human authority are distinct policies. A1.1 suspension/reactivation reuses active admission
 and adds no RLS dependency or separate gate.
 
+The owner subsequently authorized the [A1.1 consumer journey](a1-1-membership-suspension.md).
+Its [new runtime evidence](../reports/a1-1-membership-suspension.md) covers fresh admission,
+immutable admitted work, current scoped administration and native transactional audit.
+The global admission lookup remains unchanged. These proofs do not complete A2's ordering,
+database-role/pooling/RLS research or business-resource authorized-selection obligations.
+
 A2 must assess tenant isolation separately from within-tenant permissions and keep Access's
 global pre-admission registry usable without fabricated tenant context. Tenant-only RLS cannot establish
 complete permission-aware lists/counts/exports/AI selection, transactional business audit or

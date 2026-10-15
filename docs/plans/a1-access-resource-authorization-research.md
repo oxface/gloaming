@@ -1,5 +1,11 @@
 # A1: Access and resource authorization research
 
+Owner update, 2026-10-16: the owner authorized implementation of the focused
+[A1.1 membership journey](a1-1-membership-suspension.md), selecting blocked self-suspension,
+last-active-administrator protection and retained grants eligible under current checks after
+reactivation. That consumer scope supersedes the assessment-only restriction for A1.1;
+the broader A1 engine/query assessment and A2/RLS boundaries remain separate.
+
 Status: A1 + A1.1 assessment prepared for owner review, 2026-10-16, against fetched
 `origin/main` at `7ea6652`. The [comparative assessment](../reports/access-authorization-assessment.md)
 recommends native resource checks/module-owned relational predicates initially and a focused
