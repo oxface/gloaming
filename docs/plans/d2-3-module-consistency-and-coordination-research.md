@@ -1,9 +1,19 @@
 # D2.3: module consistency and coordination research
 
-Date: 2026-10-15 (Europe/Kiev). Owner-requested separate research slice. This records the
-unresolved comparison; it does not authorize a cross-module transaction abstraction or change
-the current local-dispatch contract. Select this research before further implementation decisions
-that depend on whether module persistence must commit independently.
+Date: 2026-10-15 (Europe/Kiev). Owner-selected research, now prepared for review in the
+[comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md).
+The report separates fresh primary-source/code inspection from historical runtime evidence.
+It introduces no cross-module transaction abstraction or change to the local-dispatch contract.
+
+The requirements decide the transaction boundary. Retain module-owned durable orchestration for
+independently committed steps. Assess broker-free delivery by composing existing inbox/outbox
+through public module intake Contracts before extracting another mechanism. A shared native
+transaction is a conditional alternative when the business requires atomic acceptance across
+modules in one physical database; provider support is not a completed Gloaming consumer proof.
+The owner subsequently selected [D2.3a local durable delivery](d2-3a-local-durable-module-delivery.md)
+with “proceed”; its [consumer proof report](../reports/d2-3a-local-durable-module-delivery.md)
+records the executable adoption separately from this research. Shared-transaction adoption remains
+a separate candidate.
 
 ## Question and existing evidence
 
@@ -86,12 +96,12 @@ dependency explicit rather than relying on tracker enumeration or incidental reg
 
 Produce a source-backed tradeoff report and one concrete recommendation per stated requirement.
 Any executable comparison or implementation is a separately selected increment. A defensible result
-can be consumer-owned orchestration plus documentation, with no new reusable mechanism. Reassess
-the Domain package by actual repeated buffering/dispatch obligations and consumer ergonomics; DDD
-does not require a Gloaming aggregate base or marker interfaces.
+can be consumer-owned orchestration plus documentation, with no new reusable mechanism. The
+checkpointed EventReactions capability supplies local buffering/dispatch without imposing DDD
+inheritance or marker interfaces; it supplies no cross-module delivery guarantee.
 
 No current runtime or template behavior changes with this plan. No new reusable mechanism is proven.
-This plan adds no tests or execution evidence; existing WF1/WF2 results remain historical.
+This research adds no runtime tests or execution evidence; existing WF1/WF2 results remain historical.
 
 ## Primary starting points
 

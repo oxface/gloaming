@@ -35,6 +35,10 @@ dispatch, broker intake and local processing using existing Messaging APIs. Expl
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.
 
+The [local reservation workflow](samples/Wholesale/LocalWorkflowDemo/README.md) delivers through
+public module intake Contracts without a broker. Existing inbox/outbox workers retain independently
+committed decisions and Sales-owned compensation; PostgreSQL/process-death proofs cover the handoff.
+
 [ES1 bounded event append](docs/plans/es1-library-write-store.md), checkpointed as `ab85ec9`, adds reviewed aggregate bookkeeping
 and a provided IEventStore write coordinator to the optional native EF event segment.
 State-dependent Inventory issues and an independent history/direct-JSON counter exercise it.

@@ -11,6 +11,15 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 
 public static class SalesRegistration
 {
+    /// <summary>Exposes durable in-process outcome receipt; compose with reservation workflow registration.</summary>
+    public static IServiceCollection AddStockReservationOutcomeIntake(
+        this IServiceCollection services
+    ) =>
+        services.AddSingleton<
+            IStockReservationOutcomeIntake,
+            ReservationOrders.StockReservationOutcomeIntake
+        >();
+
     public static IServiceCollection AddCustomerOrderAllowances(this IServiceCollection services) =>
         services.AddScoped<ICustomerOrderAllowances, OrderAllowances.CustomerOrderAllowances>();
 

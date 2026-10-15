@@ -65,6 +65,7 @@ public sealed class SampleModuleBoundaryTests
             .. Contracts,
             .. Libraries,
             typeof(Samples.Wholesale.WorkflowDemo.WorkflowComposition).Assembly,
+            typeof(Samples.Wholesale.LocalWorkflowDemo.LocalWorkflowComposition).Assembly,
             typeof(Samples.Wholesale.DddDemo.DddComposition).Assembly,
             typeof(DemoComposition).Assembly,
             typeof(DbContext).Assembly,
@@ -125,6 +126,7 @@ public sealed class SampleModuleBoundaryTests
         ReflectionAssembly[] hosts =
         [
             typeof(Samples.Wholesale.WorkflowDemo.WorkflowComposition).Assembly,
+            typeof(Samples.Wholesale.LocalWorkflowDemo.LocalWorkflowComposition).Assembly,
             typeof(Samples.Wholesale.DddDemo.DddComposition).Assembly,
         ];
         foreach (var host in hosts)
@@ -144,6 +146,25 @@ public sealed class SampleModuleBoundaryTests
                 .Should()
                 .NotDependOnAny(Types().That().ResideInAssembly(forbidden))
                 .Check(Architecture);
+    }
+
+    [Fact]
+    public void LocalReservationRelaysUseContractsWithoutModulePersistenceOrBrokerDependencies()
+    {
+        var relays = Types()
+            .That()
+            .ResideInNamespace("ModulithFoundry.Samples.Wholesale.LocalWorkflowDemo.Delivery");
+        Assert.NotEmpty(relays.GetObjects(Architecture));
+        foreach (ReflectionAssembly forbidden in Modules.Append(typeof(DbContext).Assembly))
+            relays
+                .Should()
+                .NotDependOnAny(Types().That().ResideInAssembly(forbidden))
+                .Check(Architecture);
+
+        Assert.DoesNotContain(
+            typeof(Samples.Wholesale.LocalWorkflowDemo.LocalWorkflowComposition).Assembly.GetReferencedAssemblies(),
+            reference => reference.Name!.StartsWith("RabbitMQ", StringComparison.Ordinal)
+        );
     }
 
     private static void NoDependency(ReflectionAssembly source, ReflectionAssembly forbidden)

@@ -1,5 +1,16 @@
 # D2: domain events and required reactions
 
+Current outcome, 2026-10-15: the owner-approved EventReactions and shared EF capability work is
+checkpointed as `c4a96da`; its [consolidated report](../reports/event-reactions-consolidation.md)
+supersedes intermediate interfaces described below. The selected
+[D2.3 research](../reports/d2-3-module-consistency-and-coordination.md) now compares inter-module
+durability and transaction choices. No new delivery adapter or shared-transaction capability is
+implemented by that assessment. D2.2 remains deferred pending a concrete post-commit requirement.
+
+The owner then selected [D2.3a public-contract durable intake](d2-3a-local-durable-module-delivery.md).
+Its [executable proof](../reports/d2-3a-local-durable-module-delivery.md) composes existing messaging
+and workflow primitives without a new Gloaming delivery engine or shared cross-module transaction.
+
 Date: 2026-10-14. The owner agreed this follow-up scope and asked to reconsider dispatch
 within SaveChanges, given the existing owning DbContext validation/staging obligations.
 The local increment is now prepared for review: [D2.1 scope](d2-1-local-domain-reactions.md),
@@ -50,8 +61,10 @@ Deliver independently reviewable outcomes:
 3. **D2.3 module consistency research:** compare durable choreography, durable orchestration and
    shared native transactions through module Contracts under the
    [separate research scope](d2-3-module-consistency-and-coordination-research.md).
-   WF1/WF2 provide independently committed workflow evidence; the shared-transaction tradeoff
-   has not yet received the same assessment. This is separate from D2.2 implementation.
+   The [research report](../reports/d2-3-module-consistency-and-coordination.md) supplies a
+   requirement-based recommendation; WF1/WF2 remain the existing independently committed workflow
+   evidence. Broker-free delivery and shared-transaction consumer proofs remain separately scoped.
+   This is separate from D2.2 implementation.
 
 These outcomes do not require a framework. Select the concrete operation,
 handler responsibilities and supported usage before implementing or proposing a library surface.

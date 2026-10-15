@@ -23,6 +23,7 @@
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
     <ProjectReference Include="../../samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/LocalWorkflowDemo/LocalWorkflowDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/DddDemo/DddDemo.csproj" />
     <ProjectReference Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />

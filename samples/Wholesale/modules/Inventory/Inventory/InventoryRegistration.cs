@@ -13,6 +13,10 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory;
 
 public static class InventoryRegistration
 {
+    /// <summary>Exposes durable in-process receipt; compose with reservation inbox registration.</summary>
+    public static IServiceCollection AddStockReservationIntake(this IServiceCollection services) =>
+        services.AddSingleton<IStockReservationIntake, Reservations.StockReservationIntake>();
+
     /// <summary>Registers reservation intake/processing; compose with stock commands and consumer transport.</summary>
     public static IServiceCollection AddStockReservationInbox(this IServiceCollection services)
     {

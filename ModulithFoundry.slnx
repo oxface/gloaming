@@ -73,6 +73,8 @@
   <Folder Name="/Samples/">
     <Project Path="samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
     <Project Path="samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/LocalWorkflowDemo/LocalWorkflowDemo.csproj" />
+    <Project Path="samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj" />
     <Project Path="samples/InboxDemo/InboxDemo.csproj" />
     <Project Path="samples/InboxDemo.Tests/InboxDemo.Tests.csproj" />
     <Project Path="samples/MessagingDemo/MessagingDemo.csproj" />

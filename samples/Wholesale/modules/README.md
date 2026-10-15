@@ -9,6 +9,11 @@ adds Inventory-owned reservation receipts and available-stock decisions, plus Sa
 two-line process state and compensation attempts. Both contexts commit independently using
 their existing inbox/outbox; implementations still communicate only through Contracts.
 
+The [local workflow executable](../LocalWorkflowDemo/README.md) runs the same business process
+without RabbitMQ. Inventory and Sales expose typed durable intake Contracts whose successful calls
+mean committed receipt. Each intake uses a fresh module-owned scope; relays never access receiver
+contexts. Sales.Contracts explicitly references Inventory.Contracts for Inventory-owned outcome types.
+
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |
