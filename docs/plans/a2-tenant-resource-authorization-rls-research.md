@@ -13,6 +13,31 @@ can accompany A1; finalize authority/order recommendations after A1 defines admi
 resource scopes and permission consistency. Optional RLS implementation is not a prerequisite
 for that research and is not selected merely because PostgreSQL is already used.
 
+## A1 assessment input: 2026-10-16
+
+The [A1 + A1.1 recommendation](../reports/access-authorization-assessment.md), prepared
+against fetched main `7ea6652`, supplies proposed authority/scopes and complete selection
+requirements. Access retains global identity/current human membership authority; business
+modules own permission definitions, resource grants and business derivation. Native resource
+checks and module-owned relational predicates are the initial recommendation; OpenFGA remains
+conditional, with [pinned enumeration/consistency limits](../reports/access-authorization-primary-sources.md).
+Cross-module facts need an explicit complete consumer contract or a separately justified
+published view/projection; no private DbContext joins or continuous mirroring are assumed.
+
+Use late imperative checks after the current native authorization → actor → admitted tenant
+ordering as the first composition. Changing tenant-aware native policy ordering needs its
+own scheme/anonymous/failure proofs. Fresh human worker operations admit again; internal
+calls in one operation retain immutable context. Company-owned system work and continuing
+human authority are distinct policies. A1.1 suspension/reactivation reuses active admission
+and adds no RLS dependency or separate gate.
+
+A2 must assess tenant isolation separately from within-tenant permissions and keep Access's
+global pre-admission registry usable without fabricated tenant context. Tenant-only RLS cannot establish
+complete permission-aware lists/counts/exports/AI selection, transactional business audit or
+cross-store revocation. Preserve the package-free Tenancy core without Access/FGA coupling.
+The dated baseline below remains evidence; A2 role/pooling/transaction/retry/bypass research
+and proofs are not completed by this handoff. No RLS implementation is authorized.
+
 ## Verified baseline, not a new guarantee
 
 Source inspected on fetched origin/main `824c95b`. These are code/documentation findings;

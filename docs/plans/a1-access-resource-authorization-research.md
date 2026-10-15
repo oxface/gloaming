@@ -1,18 +1,22 @@
 # A1: Access and resource authorization research
 
-Status: consumer-requested research/backlog item, 2026-10-14. Assessment and documentation
-only. No runtime implementation, public library interface, engine selection or package
-promotion is authorized. [Preliminary intake and primary sources](../reports/access-authorization-research-intake.md)
-record initial evidence; they are not a completed comparative evaluation.
+Status: A1 + A1.1 assessment prepared for owner review, 2026-10-16, against fetched
+`origin/main` at `7ea6652`. The [comparative assessment](../reports/access-authorization-assessment.md)
+recommends native resource checks/module-owned relational predicates initially and a focused
+consumer suspension/reactivation proof. [Pinned primary-source evidence](../reports/access-authorization-primary-sources.md)
+records OpenFGA API/query limits. Assessment and documentation only: no runtime implementation,
+public library interface, engine adoption or package promotion is authorized. The
+[intake](../reports/access-authorization-research-intake.md) retains preliminary dated evidence;
+the scope below records the requested questions and follow-up obligations.
 
 ## Priority and placement
 
-High-value consumer-driven research. Schedule after the current DDD/domain-reaction and
-C1 query-pattern work, before Access-specific T2 template choices and the P2 readiness
-review. This does not interrupt active implementation slices or authorize implementation
-once research finishes. [A2](a2-tenant-resource-authorization-rls-research.md) can collect its
-baseline concurrently; finalize its composition recommendation after A1 defines authority
-and scopes. Query requirements may justify moving research forward when Umbrine needs it.
+The owner started this assessment after DDD/domain-reaction and C1 query-pattern work;
+C1 is present in the fetched baseline. Assessment findings inform Access-specific T2 and
+P2 decisions without authorizing implementation or adding a pre-development gate.
+[A2](a2-tenant-resource-authorization-rls-research.md#a1-assessment-input-2026-10-16)
+now has A1's proposed authority, scopes and query boundary as input; its composition/RLS
+assessment and executable proofs remain separate. A1.1 stays a focused follow-up within A1.
 
 ## Consumer and boundaries
 

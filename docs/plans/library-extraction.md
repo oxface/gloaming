@@ -1,6 +1,6 @@
 # Library and sample extraction plan
 
-## Current delivery status and next slice — 2026-10-14
+## Current delivery status and next slice — 2026-10-16
 
 The three outputs remain reusable libraries, configurable repository population, and samples.
 [The strategy review](../reports/strategy-review.md) brought a bounded template rehearsal
@@ -34,7 +34,8 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Shared EF capability integration | Gloaming.EntityFrameworkCore supplies model-selected preparation/change detection/validation. Existing feature bindings and module composition remain separate from EventReactions. [Research](../reports/ef1-capability-interception-research.md), [MassTransit comparison](../reports/ef1-masstransit-applicable-patterns.md) and [original implementation evidence](../reports/ef1-1-capability-composition.md) remain dated records; the consolidation report is current. |
 | Module consistency research D2.3 | Owner-selected [comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md) prepared for review against the [bounded scope](d2-3-module-consistency-and-coordination-research.md). Existing WF1/WF2 cover durable process state and messaging. The separately selected D2.3a now proves existing inbox/outbox composition through public intake Contracts; shared native transactions remain conditional on an atomic-acceptance requirement and a separate consumer proof. No new reusable mechanism or runtime behavior is added; D2.2 remains deferred. |
 | Local durable module delivery D2.3a | Owner-selected [public-contract intake scope](d2-3a-local-durable-module-delivery.md), [broker-free executable](../../samples/Wholesale/LocalWorkflowDemo/README.md) and [fresh adoption/proof report](../reports/d2-3a-local-durable-module-delivery.md). Module-owned fresh-scope intake composes existing inbox/outbox/workflow services, preserving independent commits and RabbitMQ usage. No new reusable mechanism, migration or template preset. |
-| Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/CqrsDemo/README.md) and [fresh proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Uncommitted. Sales joins/filters/counts/pages use native EF and typed Contracts; Inventory availability remains module-owned. No new library interface or reusable mechanism. Template generation remains separate. |
+| Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15; present in fetched main `7ea6652`: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/CqrsDemo/README.md) and [dated proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Earlier uncommitted/staged statements describe that handoff. Sales joins/filters/counts/pages use native EF and typed Contracts, without resource-permission filtering; Inventory availability remains module-owned. No new reusable mechanism. Template generation remains separate. |
+| Access/resource authorization A1 + A1.1 | [Assessment prepared for review](../reports/access-authorization-assessment.md), 2026-10-16, with [pinned primary sources](../reports/access-authorization-primary-sources.md). Recommend native resource checks/module-owned relational predicates initially; focused consumer suspension/reactivation with revision/audit proofs next. No engine adoption, runtime/library interface or new reusable mechanism. A2 receives authority/query input; RLS remains separate. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
@@ -52,17 +53,20 @@ no graph interpreter or replay runtime is supplied.
 Umbrine requested two assessment-only backlog items on 2026-10-14:
 [A1 Access/resource authorization](a1-access-resource-authorization-research.md) and
 [A2 tenant-aware composition/optional PostgreSQL RLS](a2-tenant-resource-authorization-rls-research.md).
-They are queued after current DDD/domain-reaction/CQRS work, before Access-specific template
-and readiness decisions. The [intake](../reports/access-authorization-research-intake.md)
-verifies current boundaries and records initial sources; no engine, provider package, public
-interface or runtime implementation is selected. Access policy remains consumer-owned and
-the tenancy core retains independent adoption.
+The owner started A1 + A1.1 after C1 reached fetched main `7ea6652`. The
+[comparative assessment](../reports/access-authorization-assessment.md) now supersedes the
+[intake](../reports/access-authorization-research-intake.md) as current recommendation/evidence,
+ahead of Access-specific template/readiness choices. It proposes native module-owned
+authorization first and hands authority/query boundaries to A2. No engine adoption,
+provider package, public interface or runtime implementation is selected. Access policy
+remains consumer-owned and tenancy retains independent adoption.
 
 On 2026-10-15 Umbrine added [A1.1 Organization membership suspension](a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
 as a focused Access lifecycle follow-up. Existing active-membership admission is retained;
 consumer-owned authorized suspend/reactivate operations, atomic business audit, concurrency
-and combined read/write/reactivation proofs remain to assess. This adds no separate
-pre-development gate, runtime implementation or Tenancy-to-Access/FGA dependency.
+and combined read/write/reactivation proofs are now assessed in A1. Implementation and new
+proofs remain a separately reviewed small follow-up. This adds no separate pre-development
+gate, runtime implementation or Tenancy-to-Access/FGA dependency.
 
 The [remaining capability roadmap](remaining-capability-roadmap.md) is the current starting
 point for selecting another slice. It explicitly includes DDD/CQRS assessments and template

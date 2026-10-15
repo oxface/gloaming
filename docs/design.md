@@ -111,6 +111,17 @@ checkpointed as `c8cbf64`. See [the split report](reports/e1-identity-split.md) 
 
 ## Scope and HTTP integration review
 
+The opening HTTP proposal below retains E1 review history. E3 subsequently implemented
+the adapters: the current consumer order is native authorization, actor mapping, then
+Organization admission/tenant publication, as recorded later in this section. Early native
+handlers therefore cannot assume established actor/tenant context. The
+[A1 + A1.1 assessment](reports/access-authorization-assessment.md) (2026-10-16, main
+`7ea6652`) recommends late imperative resource checks with module-owned relational predicates
+as Umbrine's initial follow-up, alongside a focused consumer suspension/reactivation proof.
+This is a recommendation for review, not a new accepted architecture decision, engine choice,
+interface or implementation. [A2](plans/a2-tenant-resource-authorization-rls-research.md#a1-assessment-input-2026-10-16)
+receives the authority/query boundaries without RLS or Tenancy-to-Access/FGA coupling.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate
