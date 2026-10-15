@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
+    <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
+  </ItemGroup>
+</Project>

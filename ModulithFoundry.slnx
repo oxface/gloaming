@@ -91,6 +91,8 @@
     <Project Path="samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/DomainEventsDemo/DomainEventsDemo.csproj" />
     <Project Path="samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/CqrsDemo/CqrsDemo.csproj" />
+    <Project Path="samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />

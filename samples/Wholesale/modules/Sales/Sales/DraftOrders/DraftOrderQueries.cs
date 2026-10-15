@@ -23,7 +23,45 @@ internal sealed class DraftOrderQueries(SalesDbContext database) : IDraftOrderQu
         ArgumentOutOfRangeException.ThrowIfEqual(id, Guid.Empty);
 
         _ = database.RequiredOrganizationKey;
-        return (
+        return Summaries(ReadView().Where(row => row.Id == id))
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<DraftOrderPage> SearchAsync(
+        SearchDraftOrders request,
+        CancellationToken cancellationToken
+    )
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentOutOfRangeException.ThrowIfNegative(request.Offset);
+        ArgumentOutOfRangeException.ThrowIfLessThan(request.Limit, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(request.Limit, 100);
+
+        _ = database.RequiredOrganizationKey;
+        var filtered = ReadView();
+        if (request.CustomerNameContains is not null)
+            filtered = filtered.WithCustomerNameContaining(request.CustomerNameContains);
+
+        if (request.Currency is not null)
+            filtered = filtered.InCurrency(request.Currency);
+
+        if (request.MinimumTotal is { } minimum)
+            filtered = filtered.WithTotalAtLeast(minimum);
+
+        int count = await filtered.CountAsync(cancellationToken);
+        var items = await Summaries(
+                filtered
+                    .OrderBy(row => row.Total)
+                    .ThenBy(row => row.Id)
+                    .Skip(request.Offset)
+                    .Take(request.Limit)
+            )
+            .ToArrayAsync(cancellationToken);
+        return new DraftOrderPage(items, count);
+    }
+
+    private IQueryable<DraftOrderReadView> ReadView() =>
+        (
             from draft in database.DraftOrders.AsNoTracking()
             join customer in database.Customers.AsNoTracking()
                 on new { draft.OrganizationKey, Id = draft.CustomerId } equals new
@@ -31,17 +69,28 @@ internal sealed class DraftOrderQueries(SalesDbContext database) : IDraftOrderQu
                     customer.OrganizationKey,
                     customer.Id,
                 }
-            where draft.Id == id
-            select new DraftOrderSummary(
-                draft.Id,
-                draft.Code,
-                draft.Version,
-                customer.Id,
-                customer.DisplayName,
-                draft.Currency,
-                draft.Lines.Count,
-                draft.Lines.Sum(line => line.Quantity * line.UnitPrice)
-            )
-        ).SingleOrDefaultAsync(cancellationToken);
-    }
+            select new DraftOrderReadView
+            {
+                Id = draft.Id,
+                Code = draft.Code,
+                Version = draft.Version,
+                CustomerId = customer.Id,
+                CustomerName = customer.DisplayName,
+                Currency = draft.Currency,
+                LineCount = draft.Lines.Count,
+                Total = draft.Lines.Sum(line => line.Quantity * line.UnitPrice),
+            }
+        );
+
+    private static IQueryable<DraftOrderSummary> Summaries(IQueryable<DraftOrderReadView> rows) =>
+        rows.Select(row => new DraftOrderSummary(
+            row.Id,
+            row.Code,
+            row.Version,
+            row.CustomerId,
+            row.CustomerName,
+            row.Currency,
+            row.LineCount,
+            row.Total
+        ));
 }
