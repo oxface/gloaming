@@ -118,3 +118,54 @@ whitespace checks passed. The research branch is based on fetched origin/main 82
 an isolated worktree; the existing checkout/index was not used for edits or staging.
 No C# builds, runtime tests, database experiments or deployment checks were run for this
 documentation-only intake. Existing test/code links are evidence pointers, not new results.
+
+## Membership suspension follow-up: 2026-10-15
+
+Umbrine requested [A1.1](../plans/a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
+as a focused addition to Access research. Its priority is unchanged; it is not a separate
+pre-development gate or authorization to implement a library/administration API.
+
+**Existing guarantees, inspected rather than newly executed.** The consumer cited Foundry
+HEAD f55d803. The selected Access source and AdmissionTests files in research branch baseline
+df83518 match that commit. AccessRows already defines Active/Suspended/Removed;
+ApplicationAccess admits only active members and resolves global user identity independently.
+AccessRegistration/IApplicationAccess expose queries, not administrative lifecycle commands.
+OrganizationTenantResolver remains consumer admission policy.
+
+[AdmissionTests](../../samples/Wholesale/HttpIdentityDemo.Tests/AdmissionTests.cs) contains
+MissingSuspendedAndRemovedMembershipDenyWithoutPublishingTenant and
+RevocationBlocksNextAdmissionWithSameCookieButKeepsGlobalIdentity for both Suspended and
+Removed. AlreadyAdmittedOperationRetainsContextWhenMembershipIsRemoved uses Removed
+explicitly; the focused extension should cover Suspended too. These tests change database
+status directly to exercise admission, not an authorized administrative operation.
+The seed already gives one user two active memberships; the combined post-suspension
+business read/write/other-Organization scenario remains a follow-up proof target.
+
+**Missing consumer/template behavior.** Assess narrow suspend/reactivate Contracts, target
+Organization/membership authorization, explicit repeat/conflict/transition outcomes and a
+native concurrency protocol. The inspected membership mapping has no explicit concurrency
+revision/token. Assess composing the existing Gloaming audit capability in Access's native
+transaction for Organization, target, administrator and previous/new status; no automatic
+membership-audit integration currently exists in the selected code. Umbrine owns last-admin,
+self-suspension, grant retention and unavailable-capability rules. Identity/Personnel/IdP
+lifecycles remain separate.
+
+**Smallest candidate slice.** One consumer Access suspend/reactivate journey with authorized
+direct HTTP/non-HTTP entry guidance, native concurrency and atomic business audit. Prove
+same-cookie protected read/mutation denial with no denied side effects, usable global
+identity/another active Organization, retained admitted-operation context, audited rollback
+and reactivation under current permissions with stable identity/history. Actor/tenant
+establishment and existing active-membership admission are reused. Engine selection, RLS,
+global logout and generalized offboarding/assignment automation are not prerequisites.
+
+**Work ownership decisions.** Distinguish company-owned system work from deferred work
+requiring continuing human admission. Decide reminder recipient/content eligibility and
+stale-grant/reactivation behavior explicitly. Umbrine starts with module-owned warnings
+and manual reassignment of unfulfillable required responsibilities; transition/draft checks
+and preserved historical attribution remain module business policy. No automatic cancellation
+or reassignment of every workflow is proposed. Future caching must disclose admission
+staleness; the inspected per-operation query is the current baseline.
+
+No new reusable mechanism or library gap was proven. This addition records assessment and
+future proof scope only. No source, dependency, migration, interface or runtime test changed.
+Local links and documentation whitespace were checked; no runtime tests were executed.
