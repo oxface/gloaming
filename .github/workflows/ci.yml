@@ -164,6 +164,8 @@ jobs:
         run: dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
       - name: Test required local domain reactions
         run: dotnet test --project samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test CQRS joined filtering and explicit transaction ownership
+        run: dotnet test --project samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
       - name: Test relational aggregate children and root concurrency
         run: dotnet test --project samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
       - name: Test persisted admission, isolated business operations and native telemetry through HTTP

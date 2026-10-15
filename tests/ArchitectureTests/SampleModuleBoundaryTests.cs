@@ -67,6 +67,7 @@ public sealed class SampleModuleBoundaryTests
             typeof(Samples.Wholesale.WorkflowDemo.WorkflowComposition).Assembly,
             typeof(Samples.Wholesale.LocalWorkflowDemo.LocalWorkflowComposition).Assembly,
             typeof(Samples.Wholesale.DddDemo.DddComposition).Assembly,
+            typeof(Samples.Wholesale.CqrsDemo.CqrsComposition).Assembly,
             typeof(DemoComposition).Assembly,
             typeof(DbContext).Assembly,
             typeof(HttpContext).Assembly,
@@ -128,6 +129,7 @@ public sealed class SampleModuleBoundaryTests
             typeof(Samples.Wholesale.WorkflowDemo.WorkflowComposition).Assembly,
             typeof(Samples.Wholesale.LocalWorkflowDemo.LocalWorkflowComposition).Assembly,
             typeof(Samples.Wholesale.DddDemo.DddComposition).Assembly,
+            typeof(Samples.Wholesale.CqrsDemo.CqrsComposition).Assembly,
         ];
         foreach (var host in hosts)
         foreach (var source in Modules.Concat(Contracts).Concat(Libraries))

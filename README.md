@@ -39,6 +39,10 @@ The [local reservation workflow](samples/Wholesale/LocalWorkflowDemo/README.md) 
 public module intake Contracts without a broker. Existing inbox/outbox workers retain independently
 committed decisions and Sales-owned compensation; PostgreSQL/process-death proofs cover the handoff.
 
+The [CQRS consumer journey](samples/Wholesale/CqrsDemo/README.md) composes typed Sales
+commands, joined read filters and deterministic pagination with Inventory Contract reads.
+Native EF owns storage and explicit transactions; no CQRS runtime or new library is added.
+
 [ES1 bounded event append](docs/plans/es1-library-write-store.md), checkpointed as `ab85ec9`, adds reviewed aggregate bookkeeping
 and a provided IEventStore write coordinator to the optional native EF event segment.
 State-dependent Inventory issues and an independent history/direct-JSON counter exercise it.

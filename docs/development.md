@@ -529,6 +529,25 @@ Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environm
 [The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
 proofs from earlier evidence and records native-write bypass limitations.
 
+## CQRS consumer patterns
+
+[CqrsDemo](../samples/Wholesale/CqrsDemo/README.md) reads Inventory availability through
+Contracts, creates/edits a Sales draft, then filters its joined draft/customer view before
+deterministic pagination and a matching filtered count. Native typed DI and explicit native
+transactions remain visible. Count/page share a snapshot only when the caller selects a
+repeatable-read transaction; tests also demonstrate read-committed drift.
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=cqrs_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/CqrsDemo/CqrsDemo.csproj
+dotnet test --project samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj
+```
+
+Use a fresh disposable database for the console; tests use PostgreSQL 18.6 Testcontainers
+and the rootless Podman environment above. Wholesale CI runs this suite. The
+[C1 report](reports/c1-cqrs-consumer-patterns.md) records verification, reusable-mechanism
+findings and remaining template work.
+
 ## Archived backend
 
 The archived solution and tests remain historical reference material. Active CI and commit

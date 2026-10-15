@@ -34,6 +34,7 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Shared EF capability integration | Gloaming.EntityFrameworkCore supplies model-selected preparation/change detection/validation. Existing feature bindings and module composition remain separate from EventReactions. [Research](../reports/ef1-capability-interception-research.md), [MassTransit comparison](../reports/ef1-masstransit-applicable-patterns.md) and [original implementation evidence](../reports/ef1-1-capability-composition.md) remain dated records; the consolidation report is current. |
 | Module consistency research D2.3 | Owner-selected [comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md) prepared for review against the [bounded scope](d2-3-module-consistency-and-coordination-research.md). Existing WF1/WF2 cover durable process state and messaging. The separately selected D2.3a now proves existing inbox/outbox composition through public intake Contracts; shared native transactions remain conditional on an atomic-acceptance requirement and a separate consumer proof. No new reusable mechanism or runtime behavior is added; D2.2 remains deferred. |
 | Local durable module delivery D2.3a | Owner-selected [public-contract intake scope](d2-3a-local-durable-module-delivery.md), [broker-free executable](../../samples/Wholesale/LocalWorkflowDemo/README.md) and [fresh adoption/proof report](../reports/d2-3a-local-durable-module-delivery.md). Module-owned fresh-scope intake composes existing inbox/outbox/workflow services, preserving independent commits and RabbitMQ usage. No new reusable mechanism, migration or template preset. |
+| Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/CqrsDemo/README.md) and [fresh proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Uncommitted. Sales joins/filters/counts/pages use native EF and typed Contracts; Inventory availability remains module-owned. No new library interface or reusable mechanism. Template generation remains separate. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
@@ -573,6 +574,14 @@ The owner confirmed standalone library adoption as the current strategy: a segme
 used in an ordinary .NET API or worker without the template's module structure or Access
 model. This can be revisited if actual implementation shows value in more involved libraries.
 Until reviewed otherwise, standalone consumer proofs remain part of the relevant increments.
+
+On 2026-10-15, with C1 approval, the owner reaffirmed incremental extraction from
+bounded sample slices followed by feedback from real-project bootstrap and usage.
+Simple common mechanics can earn a library; complexity is not a prerequisite.
+Compare the consumer work removed with adoption, opt-out, compatibility and eventual
+NuGet release/update/support costs. A slice can finish as consumer patterns without
+a new package. Real adoption can justify further extraction or revisions; it does
+not automatically authorize speculative capabilities or a fixed package inventory.
 
 Access begins as customizable sample/template code. Its presence in the template makes later
 extraction possible when reuse earns it; a reusable Access module is not required for E1.
