@@ -6,6 +6,14 @@ authorization research, engine selection, an ADR, interface approval or runtime 
 Accept A1 and A2 for later research; prioritize permission/query semantics and data
 authority/consistency before choosing an engine. No runtime implementation is authorized.
 
+Current handoff, 2026-10-16: the [A1 + A1.1 assessment](access-authorization-assessment.md)
+reconciles this intake against fetched main `7ea6652`, including C1, and provides the
+comparative recommendation, models/query examples and focused proof scopes. Its
+[released-source evidence](access-authorization-primary-sources.md) supersedes the unpinned
+provider observations below where more precise. This intake remains the original dated
+record; its “queued,” baseline and link-check statements are historical. A2 has the A1
+handoff but remains an assessment follow-up; no runtime authorization/RLS was implemented.
+
 ## Current repository evidence
 
 The source review found the following; existing tests were inspected,
