@@ -50,6 +50,12 @@ verifies current boundaries and records initial sources; no engine, provider pac
 interface or runtime implementation is selected. Access policy remains consumer-owned and
 the tenancy core retains independent adoption.
 
+On 2026-10-15 Umbrine added [A1.1 Organization membership suspension](a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
+as a focused Access lifecycle follow-up. Existing active-membership admission is retained;
+consumer-owned authorized suspend/reactivate operations, atomic business audit, concurrency
+and combined read/write/reactivation proofs remain to assess. This adds no separate
+pre-development gate, runtime implementation or Tenancy-to-Access/FGA dependency.
+
 The [remaining capability roadmap](remaining-capability-roadmap.md) is the current starting
 point for selecting another slice. It explicitly includes DDD/CQRS assessments and template
 patterns, separate worker hosts, observability, durable module workflows, snapshot/feed
