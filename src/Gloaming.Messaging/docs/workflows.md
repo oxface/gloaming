@@ -5,6 +5,33 @@ execute named consumer methods from a stored process. A new reply invokes only i
 continuation. Start and earlier methods are not replayed. Business branching and compensation
 are ordinary C# decisions; there is no graph interpreter, scheduler or workflow worker.
 
+## Module ownership and in-process calls
+
+The business module owns the workflow definition, process state, branching and compensation policy.
+The host wires dependencies and delivery. Durable process storage is independent of whether a future
+delivery path uses a broker or invokes a module's public Contract in the same process.
+
+This implementation persists initial input, state, pending command/continuation and requested
+operations/retained outcomes. Accepted state changes and the next outgoing request share the owning
+native transaction. Inbox processing also commits incoming completion in that transaction. Existing
+workers and admitted messages drive recovery; the runner does not resume arbitrary C# call stacks.
+
+A direct call that commits in another module followed by recording the result leaves a crash gap.
+Do not perform independently committing module operations inside continuation delegates. A reliable
+in-process delivery adapter would need retained intent before calling, stable operation identity,
+target-side idempotency/retained results and recoverable reply delivery. No general adapter is supplied
+by this package. Shared native transactions through Contracts are a separate atomicity choice, not
+an automatic consequence of workflow persistence. Compensation itself is consumer-owned business
+behavior and may fail or require an operator; durable state does not guarantee eventual success.
+
+The [D2.3 comparison](../../../docs/reports/d2-3-module-consistency-and-coordination.md) separates
+process state, delivery and transaction ownership. The
+[local reservation consumer](../../../samples/Wholesale/LocalWorkflowDemo/README.md) now demonstrates
+broker-free delivery through public module intake Contracts using existing inbox/outbox seams.
+Its [proof report](../../../docs/reports/d2-3a-local-durable-module-delivery.md) records adoption
+and process-death evidence without adding a general transport or extending this package to arbitrary
+direct calls. Shared native transaction adoption remains a separate proof.
+
 ## Setup and execution
 
 A module registers its own typed context, existing typed outbox and definition:

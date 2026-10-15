@@ -54,6 +54,18 @@ jobs:
         dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
+  event_reactions:
+    needs: changes
+    if: needs.changes.outputs.EventReactions == 'true'
+    name: Gloaming.EventReactions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
   tenancy:
     needs: changes
     if: needs.changes.outputs.Tenancy == 'true'
@@ -123,6 +135,7 @@ jobs:
         dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
@@ -147,6 +160,12 @@ jobs:
         run: dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj --no-build --no-restore
       - name: Test module migrations and persistence ownership
         run: dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test state-stored and event-sourced domain decisions
+        run: dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test required local domain reactions
+        run: dotnet test --project samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test relational aggregate children and root concurrency
+        run: dotnet test --project samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
       - name: Test persisted admission, isolated business operations and native telemetry through HTTP
         run: dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 

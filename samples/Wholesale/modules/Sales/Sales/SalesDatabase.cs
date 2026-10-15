@@ -1,9 +1,43 @@
+using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.EntityFrameworkCore;
+using Gloaming.EventReactions.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 
 public static class SalesDatabase
 {
+    public static IServiceCollection AddSalesDatabase(
+        this IServiceCollection services,
+        string connection
+    )
+    {
+        services.AddTenantOwnershipValidation<SalesDbContext, string>(context =>
+            context.RequiredOrganizationKey
+        );
+        services.AddAuditValidation<SalesDbContext>();
+        services.AddInboxValidation<SalesDbContext>();
+        services.AddOutboxValidation<SalesDbContext>();
+        services.AddWorkflowValidation<SalesDbContext>();
+        services.AddEventReactions<SalesDbContext, SalesModule>(events =>
+            events.AddReaction<
+                DraftOrders.DraftSubmitted,
+                OrderAllowances.ReserveCustomerAllowance
+            >()
+        );
+        return services.AddDbContext<SalesDbContext>(
+            (provider, options) =>
+            {
+                Configure(options, connection);
+                options.ConfigureGloamingCapabilities<SalesDbContext>(provider);
+            }
+        );
+    }
+
     public static void Configure(DbContextOptionsBuilder options, string connectionString) =>
         options.UseNpgsql(
             connectionString,

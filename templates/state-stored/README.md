@@ -57,10 +57,13 @@ contains no request-supplied identity path or demo authentication scheme.
 
 ## Library adoption and obligations
 
-`libraries/` contains local source snapshots of three existing libraries, with their stable
+`libraries/` contains local source snapshots of four existing libraries, with their stable
 namespaces unchanged. `library-sources.json` records SHA-256 hashes of every copied source
 and project file. `foundry.json` records creation configuration. All project references
-stay inside this repository; external NuGet restore is still required. Nothing is published.
+stay inside this repository; copied project references are adjusted to this flat directory layout.
+C# source is unchanged. Shared EF infrastructure is a Persistence dependency; Catalog retains its
+explicit save validation without domain-event or messaging activation. External NuGet restore is
+still required. Nothing is published.
 Review/update these snapshots explicitly; automatic upgrades and package distribution are
 future work. Library source receives the generated root build/package settings.
 

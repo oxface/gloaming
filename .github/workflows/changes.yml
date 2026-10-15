@@ -7,6 +7,8 @@ on:
         value: ${{ jobs.changes.outputs.Auditing }}
       ActorIdentity:
         value: ${{ jobs.changes.outputs.ActorIdentity }}
+      EventReactions:
+        value: ${{ jobs.changes.outputs.EventReactions }}
       Tenancy:
         value: ${{ jobs.changes.outputs.Tenancy }}
       Persistence:
@@ -38,6 +40,7 @@ jobs:
     outputs:
       Auditing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Auditing == 'true') && 'true' || 'false' }}
       ActorIdentity: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.ActorIdentity == 'true') && 'true' || 'false' }}
+      EventReactions: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EventReactions == 'true') && 'true' || 'false' }}
       Tenancy: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Tenancy == 'true') && 'true' || 'false' }}
       Persistence: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Persistence == 'true') && 'true' || 'false' }}
       Events: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Events == 'true') && 'true' || 'false' }}

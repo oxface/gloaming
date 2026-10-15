@@ -25,7 +25,7 @@ import { XMLParser, XMLValidator } from "fast-xml-parser";
 import {
   exists,
   libraries,
-  librarySources,
+  snapshotBytes,
   root,
   sha256,
   type Configuration,
@@ -161,7 +161,7 @@ function inspect(output: string, config: Configuration): void {
     xml(Buffer.from(text(content, `${config.applicationName}.slnx`))),
     "Project",
   );
-  assert.equal(projects.length, 7);
+  assert.equal(projects.length, 8);
   for (const project of projects) {
     assert(typeof project.Path === "string");
     assert(content.has(project.Path), project.Path);
@@ -186,9 +186,7 @@ function inspect(output: string, config: Configuration): void {
     assert(name);
     assert.deepEqual(
       bytes,
-      readFileSync(
-        join(librarySources[name], path.slice(`libraries/${name}/`.length)),
-      ),
+      snapshotBytes(name, path.slice(`libraries/${name}/`.length)),
     );
   }
   assert.deepEqual(JSON.parse(text(content, "foundry.json")), config);

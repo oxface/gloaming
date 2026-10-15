@@ -31,6 +31,11 @@ _Avoid_: Complete product
 An application adopting a library segment or the template.
 _Avoid_: Sample, business customer
 
+**EventReactions**:
+The Gloaming library family for local event capture and reactions, independent of an application's
+domain model.
+_Avoid_: DDD foundation, Reactive Streams
+
 **Access model**:
 The product's model of users, Organizations, memberships, invitations, roles and permissions.
 _Avoid_: Execution context, authentication provider

@@ -106,7 +106,7 @@ Shared build/toolchain, project-graph and CI-tooling changes select all checks; 
 inputs outside mapped roots also select full coverage. A detection/configuration failure
 fails required Repository integrity rather than silently skipping verification.
 
-Template adoption runs for generator/template changes and the three core library source
+Template adoption runs for generator/template changes and the four selected library source
 snapshots it copies. Wholesale runtime runs for Wholesale implementation or shared inputs
 on PRs; it still has no post-merge push run. All workflows support manual full verification
 and cancel superseded runs on the same PR/ref. Scope selection still incurs lightweight
@@ -464,6 +464,70 @@ The retained TypeScript diagnostic
 container. It is not a current library regression test and supplies no stamp-concurrency claim.
 Current executable coverage lives in the family/consumer test projects above. See
 [the supported EF contract](../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
+
+## DDD sample decisions
+
+[DddDemo](../samples/Wholesale/DddDemo/README.md) is a finite comparison of state-stored Sales
+profiles and event-sourced Purchasing orders. It requires a fresh disposable PostgreSQL database,
+applies existing module migrations and runs without a broker or HTTP host:
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=ddd_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/DddDemo/DddDemo.csproj
+dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj
+```
+
+The tests create disposable PostgreSQL 18.6 databases through Testcontainers. For rootless Podman
+use the socket environment above. [The D1 report](reports/d1-ddd-sample-patterns.md) separates
+new domain/consumer proofs, existing regression checks and the decision to retain sample patterns
+without extracting another library or changing T1's template.
+
+## Required local reactions and independent adoption
+
+[DomainEventsDemo](../samples/Wholesale/DomainEventsDemo/README.md) submits Sales drafts and reserves
+customer allowance in one native transaction. Its domain facts are ordinary records. The module
+registers EventReactions and shared EF capabilities; commands use an operation sink and save natively.
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=domain_events_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/DomainEventsDemo/DomainEventsDemo.csproj
+dotnet test --project samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj
+```
+
+The independent [EventReactions consumer](../samples/EventReactionsDemo/README.md) demonstrates a
+consumer-owned base with composed buffers, a package-free immutable model and scoped request sources.
+Source selectors are explicit. No event marker, source interface or library aggregate base is required.
+
+```sh
+dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj
+dotnet test --project samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj
+```
+
+The PostgreSQL/Testcontainers proofs cover ordered capture, selected/deleted sources, downstream
+waves, all native save overloads, concurrency, rollback/cancellation and native bypasses. Both save
+paths use the shared prepare/detect/validate order. There is no Stage or acknowledgment service.
+Use native AcceptAllChanges after a successful SaveChanges(false).
+
+The [package contract](../src/Gloaming.EventReactions/README.md) and
+[consolidation report](reports/event-reactions-consolidation.md) are current. Earlier D2.1/EF1 reports
+retain separately dated evidence. Required intra-module work remains atomic; durable deferred work
+and in-process saga delivery need separately selected requirements/proofs.
+
+## Rich state-stored aggregate
+
+[RichAggregateDemo](../samples/Wholesale/RichAggregateDemo/README.md) creates and edits a Sales
+draft with relational children and a joined customer summary, without a broker or event replay.
+Use a fresh disposable PostgreSQL database; fixed finite setup is not repeatable application setup.
+
+```sh
+WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=rich_draft_demo;Username=postgres;Password=local' \
+  dotnet run --project samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj
+dotnet test --project samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj
+```
+
+Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environment above.
+[The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
+proofs from earlier evidence and records native-write bypass limitations.
 
 ## Archived backend
 

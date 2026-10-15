@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/libraries/">
+    <Project Path="libraries/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
     <Project Path="libraries/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
     <Project Path="libraries/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
     <Project Path="libraries/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />

@@ -272,6 +272,47 @@ does not silently commit, retry, compensate, or dispatch domain events.
 Domain events are collected and processed deliberately. Integration contracts and their
 mapping remain consumer-owned. Replay produces no historical external effects.
 
+On 2026-10-15 the owner consolidated the domain-event experiments into
+Gloaming.EventReactions and its optional EF adapter. The extracted capability is composable local
+capture and reactions, not a DDD foundation. Ordinary reference/value records need no marker.
+Consumers own their inheritance and compose PendingEvents, use a scoped sink, or return plain facts
+from a package-free domain model. No supplied AggregateRoot or generic decider is required.
+
+Module/application registration selects tracked sources with CollectFrom<TEntity>(selector) and
+other scoped sources with CollectSources(provider, context). There is no inheritance/property
+scanning. Omitted source configuration is not automatically repaired or rejected. Typed handlers
+resolve lazily after context construction. Model metadata declares stable capabilities; scoped
+services remain outside cached models.
+
+Gloaming.EntityFrameworkCore supplies ConfigureGloamingCapabilities<TContext>: one native sync/async
+interceptor performs preparation, change detection and validation before native saving. Existing
+tenant, audit, inbox/outbox, workflow and event-stream validators have context-specific bindings.
+Explicit validator APIs remain available. Feature packages remain independent of each other.
+
+Required intra-module reactions finish in the producer's owning transaction. Each captured wave
+preserves Raise order across selected sources and the sink; exact-type reactions run serially and
+are bounded. The registry routes events, not a business dependency graph. Prefer explicit application
+orchestration for complex dependencies. The caller owns native save/commit; any failure requires
+rollback/disposal and a fresh decision. Native false acceptance, late callbacks, SQL/bulk bypasses
+and omitted sources remain explicit limitations. No Stage, owned transaction, acknowledgment,
+tracker mirror or default aggregate write guard is supplied.
+
+The D1/D1.1 samples retain consumer-owned rules, value objects, relational mapping and concurrency
+proofs. Their earlier commits remain intact; they do not require a Domain library. Event-sourcing
+append/version bookkeeping is a separate capability. Business-history and decider extraction need
+new consumer evidence rather than a package name to fill.
+
+Business modules own durable saga state, branching and compensation; the host wires dependencies.
+Existing workflows retain progress and atomic outgoing intent. They do not make independently
+committing direct module calls automatically recoverable. D2.3 assesses such delivery through
+public Contracts and shared native transactions. D2.2 stays deferred until a concrete post-commit
+completion requirement exists.
+
+See [ADR 0016](adr/0016-local-domain-event-dispatch.md), the
+[current contract](../src/Gloaming.EventReactions/docs/local-dispatch.md) and
+[consolidated evidence](reports/event-reactions-consolidation.md). Earlier D2.1/EF1 reports preserve
+dated implementation and research results for superseded interfaces.
+
 Supply callable delivery/maintenance operations separately from a simple optional hosted
 worker. Consumers may host those operations themselves. Competing-consumer mechanisms need
 their own claim, ordering, concurrency, and recovery evidence; leader election is excluded.

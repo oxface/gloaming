@@ -1,3 +1,4 @@
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,6 +18,7 @@ public static class InboxModelExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);
         ArgumentException.ThrowIfNullOrWhiteSpace(table);
 
+        model.RequireGloamingCapability("inbox");
         var row = model.Entity<InboxMessageRecord>();
         row.ToTable(table, schema);
         row.HasAnnotation("Gloaming:Inbox", true);

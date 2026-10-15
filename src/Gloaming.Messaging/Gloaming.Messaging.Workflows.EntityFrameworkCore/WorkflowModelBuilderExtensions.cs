@@ -1,3 +1,4 @@
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gloaming.Messaging.Workflows.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public static class WorkflowModelBuilderExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
         ArgumentException.ThrowIfNullOrWhiteSpace(jsonColumnType);
 
+        model.RequireGloamingCapability("workflows");
         var row = model.Entity<WorkflowInstanceRecord>();
         row.ToTable(tableName, schema);
         row.HasKey(value => new { value.WorkflowType, value.Id });

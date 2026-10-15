@@ -18,20 +18,26 @@ independently selectable; a family folder does not add an umbrella dependency.
 | [ActorIdentity](src/Gloaming.ActorIdentity/README.md) | Core and optional ASP.NET Core adapter |
 | [Tenancy](src/Gloaming.Tenancy/README.md) | Core and optional ASP.NET Core adapter |
 | [Persistence](src/Gloaming.Persistence/README.md) | EF Core ownership utilities |
+| [EntityFrameworkCore](src/Gloaming.EntityFrameworkCore/README.md) | Model-selected preparation and validation through common save composition |
 | [Events](src/Gloaming.Events/README.md) | Independent serialization and history utilities |
+| [EventReactions](src/Gloaming.EventReactions/README.md) | Composable event buffers, ordered reactions and optional EF preparation |
 | [EventSourcing](src/Gloaming.EventSourcing/README.md) | Aggregate core and optional EF Core write store |
 | [Messaging](src/Gloaming.Messaging/README.md) | Incoming/outgoing envelopes, EF inbox/outbox and optional workers, PostgreSQL delivery |
 
 The [state-stored template rehearsal](docs/plans/t1-template-rehearsal.md) is owner-approved
 and checkpointed as `8ccf4c8`. Its [creator](tools/template/README.md) generates an independent
-Catalog/console repository with configurable naming and three existing library source
-snapshots, without event or messaging dependencies. [The report](docs/reports/t1-template-rehearsal.md)
+Catalog/console repository with configurable naming and existing library source
+snapshots, now including shared EF infrastructure required by Persistence, without domain-event or messaging dependencies. [The report](docs/reports/t1-template-rehearsal.md)
 records the supported creation behavior and limits.
 
 [The separate worker host](samples/MessagingWorkerDemo/README.md) demonstrates API-independent
 dispatch, broker intake and local processing using existing Messaging APIs. Explicit finite
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.
+
+The [local reservation workflow](samples/Wholesale/LocalWorkflowDemo/README.md) delivers through
+public module intake Contracts without a broker. Existing inbox/outbox workers retain independently
+committed decisions and Sales-owned compensation; PostgreSQL/process-death proofs cover the handoff.
 
 [ES1 bounded event append](docs/plans/es1-library-write-store.md), checkpointed as `ab85ec9`, adds reviewed aggregate bookkeeping
 and a provided IEventStore write coordinator to the optional native EF event segment.

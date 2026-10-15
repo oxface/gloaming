@@ -12,6 +12,7 @@ public static class SalesDemoSeed
     public static void Stage(SalesDbContext database)
     {
         ArgumentNullException.ThrowIfNull(database);
+
         string organization = database.RequiredOrganizationKey;
         bool alpha = organization == "wholesale-alpha";
         if (!alpha && organization != "wholesale-beta")
@@ -19,23 +20,34 @@ public static class SalesDemoSeed
                 "The demonstration supports Alpha and Beta only.",
                 nameof(database)
             );
+
         Guid customerId = alpha ? AlphaCustomerId : BetaCustomerId;
+        var profile = CustomerProfileAggregate.Create(
+            customerId,
+            alpha ? AlphaAddressId : BetaAddressId,
+            "DEMO-CUSTOMER",
+            CustomerProfileDetails.Create(
+                alpha ? "Alpha Customer" : "Beta Customer",
+                alpha ? "Alpha Street" : "Beta Street"
+            )
+        );
         database.Add(
             new CustomerRow
             {
-                Id = customerId,
+                Id = profile.CustomerId,
                 OrganizationKey = organization,
-                Code = "DEMO-CUSTOMER",
-                DisplayName = alpha ? "Alpha Customer" : "Beta Customer",
+                Code = profile.Code,
+                DisplayName = profile.Details.DisplayName,
+                Version = profile.Version,
             }
         );
         database.Add(
             new AddressRow
             {
-                Id = alpha ? AlphaAddressId : BetaAddressId,
-                CustomerId = customerId,
+                Id = profile.AddressId,
+                CustomerId = profile.CustomerId,
                 OrganizationKey = organization,
-                AddressLine = alpha ? "Alpha Street" : "Beta Street",
+                AddressLine = profile.Details.AddressLine,
             }
         );
     }

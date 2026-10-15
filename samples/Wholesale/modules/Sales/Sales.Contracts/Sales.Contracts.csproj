@@ -2,4 +2,7 @@
   <PropertyGroup>
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Sales.Contracts</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
+  </ItemGroup>
 </Project>

@@ -4,6 +4,16 @@ An opt-in EF Core Relational utility with no actor-identity, tenancy, Access, pr
 web or hosting dependency. PostgreSQL is the first proven provider; the consumer supplies
 native storage keys, entities, schema, mappings, registration and saves.
 
+## Shared save composition
+
+This package also references [Gloaming.EntityFrameworkCore](../../Gloaming.EntityFrameworkCore/README.md).
+HasTenantOwnership declares the tenant-ownership model requirement. Register
+AddTenantOwnershipValidation<TContext,TKey>(context => context.RequiredTenant) and install
+ConfigureGloamingCapabilities<TContext>(provider) in native scoped context options to run the existing
+validator after all preparation. The required-key property must be accessible to the module's
+registration code. The explicit override recipe below remains an alternative; choose one integration.
+Neither recipe changes filtering, stamping or transaction ownership.
+
 ## Explicit model configuration
 
 ```csharp

@@ -22,21 +22,4 @@ public sealed class PurchasingDbContext(
         HistoryMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
         InlineStateMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
     }
-
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateEventStreamChanges();
-        return base.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    public override Task<int> SaveChangesAsync(
-        bool acceptAllChangesOnSuccess,
-        CancellationToken cancellationToken = default
-    )
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateEventStreamChanges();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }
 }

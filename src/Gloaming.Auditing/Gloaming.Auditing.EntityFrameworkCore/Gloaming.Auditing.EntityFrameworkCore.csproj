@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="../../Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
   </ItemGroup>

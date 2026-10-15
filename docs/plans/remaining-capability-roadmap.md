@@ -38,8 +38,13 @@ references, not selected runtime dependencies or a feature-parity target.
 
 | Candidate | Bounded first outcome | Boundary and required evidence |
 | --- | --- | --- |
-| D1: DDD building blocks and template patterns | Compare a state-stored aggregate and an event-sourced aggregate; demonstrate creation, invariants, domain values and accepted/rejected decisions. | Domain rules stay in modules. Assess reusable identity/value/bookkeeping helpers against actual duplication; no mandatory aggregate hierarchy or generic repository. Useful editable patterns are a valid result even if no library is extracted. |
+| D1: DDD building blocks and template patterns | Committed as `041c64a`: [Sales/Purchasing executable comparison](../../samples/Wholesale/DddDemo/README.md) demonstrates creation, domain values and accepted/rejected decisions; [scope](d1-ddd-sample-patterns.md) and [fresh proof/extraction report](../reports/d1-ddd-sample-patterns.md). | Domain rules stay in modules. Immutable Sales candidates need no event bookkeeping; Purchasing uses its existing reviewed aggregate. No new reusable mechanism, general aggregate base or template preset. |
+| D1.1: rich state-stored aggregate | Owner-authorized [relational draft/line scope](d1-1-rich-state-stored-aggregate.md), with [executable usage](../../samples/Wholesale/RichAggregateDemo/README.md) and a separate [proof/extraction report](../reports/d1-1-rich-state-stored-aggregate.md), checkpointed as `f55d803`. | Complete candidate acceptance, child add/change/remove, root-version concurrency and native rollback; no generic mapper, aggregate base or new reusable mechanism. |
+| D2: local event reactions | Owner-approved [EventReactions consolidation](../reports/event-reactions-consolidation.md), checkpointed as `c4a96da`. | Composable buffers, marker-free facts, explicit EF sources and bounded ordered reactions preserve atomic local work. Explicit application orchestration remains preferred for complex dependencies; no DDD foundation or decider extraction. D2.2 is deferred until a concrete post-commit need exists. |
 | C1: CQRS patterns and optional helpers | Explicit command/query contracts, handlers and native `{Aggregate}Queries` / `{Aggregate}Filters` in real consumers, including filtering a joined EF read view. | Separate read/write logic can share storage. Preserve direct calls, typed DI and caller-owned save/commit. A mediator, pipeline or handler registry needs demonstrated value rather than CQRS naming alone. |
+| D2.3: module consistency and coordination research | Owner-selected [comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md) prepared for review. | Module-owned durable processes can use broker-free delivery, provided receipt/effects/replies remain recoverable. D2.3a now supplies the bounded consumer proof using existing inbox/outbox and public intake Contracts. Shared native transactions remain a conditional atomicity alternative requiring separate PostgreSQL/consumer proofs; no new mechanism is extracted. |
+| D2.3a: local durable module delivery | Owner-selected [broker-free consumer and public module intake](../../samples/Wholesale/LocalWorkflowDemo/README.md), prepared with [fresh proofs](../reports/d2-3a-local-durable-module-delivery.md). | Existing inbox/outbox workers and module-owned saga retain independent transactions. Process-death/duplicate/commit-failure proofs accompany typed Contracts; no generic delivery engine or shared transaction is added. |
+| D2.1e: bounded local policy and ordering | Owner-selected [capture order and workflow durability review](../reports/d2-1e-local-order-and-workflow-durability.md). | Keep required intra-module reactions atomic and use explicit orchestration for complex dependencies. D2.2 is deferred pending a concrete post-commit requirement. Module-owned saga state is durable; D2.3a separately proves consumer-owned durable intake through Contracts. |
 | A1: Access/resource authorization research | [Umbrine-driven authority, role and query assessment](a1-access-resource-authorization-research.md), queued after current DDD/domain-reaction/C1 work and before Access-specific template/readiness decisions. | Assessment/backlog only. Compare OpenFGA with native resource handlers and focused relational predicates; source-of-truth, scoped grants, revocation and complete authorized queries decide fit. [A1.1 membership suspension](a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up) adds a focused consumer administration/audit/proof follow-up, not a separate pre-development gate. No engine/interface selected. |
 | A2: tenant-aware authorization and optional RLS research | [Verified tenancy/persistence baseline and PostgreSQL protection assessment](a2-tenant-resource-authorization-rls-research.md); baseline may accompany A1, final composition follows its authority/scope decisions. | Assessment/backlog only. Tenant admission, within-tenant permissions and database isolation are separate boundaries. Propose native transaction/pooling/role/order proofs; keep tenancy core independent. |
 | W1: separately hosted workers | Complete and merged: separate API, dispatch/intake/processing roles and finite setup. | Real PostgreSQL/RabbitMQ process proofs cover API independence, competing processors, shutdown, death and recovery using existing locks/leases. See the W1 report; no new library mechanism. |
@@ -71,12 +76,34 @@ is documented as a discarded experiment. The owner closed B1 with its assessment
 its code. A later concrete receiver need may warrant revisiting the findings. B2 remains
 a separate candidate for population; it does not require the custom B1 feed.
 
-D1 and C1 can be explored independently before adding template choices. They are explicit
-roadmap items, with a library extraction decision at the end of each assessment. Reuse the
-existing event aggregate bookkeeping where appropriate; avoid copying it into a general DDD
-package or making event sourcing mandatory for state-stored domains.
+D1 has a committed bounded executable comparison and a decision to keep the new profile model
+consumer-owned. D1.1 adds relational child collections and is checkpointed as `f55d803` with
+separate proofs. D2.1 adds local submission/allowance handling and is prepared for review with
+its own event-lifecycle evidence. D2.2 durable deferred handling remains unimplemented. C1
+remains independently useful for query/command organization before template choices. Reuse existing event aggregate
+bookkeeping where appropriate; avoid copying it into a general DDD package or making event
+sourcing mandatory for state-stored domains.
 DDD does not imply domain-event persistence. D1 neither supplies retained integration history
 nor authorizes automatic mapping of private facts to public messages.
+
+D1.1 was initially prepared independently while D1 remained under working-tree review. After
+the owner committed D1 as `041c64a`, its pending changes were moved onto `feat/ddd-sample-patterns`.
+The local-event assessment is now consolidated into Gloaming.EventReactions. It supplies composable
+capture and reactions rather than an aggregate model or DDD framework. Consumers use ordinary records,
+own their inheritance and select buffers explicitly. Required intra-module effects remain atomic;
+complex dependencies use explicit orchestration. The [current review report](../reports/event-reactions-consolidation.md)
+supersedes intermediate D2.1/EF1 interfaces while retaining their dated evidence.
+
+Shared Gloaming.EntityFrameworkCore composition supplies deterministic preparation/detection/validation
+for existing capabilities. Domain models do not acquire an event marker or aggregate base. D1/D1.1
+remain useful consumer patterns without another generic mapping/decider/history abstraction.
+
+D2.3 now supplies a [source-backed comparison](../reports/d2-3-module-consistency-and-coordination.md)
+of module-owned durable orchestration, broker-free delivery through Contracts and shared native
+transactions. Existing workflow state does not make arbitrary direct calls recoverable. The owner-selected
+[D2.3a proof](../reports/d2-3a-local-durable-module-delivery.md) now composes existing inbox/outbox
+with public module intake and fresh-scope recovery. Shared transactions need their own concrete atomic-acceptance
+requirement and PostgreSQL proof. D2.2 local post-commit reactions remain deferred until justified.
 
 A1 and A2 are the next consumer-driven authorization research block after the current
 DDD/domain-reaction and C1 work, ahead of Access-specific T2 choices and P2 readiness. A1

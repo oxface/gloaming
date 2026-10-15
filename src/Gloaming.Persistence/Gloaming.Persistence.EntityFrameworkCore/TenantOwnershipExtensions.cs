@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -73,6 +74,7 @@ public static class TenantOwnershipExtensions
             tenantProperty.Parameters
         );
         entity.HasQueryFilter(filterName, predicate);
+        entity.Metadata.Model.RequireGloamingCapability("tenant-ownership");
         entity.HasAnnotation(TenantOwnershipMetadata.PropertyAnnotation, member.Name);
         entity.HasAnnotation(TenantOwnershipMetadata.FilterAnnotation, filterName);
         entity.HasAnnotation(

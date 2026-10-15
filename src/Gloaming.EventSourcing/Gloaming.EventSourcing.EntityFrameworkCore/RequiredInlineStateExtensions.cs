@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -65,6 +66,7 @@ public static class RequiredInlineStateExtensions
                 "This required inline state is already registered."
             );
         stream.SetAnnotation(annotation, new[] { streamType, events.Name, state.Name });
+        model.RequireGloamingCapability("event-streams");
         return model;
     }
 

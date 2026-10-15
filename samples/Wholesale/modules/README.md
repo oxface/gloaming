@@ -9,10 +9,15 @@ adds Inventory-owned reservation receipts and available-stock decisions, plus Sa
 two-line process state and compensation attempts. Both contexts commit independently using
 their existing inbox/outbox; implementations still communicate only through Contracts.
 
+The [local workflow executable](../LocalWorkflowDemo/README.md) runs the same business process
+without RabbitMQ. Inventory and Sales expose typed durable intake Contracts whose successful calls
+mean committed receipt. Each intake uses a fresh module-owned scope; relays never access receiver
+contexts. Sales.Contracts explicitly references Inventory.Contracts for Inventory-owned outcome types.
+
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |
-| Sales | Versioned customer profile edits, one demonstration address per customer and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
+| Sales | Versioned customer profile edits, one demonstration address per customer, relational draft orders/lines, submitted-order allowances and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
 | Inventory | Availability reads, stock-position history and inline state, opening and receipt commands within the selected Organization. | Schema `inventory`, native InventoryDbContext, separate history; ordinary queries use the registered E2 ownership filter. |
 | Purchasing | Purchase-order history, inline aggregate state and query-derived summary, drafting and line replacement. | Schema `purchasing`, native PurchasingDbContext, separate history; explicit tenant ownership. |
 
@@ -55,6 +60,56 @@ host obligations; trusted non-HTTP callers own admission. Discard the context af
 there is no automatic retry/rebase or shared ambient-transaction contract.
 
 Materialized template/CLI output remains E10.
+
+## DDD sample patterns
+
+[DddDemo](../DddDemo/README.md) compares Sales's immutable state-stored customer profile with
+Purchasing's existing event-sourced purchase order. Sales owns a validated profile-details
+value and builds a complete replacement candidate before changing either native row. Finite
+setup constructs a valid version-1 profile before tracking; it is not a production creation API.
+Invalid input leaves accepted state untouched. A mismatched observed profile version returns
+Conflict before staging; native EF still detects commits racing after the read. Trusted-human
+admission and the service-owned customer/address/audit transaction are retained.
+
+Purchasing keeps complete-batch candidate validation and pending-event bookkeeping through
+its existing optional event library; the caller still saves/commits. These are different
+consumer recipes, not a shared aggregate hierarchy. Business Contracts and migrations are
+unchanged. The [D1 report](../../../docs/reports/d1-ddd-sample-patterns.md) records fresh proofs
+and the decision that no new reusable mechanism or template preset was established.
+
+## Required local submission reactions
+
+[DomainEventsDemo](../DomainEventsDemo/README.md) adds draft submission and a separate Sales-owned
+customer order allowance. An accepted submission carries a private domain fact; its required
+handler invokes the allowance's reserve decision. Owning-context SaveChanges stages that work
+before validation, and both aggregates persist in the caller's native transaction. Explicit
+staging is available through the library when needed. Gloaming's registered adapter and ordinary
+typed Sales handler replace the original Sales-only coordinator. This is local transactional handling, without event sourcing
+or broker delivery. Different orders compete on the allowance version; direct SQL remains outside
+the protocol. [The current cleanup report](../../../docs/reports/d2-1c-domain-event-integration-simplification.md)
+records registration, lifecycle and the removal of default mirrored-write safeguards. Allowance release and durable deferred work
+remain separate capabilities.
+
+## Rich state-stored Sales draft
+
+[RichAggregateDemo](../RichAggregateDemo/README.md) adds a Sales-owned draft order with relational
+line children and an immutable total limit supplied by a trusted caller. The root controls child
+add/change/remove and validates the complete candidate. A customer identity references the separate
+Sales profile; a catalog SKU references Inventory through its Contracts, with no private peer query
+or cross-module FK. The summary joins current customer information without copying it into the root.
+
+Draft commands stage in the caller's already active native Sales transaction. Every accepted batch,
+including a child-only change, advances the root version once. Explicit single-query graph loading,
+root-version UPDATE predicates and domain decisions preserve the intended command path;
+explicit deletion staging owns child removal. The default tracked-save guard is removed.
+Direct tracked writes and bulk/native SQL bypass the aggregate protocol.
+The forward migration adds only `draft_orders` and `draft_order_lines`, with same-tenant root/child
+and customer FKs. Prior migrations and customer/profile/workflow behavior remain intact.
+
+This is a state-stored domain example, not an event stream, projection engine, reservation workflow
+or domain-event dispatcher. The existing two-line reservation workflow is a separate business
+process and is not automatically started by draft creation. [The D1.1 report](../../../docs/reports/d1-1-rich-state-stored-aggregate.md)
+records fresh proofs, scoped guarantees and the decision that no new reusable mechanism was proven.
 
 ## Closed integration-feed assessment
 
