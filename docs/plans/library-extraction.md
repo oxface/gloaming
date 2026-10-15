@@ -35,7 +35,8 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Module consistency research D2.3 | Owner-selected [comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md) prepared for review against the [bounded scope](d2-3-module-consistency-and-coordination-research.md). Existing WF1/WF2 cover durable process state and messaging. The separately selected D2.3a now proves existing inbox/outbox composition through public intake Contracts; shared native transactions remain conditional on an atomic-acceptance requirement and a separate consumer proof. No new reusable mechanism or runtime behavior is added; D2.2 remains deferred. |
 | Local durable module delivery D2.3a | Owner-selected [public-contract intake scope](d2-3a-local-durable-module-delivery.md), [broker-free executable](../../samples/Wholesale/LocalWorkflowDemo/README.md) and [fresh adoption/proof report](../reports/d2-3a-local-durable-module-delivery.md). Module-owned fresh-scope intake composes existing inbox/outbox/workflow services, preserving independent commits and RabbitMQ usage. No new reusable mechanism, migration or template preset. |
 | Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15; present in fetched main `7ea6652`: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/CqrsDemo/README.md) and [dated proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Earlier uncommitted/staged statements describe that handoff. Sales joins/filters/counts/pages use native EF and typed Contracts, without resource-permission filtering; Inventory availability remains module-owned. No new reusable mechanism. Template generation remains separate. |
-| Access/resource authorization A1 + A1.1 | [Assessment prepared for review](../reports/access-authorization-assessment.md), 2026-10-16, with [pinned primary sources](../reports/access-authorization-primary-sources.md). Recommend native resource checks/module-owned relational predicates initially; focused consumer suspension/reactivation with revision/audit proofs next. No engine adoption, runtime/library interface or new reusable mechanism. A2 receives authority/query input; RLS remains separate. |
+| Access/resource authorization A1 | [Assessment prepared for review](../reports/access-authorization-assessment.md), 2026-10-16, with [pinned primary sources](../reports/access-authorization-primary-sources.md). Recommend native resource checks/module-owned relational predicates initially; the separately authorized A1.1 consumer journey is recorded below. The assessment adds no engine adoption, runtime/library interface or new reusable mechanism. A2 receives authority/query input; RLS remains separate. |
+| Membership administration A1.1 | Owner-authorized [consumer scope](a1-1-membership-suspension.md), [Access usage](../../samples/Wholesale/modules/Access/README.md) and [fresh proof report](../reports/a1-1-membership-suspension.md). Prepared unstaged: narrow suspend/reactivate Contracts, current scoped administration grant, self/last-admin safeguards, retained grants, revision/Organization concurrency and atomic audit. Existing admission is reused; no library interface or new reusable mechanism. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
@@ -64,9 +65,10 @@ remains consumer-owned and tenancy retains independent adoption.
 On 2026-10-15 Umbrine added [A1.1 Organization membership suspension](a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
 as a focused Access lifecycle follow-up. Existing active-membership admission is retained;
 consumer-owned authorized suspend/reactivate operations, atomic business audit, concurrency
-and combined read/write/reactivation proofs are now assessed in A1. Implementation and new
-proofs remain a separately reviewed small follow-up. This adds no separate pre-development
-gate, runtime implementation or Tenancy-to-Access/FGA dependency.
+and combined read/write/reactivation proofs were assessed in A1. The owner then authorized
+the focused [A1.1 implementation](a1-1-membership-suspension.md); its separately dated
+[report](../reports/a1-1-membership-suspension.md) records fresh runtime proofs. It remains
+consumer work with no separate pre-development gate or Tenancy-to-Access/FGA dependency.
 
 The [remaining capability roadmap](remaining-capability-roadmap.md) is the current starting
 point for selecting another slice. It explicitly includes DDD/CQRS assessments and template

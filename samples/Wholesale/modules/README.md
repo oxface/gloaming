@@ -16,7 +16,7 @@ contexts. Sales.Contracts explicitly references Inventory.Contracts for Inventor
 
 | Module | Ownership | Persistence |
 | --- | --- | --- |
-| Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |
+| Access | Global application users, exact external identities, canonical Organizations, current-membership admission and authorized membership suspension/reactivation. | Schema `access`, native AccessDbContext, separate migration history; global admission queries run before tenancy exists. Scoped administration owns its native transaction and accepted-change audit. |
 | Sales | Versioned customer profile edits, one demonstration address per customer, relational draft orders/lines, submitted-order allowances and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
 | Inventory | Availability reads, stock-position history and inline state, opening and receipt commands within the selected Organization. | Schema `inventory`, native InventoryDbContext, separate history; ordinary queries use the registered E2 ownership filter. |
 | Purchasing | Purchase-order history, inline aggregate state and query-derived summary, drafting and line replacement. | Schema `purchasing`, native PurchasingDbContext, separate history; explicit tenant ownership. |
@@ -32,6 +32,11 @@ implementations, and separately registers its HTTP resolvers. Business
 [endpoints](../HttpIdentityDemo/Endpoints/OrganizationEndpoints.cs) call only business
 Contracts. Actor/provider mapping, Organization admission metadata and selection helpers
 live in the host's [HTTP integration](../HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs).
+
+[Access administration](Access/README.md) adds `AddMembershipAdministration()` and narrow
+consumer Contracts. The global registry remains independent of current tenancy for identity
+lookup; administrative operations explicitly scope authority/targets, protect revision and
+Organization, and use current active membership. Its grant supplies no business-data permission.
 
 Public native DbContexts/configuration utilities are available to composition, native EF
 tooling and finite setup. This exception keeps saves, migrations and transactions visible;

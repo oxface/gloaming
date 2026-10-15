@@ -5,6 +5,9 @@ and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.m
 cookie/OIDC authentication and separate PostgreSQL-backed Access/Inventory/Sales modules.
 Business reads and profile edits use module Contracts and tenant-owned rows.
 
+[Membership administration](#membership-administration) now supplies the consumer-owned
+suspend/reactivate journey with current scoped authority, native concurrency and atomic audit.
+
 Accepted Sales profile edits now explicitly stage a [transactional audit](../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/README.md)
 in the same native transaction as the customer/version and address changes. Sales requires an
 established Human actor, retains canonical actor/tenant and the affected address/version transition,
@@ -91,6 +94,46 @@ authentication and current active membership before reading the same isolated ca
 The default challenge uses native cookies, so recognized JSON API endpoints return 401
 without sending the browser to the provider. `/login` explicitly challenges the named OIDC
 scheme. Native token validation, HTTPS metadata and code-flow/PKCE remain unchanged.
+
+## Membership administration
+
+The [Access consumer guide](../modules/Access/README.md) records the selected policies,
+transaction protocol, setup and limits. Apply the forward Access migration before these
+endpoints are used. Existing memberships get revision 1 and no administrative grant;
+migration does not bootstrap privileges. Explicit finite demo setup gives Alpha the North
+administration grant and Beta the South administration grant, without expanding memberships.
+
+For a target membership ID known to the administrative client:
+
+| Request | Behavior |
+| --- | --- |
+| GET `/organizations/{organization}/memberships/{membershipId}` | Authorized current status, revision and narrow admin-grant read; unauthorized/foreign/missing gives 404. |
+| POST `.../memberships/{membershipId}/suspend` | Suspend an Active membership using JSON `{ "expectedRevision": 1 }`. |
+| POST `.../memberships/{membershipId}/reactivate` | Reactivate that same Suspended membership using its current revision. |
+
+POST requires the same native authentication cookie, antiforgery cookie and X-CSRF-TOKEN
+flow as profile edits. Both mutation endpoints return the current membership on 200:
+a changed revision identifies an accepted transition, while an equal-state request with
+the current revision is a no-op. Stale revisions and forbidden transitions/safeguards give
+409; malformed IDs/revisions give 400. Authentication/admission keep their existing responses.
+The scoped consumer Contract reauthorizes point reads and repeats; a body cannot choose
+actor/Organization or set arbitrary status/grants. No role-assignment/listing UI is supplied.
+
+Self-suspension is blocked and an active administrator is preserved, including concurrent
+attempts by two administrators to suspend each other. An accepted change commits one audit
+with its membership revision; conflicts/no-ops/denials add no accepted-change audit.
+Audit/storage/known-commit failure rolls both back; a lost commit response needs a fresh
+authorized state read, not blind retry. Native database errors remain errors, not denial.
+
+Suspension blocks subsequent protected requests with the same issued cookie, without
+deleting global identity, other active Organizations or historical attribution. Already
+admitted operations retain their immutable context. Reactivation preserves retained grants
+subject to current checks and does not restore revoked grants. Public catalog exceptions
+remain public. These Access grants do not define private business-data permissions;
+Personnel, licensing and complete resource-authorized queries remain separate capabilities.
+
+The route/subdomain composition is unchanged. Hosts using a subdomain can map
+MembershipEndpoints.Map with `/memberships/{membershipId:guid}` after their existing setup.
 
 [Program](Program.cs) chooses route selection explicitly through
 `AddOrganizationTenancyFromRoute("organization")`. For the tested subdomain alternative,

@@ -37,4 +37,8 @@ ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints.CustomerProfileEndp
     app,
     "/organizations/{organization}/customers/{customerId:guid}/profile"
 );
+ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints.MembershipEndpoints.Map(
+    app,
+    "/organizations/{organization}/memberships/{membershipId:guid}"
+);
 await app.RunAsync();

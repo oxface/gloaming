@@ -340,6 +340,12 @@ public sealed partial class CompositionTests(PostgreSqlFixture postgres)
                     ? "/customers/{customerId:guid}/profile"
                     : "/organizations/{organization}/customers/{customerId:guid}/profile"
             );
+            MembershipEndpoints.Map(
+                app,
+                subdomain
+                    ? "/memberships/{membershipId:guid}"
+                    : "/organizations/{organization}/memberships/{membershipId:guid}"
+            );
             await app.StartAsync(Token);
             return app;
         }

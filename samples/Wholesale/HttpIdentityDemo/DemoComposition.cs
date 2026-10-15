@@ -35,6 +35,7 @@ public static class DemoComposition
             AccessDatabase.Configure(options, connection)
         );
         services.AddAccessQueries();
+        services.AddMembershipAdministration();
         services.AddHttpActorContext<ApplicationActorResolver>();
         services.AddInventoryDatabase(connection);
         services.AddInventoryQueries();

@@ -249,7 +249,10 @@ public sealed partial class CompositionTests
         await using var app = await StartAsync(connectionString: connection, initialize: false);
         await using var scope = app.Services.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<AccessDbContext>();
-        Assert.Single(await database.Database.GetAppliedMigrationsAsync(Token));
+        Assert.Equal(
+            database.Database.GetMigrations(),
+            await database.Database.GetAppliedMigrationsAsync(Token)
+        );
         using var client = app.GetTestClient();
         using var request = Request(
             app,

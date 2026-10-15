@@ -164,8 +164,12 @@ public sealed partial class CompositionTests
         );
     }
 
-    [Fact]
-    public async Task AlreadyAdmittedOperationRetainsContextWhenMembershipIsRemoved()
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    public async Task AlreadyAdmittedOperationRetainsContextWhenMembershipIsSuspendedOrRemoved(
+        int status
+    )
     {
         var admitted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var resume = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -194,7 +198,8 @@ public sealed partial class CompositionTests
             await admitted.Task.WaitAsync(TimeSpan.FromSeconds(10), Token);
             await ExecuteAsync(
                 app,
-                "UPDATE access.memberships SET status = 3 WHERE user_id = 'application-alpha' AND organization_id = 'wholesale-alpha'"
+                "UPDATE access.memberships SET status = @status WHERE user_id = 'application-alpha' AND organization_id = 'wholesale-alpha'",
+                new Npgsql.NpgsqlParameter("status", status)
             );
         }
         finally
