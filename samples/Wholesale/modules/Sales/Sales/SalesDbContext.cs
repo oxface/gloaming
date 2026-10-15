@@ -1,5 +1,6 @@
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Auditing.EntityFrameworkCore.Postgres;
+using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
 
@@ -19,12 +21,15 @@ public sealed class SalesDbContext(
     internal DbSet<AddressRow> Addresses => Set<AddressRow>();
     internal DbSet<DraftOrderRow> DraftOrders => Set<DraftOrderRow>();
     internal DbSet<DraftOrderLineRow> DraftOrderLines => Set<DraftOrderLineRow>();
+    internal DbSet<OrderAllowanceRow> OrderAllowances => Set<OrderAllowanceRow>();
     internal string RequiredOrganizationKey => tenancy.Current.RequireTenant().Value;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ConfigureEventReactions();
         modelBuilder.HasDefaultSchema("sales");
         DraftOrderMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
+        OrderAllowanceRow.Configure(modelBuilder, () => RequiredOrganizationKey);
         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(
             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),
@@ -99,30 +104,5 @@ public sealed class SalesDbContext(
             .Property(row => row.OrganizationKey)
             .HasColumnName("organization_key")
             .HasMaxLength(256);
-    }
-
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateDraftOrderChanges();
-        this.ValidateAuditChanges();
-        this.ValidateInboxChanges();
-        this.ValidateOutboxChanges();
-        this.ValidateWorkflowChanges();
-        return base.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    public override Task<int> SaveChangesAsync(
-        bool acceptAllChangesOnSuccess,
-        CancellationToken cancellationToken = default
-    )
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateDraftOrderChanges();
-        this.ValidateAuditChanges();
-        this.ValidateInboxChanges();
-        this.ValidateOutboxChanges();
-        this.ValidateWorkflowChanges();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

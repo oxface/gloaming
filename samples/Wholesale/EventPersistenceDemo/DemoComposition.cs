@@ -20,12 +20,8 @@ public static class DemoComposition
         services.AddScoped<ITenantContextInitializer>(provider =>
             provider.GetRequiredService<TenantContextAccessor>()
         );
-        services.AddDbContext<InventoryDbContext>(options =>
-            InventoryDatabase.Configure(options, connectionString)
-        );
-        services.AddDbContext<PurchasingDbContext>(options =>
-            PurchasingDatabase.Configure(options, connectionString)
-        );
+        services.AddInventoryDatabase(connectionString);
+        services.AddPurchasingDatabase(connectionString);
         services.AddStockPositionHistory();
         services.AddStockPositionCommands();
         services.AddStockPositionQueries();

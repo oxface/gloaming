@@ -2,10 +2,34 @@
 
 Date: 2026-10-14. The owner agreed this follow-up scope and asked to reconsider dispatch
 within SaveChanges, given the existing owning DbContext validation/staging obligations.
-Dispatch location, event lifecycle and public interfaces remain under assessment. Current D1
-adds no domain-event collection or dispatcher; this plan adds no runtime guarantee.
+The local increment is now prepared for review: [D2.1 scope](d2-1-local-domain-reactions.md),
+[executable usage](../../samples/Wholesale/DomainEventsDemo/README.md) and
+[fresh evidence](../reports/d2-1-local-domain-reactions.md). Its sample-owned SaveChanges handling
+does not establish a generic dispatcher or universal write guard. D2.2 remains unimplemented.
+
+On 2026-10-15 the owner authorized promoting the separately proven two-shape local mechanism into
+[Gloaming.Domain and its optional EF adapter](../../src/Gloaming.EventReactions/README.md).
+[D2.1b evidence](../reports/d2-1b-gloaming-domain-promotion.md) records the library implementation;
+it preserves Sales' specialized protocol and does not complete D2.2.
+
+The subsequent [registered integration cleanup](../reports/d2-1c-domain-event-integration-simplification.md)
+replaces that specialized protocol with Gloaming registrations and ordinary Sales handlers, removing
+the default tracked-row/fact mirror and aggregate save guard. Native tenant validation and aggregate
+command concurrency remain; D2.2 is still unimplemented.
+
+The owner subsequently selected [D2.1d module composition and sync/async interception](d2-1d-module-owned-event-composition.md).
+It removes the explicit save service and ConsumerScope, uses ordinary module extensions/typed
+handlers and retains native tracker acceptance. [Current evidence](../reports/d2-1d-module-owned-event-composition.md)
+records callback ordering and transaction limits. This still does not implement D2.2.
 
 ## Domain meaning and separate increments
+
+Owner clarification, 2026-10-15: retain bounded transactional intra-module event handling, with explicit
+application orchestration recommended for complex dependency structures. Preserve Raise capture order
+across participating sources; subscription routing is not business dependency scheduling. Required
+local writes remain atomic. D2.2 is deferred until a concrete need for post-commit completion exists.
+It is not the default merely because receivers are separate aggregates. Sagas and compensation policy
+belong to the owning business module. D2.3 assesses reliable in-process calls through module Contracts.
 
 Start from one concrete state-stored operation and a named reaction with business value.
 Domain events describe private accepted decisions; they are not automatically event-sourcing
@@ -23,8 +47,13 @@ Deliver independently reviewable outcomes:
    inbox/outbox and, if actual multi-step progress needs it, continuation mechanics. An internal
    durable work contract and a public cross-module integration contract have different audiences;
    choose and version the required contract deliberately.
+3. **D2.3 module consistency research:** compare durable choreography, durable orchestration and
+   shared native transactions through module Contracts under the
+   [separate research scope](d2-3-module-consistency-and-coordination-research.md).
+   WF1/WF2 provide independently committed workflow evidence; the shared-transaction tradeoff
+   has not yet received the same assessment. This is separate from D2.2 implementation.
 
-Neither outcome requires the other to introduce a framework. Select the concrete operation,
+These outcomes do not require a framework. Select the concrete operation,
 handler responsibilities and supported usage before implementing or proposing a library surface.
 
 ## SaveChanges is a candidate boundary, not every write or commit
@@ -108,5 +137,5 @@ state explicitly when no new reusable mechanism was proven.
   the convenience save overloads forward to the corresponding bool overloads; prove the
   selected consumer's override behavior rather than assuming every write reaches them.
 
-References were checked on 2026-10-14. They support API and transaction constraints, not an
-implemented domain-event protocol. No runtime tests were run for this planning update.
+References were checked on 2026-10-14. They support API and transaction constraints. The original
+planning update ran no runtime tests; implementation evidence is separately recorded in the D2.1 report.

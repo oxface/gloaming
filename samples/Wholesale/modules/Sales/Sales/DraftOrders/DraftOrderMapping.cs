@@ -32,6 +32,7 @@ internal static class DraftOrderMapping
             .IsConcurrencyToken()
             .ValueGeneratedNever();
         root.Property(row => row.Currency).HasColumnName("currency").HasMaxLength(3);
+        root.Property(row => row.IsSubmitted).HasColumnName("is_submitted");
         root.Property(row => row.TotalLimit).HasColumnName("total_limit");
         root.HasIndex(row => new { row.OrganizationKey, row.Code })
             .IsUnique()

@@ -12,7 +12,7 @@ their existing inbox/outbox; implementations still communicate only through Cont
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | Access | Global application users, exact external identities, canonical Organizations and current-membership admission. | Schema `access`, native AccessDbContext, separate migration history; queries run before tenancy exists. |
-| Sales | Versioned customer profile edits, one demonstration address per customer, relational draft orders/lines and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
+| Sales | Versioned customer profile edits, one demonstration address per customer, relational draft orders/lines, submitted-order allowances and durable stock-issue request progress. | Schema `sales`, native SalesDbContext, separate history and owned inbox/outbox; explicit tenant ownership and native transactions. |
 | Inventory | Availability reads, stock-position history and inline state, opening and receipt commands within the selected Organization. | Schema `inventory`, native InventoryDbContext, separate history; ordinary queries use the registered E2 ownership filter. |
 | Purchasing | Purchase-order history, inline aggregate state and query-derived summary, drafting and line replacement. | Schema `purchasing`, native PurchasingDbContext, separate history; explicit tenant ownership. |
 
@@ -72,6 +72,19 @@ consumer recipes, not a shared aggregate hierarchy. Business Contracts and migra
 unchanged. The [D1 report](../../../docs/reports/d1-ddd-sample-patterns.md) records fresh proofs
 and the decision that no new reusable mechanism or template preset was established.
 
+## Required local submission reactions
+
+[DomainEventsDemo](../DomainEventsDemo/README.md) adds draft submission and a separate Sales-owned
+customer order allowance. An accepted submission carries a private domain fact; its required
+handler invokes the allowance's reserve decision. Owning-context SaveChanges stages that work
+before validation, and both aggregates persist in the caller's native transaction. Explicit
+staging is available through the library when needed. Gloaming's registered adapter and ordinary
+typed Sales handler replace the original Sales-only coordinator. This is local transactional handling, without event sourcing
+or broker delivery. Different orders compete on the allowance version; direct SQL remains outside
+the protocol. [The current cleanup report](../../../docs/reports/d2-1c-domain-event-integration-simplification.md)
+records registration, lifecycle and the removal of default mirrored-write safeguards. Allowance release and durable deferred work
+remain separate capabilities.
+
 ## Rich state-stored Sales draft
 
 [RichAggregateDemo](../RichAggregateDemo/README.md) adds a Sales-owned draft order with relational
@@ -82,8 +95,9 @@ or cross-module FK. The summary joins current customer information without copyi
 
 Draft commands stage in the caller's already active native Sales transaction. Every accepted batch,
 including a child-only change, advances the root version once. Explicit single-query graph loading,
-root-version UPDATE predicates and an owning-context tracked-save guard preserve complete-graph
-decisions; explicit deletion staging owns child removal. Bulk/native SQL bypasses that protocol.
+root-version UPDATE predicates and domain decisions preserve the intended command path;
+explicit deletion staging owns child removal. The default tracked-save guard is removed.
+Direct tracked writes and bulk/native SQL bypass the aggregate protocol.
 The forward migration adds only `draft_orders` and `draft_order_lines`, with same-tenant root/child
 and customer FKs. Prior migrations and customer/profile/workflow behavior remain intact.
 

@@ -28,12 +28,8 @@ public static class DddComposition
         services.AddScoped<IActorContextInitializer>(provider =>
             provider.GetRequiredService<ActorContextAccessor>()
         );
-        services.AddDbContext<SalesDbContext>(options =>
-            SalesDatabase.Configure(options, connectionString)
-        );
-        services.AddDbContext<PurchasingDbContext>(options =>
-            PurchasingDatabase.Configure(options, connectionString)
-        );
+        services.AddSalesDatabase(connectionString);
+        services.AddPurchasingDatabase(connectionString);
         services.AddCustomerProfiles();
         services.AddPurchaseOrderCommands();
         services.AddPurchaseOrderQueries();

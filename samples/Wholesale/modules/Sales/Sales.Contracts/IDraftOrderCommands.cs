@@ -12,7 +12,15 @@ public interface IDraftOrderCommands
         ChangeDraftOrderLines request,
         CancellationToken cancellationToken
     );
+
+    // Required allowance handling occurs at save; Changed remains an uncommitted proposal.
+    Task<DraftOrderChangeResult> SubmitAsync(
+        SubmitDraftOrder request,
+        CancellationToken cancellationToken
+    );
 }
+
+public sealed record SubmitDraftOrder(Guid Id, long ExpectedVersion);
 
 public sealed record CreateDraftOrder(
     Guid Id,
@@ -46,6 +54,8 @@ public abstract record DraftOrderChangeResult
     public sealed record NotFound : DraftOrderChangeResult;
 
     public sealed record Conflict : DraftOrderChangeResult;
+
+    public sealed record AlreadySubmitted : DraftOrderChangeResult;
 
     public sealed record CustomerNotFound : DraftOrderChangeResult;
 

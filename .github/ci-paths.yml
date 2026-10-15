@@ -18,15 +18,17 @@ unmapped:
   - '**'
   - '!**/*.md'
   - '!archive/**'
-  - '!src/Gloaming.{Auditing,ActorIdentity,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
+  - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/{EventStorageDemo,EventStorageDemo.Tests,OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - '!samples/Wholesale/**'
+  - '!samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!templates/**'
   - '!tools/template/**'
 
 Auditing:
+  - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.Auditing/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
@@ -36,11 +38,21 @@ ActorIdentity:
   - 'src/Gloaming.ActorIdentity/**'
   - '!**/*.md'
 
+EventReactions:
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging{,.EntityFrameworkCore,.EntityFrameworkCore.Postgres}/**'
+  - 'src/Gloaming.EventReactions/**'
+  - 'samples/EventReactionsDemo/**'
+  - 'tests/Support/PostgreSqlFixture.cs'
+  - '!**/*.md'
+
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
   - '!**/*.md'
 
 Persistence:
+  - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
@@ -53,6 +65,8 @@ Events:
 # EventPersistenceDemo composes event sourcing, messaging and accepted-change audit.
 # Its owning lanes include those dependencies and the module implementation paths.
 EventSourcing:
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventReactions/Gloaming.*/**'
   - 'src/Gloaming.EventSourcing/**'
   - 'src/Gloaming.{Events,Messaging,Auditing}/Gloaming.*/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
@@ -64,6 +78,8 @@ EventSourcing:
   - '!**/*.md'
 
 Messaging:
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventReactions/Gloaming.*/**'
   - 'src/Gloaming.Messaging/**'
   - 'src/Gloaming.{EventSourcing,Events,Auditing}/Gloaming.*/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
@@ -79,12 +95,13 @@ Messaging:
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
-  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,modules,ServiceDefaults}/**'
+  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,DomainEventsDemo,DomainEventsDemo.Tests,modules,ServiceDefaults}/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - 'samples/Wholesale/WorkflowDemo{,.Tests}/**'
   - '!**/*.md'
 
 template:
+  - 'src/Gloaming.EntityFrameworkCore/**'
   - 'tools/template/**'
   - 'templates/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'

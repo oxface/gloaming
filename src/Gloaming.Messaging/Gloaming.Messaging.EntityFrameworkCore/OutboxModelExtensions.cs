@@ -1,3 +1,4 @@
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -18,6 +19,7 @@ public static class OutboxModelExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);
         ArgumentException.ThrowIfNullOrWhiteSpace(table);
 
+        model.RequireGloamingCapability("outbox");
         var row = model.Entity<OutboxMessageRecord>();
         row.ToTable(table, schema);
         row.HasAnnotation("Gloaming:Outbox", true);

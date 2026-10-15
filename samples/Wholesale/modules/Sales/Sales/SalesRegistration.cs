@@ -11,8 +11,13 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 
 public static class SalesRegistration
 {
-    public static IServiceCollection AddDraftOrderCommands(this IServiceCollection services) =>
-        services.AddScoped<IDraftOrderCommands, DraftOrders.DraftOrderCommands>();
+    public static IServiceCollection AddCustomerOrderAllowances(this IServiceCollection services) =>
+        services.AddScoped<ICustomerOrderAllowances, OrderAllowances.CustomerOrderAllowances>();
+
+    public static IServiceCollection AddDraftOrderCommands(this IServiceCollection services)
+    {
+        return services.AddScoped<IDraftOrderCommands, DraftOrders.DraftOrderCommands>();
+    }
 
     public static IServiceCollection AddDraftOrderQueries(this IServiceCollection services) =>
         services.AddScoped<IDraftOrderQueries, DraftOrders.DraftOrderQueries>();

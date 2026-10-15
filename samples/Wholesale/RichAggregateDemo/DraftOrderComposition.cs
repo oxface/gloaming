@@ -28,12 +28,8 @@ public static class DraftOrderComposition
         services.AddScoped<IActorContextInitializer>(provider =>
             provider.GetRequiredService<ActorContextAccessor>()
         );
-        services.AddDbContext<SalesDbContext>(options =>
-            SalesDatabase.Configure(options, connection)
-        );
-        services.AddDbContext<InventoryDbContext>(options =>
-            InventoryDatabase.Configure(options, connection)
-        );
+        services.AddSalesDatabase(connection);
+        services.AddInventoryDatabase(connection);
         services.AddInventoryQueries();
         services.AddCustomerProfiles();
         services.AddDraftOrderCommands();

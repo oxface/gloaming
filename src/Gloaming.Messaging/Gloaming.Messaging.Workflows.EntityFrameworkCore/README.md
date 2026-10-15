@@ -2,7 +2,12 @@
 
 Optional typed continuation runner with a provided module-owned workflow table, scalar optimistic
 concurrency and mandatory native save validation. Dependencies are Workflows, the existing EF
-messaging roles, EF Relational and DI abstractions. No Npgsql, broker, worker or generated harness.
+messaging roles, Gloaming.EntityFrameworkCore, EF Relational and DI abstractions. No Npgsql, broker, worker or generated harness.
+
+Alternatively, use [shared save composition](../../Gloaming.EntityFrameworkCore/README.md):
+ConfigureWorkflows declares the workflows requirement. Register AddWorkflowValidation<TDbContext>()
+and configure native options with ConfigureGloamingCapabilities<TDbContext>(provider).
+This replaces the workflow validator call in overrides; it does not register a runner or worker.
 
 Register `AddWorkflow<TDbContext,TStart,TState>`, configure `ConfigureWorkflows(schema, table,
 jsonColumnType)` in the owning context, and install `ValidateWorkflowChanges()` in both native

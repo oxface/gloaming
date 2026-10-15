@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
 using Npgsql;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
@@ -14,7 +15,7 @@ public static class DraftOrderFailures
         if (exception is DbUpdateConcurrencyException)
             return exception.Entries.Count > 0
                 && exception.Entries.All(entry =>
-                    entry.Entity is DraftOrderRow or DraftOrderLineRow
+                    entry.Entity is DraftOrderRow or DraftOrderLineRow or OrderAllowanceRow
                 );
 
         return exception.InnerException

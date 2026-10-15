@@ -32,7 +32,9 @@ public sealed class AdoptionDependencyTests
             Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", project + ".csproj")
         );
         Assert.Equal(
-            [dependency],
+            project == "Gloaming.Auditing.EntityFrameworkCore"
+                ? new[] { "Gloaming.EntityFrameworkCore", dependency }
+                : new[] { dependency },
             declaration
                 .Descendants("ProjectReference")
                 .Select(reference =>
@@ -94,7 +96,16 @@ public sealed class AdoptionDependencyTests
         XDocument declaration = XDocument.Load(
             Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", library + ".csproj")
         );
-        Assert.Empty(declaration.Descendants("ProjectReference"));
+        Assert.Equal(
+            library == "Gloaming.Persistence.EntityFrameworkCore"
+                ? ["Gloaming.EntityFrameworkCore"]
+                : [],
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
         Assert.Empty(declaration.Descendants("FrameworkReference"));
         string[] packages = declaration
             .Descendants("PackageReference")
@@ -114,7 +125,7 @@ public sealed class AdoptionDependencyTests
             )
         );
         Assert.Equal(
-            ["Gloaming.EventSourcing", "Gloaming.Events.History"],
+            ["Gloaming.EntityFrameworkCore", "Gloaming.EventSourcing", "Gloaming.Events.History"],
             declaration
                 .Descendants("ProjectReference")
                 .Select(reference =>
@@ -139,7 +150,11 @@ public sealed class AdoptionDependencyTests
         Check("Gloaming.Messaging.Workflows", ["Gloaming.Messaging"], []);
         Check(
             "Gloaming.Messaging.Workflows.EntityFrameworkCore",
-            ["Gloaming.Messaging.Workflows", "Gloaming.Messaging.EntityFrameworkCore"],
+            [
+                "Gloaming.EntityFrameworkCore",
+                "Gloaming.Messaging.Workflows",
+                "Gloaming.Messaging.EntityFrameworkCore",
+            ],
             [
                 "Microsoft.EntityFrameworkCore.Relational",
                 "Microsoft.Extensions.DependencyInjection.Abstractions",
@@ -147,7 +162,7 @@ public sealed class AdoptionDependencyTests
         );
         Check(
             "Gloaming.Messaging.EntityFrameworkCore",
-            ["Gloaming.Messaging"],
+            ["Gloaming.EntityFrameworkCore", "Gloaming.Messaging"],
             [
                 "Microsoft.EntityFrameworkCore.Relational",
                 "Microsoft.Extensions.DependencyInjection.Abstractions",

@@ -10,7 +10,7 @@ next increment. It was prepared independently from fetched `origin/main` at `824
 onto `feat/ddd-sample-patterns` after D1 was committed as `041c64a`, retaining both demos.
 [Executable usage](../../samples/Wholesale/RichAggregateDemo/README.md) and
 [fresh verification/extraction findings](../reports/d1-1-rich-state-stored-aggregate.md)
-are prepared for owner review.
+were checkpointed as `f55d803` following owner review. Later D2 reactions are a separate scope.
 
 ## Selected sample behavior
 

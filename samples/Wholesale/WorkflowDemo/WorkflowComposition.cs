@@ -21,12 +21,8 @@ public static class WorkflowComposition
         services.AddScoped<ITenantContextInitializer>(provider =>
             provider.GetRequiredService<TenantContextAccessor>()
         );
-        services.AddDbContext<SalesDbContext>(options =>
-            SalesDatabase.Configure(options, salesConnection)
-        );
-        services.AddDbContext<InventoryDbContext>(options =>
-            InventoryDatabase.Configure(options, inventoryConnection)
-        );
+        services.AddSalesDatabase(salesConnection);
+        services.AddInventoryDatabase(inventoryConnection);
         services.AddStockIssueRequests();
         services.AddStockReservationOrders();
         services.AddStockPositionCommands();

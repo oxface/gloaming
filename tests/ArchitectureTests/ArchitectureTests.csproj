@@ -5,6 +5,21 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
+    <None
+      Include="../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Gloaming.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../samples/EventReactionsDemo/Consumer/EventReactionsDemo.csproj" />
+    <None
+      Include="../../samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj"
+      Link="ProjectDeclarations/EventReactionsDemo.Model.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
     <ProjectReference Include="../../samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
@@ -38,9 +53,20 @@
     <ProjectReference Include="../../samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../samples/EventStorageDemo/EventStorageDemo.csproj" />
+    <ProjectReference Include="../../samples/Wholesale/DomainEventsDemo/DomainEventsDemo.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <None
+      Include="../../src/Gloaming.EventReactions/Gloaming.EventReactions/Gloaming.EventReactions.csproj"
+      Link="ProjectDeclarations/Gloaming.EventReactions.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj"
+      Link="ProjectDeclarations/Gloaming.EventReactions.EntityFrameworkCore.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <None
       Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj"
       Link="ProjectDeclarations/Gloaming.Messaging.Workflows.csproj"

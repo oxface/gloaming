@@ -2,7 +2,8 @@
 
 A Sales draft owns a collection of line entities stored in `sales.draft_orders` and
 `sales.draft_order_lines`. It is a state-stored write model: there is no event stream,
-replay, domain-event collection or dispatcher in this capability. The existing Sales/Inventory
+replay, or creation/editing event in this capability. Sales also registers Gloaming's local
+event pipeline for the separate submission capability. The existing Sales/Inventory
 assemblies still have their other optional technical dependencies; this is not proof that those
 assemblies are dependency-free.
 
@@ -58,7 +59,8 @@ constraints are not reclassified. Roll back and dispose the whole operation afte
 One staged mutation per order is supported between saves; a second unsaved proposal rejects.
 Saving successfully and accepting tracked changes permits a later mutation in the same native
 transaction, but neither save independently establishes durability. False acceptAllChangesOnSuccess
-requires deliberate AcceptAllChanges before continued tracked mutations.
+requires native ChangeTracker.AcceptAllChanges()
+before continued tracked mutations.
 A later transaction requires a fresh operation scope; do not reuse a cached tracked graph as
 a current read across transaction boundaries.
 
@@ -95,16 +97,16 @@ this example does not mandate a row-adapter layer or generic repository.
   require a complete graph; partial child loading is insufficient to validate root-wide rules.
 - Each accepted batch advances the root version once. Native UPDATE predicates fence competing
   edits even when they touch different children. Children have no independent aggregate version.
-- Both SaveChanges override families run the owning sample guard: tracked child mutations require
-  a participating root, an advanced version and a complete valid final graph. Customer, code,
-  currency and limit are fixed after draft creation.
+- Domain commands enforce complete candidates, fixed terms and version advancement. The old
+  DraftOrderSaveGuard is removed; arbitrary tracked child/root writes do not receive those domain
+  checks automatically. Both save families retain native EF constraints and tenant validation.
 - Removed children are explicitly removed from the navigation and marked Deleted; FK delete behavior
   is Restrict. Root deletion, orphan inference and cross-order child transfer are not supported.
 - Reads return committed state using no-tracking queries. The summary joins the draft to the
   current customer name and aggregates its lines in native SQL; no stored projection is maintained.
 
-ExecuteUpdate/Delete, raw SQL and direct provider access bypass the tracked-save guard. The
-proof suite executes a bulk-write counterexample that breaks the root invariant without advancing
+Direct tracked child writes, ExecuteUpdate/Delete, raw SQL and direct provider access bypass the
+aggregate command path. The proof suite executes tracked and bulk counterexamples without advancing
 its version. These are outside the supported business-write protocol, rather than protected by
 the SaveChanges override. Ordinary schema/tenant constraints remain database-enforced; the root-wide
 total rule is not a universal database constraint. Corrupt native state is rejected on domain load,
@@ -114,13 +116,14 @@ not silently repaired. Infrastructure lifecycle SQL remains governed by its own 
 
 The proof suite checks pure complete-candidate decisions and real PostgreSQL round trips,
 child add/change/remove identity, rejected batches, root concurrency across different children,
-required-write/commit rollback, fresh-scope recovery, save overload guards, tenant-bearing FKs,
+required-write/commit rollback, fresh-scope recovery, save overloads, tenant-bearing FKs,
 native write bypass limits and migration over populated prior Sales storage. The executable
 journey is invoked directly by tests; no process-death/deployment claim follows.
 
 **No new reusable mechanism was proven.** Domain rules, Money/line values, row adaptation and the
-small complete-graph/version guard remain consumer-owned. The guard is a possible comparison point
-for later repeated obligations, not a library or supported arbitrary-graph mapper. T1 templates,
-domain-event handling, D2 SaveChanges dispatch and durable reactions remain separate increments.
+complete-candidate decisions remain consumer-owned. No arbitrary-graph mapper or default mirrored
+write guard is supplied. The later [registered event integration](../../../docs/reports/d2-1c-domain-event-integration-simplification.md)
+removes the old safeguard and supplies the shared save pipeline. T1 template and durable deferred
+reaction changes remain separate increments.
 [The D1.1 report](../../../docs/reports/d1-1-rich-state-stored-aggregate.md) records fresh evidence,
 review-worthy files and remaining gaps.

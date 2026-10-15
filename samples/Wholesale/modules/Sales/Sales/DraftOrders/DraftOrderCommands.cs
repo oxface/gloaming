@@ -1,4 +1,5 @@
 using Gloaming.ActorIdentity;
+using Gloaming.EventReactions;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
@@ -8,7 +9,8 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 internal sealed class DraftOrderCommands(
     SalesDbContext database,
     IActorContextAccessor actor,
-    IStockCatalog catalog
+    IStockCatalog catalog,
+    IEventSink<SalesModule> events
 ) : IDraftOrderCommands
 {
     public async Task<DraftOrderChangeResult> CreateAsync(
@@ -84,6 +86,9 @@ internal sealed class DraftOrderCommands(
         if (row.Version != request.ExpectedVersion)
             return new DraftOrderChangeResult.Conflict();
 
+        if (row.IsSubmitted)
+            return new DraftOrderChangeResult.AlreadySubmitted();
+
         DraftOrderAggregate candidate;
         try
         {
@@ -130,6 +135,40 @@ internal sealed class DraftOrderCommands(
             }
         }
 
+        return new DraftOrderChangeResult.Changed(candidate.ToView());
+    }
+
+    public async Task<DraftOrderChangeResult> SubmitAsync(
+        SubmitDraftOrder request,
+        CancellationToken cancellationToken
+    )
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentOutOfRangeException.ThrowIfEqual(request.Id, Guid.Empty);
+        ArgumentOutOfRangeException.ThrowIfLessThan(request.ExpectedVersion, 1);
+        ArgumentOutOfRangeException.ThrowIfEqual(request.ExpectedVersion, long.MaxValue);
+
+        RequireWriteScope();
+        var row = await database
+            .DraftOrders.Include(value => value.Lines)
+            .AsSingleQuery()
+            .SingleOrDefaultAsync(value => value.Id == request.Id, cancellationToken);
+        if (row is null)
+            return new DraftOrderChangeResult.NotFound();
+
+        if (database.Entry(row).State != EntityState.Unchanged)
+            throw new InvalidOperationException("Save the current proposal before submitting.");
+
+        if (row.Version != request.ExpectedVersion)
+            return new DraftOrderChangeResult.Conflict();
+
+        if (row.IsSubmitted)
+            return new DraftOrderChangeResult.AlreadySubmitted();
+
+        var (candidate, submitted) = row.ToAggregate().Submit();
+        row.Version = candidate.Version;
+        row.IsSubmitted = candidate.IsSubmitted;
+        events.Raise(submitted);
         return new DraftOrderChangeResult.Changed(candidate.ToView());
     }
 

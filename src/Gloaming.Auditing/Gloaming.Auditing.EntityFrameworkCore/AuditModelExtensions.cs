@@ -1,3 +1,4 @@
+using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -18,9 +19,10 @@ public static class AuditModelExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);
         ArgumentException.ThrowIfNullOrWhiteSpace(table);
 
+        model.RequireGloamingCapability(AuditModelMetadata.CapabilityKey);
         var row = model.Entity<AuditRecord>();
         row.ToTable(table, schema);
-        row.HasAnnotation("Gloaming:Audit", true);
+        row.HasAnnotation(AuditModelMetadata.EntityAnnotation, true);
         row.HasKey(item => item.Id);
         row.Property(item => item.Id).ValueGeneratedNever();
         row.Property(item => item.Id).HasColumnName("id");

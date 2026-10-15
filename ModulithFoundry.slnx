@@ -1,4 +1,14 @@
 <Solution>
+  <Folder Name="/Libraries/EntityFrameworkCore/">
+    <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventReactions/">
+    <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions/Gloaming.EventReactions.csproj" />
+    <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventReactions/Tests/">
+    <Project Path="src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj" />
+  </Folder>
   <Folder Name="/Libraries/Auditing/">
     <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
     <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
@@ -77,6 +87,8 @@
     <Project Path="samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/DddDemo/DddDemo.csproj" />
     <Project Path="samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/DomainEventsDemo/DomainEventsDemo.csproj" />
+    <Project Path="samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />
@@ -103,5 +115,10 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/Samples/EventReactionsDemo/">
+    <Project Path="samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj" />
+    <Project Path="samples/EventReactionsDemo/Consumer/EventReactionsDemo.csproj" />
+    <Project Path="samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj" />
   </Folder>
 </Solution>

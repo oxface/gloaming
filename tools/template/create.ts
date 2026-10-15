@@ -22,6 +22,7 @@ export const root = resolve(import.meta.dirname, "../..");
 export const libraries = [
   "Gloaming.ActorIdentity",
   "Gloaming.Tenancy",
+  "Gloaming.EntityFrameworkCore",
   "Gloaming.Persistence.EntityFrameworkCore",
 ] as const;
 
@@ -31,6 +32,10 @@ export const librarySources: Record<(typeof libraries)[number], string> = {
     "src/Gloaming.ActorIdentity/Gloaming.ActorIdentity",
   ),
   "Gloaming.Tenancy": join(root, "src/Gloaming.Tenancy/Gloaming.Tenancy"),
+  "Gloaming.EntityFrameworkCore": join(
+    root,
+    "src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore",
+  ),
   "Gloaming.Persistence.EntityFrameworkCore": join(
     root,
     "src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore",
@@ -38,6 +43,34 @@ export const librarySources: Record<(typeof libraries)[number], string> = {
 };
 
 export type Configuration = { applicationName: string; rootNamespace: string };
+
+export function snapshotBytes(
+  name: (typeof libraries)[number],
+  file: string,
+): Buffer {
+  const upstream = librarySources[name];
+  const bytes = readFileSync(join(upstream, file));
+  if (!file.endsWith(".csproj")) return bytes;
+  // Source snapshots live in a flat libraries directory. Only native project
+  // references need relocation; C# source remains byte-for-byte upstream.
+  return Buffer.from(
+    bytes
+      .toString("utf8")
+      .replace(
+        /(<ProjectReference\s+Include=")([^"]+)(")/g,
+        (_, before: string, include: string, after: string) => {
+          const target = libraries.find(
+            (candidate) =>
+              resolve(librarySources[candidate], `${candidate}.csproj`) ===
+              resolve(upstream, include),
+          );
+          if (!target)
+            throw new Error(`Unselected snapshot dependency: ${include}`);
+          return `${before}../${target}/${target}.csproj${after}`;
+        },
+      ),
+  );
+}
 
 const keywords = new Set(
   `
@@ -203,7 +236,7 @@ export function create(configPath: string, destination: string): void {
       for (const file of readdirSync(upstream)
         .filter((file) => /\.(cs|csproj)$/.test(file))
         .sort()) {
-        const bytes = readFileSync(join(upstream, file));
+        const bytes = snapshotBytes(name, file);
         writeFileSync(join(target, file), bytes);
         manifest[`libraries/${name}/${file}`] = sha256(bytes);
       }

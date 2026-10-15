@@ -67,27 +67,4 @@ public sealed class InventoryDbContext(
             .HasColumnName("organization_key")
             .HasMaxLength(256);
     }
-
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateAuditChanges();
-        this.ValidateEventStreamChanges();
-        this.ValidateOutboxChanges();
-        this.ValidateInboxChanges();
-        return base.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    public override Task<int> SaveChangesAsync(
-        bool acceptAllChangesOnSuccess,
-        CancellationToken cancellationToken = default
-    )
-    {
-        this.ValidateTenantChanges(() => RequiredOrganizationKey);
-        this.ValidateAuditChanges();
-        this.ValidateEventStreamChanges();
-        this.ValidateOutboxChanges();
-        this.ValidateInboxChanges();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }
 }

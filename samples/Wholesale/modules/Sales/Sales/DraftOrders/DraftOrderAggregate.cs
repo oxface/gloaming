@@ -39,7 +39,8 @@ internal sealed class DraftOrderAggregate
         string code,
         long version,
         Money limit,
-        IEnumerable<OrderLine> lines
+        IEnumerable<OrderLine> lines,
+        bool isSubmitted = false
     )
     {
         ArgumentOutOfRangeException.ThrowIfEqual(id, Guid.Empty);
@@ -76,6 +77,7 @@ internal sealed class DraftOrderAggregate
         Limit = limit;
         Total = Money.Create(total, limit.Currency);
         Lines = Array.AsReadOnly(candidate);
+        IsSubmitted = isSubmitted;
     }
 
     internal Guid Id { get; }
@@ -85,6 +87,7 @@ internal sealed class DraftOrderAggregate
     internal Money Limit { get; }
     internal Money Total { get; }
     internal IReadOnlyList<OrderLine> Lines { get; }
+    internal bool IsSubmitted { get; }
 
     internal static DraftOrderAggregate Create(CreateDraftOrder request)
     {
@@ -108,7 +111,8 @@ internal sealed class DraftOrderAggregate
         long version,
         string currency,
         decimal limit,
-        IEnumerable<DraftOrderLine> lines
+        IEnumerable<DraftOrderLine> lines,
+        bool isSubmitted = false
     ) =>
         new(
             id,
@@ -116,11 +120,15 @@ internal sealed class DraftOrderAggregate
             code,
             version,
             Money.Create(limit, currency),
-            lines.Select(line => OrderLine.Create(line, currency))
+            lines.Select(line => OrderLine.Create(line, currency)),
+            isSubmitted
         );
 
     internal DraftOrderAggregate ChangeLines(IReadOnlyList<DraftOrderLineChange> changes)
     {
+        if (IsSubmitted)
+            throw new InvalidOperationException("A submitted draft cannot be edited.");
+
         ArgumentNullException.ThrowIfNull(changes);
         ArgumentOutOfRangeException.ThrowIfLessThan(changes.Count, 1);
 
@@ -164,6 +172,16 @@ internal sealed class DraftOrderAggregate
         return new(Id, CustomerId, Code, checked(Version + 1), Limit, candidate.Values);
     }
 
+    internal (DraftOrderAggregate State, DraftSubmitted Event) Submit()
+    {
+        if (IsSubmitted)
+            throw new InvalidOperationException("The draft has already been submitted.");
+
+        long nextVersion = checked(Version + 1);
+        var state = new DraftOrderAggregate(Id, CustomerId, Code, nextVersion, Limit, Lines, true);
+        return (state, new DraftSubmitted(Id, CustomerId, nextVersion, Total));
+    }
+
     internal DraftOrder ToView() =>
         new(
             Id,
@@ -173,9 +191,13 @@ internal sealed class DraftOrderAggregate
             Limit.Currency,
             Limit.Amount,
             Total.Amount,
-            Array.AsReadOnly(Lines.Select(line => line.ToView()).ToArray())
+            Array.AsReadOnly(Lines.Select(line => line.ToView()).ToArray()),
+            IsSubmitted
         );
 }
+
+// Private accepted domain fact: neither an event-store record nor an integration contract.
+internal sealed record DraftSubmitted(Guid OrderId, Guid CustomerId, long Version, Money Total);
 
 internal sealed class OrderLimitExceededException(decimal limit, decimal requested)
     : Exception("The complete draft total exceeds its limit.")

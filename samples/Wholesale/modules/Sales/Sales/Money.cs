@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace ModulithFoundry.Samples.Wholesale.Sales;
 
 // Sales owns this bounded currency representation; no currency catalogue or conversion is implied.
 internal sealed record Money

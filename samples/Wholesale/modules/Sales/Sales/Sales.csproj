@@ -2,11 +2,13 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DddDemo.Tests" />
     <InternalsVisibleTo Include="RichAggregateDemo.Tests" />
+    <InternalsVisibleTo Include="DomainEventsDemo.Tests" />
   </ItemGroup>
   <PropertyGroup>
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Sales</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />

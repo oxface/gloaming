@@ -1,3 +1,4 @@
+using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 

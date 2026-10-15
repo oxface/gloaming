@@ -7,7 +7,7 @@ describes EF Core 11 must not be read as proof of EF Core 10 support.
 
 ## Money and the existing boundary
 
-The current [Money](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/Money.cs)
+The current [Money](../../samples/Wholesale/modules/Sales/Sales/Money.cs)
 is an immutable value object: amount and currency determine its value; it has no
 identity. Nothing about that concept requires ownership by one aggregate. Reuse
 within Sales would be reasonable once its semantics agree across consumers. Its

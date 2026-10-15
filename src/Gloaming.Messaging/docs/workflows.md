@@ -5,6 +5,25 @@ execute named consumer methods from a stored process. A new reply invokes only i
 continuation. Start and earlier methods are not replayed. Business branching and compensation
 are ordinary C# decisions; there is no graph interpreter, scheduler or workflow worker.
 
+## Module ownership and in-process calls
+
+The business module owns the workflow definition, process state, branching and compensation policy.
+The host wires dependencies and delivery. Durable process storage is independent of whether a future
+delivery path uses a broker or invokes a module's public Contract in the same process.
+
+This implementation persists initial input, state, pending command/continuation and requested
+operations/retained outcomes. Accepted state changes and the next outgoing request share the owning
+native transaction. Inbox processing also commits incoming completion in that transaction. Existing
+workers and admitted messages drive recovery; the runner does not resume arbitrary C# call stacks.
+
+A direct call that commits in another module followed by recording the result leaves a crash gap.
+Do not perform independently committing module operations inside continuation delegates. A reliable
+in-process delivery adapter would need retained intent before calling, stable operation identity,
+target-side idempotency/retained results and recoverable reply delivery. That adapter is not supplied
+or proven here. Shared native transactions through Contracts are a separate atomicity choice, not
+an automatic consequence of workflow persistence. Compensation itself is consumer-owned business
+behavior and may fail or require an operator; durable state does not guarantee eventual success.
+
 ## Setup and execution
 
 A module registers its own typed context, existing typed outbox and definition:

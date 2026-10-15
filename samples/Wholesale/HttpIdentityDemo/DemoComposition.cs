@@ -36,13 +36,9 @@ public static class DemoComposition
         );
         services.AddAccessQueries();
         services.AddHttpActorContext<ApplicationActorResolver>();
-        services.AddDbContext<InventoryDbContext>(options =>
-            InventoryDatabase.Configure(options, connection)
-        );
+        services.AddInventoryDatabase(connection);
         services.AddInventoryQueries();
-        services.AddDbContext<SalesDbContext>(options =>
-            SalesDatabase.Configure(options, connection)
-        );
+        services.AddSalesDatabase(connection);
         services.AddCustomerProfiles();
         services.AddAntiforgery(options =>
         {

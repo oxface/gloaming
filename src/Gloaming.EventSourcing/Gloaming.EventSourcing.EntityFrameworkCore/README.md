@@ -1,8 +1,14 @@
 # Native EF event stores and aggregate rebuilding
 
 The package references the package-free EventSourcing core, Events.History integrity checks,
-EF Core Relational and DI abstractions. It does not reference a database provider, tenancy, business Contracts or
+Gloaming.EntityFrameworkCore, EF Core Relational and DI abstractions. It does not reference a database provider, tenancy, business Contracts or
 an event codec. PostgreSQL is the verified runtime; other relational providers are not certified.
+
+For [shared save composition](../../Gloaming.EntityFrameworkCore/README.md), required-inline-state
+configuration declares the event-streams requirement. Register AddEventStreamValidation<TContext>()
+and install ConfigureGloamingCapabilities<TContext>(provider) in native scoped options. The existing
+validator runs after preparation. Explicit overrides described below remain an alternative; do not
+install both recipes for the same validation. Store, reducer and native transaction contracts are unchanged.
 
 ## Model and save boundary
 

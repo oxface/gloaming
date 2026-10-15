@@ -17,7 +17,8 @@ public sealed record DraftOrder(
     string Currency,
     decimal TotalLimit,
     decimal Total,
-    IReadOnlyList<DraftOrderLine> Lines
+    IReadOnlyList<DraftOrderLine> Lines,
+    bool IsSubmitted = false
 );
 
 public sealed record DraftOrderSummary(

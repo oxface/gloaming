@@ -4,9 +4,15 @@
 typed native EF context and active transaction as its business change. It performs no I/O,
 save, commit, retry or publication. `EfAudit<TDbContext>` supplies the implementation.
 
-Dependencies are `Gloaming.ActorIdentity` and `Microsoft.EntityFrameworkCore.Relational`.
+Dependencies are `Gloaming.ActorIdentity`, `Gloaming.EntityFrameworkCore` and native EF Relational.
 No runtime context/accessor, clock, tenant, codec, provider, host or bus is resolved by the
 library. ActorContext is an explicitly supplied immutable value, not an authorization rule.
+
+For [shared save composition](../../Gloaming.EntityFrameworkCore/README.md), ConfigureAudit declares
+the audit model requirement. Register AddAuditValidation<TDbContext>() and install
+ConfigureGloamingCapabilities<TDbContext>(provider) in native scoped options. It runs the existing
+ValidateAuditChanges after preparation. Explicit validator overrides below remain a supported
+alternative. Audit staging still requires its existing explicit transaction and actor values.
 
 ## Consumer setup
 

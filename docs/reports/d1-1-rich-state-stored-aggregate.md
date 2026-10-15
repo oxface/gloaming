@@ -1,5 +1,13 @@
 # D1.1: rich state-stored aggregate and relational children
 
+Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
+test counts below retain their dated scope; source links lead to current replacements.
+
+Subsequent boundary change, 2026-10-15: the owner removed the default tracked aggregate save guard
+in [D2.1c](d2-1c-domain-event-integration-simplification.md). The guard-specific proofs below remain
+historical; current guarantees cover the intended aggregate command path and native constraints.
+
 Date: 2026-10-14. Initially prepared on `feat/rich-state-stored-aggregate`, from fetched
 `origin/main` at `824c95b`, in `/tmp/modulith-foundry-d1-1`. At the owner's request, the changes
 were moved into `/home/oxface/repos/modulith-foundry` on `feat/ddd-sample-patterns` after D1
@@ -135,11 +143,11 @@ describe the independent D1.1 worktree.
   and [read shapes](../../samples/Wholesale/modules/Sales/Sales.Contracts/IDraftOrderQueries.cs):
   proposal/failure meanings, child operations and reference identities.
 - [Domain root](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderAggregate.cs)
-  and [Money value](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/Money.cs):
+  and [Money value](../../samples/Wholesale/modules/Sales/Sales/Money.cs):
   complete-candidate invariants and child identity preservation.
 - [Command adapter](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderCommands.cs),
   [native mapping](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderMapping.cs)
-  and [tracked-save guard](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderSaveGuard.cs):
+  and the original tracked-save guard (removed in D2.1c):
   full loading, root fencing, explicit deletion and supported write boundary.
 - [Forward migration](../../samples/Wholesale/modules/Sales/Sales/Migrations/20261014171512_AddDraftOrderChildren.cs)
   and updated snapshot: only two new tables and native relationships/constraints.
@@ -147,6 +155,6 @@ describe the independent D1.1 worktree.
   [consumer proofs](../../samples/Wholesale/RichAggregateDemo.Tests/OrderTests.cs) and
   [fault/concurrency proofs](../../samples/Wholesale/RichAggregateDemo.Tests/OrderTests.Persistence.cs).
 
-All changes remain unstaged and uncommitted. Commit/push authorization is not inferred.
-The owner's committed D1 comparison is preserved. The transfer leaves both staging indexes
-unchanged; D1.1 remains working-tree changes for review.
+D1.1 was owner-approved and checkpointed as `f55d803`. The earlier transfer preserved the
+owner's D1 comparison and both indexes while this increment remained under review. D2.1 later
+relocates the bounded Money value to Sales for reuse; the link above follows its current location.

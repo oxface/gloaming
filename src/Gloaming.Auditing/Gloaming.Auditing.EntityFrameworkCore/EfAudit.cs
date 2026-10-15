@@ -16,7 +16,7 @@ public sealed class EfAudit<TDbContext> : IAudit<TDbContext>
         if (
             database
                 .Model.FindEntityType(typeof(AuditRecord))
-                ?.FindAnnotation("Gloaming:Audit")
+                ?.FindAnnotation(AuditModelMetadata.EntityAnnotation)
                 ?.Value
             is not true
         )

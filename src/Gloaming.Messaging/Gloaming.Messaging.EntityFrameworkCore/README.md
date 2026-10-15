@@ -1,7 +1,14 @@
 # Native EF messaging composition
 
-References Messaging and native EF Core Relational, DI, Hosting and Logging abstractions.
+References Messaging, Gloaming.EntityFrameworkCore and native EF Core Relational, DI, Hosting and Logging abstractions.
 No Npgsql, broker, Events, EventSourcing, Persistence or Tenancy dependency.
+
+For [shared save composition](../../Gloaming.EntityFrameworkCore/README.md), ConfigureOutbox/ConfigureInbox
+declare their per-context model requirements. Register AddOutboxValidation<TDbContext>() and/or
+AddInboxValidation<TDbContext>(), then install ConfigureGloamingCapabilities<TDbContext>(provider)
+in scoped native options. Existing validation runs after preparation. Producer/processor/worker
+registrations remain separate; this does not enable delivery. Explicit save overrides below remain
+a supported alternative. Choose one integration for each validator.
 
 `IOutbox<TDbContext>`/`EfOutbox<TDbContext>` enqueue a provided `OutboxMessageRecord` in the
 caller's explicit native transaction. They do not save, commit, dispatch or open a producer
@@ -15,7 +22,7 @@ Call `ValidateOutboxChanges()` before base in both SaveChanges(bool) and
 SaveChangesAsync(bool,CancellationToken) overrides. It checks that added rows came from enqueue
 in the same native transaction and rejects envelope/lifecycle mutation or deletion through
 tracked EF writes. Technical initial timestamps are database-generated. No base context or
-automatic interceptor installs these obligations. Omitted guards, bulk/raw SQL and external
+implicit interceptor installs these obligations without the explicit shared configuration. Omitted guards, bulk/raw SQL and external
 writers are outside this contract.
 
 `IOutboxDispatcher<TDbContext>` supplies one separately callable dispatch operation.

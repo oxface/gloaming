@@ -9,6 +9,7 @@ internal sealed class DraftOrderRow
     public Guid CustomerId { get; set; }
     public required string Code { get; set; }
     public long Version { get; set; }
+    public bool IsSubmitted { get; set; }
     public required string Currency { get; set; }
     public decimal TotalLimit { get; set; }
     public List<DraftOrderLineRow> Lines { get; } = [];
@@ -26,7 +27,8 @@ internal sealed class DraftOrderRow
                 line.Sku,
                 line.Quantity,
                 line.UnitPrice
-            ))
+            )),
+            IsSubmitted
         );
 
     internal static DraftOrderRow Create(string owner, DraftOrderAggregate aggregate)
@@ -38,6 +40,7 @@ internal sealed class DraftOrderRow
             CustomerId = aggregate.CustomerId,
             Code = aggregate.Code,
             Version = aggregate.Version,
+            IsSubmitted = aggregate.IsSubmitted,
             Currency = aggregate.Limit.Currency,
             TotalLimit = aggregate.Limit.Amount,
         };

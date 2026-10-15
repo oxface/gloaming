@@ -149,7 +149,9 @@ public sealed partial class OrderTests
     [InlineData("async")]
     [InlineData("sync-false")]
     [InlineData("async-false")]
-    public async Task TrackedChildOnlyWritesCannotBypassTheRootVersion(string save)
+    public async Task DirectTrackedChildWritesDoNotAutomaticallyAdvanceTheAggregateVersion(
+        string save
+    )
     {
         string connection = await SeedAsync();
         await using var provider = Provider(connection);
@@ -161,50 +163,21 @@ public sealed partial class OrderTests
         );
         child.Quantity = 3;
         if (save == "sync")
-            Assert.Throws<InvalidOperationException>(() => database.SaveChanges());
+            database.SaveChanges();
         else if (save == "sync-false")
-            Assert.Throws<InvalidOperationException>(() => database.SaveChanges(false));
+            database.SaveChanges(false);
         else if (save == "async")
-            await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                database.SaveChangesAsync(Token)
-            );
+            await database.SaveChangesAsync(Token);
         else
-            await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                database.SaveChangesAsync(false, Token)
-            );
+            await database.SaveChangesAsync(false, Token);
 
-        await AssertOriginalAsync(provider);
-    }
-
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task TrackedRootWritesRequireACompleteGraphAndValidFinalTotal(bool complete)
-    {
-        string connection = await SeedAsync();
-        await using var provider = Provider(connection);
-        await using var write = DraftOrderComposition.CreateScope(provider);
-        var database = write.ServiceProvider.GetRequiredService<SalesDbContext>();
-        var query = database.DraftOrders.Where(row => row.Id == Id);
-        var root = complete
-            ? await query.Include(row => row.Lines).SingleAsync(Token)
-            : await query.SingleAsync(Token);
-        root.Version++;
-        var child = await database.DraftOrderLines.SingleAsync(
-            row => row.OrderId == Id && row.Id == First,
-            Token
-        );
-        child.Quantity = 20;
-        if (complete)
-            await Assert.ThrowsAsync<Sales.DraftOrders.OrderLimitExceededException>(() =>
-                database.SaveChangesAsync(Token)
-            );
-        else
-            await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                database.SaveChangesAsync(Token)
-            );
-
-        await AssertOriginalAsync(provider);
+        await using var read = DraftOrderComposition.CreateScope(provider);
+        var stored = await read
+            .ServiceProvider.GetRequiredService<IDraftOrderQueries>()
+            .ReadAsync(Id, Token);
+        Assert.NotNull(stored);
+        Assert.Equal(1, stored.Version);
+        Assert.Equal(3, stored.Lines.Single(line => line.Id == First).Quantity);
     }
 
     [Fact]
@@ -283,7 +256,7 @@ public sealed partial class OrderTests
         Assert.False(database.Database.HasPendingModelChanges());
         var after = (await database.Database.GetAppliedMigrationsAsync(Token)).ToArray();
         Assert.Equal(before, after.Take(before.Length));
-        Assert.Equal(before.Length + 1, after.Length);
+        Assert.Equal(before.Length + 2, after.Length);
         Assert.Empty(await database.DraftOrders.ToArrayAsync(Token));
         var customer = await scope
             .ServiceProvider.GetRequiredService<ICustomerProfiles>()

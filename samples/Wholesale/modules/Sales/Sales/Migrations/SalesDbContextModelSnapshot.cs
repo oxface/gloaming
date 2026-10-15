@@ -517,6 +517,10 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("customer_id");
 
+                    b.Property<bool>("IsSubmitted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_submitted");
+
                     b.Property<decimal>("TotalLimit")
                         .HasColumnType("numeric")
                         .HasColumnName("total_limit");
@@ -542,6 +546,66 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                             t.HasCheckConstraint("ck_draft_order_limit", "total_limit > 0");
 
                             t.HasCheckConstraint("ck_draft_order_version", "version > 0");
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances.OrderAllowanceRow",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<decimal>("Ceiling")
+                        .HasColumnType("numeric")
+                        .HasColumnName("ceiling");
+
+                    b.Property<decimal>("Reserved")
+                        .HasColumnType("numeric")
+                        .HasColumnName("reserved");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("version");
+
+                    b.HasKey("OrganizationKey", "CustomerId", "Currency");
+
+                    b.ToTable(
+                        "customer_order_allowances",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint(
+                                "ck_order_allowance_amounts",
+                                "ceiling > 0 AND reserved >= 0 AND reserved <= ceiling"
+                            );
+
+                            t.HasCheckConstraint("ck_order_allowance_version", "version > 0");
                         }
                     );
 
@@ -666,6 +730,19 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_draft_orders_customer");
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances.OrderAllowanceRow",
+                b =>
+                {
+                    b.HasOne("ModulithFoundry.Samples.Wholesale.Sales.CustomerRow", null)
+                        .WithMany()
+                        .HasForeignKey("OrganizationKey", "CustomerId")
+                        .HasPrincipalKey("OrganizationKey", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 }
             );
 
