@@ -49,11 +49,13 @@ EventReactions:
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
 Persistence:
   - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
@@ -95,6 +97,7 @@ Messaging:
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
+  - 'samples/Wholesale/CqrsDemo{,.Tests}/**'
   - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,DomainEventsDemo,DomainEventsDemo.Tests,modules,ServiceDefaults}/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'

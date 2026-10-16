@@ -11,10 +11,16 @@ selected opaque tenant key fixed for an operation. The HTTP adapter resolves and
 before publication; denied or unknown candidates cannot silently become tenantless. Endpoint/group
 tenancy requirements remain independent of anonymous or named authorization policies.
 
+The PostgreSQL adapter explicitly sets a consumer-selected transaction-local setting from
+the operation tenant, with native connection/transaction checks. It adds no automatic
+transaction, policy or scope establishment. Consumers must call it before protected reads
+and writes in every transaction/attempt; it does not run through SaveChanges capabilities.
+
 Select only the packages needed by the consumer:
 
 - [Gloaming.Tenancy](../Gloaming.Tenancy/README.md)
 - [Gloaming.Tenancy.AspNetCore](../Gloaming.Tenancy.AspNetCore/README.md)
+- [Gloaming.Tenancy.EntityFrameworkCore.Postgres](../Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
 
 ## Consumer obligations
 
@@ -30,10 +36,10 @@ selection visible.
 
 ## Deferred context
 
-Worker/message context propagation, tenant rebinding, cross-process formats and database row
-isolation are not supplied here. Persistence ownership is a separate opt-in family. Admission and
-future transport trust need consumer-specific proofs; tenantless execution never grants unrestricted
-access.
+Worker/message context propagation, tenant rebinding, cross-process formats and automatic database
+row-isolation provisioning are not supplied here. Persistence ownership is a separate opt-in
+family. Admission and future transport trust need consumer-specific proofs; tenantless
+execution never grants unrestricted access.
 
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
@@ -49,3 +55,19 @@ tenant admission still follows native authorization. Late consumer resource chec
 recommended first composition. Database RLS is a separate optional proof, not tenant admission
 or within-tenant permission. No middleware reordering, Access/FGA dependency, new supported
 capability or approved interface follows from this assessment.
+
+The later [A2.2 sample proof](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md)
+uses native PostgreSQL policies and explicit transaction-local setup with separate runtime
+credentials. Its [matrix](../../../docs/reports/a2-2-sales-postgres-rls.md) bounds database
+tenant isolation, setting forgery and paths not adopted. That original proof kept setup local.
+The owner subsequently selected
+[A2.3 extraction](../../../docs/reports/a2-3-postgres-tenant-context.md): the explicit setup
+utility is now an optional adapter, independently proven alongside the Sales adoption.
+RLS policies, runtime role checks and within-tenant permissions remain consumer-owned.
+
+The separately authorized [A2.4 ownership/RLS adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+now connects this immutable accessor to `.HasTenantOwnership(...).WithRls(settingName)` and
+native transaction setup for ordinary scoped EF requests. It is optional Persistence/provider
+integration; core Tenancy and this family's explicit transaction-local utility gain no dependency
+on it. Its [report](../../../docs/reports/a2-4-ownership-rls-capability.md) records fresh read/write
+proofs, explicit policy migration obligations and unsupported connection modes.

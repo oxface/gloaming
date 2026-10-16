@@ -11,6 +11,7 @@ using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.AspNetCore;
+using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
@@ -24,6 +25,7 @@ public sealed class AssemblyDependencyTests
     private const string ActorHttp = "Gloaming.ActorIdentity.AspNetCore";
     private const string Tenancy = "Gloaming.Tenancy";
     private const string TenancyHttp = "Gloaming.Tenancy.AspNetCore";
+    private const string TenancyPostgres = "Gloaming.Tenancy.EntityFrameworkCore.Postgres";
     private const string Persistence = "Gloaming.Persistence.EntityFrameworkCore";
     private const string ContextSample = "ContextDemo";
     private const string PersistenceSample = "PersistenceDemo";
@@ -54,7 +56,12 @@ public sealed class AssemblyDependencyTests
             typeof(ActorContextMiddleware).Assembly,
             typeof(TenantId).Assembly,
             typeof(TenantContextMiddleware).Assembly,
+            typeof(TenantDatabaseContextExtensions).Assembly,
+            typeof(Gloaming.EntityFrameworkCore.CapabilityConfiguration).Assembly,
+            typeof(Samples.Wholesale.Sales.SalesDatabase).Assembly,
+            typeof(Samples.Wholesale.Access.AccessRegistration).Assembly,
             typeof(TenantOwnershipExtensions).Assembly,
+            typeof(Gloaming.Persistence.EntityFrameworkCore.Postgres.TenantRowSecurityExtensions).Assembly,
             typeof(SerializedEvent).Assembly,
             typeof(EventHistory).Assembly,
             typeof(IEventStreamRecord).Assembly,
@@ -67,6 +74,65 @@ public sealed class AssemblyDependencyTests
             typeof(Samples.Wholesale.HttpIdentityDemo.DemoComposition).Assembly
         )
         .Build();
+
+    [Fact]
+    public void PostgresOwnershipIntegrationIsOptionalWithoutApplicationAuthorizationDependencies()
+    {
+        const string adapter = "Gloaming.Persistence.EntityFrameworkCore.Postgres";
+        foreach (
+            string forbidden in new[]
+            {
+                Actor,
+                ActorHttp,
+                TenancyHttp,
+                Audit,
+                AuditPostgres,
+                "Sales",
+                "Access",
+                "Gloaming.Messaging",
+            }
+        )
+            NoDependency(adapter, forbidden).Check(Architecture);
+
+        foreach (
+            string independent in new[]
+            {
+                Tenancy,
+                TenancyPostgres,
+                Persistence,
+                "Gloaming.EntityFrameworkCore",
+            }
+        )
+            NoDependency(independent, adapter).Check(Architecture);
+    }
+
+    [Fact]
+    public void PostgresTenantContextRemainsOptionalAndUsesOnlyTenancyAndNativeStorage()
+    {
+        foreach (
+            string forbidden in new[]
+            {
+                Actor,
+                ActorHttp,
+                TenancyHttp,
+                Persistence,
+                Audit,
+                AuditPostgres,
+                ContextSample,
+                PersistenceSample,
+                HttpSample,
+                "Gloaming.EntityFrameworkCore",
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Sales",
+                "Access",
+            }
+        )
+            NoDependency(TenancyPostgres, forbidden).Check(Architecture);
+
+        NoDependency(Tenancy, TenancyPostgres).Check(Architecture);
+        NoDependency(Persistence, TenancyPostgres).Check(Architecture);
+    }
 
     [Fact]
     public void WorkflowCoreAndRunnerRemainOptionalWithoutTransportOrModuleDependencies()

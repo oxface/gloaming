@@ -7,6 +7,11 @@ repository. No database was started, role catalog inspected, policy installed or
 proof executed for this note. Read with the [A2 assessment](tenant-authorization-assessment.md)
 and [A2 brief](../plans/a2-tenant-resource-authorization-rls-research.md).
 
+The later [A2.2 implementation report](a2-2-sales-postgres-rls.md) records freshly executed
+role/SQL/lifecycle controls for an opt-in Sales consumer. This source note retains the
+assessment's unexecuted status and original proposals; it does not describe default
+HTTP/AppHost/worker RLS adoption.
+
 ## Versions and the actual configured credential
 
 The [AppHost](../../samples/Wholesale/AppHost/Program.cs) and

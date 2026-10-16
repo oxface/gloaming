@@ -10,6 +10,12 @@ checkout. [Brief](../plans/a2-tenant-resource-authorization-rls-research.md),
 This is an assessment and recommendation for review, with no runtime implementation,
 policy/migration, middleware reordering, new interface or accepted ADR.
 
+Later implementation evidence: [A2.1 Sales permissions](a2-1-sales-resource-permissions.md)
+was committed as `b2f0d01`; the separately authorized
+[A2.2 optional RLS proof](a2-2-sales-postgres-rls.md) exercises a bounded restricted-role
+consumer. Those reports supersede the corresponding proposed-proof status below, while
+this assessment retains its dated baseline and whole-application limitations.
+
 ## Recommendation
 
 Keep the existing HTTP composition and immutable operation contexts. Use late imperative

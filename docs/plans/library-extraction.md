@@ -39,6 +39,10 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Membership administration A1.1 | Merged in fetched main `d35b3ee`: owner-authorized [consumer scope](a1-1-membership-suspension.md), [Access usage](../../samples/Wholesale/modules/Access/README.md) and [dated proof report](../reports/a1-1-membership-suspension.md). Narrow suspend/reactivate Contracts, current scoped administration grant, self/last-admin safeguards, retained grants, revision/Organization concurrency and atomic audit. Existing admission is reused; no library interface or new reusable mechanism. Earlier unstaged statements describe its handoff. |
 | Tenant authorization / optional RLS A2 | [Assessment prepared for review](../reports/tenant-authorization-assessment.md), 2026-10-16, baseline `d35b3ee`, with [primary-source evidence](../reports/tenant-authorization-primary-sources.md). Corrects actor-before-native-handler ordering; tenancy remains later. Recommends late consumer permission checks/queries and optional restricted-role RLS proofs with explicit transaction and transport boundaries. No runtime integration, middleware reorder, library interface or new reusable mechanism. |
 | Sales resource permissions A2.1 | Owner-selected [consumer implementation](a2-1-sales-resource-permissions.md) following A2: scoped positive draft Read/Edit grants, complete permission-filtered queries, actual module entry checks and late native HTTP adoption. [Sales usage](../../samples/Wholesale/modules/Sales/README.md) and [proof report](../reports/a2-1-sales-resource-permissions.md) record its bounded behavior. No RLS, library interface, mandatory Access/FGA dependency or template preset. |
+| Optional Sales PostgreSQL RLS A2.2 | Owner-selected [consumer proof](a2-2-sales-postgres-rls.md) after A2.1 commit `b2f0d01`: explicit [CQRS mode](../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md), five-table ENABLE/FORCE policies, restricted runtime credentials and native transaction-local setup. [Fresh report](../reports/a2-2-sales-postgres-rls.md) records role, raw/bulk and physical-pool/retry controls plus setting-forgery limits. Reads/existing-draft edits only; no default HTTP/worker adoption, library interface, new reusable mechanism or template preset. |
+| Explicit PostgreSQL tenant context A2.3 | Owner-selected [extraction](a2-3-postgres-tenant-context.md) of A2.2's setup into [Gloaming.Tenancy.EntityFrameworkCore.Postgres](../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md). One explicit DbContext extension, required consumer setting, immutable accessor and native transaction checks; independent PostgreSQL adoption and transferred Sales lifecycle proofs are recorded in the [report](../reports/a2-3-postgres-tenant-context.md). No automatic interceptor, policy generator, core/Persistence dependency or template preset. |
+| Ownership-declared RLS A2.4 | Owner-requested research into `.HasTenantOwnership(...).WithRls()` and native interceptors, comparing Bytefish, Marten and EF integrations in the [primary-source note](../reports/a2-4-rls-capability-reference-research.md). The owner subsequently authorized implementation, retaining HasQueryFilter and requiring write protection. The optional [adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md) and [implementation report](../reports/a2-4-ownership-rls-capability.md) record the initial session implementation; the owner-selected transaction refinement below replaces that wiring. Automatic migration scaffolding remains deferred. |
+| Transaction-local RLS simplification A2.5 | Owner-selected refinement: keep the existing operation/request owner responsible for beginning transactions, and establish tenant context automatically. [Current adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md), [implementation/proofs](../reports/a2-5-transaction-rls-simplification.md). One scoped native transaction/command interceptor, direct `.UseRls` installation and existing save capability; no native registry, session lifetime or connection-lease tracking. |
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
@@ -74,14 +78,60 @@ consumer work with no separate pre-development gate or Tenancy-to-Access/FGA dep
 
 A1.1 is now merged at `d35b3ee`. The [A2 assessment](../reports/tenant-authorization-assessment.md)
 reconciles its code, actor policy establishment and raw worker SQL. Role/lifecycle research is
-complete for review; RLS and general business-resource query proofs remain separate proposals.
-No RLS package/adoption, mandatory dependency or runtime change is selected.
+complete for review. A2.1 subsequently implements scoped Sales permission queries; A2.2
+implements the optional bounded RLS proof recorded above. A general RLS package, default
+HTTP/worker rollout and mandatory dependency remain unselected. A2.3 separately supplies
+the selected explicit context utility; it does not supply a general RLS package or rollout.
 
 The [remaining capability roadmap](remaining-capability-roadmap.md) is the current starting
 point for selecting another slice. It explicitly includes DDD/CQRS assessments and template
 patterns, separate worker hosts, observability, durable module workflows, snapshot/feed
 repopulation, aggregate maintenance and a late cross-family isolation review. Its scope/order
 is proposed; no new runtime interface is approved by that list.
+
+## A2.4: ownership-declared PostgreSQL RLS
+
+The owner authorized the fluent capability and then its transaction-local simplification,
+retaining HasQueryFilter and requiring database write protection. The
+[reference research](../reports/a2-4-rls-capability-reference-research.md) and
+[earlier session implementation](../reports/a2-4-ownership-rls-capability.md) retain history.
+The [current report](../reports/a2-5-transaction-rls-simplification.md) and
+[package contract](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+describe the implemented interface under owner review:
+
+```csharp
+entity.HasTenantOwnership(
+        row => row.OrganizationKey,
+        () => RequiredOrganizationKey,
+        "OrganizationScope")
+    .WithRls(settingName: "app.tenant_key");
+
+services.AddTenantOwnershipValidation<OrdersContext, string>(db => db.RequiredOrganizationKey);
+services.AddPostgresTenantRowSecurity<OrdersContext>();
+services.AddDbContext<OrdersContext>((provider, options) =>
+    options.UseNpgsql(runtimeConnection).UseRls<OrdersContext>(provider));
+```
+
+The existing request/operation owner begins the native transaction once. EF's transaction-started
+callback establishes parameterized local context before business SQL and before returning the
+transaction to that owner. This removes explicit tenant-database setup at every transaction.
+Reads on selected contexts require a transaction too; the owner explicitly selected retaining
+that responsibility rather than adding a central request-level transaction owner. Existing HTTP
+middleware already admits and initializes immutable tenancy once; workers establish each operation.
+
+The feature uses one scoped native transaction/command interceptor plus the existing save capability.
+No generic native-interceptor registry, connection-lease readiness flags or session settings remain.
+Static model validation is cached per model, without tenant/services in its selection cache.
+Direct native callback setup is necessary because EF has not assigned CurrentTransaction yet.
+Setup failure disposes the unpublished transaction. Adopted/ambient transactions and unsupported
+pooling modes are rejected; external poolers/provider failover need separate deployment proofs.
+
+Consumer migrations explicitly install matching ENABLE/FORCE, USING and WITH CHECK policies.
+Automatic policy scaffolding remains deferred. Scope immutability, admission, within-tenant
+permissions, roles/privileges, complete table inventory and tenant-inclusive relationships remain
+consumer-owned. The optional provider adapter introduces no mandatory Access/FGA dependency or
+reverse dependency from core Tenancy/ownership. The explicit A2.3 utility remains independent;
+Sales' existing opt-in local composition and default HTTP/worker/template paths are not changed.
 
 ## B1: closed assessment and discarded implementation
 

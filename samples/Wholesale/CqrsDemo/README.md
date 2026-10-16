@@ -13,6 +13,10 @@ Reading availability does not reserve stock or establish that a draft can be ful
 
 ## Run and verify
 
+For separately provisioned restricted-role RLS, use the explicit
+[`--tenant-isolation` mode](TenantIsolation/README.md). That mode covers Sales reads and
+proofs of existing-draft edits; the ordinary journey below retains its original composition.
+
 Use .NET from the root `global.json`. The executable requires a fresh disposable
 PostgreSQL database; it applies existing module migrations and finite setup rows.
 It is intentionally not an idempotent production initializer. It uses fixture
@@ -121,7 +125,9 @@ helpers remain unselected.
 The [A2.1 permission slice](../../../docs/plans/a2-1-sales-resource-permissions.md) adds
 direct human/system grants and native HTTP adoption; its query tests cover sparse grants,
 revocation, tenant-colliding IDs and count/page grant-snapshot changes. This supplies no
-RLS, grant editor, role/group engine, export/AI endpoint or strict permission-at-commit fence.
+grant editor, role/group engine, export/AI endpoint or strict permission-at-commit fence.
+RLS is exercised separately by the opt-in mode linked above, with its own credentials,
+table inventory, native transaction setup and limitations.
 
 Template candidates are editable registrations, the operation scope, explicit
 transaction ownership and native query/filter examples. T1's generated Catalog

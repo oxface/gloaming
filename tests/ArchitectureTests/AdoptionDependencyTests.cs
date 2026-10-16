@@ -5,6 +5,86 @@ namespace ModulithFoundry.ArchitectureTests;
 public sealed class AdoptionDependencyTests
 {
     [Theory]
+    [InlineData("Gloaming.Persistence.EntityFrameworkCore.Postgres")]
+    [InlineData("PostgresTests")]
+    public void OptionalRlsAdapterAndConsumerDeclareTheirSelectedDependencies(string project)
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", project + ".csproj")
+        );
+        string[] expectedProjects =
+            project == "PostgresTests"
+                ? ["Gloaming.Persistence.EntityFrameworkCore.Postgres"]
+                : ["Gloaming.Persistence.EntityFrameworkCore", "Gloaming.Tenancy"];
+        string[] expectedPackages =
+            project == "PostgresTests"
+                ?
+                [
+                    "Npgsql.EntityFrameworkCore.PostgreSQL",
+                    "Testcontainers.PostgreSql",
+                    "xunit.v3.mtp-v2",
+                ]
+                : ["Npgsql"];
+        Assert.Equal(
+            expectedProjects,
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Equal(
+            expectedPackages,
+            declaration
+                .Descendants("PackageReference")
+                .Select(reference => (string)reference.Attribute("Include")!)
+                .Order(StringComparer.Ordinal)
+        );
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
+    [Theory]
+    [InlineData(
+        "Gloaming.Tenancy.EntityFrameworkCore.Postgres",
+        "Gloaming.Tenancy",
+        "Microsoft.EntityFrameworkCore.Relational",
+        "Npgsql"
+    )]
+    [InlineData(
+        "TenancyPostgresTests",
+        "Gloaming.Tenancy.EntityFrameworkCore.Postgres",
+        "Npgsql.EntityFrameworkCore.PostgreSQL",
+        "Testcontainers.PostgreSql",
+        "xunit.v3.mtp-v2"
+    )]
+    public void PostgresTenantContextAndIndependentConsumerDeclareOnlyUsedDependencies(
+        string project,
+        string dependency,
+        params string[] packages
+    )
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", project + ".csproj")
+        );
+        Assert.Equal(
+            [dependency],
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Equal(
+            packages.Order(StringComparer.Ordinal),
+            declaration
+                .Descendants("PackageReference")
+                .Select(reference => (string)reference.Attribute("Include")!)
+                .Order(StringComparer.Ordinal)
+        );
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
+    [Theory]
     [InlineData(
         "Gloaming.Auditing.EntityFrameworkCore",
         "Gloaming.ActorIdentity",

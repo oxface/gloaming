@@ -538,6 +538,41 @@ Podman environment below. The [Sales guide](../samples/Wholesale/modules/Sales/R
 and [HTTP routes](../samples/Wholesale/HttpIdentityDemo/README.md#private-draft-permissions)
 describe explicit migration/setup and the supported limits; no RLS service is required.
 
+## Optional Sales PostgreSQL RLS
+
+The separate [A2.2 consumer](../samples/Wholesale/CqrsDemo/TenantIsolation/README.md) uses
+`CqrsDemo --tenant-isolation` with separately provisioned owner/runtime credentials and a
+fresh disposable database. Its guide lists provisioning, the five-table inventory and
+native transaction-local setup. The [report](reports/a2-2-sales-postgres-rls.md) distinguishes
+tenant isolation from Sales permissions and default HTTP/worker behavior.
+
+The existing CQRS CI project includes all RLS proofs. To run only those cases:
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj --filter-class '*TenantIsolationTests'
+```
+
+## PostgreSQL tenant-context utility
+
+The optional [Tenancy adapter](../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+requires an explicit custom setting name and caller-owned native transaction. It reads the
+immutable operation accessor; it does not configure RLS policies, credentials or transactions.
+Its [extraction report](reports/a2-3-postgres-tenant-context.md) records independent adoption
+and the transferred Sales lifecycle proofs.
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj
+```
+
+The Tenancy CI lane includes this suite. Wholesale's CQRS suite uses the same public utility
+through its separately provisioned opt-in RLS mode.
+
 ## Organization membership administration
 
 The [A1.1 Access scope](plans/a1-1-membership-suspension.md),
@@ -601,3 +636,26 @@ Independence checks must build and exercise minimal consumers with only the sele
 segment and its documented dependencies. Include separate state-stored, event-sourced,
 and reliable-messaging compositions as those capabilities arrive. Sample architecture
 policy should also demonstrate a configurable alternative and reject a deliberate violation.
+
+
+## Ownership-declared PostgreSQL RLS
+
+The optional [Persistence/PostgreSQL adapter](../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+combines ownership selection with automatic transaction-local setup for scoped EF contexts.
+Register the capability and use `.UseRls<TContext>(provider)` in options. The existing operation
+owner begins the transaction once; setup is automatic for all its reads/writes. No extra RLS
+scope or explicit setup call is needed. Selected reads without a transaction are rejected.
+Its independent consumer retains EF filters and proves database writes through reviewed
+USING/WITH CHECK policy operations, with separate restricted runtime credentials.
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj
+```
+
+The suite belongs to the Persistence CI lane. This adds no default Wholesale HTTP/AppHost/worker
+adoption; the existing Sales RLS executable keeps its explicit local-transaction setup. The
+[A2.5 report](reports/a2-5-transaction-rls-simplification.md) distinguishes the refined mechanism,
+current proofs, explicit migration obligations and unsupported transaction/pooling modes.

@@ -146,6 +146,35 @@ SQL permission predicates at actual module entry points and late native HTTP che
 bounded sample policy preserves current admission/immutable operations; optional RLS, grant
 administration, generalized roles and new public Gloaming interfaces remain separate.
 
+The separately authorized [A2.2 RLS consumer proof](plans/a2-2-sales-postgres-rls.md) now
+adds an explicit CQRS executable mode: five Sales tables, separately provisioned restricted
+credentials and native transaction-local setup. Its [report](reports/a2-2-sales-postgres-rls.md)
+records role/bypass and lifecycle controls alongside setting-forgery limits. This is an
+optional sample composition for reads/existing-draft edits, not a library isolation mechanism
+or adoption by default HTTP/AppHost/transport paths. No new architecture dependency or
+reusable mechanism is selected.
+
+The owner subsequently selected [A2.3 explicit tenant-context extraction](plans/a2-3-postgres-tenant-context.md).
+`Gloaming.Tenancy.EntityFrameworkCore.Postgres` now connects the immutable tenant accessor
+to a caller-owned native transaction using parameterized local setup, with independent
+consumer proofs and [package-local obligations](../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md).
+The optional adapter references Tenancy core, EF Relational and Npgsql. Core tenancy,
+Persistence and shared SaveChanges capabilities gain no dependency or automatic behavior.
+Policy provisioning, roles, admission, permissions and transaction ownership stay consumer-owned.
+
+The separately authorized [A2.4 ownership/RLS capability](reports/a2-4-ownership-rls-capability.md)
+added explicit USING/WITH CHECK migration helpers and retained ownership filtering/validation.
+The owner then selected [transaction-local simplification](reports/a2-5-transaction-rls-simplification.md):
+`.HasTenantOwnership(...).WithRls(settingName)` selects each table, capability registration supplies
+one scoped interceptor, and `.UseRls<TContext>(provider)` installs it through native EF interfaces.
+When the existing operation owner begins a transaction, its tenant is established automatically
+using the callback's native transaction. All selected reads/writes require that caller-owned
+transaction; commit/rollback ends local context. No per-transaction setup call, connection-lease
+cache or general native-interceptor registry is needed. The shared save coordinator retains its
+original EF Core/DI dependencies. Policies, roles, admission, permission predicates and rollout
+remain consumer-owned; there is no new request transaction owner, default HTTP/worker/template
+adoption or automatic policy scaffolding. A2.3 remains the independent explicit utility.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

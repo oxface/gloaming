@@ -3,6 +3,10 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="CqrsDemo.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
   </ItemGroup>

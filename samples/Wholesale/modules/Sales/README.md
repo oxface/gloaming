@@ -39,10 +39,22 @@ fence at commit. Do not share a DbContext between concurrent branches or rebind 
 Migration creates an empty grant table and preserves old drafts without granting anyone
 access. `DraftOrderAccessDemoSeed` is finite explicit setup for the HTTP demo, not a grant
 editor, production backfill or reconciliation API. There is no runtime grant administration,
-grant-change audit, role/group model, export/AI endpoint, RLS guarantee or automatic retry.
+grant-change audit, role/group model, export/AI endpoint or automatic retry.
 Privileged/raw/bulk writes and code bypassing these Contracts can bypass business protocols.
 Draft visibility governs the lines/customer display fields returned here; independently
 protected fields need their own selected capability and proof.
+
+The separate [opt-in PostgreSQL RLS consumer](../../CqrsDemo/TenantIsolation/README.md)
+adds database tenant equality on five Sales tables under restricted credentials and explicit
+transaction-local setup. It proves reads/existing-draft edits; ordinary module registration,
+HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
+no within-tenant permission, authentication or protection from tenant-setting forgery by
+the credential holder.
+
+The later [A2.3 utility extraction](../../../../docs/reports/a2-3-postgres-tenant-context.md)
+replaces the executable's private setup helper with an optional Tenancy/PostgreSQL extension.
+Sales module registration and permission semantics remain unchanged; the executable owns
+that adapter reference and calls it explicitly inside each native transaction.
 
 ## Executable usage and evidence
 
@@ -52,4 +64,5 @@ protected fields need their own selected capability and proof.
   its PostgreSQL cases exercise complete permitted selection and native snapshot timing.
 - [A2.1 scope](../../../../docs/plans/a2-1-sales-resource-permissions.md) and
   [implementation report](../../../../docs/reports/a2-1-sales-resource-permissions.md) record
-  fresh proofs separately from the A2 assessment and deferred RLS work.
+  fresh proofs separately from the A2 assessment and the
+  [A2.2 optional RLS report](../../../../docs/reports/a2-2-sales-postgres-rls.md).
