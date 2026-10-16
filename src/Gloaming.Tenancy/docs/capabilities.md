@@ -1,6 +1,7 @@
 # Tenancy composition and capabilities
 
-Current scope, 2026-10-07. This family guide and the package-local contracts travel with
+Foundational scope, 2026-10-07; A2 composition research reconciled 2026-10-16.
+This family guide and the package-local contracts travel with
 the source. Root plans/reports retain cross-cutting review and dated execution evidence.
 
 ## Supported composition
@@ -37,10 +38,14 @@ access.
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Queued consumer research
+## Consumer research
 
 Tenant-aware resource authorization and native authorization ordering are recorded in
 [A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
 [A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
-These are assessment-only backlog items for Umbrine, not supported capabilities or approved
-interfaces. The current guarantees and dependencies above remain the baseline.
+The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) now traces the
+current composition: the optional actor evaluator establishes actor before native handlers;
+tenant admission still follows native authorization. Late consumer resource checks are the
+recommended first composition. Database RLS is a separate optional proof, not tenant admission
+or within-tenant permission. No middleware reordering, Access/FGA dependency, new supported
+capability or approved interface follows from this assessment.

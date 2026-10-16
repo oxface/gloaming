@@ -3,15 +3,19 @@ using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
-internal sealed class DraftOrderQueries(SalesDbContext database) : IDraftOrderQueries
+internal sealed class DraftOrderQueries(
+    SalesDbContext database,
+    DraftOrderAuthorization authorization
+) : IDraftOrderQueries
 {
     public async Task<DraftOrder?> ReadAsync(Guid id, CancellationToken cancellationToken)
     {
         ArgumentOutOfRangeException.ThrowIfEqual(id, Guid.Empty);
 
         _ = database.RequiredOrganizationKey;
-        var row = await database
-            .DraftOrders.AsNoTracking()
+        var row = await authorization
+            .Allowed(DraftOrderAction.Read)
+            .AsNoTracking()
             .Include(value => value.Lines)
             .AsSingleQuery()
             .SingleOrDefaultAsync(value => value.Id == id, cancellationToken);
@@ -62,7 +66,7 @@ internal sealed class DraftOrderQueries(SalesDbContext database) : IDraftOrderQu
 
     private IQueryable<DraftOrderReadView> ReadView() =>
         (
-            from draft in database.DraftOrders.AsNoTracking()
+            from draft in authorization.Allowed(DraftOrderAction.Read).AsNoTracking()
             join customer in database.Customers.AsNoTracking()
                 on new { draft.OrganizationKey, Id = draft.CustomerId } equals new
                 {

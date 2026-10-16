@@ -256,7 +256,7 @@ public sealed partial class OrderTests
         Assert.False(database.Database.HasPendingModelChanges());
         var after = (await database.Database.GetAppliedMigrationsAsync(Token)).ToArray();
         Assert.Equal(before, after.Take(before.Length));
-        Assert.Equal(before.Length + 2, after.Length);
+        Assert.Equal(database.Database.GetMigrations(), after);
         Assert.Empty(await database.DraftOrders.ToArrayAsync(Token));
         var customer = await scope
             .ServiceProvider.GetRequiredService<ICustomerProfiles>()

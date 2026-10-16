@@ -41,6 +41,10 @@ public static class DemoComposition
         services.AddInventoryQueries();
         services.AddSalesDatabase(connection);
         services.AddCustomerProfiles();
+        services.AddDraftOrderQueries();
+        services.AddDraftOrderCommands();
+        services.AddScoped<IAuthorizationHandler, DraftOrderAuthorizationHandler>();
+        services.AddScoped<DraftOrderEdits>();
         services.AddAntiforgery(options =>
         {
             options.HeaderName = "X-CSRF-TOKEN";

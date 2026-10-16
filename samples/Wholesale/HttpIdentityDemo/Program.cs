@@ -41,4 +41,8 @@ ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints.MembershipEndpoints
     app,
     "/organizations/{organization}/memberships/{membershipId:guid}"
 );
+ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints.DraftOrderEndpoints.Map(
+    app,
+    "/organizations/{organization}/draft-orders"
+);
 await app.RunAsync();

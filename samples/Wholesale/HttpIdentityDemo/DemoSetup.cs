@@ -74,6 +74,7 @@ public static class DemoSetup
                 cancellationToken
             );
             SalesDemoSeed.Stage(sales);
+            DraftOrderAccessDemoSeed.Stage(sales);
             await sales.SaveChangesAsync(cancellationToken);
             await salesTransaction.CommitAsync(cancellationToken);
         }

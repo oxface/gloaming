@@ -5,6 +5,9 @@ and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.m
 cookie/OIDC authentication and separate PostgreSQL-backed Access/Inventory/Sales modules.
 Business reads and profile edits use module Contracts and tenant-owned rows.
 
+[Private draft permissions](#private-draft-permissions) add Sales-owned resource grants,
+complete permitted lists/counts and late native HTTP resource checks.
+
 [Membership administration](#membership-administration) now supplies the consumer-owned
 suspend/reactivate journey with current scoped authority, native concurrency and atomic audit.
 
@@ -292,8 +295,44 @@ Keycloak login/callback and native session cookies against HTTPS Kestrel, with n
 authentication cookie or OIDC form replay. Their scope/limits are recorded in
 [E3.7](../../../docs/plans/e3-7-oidc-browser-journey.md).
 
-User creation/linking, invitations, membership administration, roles/permissions,
+Focused membership administration and private draft grants are supported as documented here.
+User creation/linking, invitations, general grant administration and configurable roles,
 logout/provider end-session, session invalidation, external provider/proxy topology, tenant-aware
-native authorization handlers and shared module transactions remain separate increments. Inventory availability does not establish reservation
-logic or the future event-sourced stock model. The bounded E3 ingress scope is implemented
-through E3.7 and pending owner review; these remaining capabilities are not implied by it.
+native authorization handlers and shared module transactions remain separate increments.
+The catalog read alone establishes no reservation/workflow guarantee; those have separate
+consumer proofs. E3.7's dated browser-provider evidence does not prove later permission features.
+
+## Private draft permissions
+
+Explicit `--initialize-demo` setup now seeds a private draft with ID
+`a2000000-0000-0000-0000-000000000001` in each Organization. Alpha's North draft totals 40
+and is editable by `application-alpha`; Beta's South draft totals 70 and is editable by
+`application-beta`. Alpha's active South membership grants no access to Beta's draft.
+The fixed ID collision demonstrates that resource identity always includes Organization.
+Apply migrations through explicit setup, never HTTP startup. Existing databases receive no
+inferred grants for historical drafts; the finite demo initializer requires a disposable DB.
+
+| Route under `/organizations/{organization}` | Consumer behavior |
+| --- | --- |
+| `GET /draft-orders?minimumTotal=30&limit=1` | Sales combines resource grants and business filters before count/page; unauthorized rows never fill the page or totals. Other optional filters are `customerNameContains`, `currency`, `offset`. |
+| `GET /draft-orders/{draftId}` | Late native `IAuthorizationService` Read check, followed by the module's own permission-filtered detail read. Unknown/inaccessible resources both return 404. |
+| `PUT /draft-orders/{draftId}/line` | Native authentication/admission/antiforgery, late Edit check, then module Edit enforcement and native Sales save/commit. JSON: `{"expectedVersion":1,"lineId":"a2000000-0000-0000-0000-000000000002","quantity":2,"unitPrice":25}`. Success returns version 2/total 50; stale versions return 409. |
+
+Read/Edit grants are positive and scoped to a canonical human/system kind+key; Edit includes
+Read. Membership administrators receive no implicit grant. The host's boolean resource
+decision is not cached authority: direct module calls enforce grants too. HTTP admission
+still checks current Active membership before tenant publication; already-admitted contexts
+stay immutable. Native challenge/forbid and the public catalog exception retain their order.
+
+Direct callers establish trusted actor/tenant contexts, perform fresh human admission or
+select an explicit system mandate, and call the same Contracts. New draft creation stages
+the creator's Edit grant in its existing transaction. System read requires its own grant,
+and a human initiator contributes no authority. Sales commands retain their human requirement.
+The response's lines/customer display fields share draft visibility in this bounded sample.
+
+Count and page use separate native statements; choose RepeatableRead for one snapshot when
+required. Grant changes can affect a later statement while the actor/tenant stay fixed.
+This is not permission-at-commit fencing, grant administration/audit, RLS, export/AI selection
+or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
+[scope](../../../docs/plans/a2-1-sales-resource-permissions.md) and
+[proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).

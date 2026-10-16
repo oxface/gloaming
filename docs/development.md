@@ -529,6 +529,15 @@ Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environm
 [The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
 proofs from earlier evidence and records native-write bypass limitations.
 
+## Sales resource permissions
+
+Sales draft resource-permission adoption follows the separate
+[A2.1 scope](plans/a2-1-sales-resource-permissions.md). Its PostgreSQL query and HTTP proofs
+run in the existing `CqrsDemo.Tests` and `HttpIdentityDemo.Tests` projects using the same
+Podman environment below. The [Sales guide](../samples/Wholesale/modules/Sales/README.md)
+and [HTTP routes](../samples/Wholesale/HttpIdentityDemo/README.md#private-draft-permissions)
+describe explicit migration/setup and the supported limits; no RLS service is required.
+
 ## Organization membership administration
 
 The [A1.1 Access scope](plans/a1-1-membership-suspension.md),

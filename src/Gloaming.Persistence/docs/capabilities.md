@@ -1,6 +1,7 @@
 # Persistence composition and capabilities
 
-Current scope, 2026-10-07. This family guide and the package-local contracts travel with
+Foundational scope, 2026-10-07; save wiring and A2 research reconciled 2026-10-16.
+This family guide and the package-local contracts travel with
 the source. Root plans/reports retain cross-cutting review and dated execution evidence.
 
 ## Supported composition
@@ -18,7 +19,8 @@ Select only the packages needed by the consumer:
 ## Consumer obligations
 
 Consumers populate ownership, establish a fixed operation key, map entities and relationships, own
-migrations and invoke validation in both native save overrides. They choose tenant admission,
+migrations and cover both sync/async saves through the documented shared capability binding
+or explicit native save overrides. They choose tenant admission,
 same-tenant foreign keys, separate edit-version tokens and final transactions/save/commit. No
 Tenancy or ActorIdentity dependency is required.
 
@@ -37,10 +39,15 @@ proofs.
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Queued consumer research
+## Consumer research
 
 Optional PostgreSQL RLS and tenant/resource authorization composition are recorded in
 [A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
 [A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
-These are assessment-only backlog items for Umbrine, not supported capabilities or approved
-interfaces. The current guarantees and dependencies above remain the baseline.
+The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) and
+[primary-source matrix](../../../docs/reports/tenant-authorization-primary-sources.md) are now
+prepared for review. Optional RLS needs a restricted runtime role and transaction-local setup
+for every protected read/write/retry; current local credentials and raw transport paths do
+not provide that guarantee. Tenant equality supplies no within-tenant resource permissions.
+These findings add no supported capability or approved interface; executable RLS proofs remain
+proposed. The current guarantees and dependencies above remain the baseline.

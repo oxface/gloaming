@@ -25,11 +25,24 @@ public static class SalesRegistration
 
     public static IServiceCollection AddDraftOrderCommands(this IServiceCollection services)
     {
+        services.AddDraftOrderAuthorization();
         return services.AddScoped<IDraftOrderCommands, DraftOrders.DraftOrderCommands>();
     }
 
-    public static IServiceCollection AddDraftOrderQueries(this IServiceCollection services) =>
-        services.AddScoped<IDraftOrderQueries, DraftOrders.DraftOrderQueries>();
+    public static IServiceCollection AddDraftOrderQueries(this IServiceCollection services)
+    {
+        services.AddDraftOrderAuthorization();
+        return services.AddScoped<IDraftOrderQueries, DraftOrders.DraftOrderQueries>();
+    }
+
+    public static IServiceCollection AddDraftOrderAuthorization(this IServiceCollection services)
+    {
+        services.TryAddScoped<DraftOrders.DraftOrderAuthorization>();
+        services.TryAddScoped<IDraftOrderAuthorization>(provider =>
+            provider.GetRequiredService<DraftOrders.DraftOrderAuthorization>()
+        );
+        return services;
+    }
 
     /// <summary>Registers the compensating two-line process, leaving transport and worker hosting explicit.</summary>
     public static IServiceCollection AddStockReservationOrders(this IServiceCollection services)

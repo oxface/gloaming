@@ -112,9 +112,10 @@ checkpointed as `c8cbf64`. See [the split report](reports/e1-identity-split.md) 
 ## Scope and HTTP integration review
 
 The opening HTTP proposal below retains E1 review history. E3 subsequently implemented
-the adapters: the current consumer order is native authorization, actor mapping, then
-Organization admission/tenant publication, as recorded later in this section. Early native
-handlers therefore cannot assume established actor/tenant context. The
+the adapters: native policy authentication selects the principal, the actor evaluator
+establishes its actor before native authorization handlers, and the later actor middleware
+completes policy-free requests. Organization admission/tenant publication follows native
+authorization. Native handlers can consume actor context but cannot assume established tenancy. The
 [A1 + A1.1 assessment](reports/access-authorization-assessment.md) (2026-10-16, main
 `7ea6652`) recommends late imperative resource checks with module-owned relational predicates
 as Umbrine's initial follow-up, alongside a focused consumer suspension/reactivation proof.
@@ -128,6 +129,22 @@ under current checks after reactivation. The [proof report](reports/a1-1-members
 records native Organization serialization, revision/ownership concurrency, explicit accepted
 audit and HTTP/non-HTTP adoption. Existing active-membership admission and immutable admitted
 context remain. This adds no general permission engine or public Gloaming interface.
+
+The [A2 assessment](reports/tenant-authorization-assessment.md), against fetched main
+`d35b3ee`, corrects actor-order shorthand and traces HTTP, internal and worker boundaries.
+It recommends retaining late consumer resource checks/module-owned permission predicates;
+optional PostgreSQL RLS would require restricted runtime credentials, transaction-local
+setup and separate global/transport lanes. Fresh AppHost defaults imply a superuser runtime,
+and cross-tenant inbox/outbox SQL precedes or spans different transactions from handler
+establishment. These are assessment findings and proposed proofs, not an accepted RLS
+integration, middleware change, library interface or Tenancy-to-Access/FGA dependency.
+
+The owner then selected [A2.1 Sales draft permissions and complete queries](plans/a2-1-sales-resource-permissions.md)
+for implementation. Its [consumer guide](../samples/Wholesale/modules/Sales/README.md) and
+[proof report](reports/a2-1-sales-resource-permissions.md) cover scoped positive Read/Edit grants,
+SQL permission predicates at actual module entry points and late native HTTP checks. This
+bounded sample policy preserves current admission/immutable operations; optional RLS, grant
+administration, generalized roles and new public Gloaming interfaces remain separate.
 
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,

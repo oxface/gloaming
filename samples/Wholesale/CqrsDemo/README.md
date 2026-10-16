@@ -16,7 +16,9 @@ Reading availability does not reserve stock or establish that a draft can be ful
 Use .NET from the root `global.json`. The executable requires a fresh disposable
 PostgreSQL database; it applies existing module migrations and finite setup rows.
 It is intentionally not an idempotent production initializer. It uses fixture
-identities rather than real authentication, tenant admission or authorization.
+identities rather than real authentication or tenant admission. Sales now enforces
+resource grants: the creating human receives Edit, which includes Read, so the finite
+journey retains its output. A caller with another identity receives no implicit access.
 
 ```bash
 WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Port=5432;Database=cqrs_demo;Username=postgres;Password=postgres' \
@@ -72,7 +74,10 @@ query joins draft/customer on organization and customer ID, and derives line
 count/total from Sales' relational children. `DraftOrderFilters` composes ordinary
 `IQueryable` predicates over that joined shape; filtering precedes count, sorting
 by total then ID, and offset/limit. Existing `ReadSummaryAsync` reuses the same view.
-Neither rows nor `IQueryable` cross module Contracts.
+Neither rows nor `IQueryable` cross module Contracts. Sales' correlated grant EXISTS
+predicate runs before detail loading, totals, count and paging. Read/Edit overlap cannot
+duplicate draft results. Read-only subjects cannot stage edits or submission; the same
+checks run on direct Contract calls. See [Sales permissions](../modules/Sales/README.md).
 
 All supplied filters combine with AND. Name matching is a literal case-sensitive
 substring, including `%` and `_`; currency matches exactly. Inputs are not trimmed
@@ -113,9 +118,14 @@ cross-module technical duplication that warrants a library. Persisted projection
 generic repositories, mediator/pipeline abstractions and generic paging/filter
 helpers remain unselected.
 
+The [A2.1 permission slice](../../../docs/plans/a2-1-sales-resource-permissions.md) adds
+direct human/system grants and native HTTP adoption; its query tests cover sparse grants,
+revocation, tenant-colliding IDs and count/page grant-snapshot changes. This supplies no
+RLS, grant editor, role/group engine, export/AI endpoint or strict permission-at-commit fence.
+
 Template candidates are editable registrations, the operation scope, explicit
 transaction ownership and native query/filter examples. T1's generated Catalog
-composition is unchanged; richer CQRS generation, HTTP query binding/authorization,
+composition is unchanged; richer CQRS generation, additional HTTP query/authorization compositions,
 query indexes/benchmarks, alternate sorting and provider semantics need separate
 consumer requirements. An upper page-size limit does not bound offset scan cost
 or aggregate-query cost.

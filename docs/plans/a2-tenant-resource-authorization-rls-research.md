@@ -1,9 +1,23 @@
 # A2: tenant-aware resource authorization and optional PostgreSQL RLS research
 
-Status: consumer-requested research/backlog item, 2026-10-14. Assessment and documentation
-only; no middleware reordering, RLS policies/migrations, packages or public interfaces are
-implemented or approved. Related to [A1](a1-access-resource-authorization-research.md), with
+Status: assessment prepared for review, 2026-10-16, against fetched main `d35b3ee`.
+[Recommendation, code trace, protection matrix and bounded proofs](../reports/tenant-authorization-assessment.md),
+with [versioned primary sources](../reports/tenant-authorization-primary-sources.md).
+Consumer-requested on 2026-10-14; assessment and documentation only. No middleware reordering,
+RLS policies/migrations, packages or public interfaces are implemented or approved.
+Related to [A1](a1-access-resource-authorization-research.md), with
 [preliminary evidence](../reports/access-authorization-research-intake.md).
+
+The assessment recommends late consumer resource checks and module-owned complete permission
+queries. Optional RLS needs a separately selected restricted-role/transaction-lifecycle proof;
+fresh local AppHost defaults bypass RLS and raw transport polling precedes handler tenancy.
+No new reusable mechanism was proven. The original brief and dated intake below remain
+research context; no executable RLS proof is claimed.
+
+The owner subsequently selected [A2.1 Sales draft permissions and complete queries](a2-1-sales-resource-permissions.md)
+for implementation on 2026-10-16. That bounded consumer scope supersedes the assessment-only
+restriction for Sales grants/query/HTTP adoption. Optional RLS and transport integration remain
+separate; no middleware reordering or new public Gloaming interface follows from this selection.
 
 ## Priority and placement
 
@@ -24,8 +38,10 @@ conditional, with [pinned enumeration/consistency limits](../reports/access-auth
 Cross-module facts need an explicit complete consumer contract or a separately justified
 published view/projection; no private DbContext joins or continuous mirroring are assumed.
 
-Use late imperative checks after the current native authorization → actor → admitted tenant
-ordering as the first composition. Changing tenant-aware native policy ordering needs its
+Use late imperative checks after admitted tenant publication as the first composition.
+A2 corrects the shorthand: the actor evaluator establishes actor context after native policy
+authentication and before native authorization handlers; tenancy follows authorization.
+Changing tenant-aware native policy ordering needs its
 own scheme/anonymous/failure proofs. Fresh human worker operations admit again; internal
 calls in one operation retain immutable context. Company-owned system work and continuing
 human authority are distinct policies. A1.1 suspension/reactivation reuses active admission
@@ -41,8 +57,9 @@ A2 must assess tenant isolation separately from within-tenant permissions and ke
 global pre-admission registry usable without fabricated tenant context. Tenant-only RLS cannot establish
 complete permission-aware lists/counts/exports/AI selection, transactional business audit or
 cross-store revocation. Preserve the package-free Tenancy core without Access/FGA coupling.
-The dated baseline below remains evidence; A2 role/pooling/transaction/retry/bypass research
-and proofs are not completed by this handoff. No RLS implementation is authorized.
+The dated baseline below remains evidence; the subsequent assessment supplies A2
+role/pooling/transaction/retry/bypass research. Executable proofs remain proposed.
+No RLS implementation is authorized.
 
 ## Verified baseline, not a new guarantee
 
