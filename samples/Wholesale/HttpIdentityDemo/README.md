@@ -41,6 +41,8 @@ Environment variables use double underscores instead of colons.
 | `ConnectionStrings:Access` | Access/Inventory runtime connection; also Sales when its optional separate connection is absent. Finite demo initialization uses this connection as migration authority. |
 | `ConnectionStrings:Sales` | Optional separate restricted Sales runtime connection; selects automatic transaction-local RLS for profile/draft HTTP operations. |
 | `ConnectionStrings:SalesMigrations` | Sales table owner, used only by `--initialize-sales-rls`. Keep this credential out of normal HTTP configuration. |
+| `ConnectionStrings:Setup` | Administrative provisioning authority, used only by the optional Aspire `--initialize-rls-demo` mode. Never pass it to normal HTTP. |
+| `RuntimePasswords:Access`, `RuntimePasswords:Sales` | Optional separate secret passwords for password-free runtime connection strings. Program combines them through Npgsql before setup/service registration. |
 | `Oidc:Authority` | HTTPS OIDC provider authority for HTTP login. |
 | `Oidc:ClientId` | Registered authorization-code client. |
 | `Oidc:ClientSecret` | Credential when that client registration requires one. |
@@ -364,6 +366,13 @@ privileged role memberships or Sales schema CREATE. Give the owner database/sche
 authority for finite migrations. Do not reuse the AppHost's default PostgreSQL admin credential.
 There is no automatic role/password creation.
 
+The separate [Aspire opt-in](../AppHost/README.md#optional-sales-rls-graph) supplies a finite
+`--initialize-rls-demo` mode that creates the two named disposable-demo runtime logins before
+the migrations/seed/policy steps. That mode alone receives `ConnectionStrings:Setup`; it is
+not called by ordinary HTTP startup. Use that graph's workflow instead of the manual role
+provisioning steps below. Normal RLS HTTP startup rejects nonempty setup/migration/admin
+parameter credentials; empty overrides are used to remove known inherited AppHost values.
+
 1. Run `--initialize-demo` with `ConnectionStrings:Access` temporarily supplied as the owner
    connection. This applies the ordinary module migrations and seeds before RLS is installed.
 2. As the owner, grant the Access runtime role USAGE on `access`/`inventory`, SELECT/INSERT/
@@ -398,7 +407,8 @@ This is a bounded catalog check, not certification of policy expression bodies, 
 other secrets, or subsequent administrative changes. Review those separately. Readiness retains
 its existing connectivity/schema check; it does not continually re-attest RLS policy.
 Never pass migration credentials to the HTTP host or enable these credentials in transport
-workers. The standard AppHost graph retains its existing credentials. Default single-connection
+workers. The standard AppHost graph retains its existing credentials; its separate RLS opt-in
+now provisions restricted credentials through explicit setup. Default single-connection
 HTTP mode remains supported and also uses the explicit read transactions; it enables no RLS.
 
 RLS supplies database tenant equality, not private-draft permissions, authentication or

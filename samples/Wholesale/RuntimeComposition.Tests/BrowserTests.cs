@@ -27,10 +27,15 @@ public sealed class BrowserTests
     ];
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 
-    [Fact(Timeout = 240_000)]
-    public async Task AlphaLogsInSelectsTwoTenantsAndCommitsProtectedProfileEdit()
+    [Theory(Timeout = 240_000)]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AlphaLogsInSelectsTwoTenantsAndCommitsProtectedProfileEdit(bool rowSecurity)
     {
-        await using var builder = await CreateBuilderAsync(TestContext.Current.CancellationToken);
+        await using var builder = await CreateBuilderAsync(
+            TestContext.Current.CancellationToken,
+            rowSecurity
+        );
         await using var app = await StartAndInitializeAsync(builder);
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync();
@@ -103,6 +108,25 @@ public sealed class BrowserTests
         Assert.True(csrfCookie.Secure);
         Assert.True(csrfCookie.HttpOnly);
         Assert.Equal(SameSiteAttribute.Strict, csrfCookie.SameSite);
+        if (rowSecurity)
+        {
+            await using var database = new NpgsqlConnection(
+                await app.GetConnectionStringAsync("wholesale", Token)
+            );
+            await database.OpenAsync(Token);
+            await using var audit = new NpgsqlCommand(
+                """
+                SELECT (SELECT count(*) FROM sales.audit_entries) = 1
+                    AND EXISTS (SELECT 1 FROM sales.audit_entries WHERE tenant_key = 'wholesale-alpha'
+                        AND actor_kind = 2 AND actor_key = 'application-alpha'
+                        AND action = 'customer-profile.changed' AND (details->>'Version')::bigint = 2)
+                    AND EXISTS (SELECT 1 FROM sales.customer_profiles WHERE organization_key = 'wholesale-beta' AND version = 1)
+                    AND EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname = current_database() AND usename = 'wholesale_sales')
+                """,
+                database
+            );
+            Assert.Equal(true, await audit.ExecuteScalarAsync(Token));
+        }
     }
 
     [Fact(Timeout = 240_000)]
@@ -183,11 +207,12 @@ public sealed class BrowserTests
     }
 
     private static async Task<IDistributedApplicationTestingBuilder> CreateBuilderAsync(
-        CancellationToken cancellation
+        CancellationToken cancellation,
+        bool rowSecurity = false
     )
     {
         var builder = await DistributedApplicationTestingBuilder.CreateAsync<AppHostMarker>(
-            LocalArguments,
+            [.. LocalArguments, $"LocalDevelopment:UseSalesRowSecurity={rowSecurity}"],
             cancellation
         );
         builder.Configuration["Parameters:postgres-password"] =
@@ -195,6 +220,10 @@ public sealed class BrowserTests
         builder.Configuration["Parameters:keycloak-password"] = "disposable-browser-admin-password";
         builder.Configuration["Parameters:oidc-client-secret"] = "disposable-browser-client-secret";
         builder.Configuration["Parameters:demo-user-password"] = UserPassword;
+        builder.Configuration["Parameters:access-runtime-password"] =
+            "browser access;\"quoted'password";
+        builder.Configuration["Parameters:sales-runtime-password"] =
+            "browser sales;\"quoted'password";
         builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         return builder;
     }
@@ -210,11 +239,15 @@ public sealed class BrowserTests
             await app.ResourceNotifications.WaitForResourceHealthyAsync("keycloak", Token);
             Uri provider = app.GetEndpoint("keycloak", "http");
             Assert.Equal(Uri.UriSchemeHttps, provider.Scheme);
-            await app.ResourceNotifications.WaitForResourceAsync(
-                "api",
-                KnownResourceStates.Running,
-                Token
+            bool rowSecurity = bool.Parse(
+                builder.Configuration["LocalDevelopment:UseSalesRowSecurity"]!
             );
+            if (!rowSecurity)
+                await app.ResourceNotifications.WaitForResourceAsync(
+                    "api",
+                    KnownResourceStates.Running,
+                    Token
+                );
             var commands = app.Services.GetRequiredService<ResourceCommandService>();
             var result = await commands.ExecuteCommandAsync(
                 "demo-setup",
@@ -229,6 +262,34 @@ public sealed class BrowserTests
             );
             Assert.True(app.ResourceNotifications.TryGetCurrentState("demo-setup", out var setup));
             Assert.Equal(0, setup.Snapshot.ExitCode);
+            if (rowSecurity)
+            {
+                await using (
+                    var database = new NpgsqlConnection(
+                        await app.GetConnectionStringAsync("wholesale", Token)
+                    )
+                )
+                {
+                    await database.OpenAsync(Token);
+                    await using var policies = new NpgsqlCommand(
+                        """
+                        SELECT (SELECT count(*) FROM pg_roles WHERE rolname IN ('wholesale_access', 'wholesale_sales')) = 2
+                            AND (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                                WHERE n.nspname = 'sales' AND c.relrowsecurity AND c.relforcerowsecurity) = 6
+                        """,
+                        database
+                    );
+                    Assert.Equal(true, await policies.ExecuteScalarAsync(Token));
+                }
+
+                var api = await commands.ExecuteCommandAsync(
+                    "api",
+                    KnownResourceCommands.StartCommand,
+                    Token
+                );
+                Assert.True(api.Success, api.Message);
+            }
+
             await app.ResourceNotifications.WaitForResourceHealthyAsync("api", Token);
             return app;
         }

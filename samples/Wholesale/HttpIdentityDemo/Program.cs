@@ -5,9 +5,18 @@ using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
 bool initializeAccess = args is ["--initialize-access"];
 bool initializeDemo = args is ["--initialize-demo"];
 bool initializeSalesRls = args is ["--initialize-sales-rls"];
+bool initializeRlsDemo = args is ["--initialize-rls-demo"];
 var builder = WebApplication.CreateBuilder(
-    initializeAccess || initializeDemo || initializeSalesRls ? [] : args
+    initializeAccess || initializeDemo || initializeSalesRls || initializeRlsDemo ? [] : args
 );
+DemoDatabasePasswords.Apply(builder.Configuration);
+if (initializeRlsDemo)
+{
+    await RlsDemoSetup.InitializeAsync(builder.Configuration, CancellationToken.None);
+    Console.WriteLine("Wholesale RLS demo initialized; HTTP host was not started.");
+    return;
+}
+
 if (initializeSalesRls)
 {
     string owner =
@@ -45,6 +54,19 @@ if (initializeAccess || initializeDemo)
     );
     return;
 }
+
+if (
+    builder.Configuration.GetConnectionString("Sales") is not null
+    && (
+        !string.IsNullOrEmpty(builder.Configuration.GetConnectionString("Setup"))
+        || !string.IsNullOrEmpty(builder.Configuration.GetConnectionString("SalesMigrations"))
+        || !string.IsNullOrEmpty(builder.Configuration["Parameters:postgres-password"])
+    )
+)
+    throw new InvalidOperationException(
+        "Keep provisioning credentials out of the Sales RLS HTTP host."
+    );
+
 builder.AddServiceDefaults();
 DemoComposition.AddServices(builder.Services, builder.Configuration);
 builder.Services.AddOrganizationTenancyFromRoute("organization");

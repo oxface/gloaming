@@ -16,6 +16,7 @@ public sealed class RuntimeTests
     [
         "LocalDevelopment:UseDataVolume=false",
         "LocalDevelopment:UseLocalIdentityProvider=false",
+        "LocalDevelopment:UseSalesRowSecurity=false",
     ];
 
     [Fact]

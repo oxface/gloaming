@@ -1,6 +1,6 @@
 # Library and sample extraction plan
 
-## Current delivery status and next slice — 2026-10-16
+## Current delivery status and next slice — 2026-10-17
 
 The three outputs remain reusable libraries, configurable repository population, and samples.
 [The strategy review](../reports/strategy-review.md) brought a bounded template rehearsal
@@ -44,8 +44,10 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Ownership-declared RLS A2.4 | Owner-requested research into `.HasTenantOwnership(...).WithRls()` and native interceptors, comparing Bytefish, Marten and EF integrations in the [primary-source note](../reports/a2-4-rls-capability-reference-research.md). The owner subsequently authorized implementation, retaining HasQueryFilter and requiring write protection. The optional [adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md) and [implementation report](../reports/a2-4-ownership-rls-capability.md) record the initial session implementation; the owner-selected transaction refinement below replaces that wiring. Automatic migration scaffolding remains deferred. |
 | Transaction-local RLS simplification A2.5 | Owner-selected refinement: keep the existing operation/request owner responsible for beginning transactions, and establish tenant context automatically. [Current adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md), [implementation/proofs](../reports/a2-5-transaction-rls-simplification.md). One scoped native transaction/command interceptor, direct `.UseRls` installation and existing save capability; no native registry, session lifetime or connection-lease tracking. |
 
-The next [A2.6 Sales HTTP slice](a2-6-sales-http-rls.md) continues checkpoint `635cb5b` with
-bounded opt-in adoption and [fresh verification](../reports/a2-6-sales-http-rls.md), under owner review.
+The [A2.6 Sales HTTP slice](a2-6-sales-http-rls.md) is owner-approved and checkpointed as
+`521e9b3`, with [bounded adoption and verification](../reports/a2-6-sales-http-rls.md).
+The selected [A2.7 AppHost continuation](a2-7-aspire-sales-rls.md) adds optional finite runtime-role
+provisioning and explicit API startup; [fresh evidence](../reports/a2-7-aspire-sales-rls.md) is separate.
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging

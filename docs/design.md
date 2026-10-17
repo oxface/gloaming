@@ -185,6 +185,14 @@ varchar discriminators are supported without schema changes; blank-padded charac
 remain rejected. Default AppHost/worker/template rollout and policy scaffolding remain separate;
 no new Gloaming interface or mandatory Access dependency is introduced.
 
+The owner's [A2.7 continuation](plans/a2-7-aspire-sales-rls.md) carries that optional HTTP mode
+into the AppHost: separate runtime logins, explicit one-shot role/migration/seed/policy setup,
+then explicit API start. Runtime passwords remain secret parameters until Npgsql assembles
+connections; known inherited provisioning keys are emptied and normal RLS HTTP rejects retained
+provisioning credentials. Readiness inspects catalog metadata without granting Access any Sales
+schema/table authority. Default graph selection, transport workers and Gloaming interfaces remain
+unchanged. The [report](reports/a2-7-aspire-sales-rls.md) separates fresh CLI/runtime/browser evidence.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

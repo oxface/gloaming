@@ -667,3 +667,12 @@ guide. HTTP startup validates the finite role/policy inventory but never install
 run in `samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj` through the
 existing Wholesale PostgreSQL lane. The [A2.6 report](reports/a2-6-sales-http-rls.md) records
 the bounded adoption and distinguishes unchanged AppHost/transport behavior.
+
+The [Aspire RLS opt-in](../samples/Wholesale/AppHost/README.md#optional-sales-rls-graph) now carries
+that composition into native orchestration. Set `LocalDevelopment:UseSalesRowSecurity=true`
+and the two secret runtime password parameters, run explicit finite setup on a fresh database,
+check exit 0, then explicitly start the API. Retained initialized storage needs only API start.
+The runtime suite includes both ordinary and RLS browser/profile journeys; run it separately
+from other graph lifetimes to avoid container-network changes during browser navigation.
+The [A2.7 report](reports/a2-7-aspire-sales-rls.md) records current role/readiness and credential
+separation evidence. Worker/transport adoption remains separate.

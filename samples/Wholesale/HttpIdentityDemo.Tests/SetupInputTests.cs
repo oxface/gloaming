@@ -6,6 +6,67 @@ namespace ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Tests;
 public sealed partial class CompositionTests
 {
     [Theory]
+    [InlineData("ConnectionStrings__Setup")]
+    [InlineData("ConnectionStrings__SalesMigrations")]
+    [InlineData("Parameters__postgres-password")]
+    public async Task RlsHttpRejectsProvisioningCredentialsBeforeOpeningRuntimeConnections(
+        string key
+    )
+    {
+        var start = new ProcessStartInfo("dotnet")
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+        };
+        start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
+        start.Environment["ConnectionStrings__Access"] =
+            "Host=127.0.0.1;Port=1;Database=unused;Username=runtime";
+        start.Environment["ConnectionStrings__Sales"] =
+            "Host=127.0.0.1;Port=1;Database=unused;Username=runtime";
+        foreach (
+            string provisionKey in new[]
+            {
+                "ConnectionStrings__Setup",
+                "ConnectionStrings__SalesMigrations",
+                "Parameters__postgres-password",
+            }
+        )
+            start.Environment[provisionKey] = "";
+
+        start.Environment[key] = "deliberately-forbidden-provisioning-value";
+        using var process =
+            Process.Start(start)
+            ?? throw new InvalidOperationException("Could not start the guarded HTTP host.");
+        Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
+        Task<string> errors = process.StandardError.ReadToEndAsync(Token);
+        try
+        {
+            await process.WaitForExitAsync(Token).WaitAsync(TimeSpan.FromSeconds(30), Token);
+            Assert.NotEqual(0, process.ExitCode);
+            Assert.Contains(
+                "Keep provisioning credentials out",
+                await errors,
+                StringComparison.Ordinal
+            );
+            Assert.DoesNotContain(
+                "deliberately-forbidden-provisioning-value",
+                await errors,
+                StringComparison.Ordinal
+            );
+            Assert.DoesNotContain("Now listening", await output, StringComparison.Ordinal);
+        }
+        finally
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                await process.WaitForExitAsync(CancellationToken.None);
+            }
+        }
+    }
+
+    [Theory]
     [InlineData("partial")]
     [InlineData("insecure-issuer")]
     [InlineData("duplicate-subjects")]

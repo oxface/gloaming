@@ -39,13 +39,16 @@ secret provider). Environment variables use double underscores.
 | `Parameters:oidc-client-id` | Required authorization-code client identifier passed to the API. |
 | `LocalDevelopment:UseDataVolume` | Defaults to true. False uses ephemeral PostgreSQL storage for a disposable graph. |
 | `LocalDevelopment:UseLocalIdentityProvider` | Defaults to false. True adds the local HTTPS Keycloak realm instead of external authority/client parameters. |
+| `LocalDevelopment:UseSalesRowSecurity` | Defaults to false. True selects separate restricted runtime logins and explicit setup/API startup, described below. |
+| `Parameters:access-runtime-password`, `Parameters:sales-runtime-password` | Separate secret runtime passwords, required in Sales RLS mode. Keep stable with retained storage. |
 | `LocalDevelopment:KeycloakPort` | Local provider port, default 58081. Keep stable with retained Access mappings. Isolated/test graphs randomize ports. |
 
 For example, set secrets with `dotnet user-secrets set --project
 samples/Wholesale/AppHost/Wholesale.AppHost.csproj KEY VALUE` using your values.
 Do not commit credentials. For Podman set `ASPIRE_CONTAINER_RUNTIME=podman` and `DOCKER_HOST`
-to your rootless socket. Aspire supplies the actual database connection as
-`ConnectionStrings:Access` to API and setup; all three modules register their own contexts.
+to your rootless socket. The ordinary graph supplies its database connection as
+`ConnectionStrings:Access` to API and setup. The optional RLS graph separates provisioning
+and runtime credentials. All three modules register their own contexts.
 
 The provider-free runtime test uses inert `https://identity.test` settings solely for public requests.
 For external authentication configure the API's
@@ -96,7 +99,65 @@ Trust the native development certificate for ordinary manual browsing. Automated
 contexts explicitly ignore development certificate trust errors; this is not production
 certificate-trust evidence.
 
+## Optional Sales RLS graph
+
+Set `LocalDevelopment:UseSalesRowSecurity=true` and supply the two runtime password parameters.
+This selects the [six-table Sales HTTP composition](../HttpIdentityDemo/README.md#optional-sales-http-row-security)
+for profile/draft reads and writes, including accepted profile audit. Access/Inventory uses
+`wholesale_access`; Sales uses `wholesale_sales`. Both are non-owner logins without superuser,
+BYPASSRLS, role-creation or database-creation rights. Transport and other Sales tables remain
+outside this HTTP lane; within-tenant resource predicates remain necessary.
+
+In this mode **both `demo-setup` and `api` require explicit start**. On a fresh database:
+
+```bash
+aspire start --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --no-build --non-interactive
+aspire wait wholesale --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive --timeout 90
+aspire resource demo-setup start --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive
+aspire wait demo-setup --status down --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive --timeout 90
+aspire describe demo-setup --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive
+```
+
+Confirm `demo-setup` finished with exit 0, then start the API:
+
+```bash
+aspire resource api start --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive
+aspire wait api --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-interactive --timeout 90
+```
+
+The finite `--initialize-rls-demo` command creates the two named logins, migrates/seeds the
+ordinary modules using its separate `ConnectionStrings:Setup` authority, grants Access/catalog
+rights, then installs the reviewed Sales policies/grants and checks both runtime roles.
+Role creation uses PostgreSQL identifier/literal formatting. Existing roles are never altered.
+This is one-shot disposable-demo provisioning, not production role management, password rotation,
+upgrade/backfill or repeatable reconciliation. Failure after role creation can leave partial
+setup; inspect the failure and use a new disposable database rather than rerunning seed blindly.
+
+On retained, already initialized storage, start the graph and then start **only the API**;
+do not run setup again. Password changes do not update existing PostgreSQL logins. Keep the
+same parameters or perform an independently authorized rotation. Local Keycloak mode remains
+available; its issuer/subject inputs flow to the same explicit setup process.
+
+The API receives password-free endpoint/username references plus separate secret password
+parameters. The HTTP sample uses Npgsql's connection-string builder to escape password values,
+including quotes/semicolons. No provisioning connection is referenced by the API. Its known
+inherited setup/migration/admin-parameter environment keys are explicitly emptied; a startup
+guard rejects nonempty provisioning credentials in the RLS HTTP host. Keep other administrative
+secrets out of the API environment too; this is not a sandbox against arbitrary host secrets.
+
+Starting the graph alone creates no application logins, module schemas, RLS policies or seed rows. Normal HTTP startup
+only checks the finite runtime roles/catalog before accepting requests. This opt-in changes no
+middleware ordering, transaction ownership, Gloaming interfaces or template presets.
+The default graph retains its earlier single-credential composition and does **not** claim RLS.
+
+[Runtime proofs](../RuntimeComposition.Tests/RowSecurityRuntimeTests.cs),
+[browser proofs](../RuntimeComposition.Tests/BrowserTests.cs) and
+the [A2.7 report](../../../docs/reports/a2-7-aspire-sales-rls.md) distinguish current results
+from prior AppHost/browser evidence.
+
 ## Start and explicitly initialize
+
+The following workflow is for `UseSalesRowSecurity=false`; use the section above when selected.
 
 Run from the repository root after configuration:
 
