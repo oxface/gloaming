@@ -193,6 +193,16 @@ provisioning credentials. Readiness inspects catalog metadata without granting A
 schema/table authority. Default graph selection, transport workers and Gloaming interfaces remain
 unchanged. The [report](reports/a2-7-aspire-sales-rls.md) separates fresh CLI/runtime/browser evidence.
 
+The owner's [A2.8 continuation](plans/a2-8-sales-outbox-dispatch.md) adds an optional independent
+Sales outbox dispatcher to the workflow sample. Its context maps only the existing delivery
+table; a separate restricted login reads envelopes across tenants and updates only delivery
+state columns. Native claims, publication, conditional completion and fresh worker scopes remain.
+This is explicit queue authority rather than a tenantless exception on business RLS. It grants
+no business-table access and retains no business/provisioning connection. Explicit one-shot role
+setup and actual effective-grant checks remain sample policy; inbox tenant establishment,
+ordinary workflow defaults and library interfaces are unchanged. The
+[report](reports/a2-8-sales-outbox-dispatch.md) records proofs and remaining limits.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

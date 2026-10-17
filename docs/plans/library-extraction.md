@@ -46,8 +46,14 @@ forward from E10; that rehearsal is now complete and owner-approved.
 
 The [A2.6 Sales HTTP slice](a2-6-sales-http-rls.md) is owner-approved and checkpointed as
 `521e9b3`, with [bounded adoption and verification](../reports/a2-6-sales-http-rls.md).
-The selected [A2.7 AppHost continuation](a2-7-aspire-sales-rls.md) adds optional finite runtime-role
-provisioning and explicit API startup; [fresh evidence](../reports/a2-7-aspire-sales-rls.md) is separate.
+The selected [A2.7 AppHost continuation](a2-7-aspire-sales-rls.md) is owner-approved and
+checkpointed as `192fe7d`: optional finite runtime-role provisioning and explicit API startup;
+[fresh evidence](../reports/a2-7-aspire-sales-rls.md) is separate. The owner then selected
+[A2.8 restricted Sales outbox dispatch](a2-8-sales-outbox-dispatch.md): an independent executable
+role, a context limited to the existing queue and column-level delivery grants, using the
+existing dispatcher/worker. [Consumer setup](../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md)
+and the [report](../reports/a2-8-sales-outbox-dispatch.md) separate cross-tenant queue authority
+from business RLS. Inbox adoption, default rollout, templates and library interfaces remain separate.
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging

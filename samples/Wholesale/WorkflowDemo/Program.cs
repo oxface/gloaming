@@ -17,10 +17,68 @@ using OpenTelemetry.Trace;
 
 var builder = Host.CreateApplicationBuilder(args);
 string role = builder.Configuration["role"] ?? "run";
+using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+if (role == "setup-sales-dispatch")
+{
+    await SalesDispatchDatabase.ProvisionAsync(
+        Required("ConnectionStrings:SalesDispatchSetup"),
+        Required("ConnectionStrings:SalesDispatch"),
+        startup.Token
+    );
+    Console.WriteLine("Sales dispatch role and grants ready.");
+    return;
+}
+
+if (role == "dispatch-sales")
+{
+    foreach (
+        string key in new[]
+        {
+            "ConnectionStrings:SalesDispatchSetup",
+            "ConnectionStrings:Sales",
+            "ConnectionStrings:Inventory",
+            "ConnectionStrings:Access",
+            "ConnectionStrings:Setup",
+            "ConnectionStrings:SalesMigrations",
+            "Parameters:postgres-password",
+        }
+    )
+        if (!string.IsNullOrEmpty(builder.Configuration[key]))
+            throw new InvalidOperationException(
+                "Keep provisioning and business database credentials out of the Sales dispatch host."
+            );
+
+    string runtime = Required("ConnectionStrings:SalesDispatch");
+    await SalesDispatchDatabase.VerifyAsync(runtime, startup.Token);
+    await using var dispatchBroker = await WorkflowBroker.OpenAsync(
+        Required("ConnectionStrings:RabbitMq"),
+        builder.Configuration["QueuePrefix"] ?? "wf1",
+        startup.Token
+    );
+    await dispatchBroker.RequireQueuesAsync(startup.Token);
+    builder.Services.AddSingleton(dispatchBroker);
+    builder.Services.AddDbContext<SalesOutboxDbContext>(options => options.UseNpgsql(runtime));
+    builder.Services.AddPostgresOutboxDispatcher<SalesOutboxDbContext, SalesCommandPublisher>(
+        new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
+    );
+    builder.Services.AddOutboxWorker<SalesOutboxDbContext>(
+        new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
+    );
+    builder.AddServiceDefaults();
+    builder
+        .Services.AddOpenTelemetry()
+        .WithTracing(tracing =>
+            tracing.AddGloamingMessaging().AddSource("RabbitMQ.Client.Publisher")
+        )
+        .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    using var dispatchHost = builder.Build();
+    await dispatchHost.RunAsync();
+    return;
+}
+
 string sales = Required("ConnectionStrings:Sales");
 string inventory = Required("ConnectionStrings:Inventory");
 builder.Services.AddWorkflowDemo(sales, inventory);
-using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(60));
 
 if (role is "start" or "read" or "seed" or "reserve-order" or "read-order" or "retry-compensation")
 {

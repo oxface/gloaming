@@ -676,3 +676,12 @@ The runtime suite includes both ordinary and RLS browser/profile journeys; run i
 from other graph lifetimes to avoid container-network changes during browser navigation.
 The [A2.7 report](reports/a2-7-aspire-sales-rls.md) records current role/readiness and credential
 separation evidence. Worker/transport adoption remains separate.
+
+The workflow sample now also has a separate [Sales dispatch role](../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md):
+run finite `setup-sales-dispatch` against an already migrated outbox, then start `dispatch-sales`
+with only its dispatch and broker connections. Its context maps one delivery table, and its
+runtime grants permit envelope reads plus delivery-state column updates. It does not install
+tenant RLS on the global queue or adopt inbox/business worker paths. The existing workflow test
+project includes both-tenant delivery, database privilege controls, real publication failure,
+competing child processes and death/restart after confirmed publication. The
+[A2.8 report](reports/a2-8-sales-outbox-dispatch.md) records fresh evidence and limits.
