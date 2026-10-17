@@ -44,6 +44,9 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Ownership-declared RLS A2.4 | Owner-requested research into `.HasTenantOwnership(...).WithRls()` and native interceptors, comparing Bytefish, Marten and EF integrations in the [primary-source note](../reports/a2-4-rls-capability-reference-research.md). The owner subsequently authorized implementation, retaining HasQueryFilter and requiring write protection. The optional [adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md) and [implementation report](../reports/a2-4-ownership-rls-capability.md) record the initial session implementation; the owner-selected transaction refinement below replaces that wiring. Automatic migration scaffolding remains deferred. |
 | Transaction-local RLS simplification A2.5 | Owner-selected refinement: keep the existing operation/request owner responsible for beginning transactions, and establish tenant context automatically. [Current adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md), [implementation/proofs](../reports/a2-5-transaction-rls-simplification.md). One scoped native transaction/command interceptor, direct `.UseRls` installation and existing save capability; no native registry, session lifetime or connection-lease tracking. |
 
+The next [A2.6 Sales HTTP slice](a2-6-sales-http-rls.md) continues checkpoint `635cb5b` with
+bounded opt-in adoption and [fresh verification](../reports/a2-6-sales-http-rls.md), under owner review.
+
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging
 and telemetry concerns. Its optional PostgreSQL mapping and item timeline belong to the
@@ -132,6 +135,13 @@ permissions, roles/privileges, complete table inventory and tenant-inclusive rel
 consumer-owned. The optional provider adapter introduces no mandatory Access/FGA dependency or
 reverse dependency from core Tenancy/ownership. The explicit A2.3 utility remains independent;
 Sales' existing opt-in local composition and default HTTP/worker/template paths are not changed.
+
+The next [A2.6 Sales HTTP composition](a2-6-sales-http-rls.md) adopts the transaction-local
+capability when a separate restricted Sales connection is selected. It covers six existing
+ownership mappings, including profile audit, with finite policy/grant setup, actual two-role
+startup checks and native request-owned read transactions. Existing varchar discriminators
+are supported without a schema migration. [Current verification](../reports/a2-6-sales-http-rls.md)
+is separate from earlier evidence; default AppHost/transport/template adoption remains deferred.
 
 ## B1: closed assessment and discarded implementation
 

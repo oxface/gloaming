@@ -175,6 +175,16 @@ original EF Core/DI dependencies. Policies, roles, admission, permission predica
 remain consumer-owned; there is no new request transaction owner, default HTTP/worker/template
 adoption or automatic policy scaffolding. A2.3 remains the independent explicit utility.
 
+The owner's next continuation adds [bounded Sales HTTP adoption](plans/a2-6-sales-http-rls.md).
+A separate Sales runtime connection selects six existing ownership mappings through stateless
+native EF model customization, including profile audit. Endpoint reads and late checks begin
+ordinary native transactions; mutation owners retain their saves/commits. Finite setup applies
+explicit read/write policy operations and restricted grants. Startup rejects privileged Sales
+credentials and an alternate Access/Inventory credential with Sales table authority. Existing
+varchar discriminators are supported without schema changes; blank-padded character keys
+remain rejected. Default AppHost/worker/template rollout and policy scaffolding remain separate;
+no new Gloaming interface or mandatory Access dependency is introduced.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

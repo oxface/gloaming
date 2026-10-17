@@ -4,7 +4,9 @@ using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Persistence.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ModulithFoundry.Samples.Wholesale.Sales;
@@ -13,7 +15,8 @@ public static class SalesDatabase
 {
     public static IServiceCollection AddSalesDatabase(
         this IServiceCollection services,
-        string connection
+        string connection,
+        bool useRowSecurity = false
     )
     {
         services.AddTenantOwnershipValidation<SalesDbContext, string>(context =>
@@ -29,11 +32,20 @@ public static class SalesDatabase
                 OrderAllowances.ReserveCustomerAllowance
             >()
         );
+        if (useRowSecurity)
+            services.AddPostgresTenantRowSecurity<SalesDbContext>();
+
         return services.AddDbContext<SalesDbContext>(
             (provider, options) =>
             {
                 Configure(options, connection);
-                options.ConfigureGloamingCapabilities<SalesDbContext>(provider);
+                if (useRowSecurity)
+                {
+                    options.ReplaceService<IModelCustomizer, SalesRowSecurityModelCustomizer>();
+                    options.UseRls<SalesDbContext>(provider);
+                }
+                else
+                    options.ConfigureGloamingCapabilities<SalesDbContext>(provider);
             }
         );
     }

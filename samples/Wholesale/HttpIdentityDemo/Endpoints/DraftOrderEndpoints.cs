@@ -19,6 +19,7 @@ public static class DraftOrderEndpoints
 
     private static async Task<Results<Ok<DraftOrderPage>, BadRequest>> SearchAsync(
         IDraftOrderQueries queries,
+        SalesReadTransaction transactions,
         string? customerNameContains,
         string? currency,
         decimal? minimumTotal,
@@ -29,6 +30,7 @@ public static class DraftOrderEndpoints
     {
         try
         {
+            await using var transaction = await transactions.BeginAsync(cancellationToken);
             var page = await queries.SearchAsync(
                 new(customerNameContains, currency, minimumTotal, offset ?? 0, limit ?? 20),
                 cancellationToken
@@ -46,12 +48,14 @@ public static class DraftOrderEndpoints
         HttpContext http,
         IAuthorizationService authorization,
         IDraftOrderQueries queries,
+        SalesReadTransaction transactions,
         CancellationToken cancellationToken
     )
     {
         if (draftId == Guid.Empty)
             return TypedResults.BadRequest();
 
+        await using var transaction = await transactions.BeginAsync(cancellationToken);
         var decision = await authorization.AuthorizeAsync(
             http.User,
             new DraftOrderResource(draftId, cancellationToken),
@@ -70,6 +74,7 @@ public static class DraftOrderEndpoints
         HttpContext http,
         IAuthorizationService authorization,
         DraftOrderEdits edits,
+        SalesReadTransaction transactions,
         CancellationToken cancellationToken
     )
     {
@@ -83,12 +88,18 @@ public static class DraftOrderEndpoints
         )
             return TypedResults.BadRequest();
 
-        var decision = await authorization.AuthorizeAsync(
-            http.User,
-            new DraftOrderResource(draftId, cancellationToken),
-            [new DraftOrderRequirement(DraftOrderAction.Edit)]
-        );
-        if (!decision.Succeeded)
+        bool allowed;
+        await using (var transaction = await transactions.BeginAsync(cancellationToken))
+        {
+            var decision = await authorization.AuthorizeAsync(
+                http.User,
+                new DraftOrderResource(draftId, cancellationToken),
+                [new DraftOrderRequirement(DraftOrderAction.Edit)]
+            );
+            allowed = decision.Succeeded;
+        }
+
+        if (!allowed)
             return TypedResults.NotFound();
 
         DraftOrderChangeResult result;

@@ -1,6 +1,7 @@
 using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,38 @@ public sealed class DeclarationTests
         entity.Property(row => row.Id);
         probe.OwnGuid(entity);
         Assert.Throws<InvalidOperationException>(() => entity.WithRls(ProofDatabase.Setting));
+    }
+
+    [Fact]
+    public async Task BlankPaddedOwnershipFailsBeforeOpeningAConnection()
+    {
+        await using var operation = new Operation(
+            "Host=127.0.0.1;Port=1;Database=unused",
+            ProofDatabase.Alpha,
+            configure: options =>
+                options.ReplaceService<IModelCustomizer, FixedWidthModelCustomizer>()
+        );
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            operation.Database.SaveChangesAsync(TestContext.Current.CancellationToken)
+        );
+        Assert.Contains("text or character varying", failure.Message, StringComparison.Ordinal);
+        Assert.Equal(
+            System.Data.ConnectionState.Closed,
+            operation.Database.Database.GetDbConnection().State
+        );
+    }
+
+    private sealed class FixedWidthModelCustomizer(ModelCustomizerDependencies dependencies)
+        : RelationalModelCustomizer(dependencies)
+    {
+        public override void Customize(ModelBuilder modelBuilder, DbContext context)
+        {
+            base.Customize(modelBuilder, context);
+            modelBuilder
+                .Entity<Note>()
+                .Property(row => row.Partition)
+                .HasColumnType("character(256)");
+        }
     }
 
     [Theory]

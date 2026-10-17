@@ -659,3 +659,11 @@ The suite belongs to the Persistence CI lane. This adds no default Wholesale HTT
 adoption; the existing Sales RLS executable keeps its explicit local-transaction setup. The
 [A2.5 report](reports/a2-5-transaction-rls-simplification.md) distinguishes the refined mechanism,
 current proofs, explicit migration obligations and unsupported transaction/pooling modes.
+
+The separate [Sales HTTP opt-in](../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+selects automatic setup with `ConnectionStrings:Sales`. Provision its two restricted runtime
+roles and run finite `--initialize-sales-rls` after ordinary migrations/seeding, following that
+guide. HTTP startup validates the finite role/policy inventory but never installs it. New cases
+run in `samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj` through the
+existing Wholesale PostgreSQL lane. The [A2.6 report](reports/a2-6-sales-http-rls.md) records
+the bounded adoption and distinguishes unchanged AppHost/transport behavior.

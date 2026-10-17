@@ -39,12 +39,20 @@ public static class DemoComposition
         services.AddHttpActorContext<ApplicationActorResolver>();
         services.AddInventoryDatabase(connection);
         services.AddInventoryQueries();
-        services.AddSalesDatabase(connection);
+        string? salesConnection = configuration.GetConnectionString("Sales");
+        if (salesConnection is not null && string.IsNullOrWhiteSpace(salesConnection))
+            throw new InvalidOperationException("ConnectionStrings:Sales must not be empty.");
+
+        services.AddSalesDatabase(
+            salesConnection ?? connection,
+            useRowSecurity: salesConnection is not null
+        );
         services.AddCustomerProfiles();
         services.AddDraftOrderQueries();
         services.AddDraftOrderCommands();
         services.AddScoped<IAuthorizationHandler, DraftOrderAuthorizationHandler>();
         services.AddScoped<DraftOrderEdits>();
+        services.AddScoped<SalesReadTransaction>();
         services.AddAntiforgery(options =>
         {
             options.HeaderName = "X-CSRF-TOKEN";

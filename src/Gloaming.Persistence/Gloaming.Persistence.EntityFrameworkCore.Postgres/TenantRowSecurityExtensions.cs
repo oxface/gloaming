@@ -155,11 +155,12 @@ public static class TenantRowSecurityExtensions
             runtime
             && (
                 property.GetTypeMapping().Converter is not null
-                || property.GetColumnType() != "text"
+                || property.GetRelationalTypeMapping().StoreTypeNameBase
+                    is not ("text" or "character varying" or "varchar")
             )
         )
             throw new InvalidOperationException(
-                "RLS currently supports only unconverted PostgreSQL text discriminators."
+                "RLS supports only unconverted PostgreSQL text or character varying discriminators."
             );
     }
 

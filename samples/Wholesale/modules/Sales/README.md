@@ -47,7 +47,7 @@ protected fields need their own selected capability and proof.
 The separate [opt-in PostgreSQL RLS consumer](../../CqrsDemo/TenantIsolation/README.md)
 adds database tenant equality on five Sales tables under restricted credentials and explicit
 transaction-local setup. It proves reads/existing-draft edits; ordinary module registration,
-HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
+default HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
 no within-tenant permission, authentication or protection from tenant-setting forgery by
 the credential holder.
 
@@ -55,6 +55,16 @@ The later [A2.3 utility extraction](../../../../docs/reports/a2-3-postgres-tenan
 replaces the executable's private setup helper with an optional Tenancy/PostgreSQL extension.
 Sales module registration and permission semantics remain unchanged; the executable owns
 that adapter reference and calls it explicitly inside each native transaction.
+
+The separate [Sales HTTP RLS composition](../../HttpIdentityDemo/README.md#optional-sales-http-row-security)
+now calls `AddSalesDatabase(connection, useRowSecurity: true)`. A stateless native EF model
+customizer selects six existing ownership mappings with `.WithRls`, including profile audit;
+EF caches this model separately from ordinary Sales options. No relational table/column or
+snapshot changes. Registration installs the optional capability and `UseRls` once.
+This mode requires caller-owned transactions for all EF commands, including queries and
+authorization checks. Its finite host installer supplies reviewed policies and restricted
+credentials; it does not enable grant administration, draft creation/submission, transport
+or workflow rights. The normal registration remains filter/save-validation based.
 
 ## Executable usage and evidence
 

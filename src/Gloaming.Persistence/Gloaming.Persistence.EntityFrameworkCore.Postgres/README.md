@@ -19,7 +19,8 @@ notes.HasTenantOwnership(
 `RequiredPartition` reads the same operation's
 `ITenantContextAccessor.Current.RequireTenant().Value`. One context uses one explicit,
 qualified lowercase setting name. Supported mappings are ordinary unshared single tables
-with unconverted PostgreSQL `text` ownership. Named EF filters, ownership concurrency and
+with unconverted PostgreSQL `text` or `character varying` (`varchar`) ownership. Blank-padded
+`character` remains unsupported; exact trailing spaces distinguish keys. Named EF filters, ownership concurrency and
 tracked-write validation stay in place. Static model validation is cached per completed
 model; tenant values and services are resolved from the runtime scope.
 
@@ -146,5 +147,8 @@ Use the container environment in the [development guide](../../../docs/developme
 The [transaction refinement report](../../../docs/reports/a2-5-transaction-rls-simplification.md)
 records fresh evidence. The [earlier session implementation](../../../docs/reports/a2-4-ownership-rls-capability.md)
 and [reference research](../../../docs/reports/a2-4-rls-capability-reference-research.md) retain history.
-This package has no default Wholesale HTTP/AppHost/worker or template rollout; Sales' existing
-opt-in executable retains explicit local setup.
+The [optional Sales HTTP composition](../../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+adopts this capability for six finite tables under separate restricted credentials. Its
+[report](../../../docs/reports/a2-6-sales-http-rls.md) records native varchar adoption and proofs.
+Default Wholesale HTTP/AppHost/worker/template rollout remains separate; the earlier opt-in
+CQRS executable retains explicit local setup.

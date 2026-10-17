@@ -351,6 +351,13 @@ public sealed partial class CompositionTests(PostgreSqlFixture postgres)
                 app,
                 subdomain ? "/draft-orders" : "/organizations/{organization}/draft-orders"
             );
+            if (app.Configuration.GetConnectionString("Sales") is { } salesRuntime)
+                await SalesHttpRowSecurity.VerifyRuntimeAsync(
+                    salesRuntime,
+                    app.Configuration.GetConnectionString("Access")!,
+                    Token
+                );
+
             await app.StartAsync(Token);
             return app;
         }

@@ -34,6 +34,11 @@ configuration. Copying or referencing one package does not automatically install
 family's context or policy. Consumers keep DI lifetimes, host wiring and native dependency
 selection visible.
 
+An optional [Sales HTTP composition](../../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+now exercises the PostgreSQL capability against six finite tables, including accepted profile
+audit. Unconverted PostgreSQL text/varchar ownership is supported; blank-padded character
+keys remain rejected. Default HTTP/AppHost/transport rollout remains separate.
+
 ## Deferred context
 
 Automatic stamping, automatic RLS policy scaffolding, tenant transfer, additional providers

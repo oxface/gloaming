@@ -38,7 +38,9 @@ Environment variables use double underscores instead of colons.
 
 | Key | Meaning |
 | --- | --- |
-| `ConnectionStrings:Access` | Shared PostgreSQL connection passed explicitly to Access, Inventory and Sales. |
+| `ConnectionStrings:Access` | Access/Inventory runtime connection; also Sales when its optional separate connection is absent. Finite demo initialization uses this connection as migration authority. |
+| `ConnectionStrings:Sales` | Optional separate restricted Sales runtime connection; selects automatic transaction-local RLS for profile/draft HTTP operations. |
+| `ConnectionStrings:SalesMigrations` | Sales table owner, used only by `--initialize-sales-rls`. Keep this credential out of normal HTTP configuration. |
 | `Oidc:Authority` | HTTPS OIDC provider authority for HTTP login. |
 | `Oidc:ClientId` | Registered authorization-code client. |
 | `Oidc:ClientSecret` | Credential when that client registration requires one. |
@@ -332,7 +334,81 @@ The response's lines/customer display fields share draft visibility in this boun
 
 Count and page use separate native statements; choose RepeatableRead for one snapshot when
 required. Grant changes can affect a later statement while the actor/tenant stay fixed.
-This is not permission-at-commit fencing, grant administration/audit, RLS, export/AI selection
+This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
 or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
 [scope](../../../docs/plans/a2-1-sales-resource-permissions.md) and
 [proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).
+
+## Optional Sales HTTP row security
+
+Supplying `ConnectionStrings:Sales` selects the optional
+[PostgreSQL capability](../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+for **all profile/draft HTTP requests**. It retains EF filters and Sales resource predicates.
+Tenant admission still runs once in the existing HTTP middleware order. Endpoint reads and
+late resource checks begin short native Sales transactions; profile writes and draft edits
+retain their existing transaction owners. The interceptor supplies the admitted tenant before
+the first protected statement. No endpoint calls a tenant-database setup helper or creates
+another operation scope. Native command failures still produce server errors.
+
+| Sales table | Runtime privileges; database boundary |
+| --- | --- |
+| `customer_profiles`, `customer_addresses`, `draft_orders`, `draft_order_lines` | SELECT/INSERT/UPDATE/DELETE, tenant equality through USING and WITH CHECK. |
+| `draft_order_grants` | SELECT only, tenant equality; this HTTP composition edits existing drafts and does not create grants. |
+| `audit_entries` | SELECT/INSERT, tenant equality; accepted profile audit commits with its business rows. |
+| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. |
+| Access/Inventory | Separate restricted connection for global admission and catalog work; no Sales table privileges. No new RLS policy. |
+
+Use a fresh disposable database, a migration-owner login and two separate runtime logins.
+Provision those logins independently, without superuser/BYPASSRLS/CREATEROLE/CREATEDB,
+privileged role memberships or Sales schema CREATE. Give the owner database/schema creation
+authority for finite migrations. Do not reuse the AppHost's default PostgreSQL admin credential.
+There is no automatic role/password creation.
+
+1. Run `--initialize-demo` with `ConnectionStrings:Access` temporarily supplied as the owner
+   connection. This applies the ordinary module migrations and seeds before RLS is installed.
+2. As the owner, grant the Access runtime role USAGE on `access`/`inventory`, SELECT/INSERT/
+   UPDATE/DELETE on the existing Access tables, and SELECT on `inventory.stock_availability`.
+   For example, for a separately provisioned `wholesale_access` login:
+
+   ```sql
+   GRANT USAGE ON SCHEMA access, inventory TO wholesale_access;
+   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA access TO wholesale_access;
+   GRANT SELECT ON inventory.stock_availability TO wholesale_access;
+   ```
+
+3. Set `ConnectionStrings:Access` to that restricted login, `ConnectionStrings:Sales` to
+   the separate Sales login, and `ConnectionStrings:SalesMigrations` to the table owner.
+   All three connections target that same database. Run:
+
+   ```bash
+   dotnet run --project samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj -- --initialize-sales-rls
+   ```
+
+4. Remove the migration credential from HTTP configuration and start HTTP normally.
+
+The finite [installer](SalesHttpRowSecurity.cs) applies explicit ENABLE/FORCE and USING/
+WITH CHECK operations plus only the listed Sales grants in one transaction. It does not
+change ordinary EF migration history, reconcile existing policies or support repeated setup.
+Keep this database separate from the earlier CQRS five-table RLS demonstration. Future
+policy changes need reviewed consumer migrations; model declarations do not scaffold policies.
+
+Startup checks the actual two runtime credentials, tenantless Sales baseline, finite table
+flags, policy shape/count and required/forbidden privileges. A failed check stops startup.
+This is a bounded catalog check, not certification of policy expression bodies, views/functions,
+other secrets, or subsequent administrative changes. Review those separately. Readiness retains
+its existing connectivity/schema check; it does not continually re-attest RLS policy.
+Never pass migration credentials to the HTTP host or enable these credentials in transport
+workers. The standard AppHost graph retains its existing credentials. Default single-connection
+HTTP mode remains supported and also uses the explicit read transactions; it enables no RLS.
+
+RLS supplies database tenant equality, not private-draft permissions, authentication or
+membership freshness. A credential holder can forge the custom tenant setting; same-tenant
+private rows still require Sales predicates. Missing/tenantless context and missing caller
+transactions reject protected EF work. DbContext pooling, external poolers and failover are
+not proved by this composition. Direct module callers in this selected mode must begin their
+own native Sales transaction around reads, resource checks and writes.
+
+[HTTP/PostgreSQL proofs](../HttpIdentityDemo.Tests/RowSecurityTests.cs) exercise native HTTP
+admission, actual restricted roles, Alpha/Beta/Alpha backend reuse, deliberately unfiltered SQL,
+exact varchar keys, read/list/edit permissions, raw write rejection and profile/audit rollback.
+The [slice report](../../../docs/reports/a2-6-sales-http-rls.md) records verification and limits.
