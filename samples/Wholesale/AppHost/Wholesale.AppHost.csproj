@@ -9,6 +9,8 @@
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="Aspire.Hosting.Keycloak" />
+    <!-- Security floor for Aspire/StreamJsonRpc's transitive MessagePack dependency. -->
+    <PackageReference Include="MessagePack" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
   </ItemGroup>
