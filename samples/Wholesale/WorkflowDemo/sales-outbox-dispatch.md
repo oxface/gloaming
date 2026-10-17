@@ -7,8 +7,8 @@ no business context, tenant accessor, inbox processing or deadline worker. The o
 combined `run` role remains available and retains its existing credential composition.
 
 This is the delivery boundary around tenant-scoped business operations. Dispatch needs to
-read committed messages for different tenants, so the queue retains its global policy and
-does not install `.UseRls()` or a synthetic tenantless business scope. The dispatch login
+read committed messages for different tenants, so the queue retains global read/delivery authority.
+This context does not install `.UseRls()` or a synthetic tenantless business scope. The dispatch login
 has no BYPASSRLS, ownership or access to the RLS-protected Sales business tables. Business
 operations still establish their own immutable actor/tenant context and own their commits.
 The separate [HTTP composition](../HttpIdentityDemo/README.md) covers six business tables;
@@ -48,8 +48,11 @@ environment. Nonempty values are rejected before any connection opens. This fini
 guards known composition keys; it is not a sandbox against arbitrary unrecognized secrets.
 
 Startup verifies the actual login, effective table/column grants and the existing outbox,
-then passively checks the existing workflow queues. It creates no storage or queues and
-rejects an outbox with RLS enabled rather than disabling its policies. The existing broker
+then passively checks the existing workflow queues. It creates no storage or queues. It accepts
+the ordinary unprotected queue or the explicit command policies installed by the optional
+[RLS reply processor](sales-inbox-rls.md): tenant-checked INSERT, global SELECT and delivery UPDATE.
+Other RLS policy inventories reject; this role never disables policies. Its grants still deny
+INSERT and limit UPDATE to delivery columns. The existing broker
 adapter opens its normal channels and checks all five workflow queues; narrower broker ACLs
 and a publisher-specific topology are separate work. Existing ServiceDefaults and optional
 messaging/RabbitMQ telemetry subscriptions are retained.

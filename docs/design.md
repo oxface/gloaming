@@ -203,6 +203,17 @@ setup and actual effective-grant checks remain sample policy; inbox tenant estab
 ordinary workflow defaults and library interfaces are unchanged. The
 [report](reports/a2-8-sales-outbox-dispatch.md) records proofs and remaining limits.
 
+The owner's [A2.9 inbox continuation](plans/a2-9-sales-inbox-rls.md) selects a bounded WF2
+reply processor per admitted Organization. Scoped factories establish immutable tenancy and the
+receiver-owned system actor before the existing processor starts its native transaction. The
+current interceptor initializes PostgreSQL automatically; inbox/workflow policies then protect
+raw claims, business state, completion and retry. A module entry checks the existing context
+without rebinding it. The original message-established handler retains the same continuation.
+Outgoing INSERTs require the transaction tenant through a command-specific policy; global queue
+read/delivery policies preserve the separate restricted dispatcher. No Gloaming interface,
+implementation, new transaction owner or schema migration is added. The
+[report](reports/a2-9-sales-inbox-rls.md) distinguishes fresh evidence and deployment/coverage limits.
+
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,
 not the actor concurrency model. `Gloaming.Tenancy` covers selected tenant or deliberate

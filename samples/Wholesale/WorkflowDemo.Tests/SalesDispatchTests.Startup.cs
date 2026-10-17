@@ -9,6 +9,8 @@ public sealed partial class SalesDispatchTests
 {
     [Theory(Timeout = 60_000)]
     [InlineData("ConnectionStrings__SalesDispatchSetup")]
+    [InlineData("ConnectionStrings__SalesReplies")]
+    [InlineData("ConnectionStrings__SalesRepliesSetup")]
     [InlineData("ConnectionStrings__Sales")]
     [InlineData("ConnectionStrings__Inventory")]
     [InlineData("ConnectionStrings__Access")]

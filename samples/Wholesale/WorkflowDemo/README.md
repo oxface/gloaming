@@ -7,6 +7,10 @@ For an independent Sales dispatcher with a database login limited to the existin
 use the optional [restricted dispatch role](sales-outbox-dispatch.md). Inbox processing and
 the ordinary combined `run` role retain their existing composition.
 
+The optional [RLS reservation-reply processor](sales-inbox-rls.md) assigns one admitted
+Organization to each worker instance, establishes fresh operation contexts automatically and
+preserves atomic workflow/outbox/inbox completion with restricted credentials.
+
 WF1 demonstrates Sales-owned progress across an independently committed Inventory command.
 The modules communicate through their versioned Contracts using the existing Gloaming
 inbox/outbox. The executable owns transport and hosting. WF2 opts into the typed continuation

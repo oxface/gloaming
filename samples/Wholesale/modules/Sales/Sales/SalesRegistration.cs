@@ -47,12 +47,7 @@ public static class SalesRegistration
     /// <summary>Registers the compensating two-line process, leaving transport and worker hosting explicit.</summary>
     public static IServiceCollection AddStockReservationOrders(this IServiceCollection services)
     {
-        RegisterMessaging(services);
-        services.AddWorkflow<
-            SalesDbContext,
-            StartStockReservationOrder,
-            ReservationOrders.ReservationState
-        >(_ => ReservationOrders.ReservationWorkflow.Define());
+        RegisterReservationWorkflow(services);
         services.AddInboxHandler<SalesDbContext, ReservationOrders.StockReservationReplyHandler>(
             StockReservationReplyAdmission.Subscription
         );
@@ -60,6 +55,29 @@ public static class SalesRegistration
             IStockReservationOrders,
             ReservationOrders.StockReservationOrders
         >();
+    }
+
+    /// <summary>Registers reply processing for a host-admitted immutable tenant/system-actor scope.</summary>
+    public static IServiceCollection AddAdmittedStockReservationReplies(
+        this IServiceCollection services
+    )
+    {
+        RegisterReservationWorkflow(services);
+        services.AddScoped<ReservationOrders.StockReservationReplyHandler>();
+        return services.AddInboxHandler<
+            SalesDbContext,
+            ReservationOrders.AdmittedStockReservationReplyHandler
+        >(StockReservationReplyAdmission.Subscription);
+    }
+
+    private static void RegisterReservationWorkflow(IServiceCollection services)
+    {
+        RegisterMessaging(services);
+        services.AddWorkflow<
+            SalesDbContext,
+            StartStockReservationOrder,
+            ReservationOrders.ReservationState
+        >(_ => ReservationOrders.ReservationWorkflow.Define());
     }
 
     /// <summary>Registers Sales requests and reply processing without starting workers or configuring transport.</summary>

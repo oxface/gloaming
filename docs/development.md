@@ -685,3 +685,11 @@ tenant RLS on the global queue or adopt inbox/business worker paths. The existin
 project includes both-tenant delivery, database privilege controls, real publication failure,
 competing child processes and death/restart after confirmed publication. The
 [A2.8 report](reports/a2-8-sales-outbox-dispatch.md) records fresh evidence and limits.
+
+The optional [WF2 RLS inbox role](../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) uses explicit
+`setup-sales-replies`, then `process-sales-replies` with only `ConnectionStrings:SalesReplies`
+and one admitted `Organization`. Existing scoped processing automatically receives immutable
+tenant/system-actor contexts before its transaction; no per-message tenant-database setup call
+is needed. It protects workflow/inbox rows and outgoing INSERTs while retaining global dispatch.
+The same workflow suite exercises this composition and the related local-delivery suite covers
+the retained default handler. [A2.9 evidence](reports/a2-9-sales-inbox-rls.md) is recorded separately.

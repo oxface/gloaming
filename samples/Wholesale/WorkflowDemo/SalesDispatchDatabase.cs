@@ -31,7 +31,7 @@ internal static class SalesDispatchDatabase
             var check = new NpgsqlCommand(
                 """
                 SELECT current_user <> @runtime AND c.relowner = current_user::regrole
-                    AND c.relkind = 'r' AND NOT c.relrowsecurity
+                    AND c.relkind = 'r'
                 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
                 WHERE n.nspname = 'sales' AND c.relname = 'outbox_messages'
                 """,
@@ -107,7 +107,7 @@ internal static class SalesDispatchDatabase
                 AND EXISTS (
                     SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
                     WHERE n.nspname = 'sales' AND c.relname = 'outbox_messages'
-                        AND c.relkind = 'r' AND NOT c.relrowsecurity
+                        AND c.relkind = 'r'
                         AND NOT pg_has_role(r.oid, c.relowner, 'MEMBER')
                         AND has_schema_privilege(r.oid, n.oid, 'USAGE')
                         AND has_table_privilege(r.oid, c.oid, 'SELECT')
@@ -142,7 +142,14 @@ internal static class SalesDispatchDatabase
         );
         command.Parameters.AddWithValue("runtime", runtime.Username ?? "");
         command.Parameters.AddWithValue("columns", DeliveryColumns);
-        if (await command.ExecuteScalarAsync(cancellationToken) is not true)
+        if (
+            await command.ExecuteScalarAsync(cancellationToken) is not true
+            || !await SalesOutboxPolicies.VerifyAsync(
+                connection,
+                requireTenantWrites: false,
+                cancellationToken
+            )
+        )
             throw new InvalidOperationException(
                 "The Sales dispatch role or outbox grants are unsafe."
             );

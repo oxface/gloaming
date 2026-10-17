@@ -66,6 +66,15 @@ authorization checks. Its finite host installer supplies reviewed policies and r
 credentials; it does not enable grant administration, draft creation/submission, transport
 or workflow rights. The normal registration remains filter/save-validation based.
 
+The separate [WF2 reply processor](../../WorkflowDemo/sales-inbox-rls.md) uses
+`AddSalesReservationReplyDatabase` and `AddAdmittedStockReservationReplies` with a host-established
+immutable Organization/system-actor scope. The inbox processor still owns its native transaction,
+saves and commit. A different stateless model selects workflow/inbox RLS and keeps named ownership
+filters; the admitted handler checks existing context rather than initializing it again. The
+original handler continues to establish context from an admitted message before the same workflow
+continuation logic. Its existing `AddStockReservationOrders` registration remains available.
+This consumer profile adds no Gloaming interface, schema migration or general worker bootstrap.
+
 ## Executable usage and evidence
 
 - [HTTP identity/admission consumer](../../HttpIdentityDemo/README.md#private-draft-permissions)

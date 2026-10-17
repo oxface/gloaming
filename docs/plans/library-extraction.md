@@ -53,7 +53,13 @@ checkpointed as `192fe7d`: optional finite runtime-role provisioning and explici
 role, a context limited to the existing queue and column-level delivery grants, using the
 existing dispatcher/worker. [Consumer setup](../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md)
 and the [report](../reports/a2-8-sales-outbox-dispatch.md) separate cross-tenant queue authority
-from business RLS. Inbox adoption, default rollout, templates and library interfaces remain separate.
+from business RLS. A2.8 is owner-approved and checkpointed as `087a008`.
+The selected [A2.9 inbox continuation](a2-9-sales-inbox-rls.md) adds an optional WF2 processor per
+admitted Organization, automatic operation contexts and existing native RLS/processor transactions.
+[Consumer usage](../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) and the
+[report](../reports/a2-9-sales-inbox-rls.md) cover atomic workflow/outbox/inbox effects and
+command-specific enqueue protection that preserves global dispatch. Broader coverage, production
+rollout, templates and library interfaces remain separately selectable.
 
 The completed [E9 audit slice](e9-explicit-transactional-audit.md) deliberately excludes
 correlation, causation and trace IDs under the owner's YAGNI decision; these remain messaging

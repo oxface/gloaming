@@ -18,6 +18,56 @@ using OpenTelemetry.Trace;
 var builder = Host.CreateApplicationBuilder(args);
 string role = builder.Configuration["role"] ?? "run";
 using var startup = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+if (role == "setup-sales-replies")
+{
+    await SalesReplyDatabase.ProvisionAsync(
+        Required("ConnectionStrings:SalesRepliesSetup"),
+        Required("ConnectionStrings:SalesReplies"),
+        startup.Token
+    );
+    Console.WriteLine("Sales reply role, policies and grants ready.");
+    return;
+}
+
+if (role == "process-sales-replies")
+{
+    foreach (
+        string key in new[]
+        {
+            "ConnectionStrings:SalesRepliesSetup",
+            "ConnectionStrings:SalesDispatchSetup",
+            "ConnectionStrings:SalesDispatch",
+            "ConnectionStrings:Sales",
+            "ConnectionStrings:Inventory",
+            "ConnectionStrings:Access",
+            "ConnectionStrings:Setup",
+            "ConnectionStrings:SalesMigrations",
+            "ConnectionStrings:RabbitMq",
+            "Parameters:postgres-password",
+        }
+    )
+        if (!string.IsNullOrEmpty(builder.Configuration[key]))
+            throw new InvalidOperationException(
+                "Keep provisioning, alternate database and broker credentials out of the Sales reply host."
+            );
+
+    string runtime = Required("ConnectionStrings:SalesReplies");
+    builder.Services.AddSalesReservationReplyProcessing(runtime, Required("Organization"));
+    await SalesReplyDatabase.VerifyAsync(runtime, startup.Token);
+    builder.Services.AddInboxWorker<SalesDbContext>(
+        StockReservationReplyAdmission.Subscription,
+        new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
+    );
+    builder.AddServiceDefaults();
+    builder
+        .Services.AddOpenTelemetry()
+        .WithTracing(tracing => tracing.AddGloamingMessaging())
+        .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    using var replyHost = builder.Build();
+    await replyHost.RunAsync();
+    return;
+}
+
 if (role == "setup-sales-dispatch")
 {
     await SalesDispatchDatabase.ProvisionAsync(
@@ -35,6 +85,8 @@ if (role == "dispatch-sales")
         string key in new[]
         {
             "ConnectionStrings:SalesDispatchSetup",
+            "ConnectionStrings:SalesReplies",
+            "ConnectionStrings:SalesRepliesSetup",
             "ConnectionStrings:Sales",
             "ConnectionStrings:Inventory",
             "ConnectionStrings:Access",
