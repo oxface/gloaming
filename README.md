@@ -16,8 +16,8 @@ independently selectable; a family folder does not add an umbrella dependency.
 | Family | Packages |
 | --- | --- |
 | [ActorIdentity](src/Gloaming.ActorIdentity/README.md) | Core and optional ASP.NET Core adapter |
-| [Tenancy](src/Gloaming.Tenancy/README.md) | Core and optional ASP.NET Core adapter |
-| [Persistence](src/Gloaming.Persistence/README.md) | EF Core ownership utilities |
+| [Tenancy](src/Gloaming.Tenancy/README.md) | Core, optional ASP.NET Core admission and explicit PostgreSQL transaction context |
+| [Persistence](src/Gloaming.Persistence/README.md) | EF Core ownership utilities and optional PostgreSQL RLS |
 | [EntityFrameworkCore](src/Gloaming.EntityFrameworkCore/README.md) | Model-selected preparation and validation through common save composition |
 | [Events](src/Gloaming.Events/README.md) | Independent serialization and history utilities |
 | [EventReactions](src/Gloaming.EventReactions/README.md) | Composable event buffers, ordered reactions and optional EF preparation |

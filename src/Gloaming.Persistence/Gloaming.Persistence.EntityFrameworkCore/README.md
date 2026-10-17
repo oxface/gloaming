@@ -115,9 +115,33 @@ See [the executable Inventory/Sales consumer](../../../samples/Wholesale/Persist
 ## Deferred direction
 
 Automatic trusted-owner assignment is not implemented; the current mechanism rejects absent,
-foreign or changed ownership rather than filling it. Raw/bulk writes and database-level RLS
-remain outside tracked-save validation. Table metadata could support an optional PostgreSQL
-adapter for USING/WITH CHECK policies, but role/context handling, privilege bypass, pooled
-connections, rollback and competing writers need actual database proofs. No provider package
-or universal SQL abstraction has been selected. Additional providers/mapping shapes require
-their own identity, native-predicate and transaction evidence.
+foreign or changed ownership rather than filling it. Raw/bulk writes remain outside this
+provider-independent adapter's tracked-save validation. Tenant transfer, additional providers
+and complex/shared/inherited mapping shapes need their own proofs.
+
+The optional [PostgreSQL adapter](../Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+now adds `.HasTenantOwnership(...).WithRls(settingName)`, explicit read/write policy migration
+helpers and automatic scoped transaction setup through a native transaction interceptor. This package stays
+independent of Tenancy and Npgsql. `FindTenantOwnershipProperty` exposes the declared property
+for optional integrations without duplicating private annotation names.
+
+The separate [A2.2 Sales consumer](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md)
+now demonstrates restricted-role policies and explicit native setup, with
+[role/lifecycle proofs and limits](../../../docs/reports/a2-2-sales-postgres-rls.md). It is
+sample-owned SQL, not a capability of this adapter. RLS does not enforce within-tenant
+permissions or contain a credential holder who can forge the custom tenant setting.
+
+That consumer now uses the separate
+[Tenancy/PostgreSQL context utility](../../Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+for explicit transaction setup. This Persistence adapter remains independent of Tenancy and
+Npgsql and does not generate policies or automatically bind context.
+
+The [A2.4 implementation report](../../../docs/reports/a2-4-ownership-rls-capability.md)
+records the separate optional adapter's executable usage, read/write proofs and limitations.
+The [reference comparison](../../../docs/reports/a2-4-rls-capability-reference-research.md)
+retains the earlier proposal and source evidence.
+
+The later [transaction simplification](../../../docs/reports/a2-5-transaction-rls-simplification.md)
+uses direct `.UseRls<TContext>(provider)` installation and existing caller-owned transactions.
+The shared save coordinator retains its original dependency/interface; native transaction
+setup belongs entirely to the optional provider adapter.

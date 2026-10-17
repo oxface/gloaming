@@ -10,6 +10,17 @@ namespace Gloaming.Persistence.EntityFrameworkCore;
 
 public static class TenantOwnershipExtensions
 {
+    /// <summary>Reads the declared ownership property for optional provider integrations.</summary>
+    public static IReadOnlyProperty? FindTenantOwnershipProperty(this IReadOnlyEntityType entity)
+    {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        return
+            entity.FindAnnotation(TenantOwnershipMetadata.PropertyAnnotation)?.Value is string name
+            ? entity.FindProperty(name)
+            : null;
+    }
+
     /// <summary>
     /// Configures consumer-populated ownership, a named equality filter and an ownership
     /// concurrency token. The key expression must read a member on the DbContext instance.

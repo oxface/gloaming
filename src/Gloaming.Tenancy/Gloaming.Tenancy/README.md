@@ -55,3 +55,7 @@ EF ownership filtering/write validation is implemented in Persistence.EntityFram
 Neither becomes a dependency of this core. No cross-process context format or database
 isolation mechanism is supplied here. Future worker/message integration needs its own explicit
 selection/admission and compatibility contract; membership remains consumer policy.
+
+The optional [PostgreSQL context utility](../Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+connects this immutable context to the caller's explicit EF transaction. It remains a
+separate adapter; this core acquires no EF, Npgsql, Access or resource-permission dependency.

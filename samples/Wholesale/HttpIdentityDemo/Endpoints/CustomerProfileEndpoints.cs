@@ -18,11 +18,14 @@ public static class CustomerProfileEndpoints
     private static async Task<Results<Ok<CustomerProfile>, NotFound, ProblemHttpResult>> ReadAsync(
         Guid customerId,
         ICustomerProfiles profiles,
+        SalesReadTransaction transactions,
         CancellationToken cancellation
     )
     {
         if (customerId == Guid.Empty)
             return TypedResults.Problem(statusCode: 400, title: "Invalid customer ID.");
+
+        await using var transaction = await transactions.BeginAsync(cancellation);
         CustomerProfile? profile = await profiles.ReadAsync(customerId, cancellation);
         return profile is null ? TypedResults.NotFound() : TypedResults.Ok(profile);
     }

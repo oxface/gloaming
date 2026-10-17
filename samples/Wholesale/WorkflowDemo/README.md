@@ -3,6 +3,14 @@
 The same host also runs [WF2's two-line reservation saga with compensation](compensating-reservations.md).
 Its separate commands and business state preserve the WF1 journey below.
 
+For an independent Sales dispatcher with a database login limited to the existing outbox,
+use the optional [restricted dispatch role](sales-outbox-dispatch.md). Inbox processing and
+the ordinary combined `run` role retain their existing composition.
+
+The optional [RLS reservation-reply processor](sales-inbox-rls.md) assigns one admitted
+Organization to each worker instance, establishes fresh operation contexts automatically and
+preserves atomic workflow/outbox/inbox completion with restricted credentials.
+
 WF1 demonstrates Sales-owned progress across an independently committed Inventory command.
 The modules communicate through their versioned Contracts using the existing Gloaming
 inbox/outbox. The executable owns transport and hosting. WF2 opts into the typed continuation
@@ -46,7 +54,7 @@ dotnet run --project samples/Wholesale/WorkflowDemo -- --role seed --StockId 8c6
 dotnet run --project samples/Wholesale/WorkflowDemo -- --role run
 ```
 
-Setup applies each module's own migrations and creates two durable queues. Seed explicitly
+Setup applies each module's own migrations and creates five durable workflow queues. Seed explicitly
 opens a new stock position and receives quantity 5, producing version 2. It is a demonstration
 seed for a fresh identity, not an idempotent provisioning API. `run` validates existing storage
 and queues, then hosts the provided outbox and inbox workers for each module, native intake,

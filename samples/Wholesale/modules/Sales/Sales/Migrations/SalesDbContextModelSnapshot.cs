@@ -19,6 +19,12 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("sales")
+                .HasAnnotation("Gloaming:Requires:audit", true)
+                .HasAnnotation("Gloaming:Requires:event-reactions", true)
+                .HasAnnotation("Gloaming:Requires:inbox", true)
+                .HasAnnotation("Gloaming:Requires:outbox", true)
+                .HasAnnotation("Gloaming:Requires:tenant-ownership", true)
+                .HasAnnotation("Gloaming:Requires:workflows", true)
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -437,6 +443,75 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
             );
 
             modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderGrantRow",
+                b =>
+                {
+                    b.Property<string>("OrganizationKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key");
+
+                    b.Property<Guid>("OrderId").HasColumnType("uuid").HasColumnName("order_id");
+
+                    b.Property<int>("SubjectKind")
+                        .HasColumnType("integer")
+                        .HasColumnName("subject_kind");
+
+                    b.Property<string>("SubjectKey")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("subject_key");
+
+                    b.Property<int>("Permission")
+                        .HasColumnType("integer")
+                        .HasColumnName("permission");
+
+                    b.HasKey(
+                        "OrganizationKey",
+                        "OrderId",
+                        "SubjectKind",
+                        "SubjectKey",
+                        "Permission"
+                    );
+
+                    b.HasIndex("OrganizationKey", "SubjectKind", "SubjectKey", "OrderId");
+
+                    b.ToTable(
+                        "draft_order_grants",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint(
+                                "ck_draft_grant_key",
+                                "subject_key ~ '[^[:space:]]'"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_draft_grant_permission",
+                                "permission IN (1, 2)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_draft_grant_subject",
+                                "subject_kind IN (2, 3)"
+                            );
+                        }
+                    );
+
+                    b.HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantOwnershipProperty",
+                            "OrganizationKey"
+                        );
+                }
+            );
+
+            modelBuilder.Entity(
                 "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderLineRow",
                 b =>
                 {
@@ -698,6 +773,21 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .WithMany()
                         .HasForeignKey("OrganizationKey", "CustomerId")
                         .HasPrincipalKey("OrganizationKey", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                }
+            );
+
+            modelBuilder.Entity(
+                "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderGrantRow",
+                b =>
+                {
+                    b.HasOne(
+                            "ModulithFoundry.Samples.Wholesale.Sales.DraftOrders.DraftOrderRow",
+                            null
+                        )
+                        .WithMany()
+                        .HasForeignKey("OrganizationKey", "OrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 }

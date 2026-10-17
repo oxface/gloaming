@@ -121,11 +121,19 @@ public sealed partial class ReactionTests
         await sales.Database.MigrateAsync(Token);
         var after = (await sales.Database.GetAppliedMigrationsAsync(Token)).ToArray();
         Assert.Equal(before, after.Take(before.Length));
-        Assert.Equal(before.Length + 1, after.Length);
+        Assert.Equal(sales.Database.GetMigrations(), after);
         Assert.False(sales.Database.HasPendingModelChanges());
-        var draft = await migrated
-            .ServiceProvider.GetRequiredService<IDraftOrderQueries>()
-            .ReadAsync(First, Token);
+        // Upgrading storage invents no resource grants for historical rows.
+        Assert.Null(
+            await migrated
+                .ServiceProvider.GetRequiredService<IDraftOrderQueries>()
+                .ReadAsync(First, Token)
+        );
+        var stored = await sales
+            .DraftOrders.AsNoTracking()
+            .Include(row => row.Lines)
+            .SingleAsync(row => row.Id == First, Token);
+        var draft = stored.ToAggregate().ToView();
         Assert.NotNull(draft);
         Assert.False(draft.IsSubmitted);
         Assert.Equal(1, draft.Version);

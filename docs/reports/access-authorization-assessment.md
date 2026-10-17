@@ -7,6 +7,13 @@ library interface or ADR is selected. [A1 scope](../plans/a1-access-resource-aut
 [original intake](access-authorization-research-intake.md),
 [primary-source/version evidence](access-authorization-primary-sources.md).
 
+Current-code reconciliation, 2026-10-16: A1.1 is merged at `d35b3ee`; its
+[implementation report](a1-1-membership-suspension.md) supersedes the baseline absence of
+membership commands/revision/audit and the proposed A1.1 protocol below. Those sections
+retain their dated assessment meaning. [A2's assessment](tenant-authorization-assessment.md)
+reconciles current code and optional RLS; its source/configuration findings are not new
+database enforcement proofs.
+
 ## Recommendation
 
 Start Umbrine with native ASP.NET imperative resource authorization and focused,
@@ -37,7 +44,7 @@ Historical test results retain their original dates and do not prove A1/A1.1.
 | --- | --- |
 | [AccessRows](../../samples/Wholesale/modules/Access/Access/Persistence/AccessRows.cs), [mapping](../../samples/Wholesale/modules/Access/Access/Persistence/AccessDbContext.cs) | Stable users, issuer/subject links, Organizations and Active=1/Suspended=2/Removed=3 memberships exist. One Active/Suspended row per Organization/user is enforced; removed history may coexist. No membership revision/concurrency token, permissions, roles or Personnel model exists. Organization availability/licensing is not modeled here. |
 | [ApplicationAccess](../../samples/Wholesale/modules/Access/Access/ApplicationAccess.cs), [Contracts](../../samples/Wholesale/modules/Access/Access.Contracts/IApplicationAccess.cs), [registration](../../samples/Wholesale/modules/Access/Access/AccessRegistration.cs) | Read-only lookup/admission; global identity resolution is independent of selected Organization. Admission reads persisted Active membership. No suspend/reactivate command or Access audit integration exists. |
-| [HTTP composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs), [resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs), [ADR 0003](../adr/0003-access-registry-and-operation-admission.md) | Native authorization → actor mapping → Organization admission/tenant publication → endpoint. Early native handlers cannot depend on established actor/tenant. Public Organization catalog access is an intentional exception, including mapped non-members; suspension does not close public routes. |
+| [HTTP composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs), [actor evaluator](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/ActorContextPolicyEvaluator.cs), [resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs), [ADR 0003](../adr/0003-access-registry-and-operation-admission.md) | Policy authentication → actor establishment → native authorization → actor completion → Organization admission/tenant publication → endpoint. Corrected by A2: native handlers can consume actor context, but not established tenancy. Public Organization catalog access is an intentional exception, including mapped non-members; suspension does not close public routes. |
 | [AdmissionTests](../../samples/Wholesale/HttpIdentityDemo.Tests/AdmissionTests.cs), [seed](../../samples/Wholesale/modules/Access/Access/AccessDemoSeed.cs) | Source cases cover suspended/removed denial and next admission with the same cookie while preserving global identity. The in-flight case explicitly uses Removed, not Suspended. Seeded alpha has two active Organizations. Tests mutate SQL directly; they do not prove authorized administration, audited races, reactivation or the combined business read/write/other-Organization journey. |
 | [Sales queries](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderQueries.cs), [filters](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderFilters.cs), [transaction cases](../../samples/Wholesale/CqrsDemo.Tests/QueryTests.Transactions.cs) | C1 composes Sales-owned joins/child totals, filters before count and stable total/ID paging. Count/page are separate statements; repeatable read is caller-owned. There is no resource-permission predicate. |
 | [C1 composition](../../samples/Wholesale/CqrsDemo/CqrsComposition.cs), [draft commands](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderCommands.cs) | Console setup supplies finite identities directly. Commands check human actor, selected tenant and transaction; those checks do not look up current membership or resource grants. Trusted ingress remains the caller's obligation, despite the phrase “admitted human” in an exception. |
@@ -400,7 +407,8 @@ revocation. Access's pre-admission global identity/membership registry must rema
 without a fake tenant/filter bypass. No RLS policy, migration, mandatory provider dependency
 or Tenancy→Access/FGA dependency is introduced. A2's runtime-role, connection, pooling,
 transaction/retry and bypass proof matrix remains open; this is coordination, not completion
-of A2 research.
+of A2 research. The subsequent [A2 assessment](tenant-authorization-assessment.md) now
+supplies the role/lifecycle/protection analysis; executable RLS proofs remain proposed.
 
 | Choice | Cost/fit recommendation |
 | --- | --- |

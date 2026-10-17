@@ -46,7 +46,9 @@
     <ProjectReference Include="../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/Gloaming.ActorIdentity.AspNetCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
     <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/Gloaming.Tenancy.AspNetCore.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../samples/Wholesale/ContextDemo/ContextDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj" />
@@ -59,6 +61,26 @@
     <Using Include="Xunit" />
   </ItemGroup>
   <ItemGroup>
+    <None
+      Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj"
+      Link="ProjectDeclarations/PostgresTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj"
+      Link="ProjectDeclarations/TenancyPostgresTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <None
       Include="../../src/Gloaming.EventReactions/Gloaming.EventReactions/Gloaming.EventReactions.csproj"
       Link="ProjectDeclarations/Gloaming.EventReactions.csproj"

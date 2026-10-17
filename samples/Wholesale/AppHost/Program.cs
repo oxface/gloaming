@@ -7,10 +7,33 @@ var postgres = builder.AddPostgres("postgres", password: password).WithImageTag(
 if (builder.Configuration.GetValue("LocalDevelopment:UseDataVolume", true))
     postgres.WithDataVolume();
 var database = postgres.AddDatabase("wholesale", "wholesale");
+bool useRowSecurity = builder.Configuration.GetValue("LocalDevelopment:UseSalesRowSecurity", false);
+IResourceBuilder<IResourceWithConnectionString> access = database;
+IResourceBuilder<IResourceWithConnectionString>? sales = null;
+IResourceBuilder<ParameterResource>? accessPassword = null;
+IResourceBuilder<ParameterResource>? salesPassword = null;
+if (useRowSecurity)
+{
+    accessPassword = builder.AddParameter("access-runtime-password", secret: true);
+    salesPassword = builder.AddParameter("sales-runtime-password", secret: true);
+    var endpoint = postgres.Resource.PrimaryEndpoint;
+    access = builder.AddConnectionString(
+        "access-runtime",
+        ReferenceExpression.Create(
+            $"Host={endpoint.Property(EndpointProperty.Host)};Port={endpoint.Property(EndpointProperty.Port)};Database=wholesale;Username=wholesale_access"
+        )
+    );
+    sales = builder.AddConnectionString(
+        "sales-runtime",
+        ReferenceExpression.Create(
+            $"Host={endpoint.Property(EndpointProperty.Host)};Port={endpoint.Property(EndpointProperty.Port)};Database=wholesale;Username=wholesale_sales"
+        )
+    );
+}
 
 var api = builder
     .AddProject("api", "../HttpIdentityDemo/HttpIdentityDemo.csproj", launchProfileName: null)
-    .WithReference(database, connectionName: "Access")
+    .WithReference(access, connectionName: "Access")
     .WithHttpEndpoint(name: "http")
     .WithHttpsEndpoint(name: "https")
     .WithHttpHealthCheck("/health/ready")
@@ -23,10 +46,28 @@ var setup = builder
         "../HttpIdentityDemo/HttpIdentityDemo.csproj",
         launchProfileName: null
     )
-    .WithReference(database, connectionName: "Access")
-    .WithArgs("--initialize-demo")
+    .WithReference(access, connectionName: "Access")
+    .WithArgs(useRowSecurity ? "--initialize-rls-demo" : "--initialize-demo")
     .WaitFor(database)
     .WithExplicitStart();
+
+if (useRowSecurity)
+{
+    // Passwords remain separate secret parameters. The consumer uses Npgsql's builder to escape
+    // them; no admin connection or provisioning password reaches the API.
+    api.WithReference(sales!, connectionName: "Sales")
+        .WithEnvironment("RuntimePasswords__Access", accessPassword!)
+        .WithEnvironment("RuntimePasswords__Sales", salesPassword!)
+        .WithEnvironment("ConnectionStrings__Setup", "")
+        .WithEnvironment("ConnectionStrings__SalesMigrations", "")
+        .WithEnvironment("Parameters__postgres-password", "")
+        .WithExplicitStart();
+    setup
+        .WithReference(database, connectionName: "Setup")
+        .WithReference(sales!, connectionName: "Sales")
+        .WithEnvironment("RuntimePasswords__Access", accessPassword!)
+        .WithEnvironment("RuntimePasswords__Sales", salesPassword!);
+}
 
 if (builder.Configuration.GetValue("LocalDevelopment:UseLocalIdentityProvider", false))
 {

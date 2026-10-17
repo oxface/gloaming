@@ -76,6 +76,7 @@ jobs:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   persistence:
@@ -88,6 +89,7 @@ jobs:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   events:

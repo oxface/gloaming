@@ -21,6 +21,7 @@ public sealed class SalesDbContext(
     internal DbSet<AddressRow> Addresses => Set<AddressRow>();
     internal DbSet<DraftOrderRow> DraftOrders => Set<DraftOrderRow>();
     internal DbSet<DraftOrderLineRow> DraftOrderLines => Set<DraftOrderLineRow>();
+    internal DbSet<DraftOrderGrantRow> DraftOrderGrants => Set<DraftOrderGrantRow>();
     internal DbSet<OrderAllowanceRow> OrderAllowances => Set<OrderAllowanceRow>();
     internal string RequiredOrganizationKey => tenancy.Current.RequireTenant().Value;
 
@@ -29,6 +30,7 @@ public sealed class SalesDbContext(
         modelBuilder.ConfigureEventReactions();
         modelBuilder.HasDefaultSchema("sales");
         DraftOrderMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
+        DraftOrderGrantRow.Configure(modelBuilder, () => RequiredOrganizationKey);
         OrderAllowanceRow.Configure(modelBuilder, () => RequiredOrganizationKey);
         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(

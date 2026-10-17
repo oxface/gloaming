@@ -302,6 +302,7 @@ public sealed partial class CompositionTests(PostgreSqlFixture postgres)
                         .Initialize(TenantContext.ForTenant(new TenantId(organization)));
                     var sales = seedScope.ServiceProvider.GetRequiredService<SalesDbContext>();
                     SalesDemoSeed.Stage(sales);
+                    DraftOrderAccessDemoSeed.Stage(sales);
                     await sales.SaveChangesAsync(Token);
                 }
                 await ExecuteAsync(
@@ -346,6 +347,17 @@ public sealed partial class CompositionTests(PostgreSqlFixture postgres)
                     ? "/memberships/{membershipId:guid}"
                     : "/organizations/{organization}/memberships/{membershipId:guid}"
             );
+            DraftOrderEndpoints.Map(
+                app,
+                subdomain ? "/draft-orders" : "/organizations/{organization}/draft-orders"
+            );
+            if (app.Configuration.GetConnectionString("Sales") is { } salesRuntime)
+                await SalesHttpRowSecurity.VerifyRuntimeAsync(
+                    salesRuntime,
+                    app.Configuration.GetConnectionString("Access")!,
+                    Token
+                );
+
             await app.StartAsync(Token);
             return app;
         }

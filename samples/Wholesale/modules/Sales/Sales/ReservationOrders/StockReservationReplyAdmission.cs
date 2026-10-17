@@ -9,6 +9,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 public static class StockReservationReplyAdmission
 {
     public const string Subscription = "sales.reservation-outcomes";
+    public const string WorkerActor = "sales.reservation-worker";
     private static readonly JsonEventCodec<object> Codec = new(
         new JsonSerializerOptions(JsonSerializerDefaults.Web),
         [

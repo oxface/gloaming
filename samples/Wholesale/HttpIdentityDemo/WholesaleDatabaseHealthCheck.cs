@@ -19,13 +19,22 @@ internal sealed class WholesaleDatabaseHealthCheck(IConfiguration configuration)
             await connection.OpenAsync(cancellationToken);
             await using var command = new NpgsqlCommand(
                 """
-                SELECT to_regclass('access.users') IS NOT NULL
-                    AND to_regclass('access.external_identities') IS NOT NULL
-                    AND to_regclass('access.organizations') IS NOT NULL
-                    AND to_regclass('access.memberships') IS NOT NULL
-                    AND to_regclass('inventory.stock_availability') IS NOT NULL
-                    AND to_regclass('sales.customer_profiles') IS NOT NULL
-                    AND to_regclass('sales.customer_addresses') IS NOT NULL
+                WITH required_tables(schema_name, table_name) AS (
+                    VALUES ('access', 'users'), ('access', 'external_identities'),
+                           ('access', 'organizations'), ('access', 'memberships'),
+                           ('inventory', 'stock_availability'),
+                           ('sales', 'customer_profiles'), ('sales', 'customer_addresses')
+                )
+                SELECT NOT EXISTS (
+                    SELECT 1 FROM required_tables required
+                    WHERE NOT EXISTS (
+                        SELECT 1
+                        FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                        WHERE n.nspname = required.schema_name
+                          AND c.relname = required.table_name
+                          AND c.relkind IN ('r', 'p')
+                    )
+                )
                 """,
                 connection
             );

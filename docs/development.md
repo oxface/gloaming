@@ -529,6 +529,50 @@ Tests use Testcontainers PostgreSQL 18.6 and the rootless Podman socket environm
 [The D1.1 report](reports/d1-1-rich-state-stored-aggregate.md) separates new domain/persistence
 proofs from earlier evidence and records native-write bypass limitations.
 
+## Sales resource permissions
+
+Sales draft resource-permission adoption follows the separate
+[A2.1 scope](plans/a2-1-sales-resource-permissions.md). Its PostgreSQL query and HTTP proofs
+run in the existing `CqrsDemo.Tests` and `HttpIdentityDemo.Tests` projects using the same
+Podman environment below. The [Sales guide](../samples/Wholesale/modules/Sales/README.md)
+and [HTTP routes](../samples/Wholesale/HttpIdentityDemo/README.md#private-draft-permissions)
+describe explicit migration/setup and the supported limits; no RLS service is required.
+
+## Optional Sales PostgreSQL RLS
+
+The separate [A2.2 consumer](../samples/Wholesale/CqrsDemo/TenantIsolation/README.md) uses
+`CqrsDemo --tenant-isolation` with separately provisioned owner/runtime credentials and a
+fresh disposable database. Its guide lists provisioning, the five-table inventory and
+native transaction-local setup. The [report](reports/a2-2-sales-postgres-rls.md) distinguishes
+tenant isolation from Sales permissions and default HTTP/worker behavior.
+
+The existing CQRS CI project includes all RLS proofs. To run only those cases:
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj --filter-class '*TenantIsolationTests'
+```
+
+## PostgreSQL tenant-context utility
+
+The optional [Tenancy adapter](../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+requires an explicit custom setting name and caller-owned native transaction. It reads the
+immutable operation accessor; it does not configure RLS policies, credentials or transactions.
+Its [extraction report](reports/a2-3-postgres-tenant-context.md) records independent adoption
+and the transferred Sales lifecycle proofs.
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj
+```
+
+The Tenancy CI lane includes this suite. Wholesale's CQRS suite uses the same public utility
+through its separately provisioned opt-in RLS mode.
+
 ## Organization membership administration
 
 The [A1.1 Access scope](plans/a1-1-membership-suspension.md),
@@ -592,3 +636,60 @@ Independence checks must build and exercise minimal consumers with only the sele
 segment and its documented dependencies. Include separate state-stored, event-sourced,
 and reliable-messaging compositions as those capabilities arrive. Sample architecture
 policy should also demonstrate a configurable alternative and reject a deliberate violation.
+
+
+## Ownership-declared PostgreSQL RLS
+
+The optional [Persistence/PostgreSQL adapter](../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+combines ownership selection with automatic transaction-local setup for scoped EF contexts.
+Register the capability and use `.UseRls<TContext>(provider)` in options. The existing operation
+owner begins the transaction once; setup is automatic for all its reads/writes. No extra RLS
+scope or explicit setup call is needed. Selected reads without a transaction are rejected.
+Its independent consumer retains EF filters and proves database writes through reviewed
+USING/WITH CHECK policy operations, with separate restricted runtime credentials.
+
+```bash
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock \
+TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/run/user/1000/podman/podman.sock \
+DOTNET_PROCESSOR_COUNT=4 \
+  dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj
+```
+
+The suite belongs to the Persistence CI lane. This adds no default Wholesale HTTP/AppHost/worker
+adoption; the existing Sales RLS executable keeps its explicit local-transaction setup. The
+[A2.5 report](reports/a2-5-transaction-rls-simplification.md) distinguishes the refined mechanism,
+current proofs, explicit migration obligations and unsupported transaction/pooling modes.
+
+The separate [Sales HTTP opt-in](../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+selects automatic setup with `ConnectionStrings:Sales`. Provision its two restricted runtime
+roles and run finite `--initialize-sales-rls` after ordinary migrations/seeding, following that
+guide. HTTP startup validates the finite role/policy inventory but never installs it. New cases
+run in `samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj` through the
+existing Wholesale PostgreSQL lane. The [A2.6 report](reports/a2-6-sales-http-rls.md) records
+the bounded adoption and distinguishes unchanged AppHost/transport behavior.
+
+The [Aspire RLS opt-in](../samples/Wholesale/AppHost/README.md#optional-sales-rls-graph) now carries
+that composition into native orchestration. Set `LocalDevelopment:UseSalesRowSecurity=true`
+and the two secret runtime password parameters, run explicit finite setup on a fresh database,
+check exit 0, then explicitly start the API. Retained initialized storage needs only API start.
+The runtime suite includes both ordinary and RLS browser/profile journeys; run it separately
+from other graph lifetimes to avoid container-network changes during browser navigation.
+The [A2.7 report](reports/a2-7-aspire-sales-rls.md) records current role/readiness and credential
+separation evidence. Worker/transport adoption remains separate.
+
+The workflow sample now also has a separate [Sales dispatch role](../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md):
+run finite `setup-sales-dispatch` against an already migrated outbox, then start `dispatch-sales`
+with only its dispatch and broker connections. Its context maps one delivery table, and its
+runtime grants permit envelope reads plus delivery-state column updates. It does not install
+tenant RLS on the global queue or adopt inbox/business worker paths. The existing workflow test
+project includes both-tenant delivery, database privilege controls, real publication failure,
+competing child processes and death/restart after confirmed publication. The
+[A2.8 report](reports/a2-8-sales-outbox-dispatch.md) records fresh evidence and limits.
+
+The optional [WF2 RLS inbox role](../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) uses explicit
+`setup-sales-replies`, then `process-sales-replies` with only `ConnectionStrings:SalesReplies`
+and one admitted `Organization`. Existing scoped processing automatically receives immutable
+tenant/system-actor contexts before its transaction; no per-message tenant-database setup call
+is needed. It protects workflow/inbox rows and outgoing INSERTs while retaining global dispatch.
+The same workflow suite exercises this composition and the related local-delivery suite covers
+the retained default handler. [A2.9 evidence](reports/a2-9-sales-inbox-rls.md) is recorded separately.

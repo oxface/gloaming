@@ -112,9 +112,10 @@ checkpointed as `c8cbf64`. See [the split report](reports/e1-identity-split.md) 
 ## Scope and HTTP integration review
 
 The opening HTTP proposal below retains E1 review history. E3 subsequently implemented
-the adapters: the current consumer order is native authorization, actor mapping, then
-Organization admission/tenant publication, as recorded later in this section. Early native
-handlers therefore cannot assume established actor/tenant context. The
+the adapters: native policy authentication selects the principal, the actor evaluator
+establishes its actor before native authorization handlers, and the later actor middleware
+completes policy-free requests. Organization admission/tenant publication follows native
+authorization. Native handlers can consume actor context but cannot assume established tenancy. The
 [A1 + A1.1 assessment](reports/access-authorization-assessment.md) (2026-10-16, main
 `7ea6652`) recommends late imperative resource checks with module-owned relational predicates
 as Umbrine's initial follow-up, alongside a focused consumer suspension/reactivation proof.
@@ -128,6 +129,90 @@ under current checks after reactivation. The [proof report](reports/a1-1-members
 records native Organization serialization, revision/ownership concurrency, explicit accepted
 audit and HTTP/non-HTTP adoption. Existing active-membership admission and immutable admitted
 context remain. This adds no general permission engine or public Gloaming interface.
+
+The [A2 assessment](reports/tenant-authorization-assessment.md), against fetched main
+`d35b3ee`, corrects actor-order shorthand and traces HTTP, internal and worker boundaries.
+It recommends retaining late consumer resource checks/module-owned permission predicates;
+optional PostgreSQL RLS would require restricted runtime credentials, transaction-local
+setup and separate global/transport lanes. Fresh AppHost defaults imply a superuser runtime,
+and cross-tenant inbox/outbox SQL precedes or spans different transactions from handler
+establishment. These are assessment findings and proposed proofs, not an accepted RLS
+integration, middleware change, library interface or Tenancy-to-Access/FGA dependency.
+
+The owner then selected [A2.1 Sales draft permissions and complete queries](plans/a2-1-sales-resource-permissions.md)
+for implementation. Its [consumer guide](../samples/Wholesale/modules/Sales/README.md) and
+[proof report](reports/a2-1-sales-resource-permissions.md) cover scoped positive Read/Edit grants,
+SQL permission predicates at actual module entry points and late native HTTP checks. This
+bounded sample policy preserves current admission/immutable operations; optional RLS, grant
+administration, generalized roles and new public Gloaming interfaces remain separate.
+
+The separately authorized [A2.2 RLS consumer proof](plans/a2-2-sales-postgres-rls.md) now
+adds an explicit CQRS executable mode: five Sales tables, separately provisioned restricted
+credentials and native transaction-local setup. Its [report](reports/a2-2-sales-postgres-rls.md)
+records role/bypass and lifecycle controls alongside setting-forgery limits. This is an
+optional sample composition for reads/existing-draft edits, not a library isolation mechanism
+or adoption by default HTTP/AppHost/transport paths. No new architecture dependency or
+reusable mechanism is selected.
+
+The owner subsequently selected [A2.3 explicit tenant-context extraction](plans/a2-3-postgres-tenant-context.md).
+`Gloaming.Tenancy.EntityFrameworkCore.Postgres` now connects the immutable tenant accessor
+to a caller-owned native transaction using parameterized local setup, with independent
+consumer proofs and [package-local obligations](../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md).
+The optional adapter references Tenancy core, EF Relational and Npgsql. Core tenancy,
+Persistence and shared SaveChanges capabilities gain no dependency or automatic behavior.
+Policy provisioning, roles, admission, permissions and transaction ownership stay consumer-owned.
+
+The separately authorized [A2.4 ownership/RLS capability](reports/a2-4-ownership-rls-capability.md)
+added explicit USING/WITH CHECK migration helpers and retained ownership filtering/validation.
+The owner then selected [transaction-local simplification](reports/a2-5-transaction-rls-simplification.md):
+`.HasTenantOwnership(...).WithRls(settingName)` selects each table, capability registration supplies
+one scoped interceptor, and `.UseRls<TContext>(provider)` installs it through native EF interfaces.
+When the existing operation owner begins a transaction, its tenant is established automatically
+using the callback's native transaction. All selected reads/writes require that caller-owned
+transaction; commit/rollback ends local context. No per-transaction setup call, connection-lease
+cache or general native-interceptor registry is needed. The shared save coordinator retains its
+original EF Core/DI dependencies. Policies, roles, admission, permission predicates and rollout
+remain consumer-owned; there is no new request transaction owner, default HTTP/worker/template
+adoption or automatic policy scaffolding. A2.3 remains the independent explicit utility.
+
+The owner's next continuation adds [bounded Sales HTTP adoption](plans/a2-6-sales-http-rls.md).
+A separate Sales runtime connection selects six existing ownership mappings through stateless
+native EF model customization, including profile audit. Endpoint reads and late checks begin
+ordinary native transactions; mutation owners retain their saves/commits. Finite setup applies
+explicit read/write policy operations and restricted grants. Startup rejects privileged Sales
+credentials and an alternate Access/Inventory credential with Sales table authority. Existing
+varchar discriminators are supported without schema changes; blank-padded character keys
+remain rejected. Default AppHost/worker/template rollout and policy scaffolding remain separate;
+no new Gloaming interface or mandatory Access dependency is introduced.
+
+The owner's [A2.7 continuation](plans/a2-7-aspire-sales-rls.md) carries that optional HTTP mode
+into the AppHost: separate runtime logins, explicit one-shot role/migration/seed/policy setup,
+then explicit API start. Runtime passwords remain secret parameters until Npgsql assembles
+connections; known inherited provisioning keys are emptied and normal RLS HTTP rejects retained
+provisioning credentials. Readiness inspects catalog metadata without granting Access any Sales
+schema/table authority. Default graph selection, transport workers and Gloaming interfaces remain
+unchanged. The [report](reports/a2-7-aspire-sales-rls.md) separates fresh CLI/runtime/browser evidence.
+
+The owner's [A2.8 continuation](plans/a2-8-sales-outbox-dispatch.md) adds an optional independent
+Sales outbox dispatcher to the workflow sample. Its context maps only the existing delivery
+table; a separate restricted login reads envelopes across tenants and updates only delivery
+state columns. Native claims, publication, conditional completion and fresh worker scopes remain.
+This is explicit queue authority rather than a tenantless exception on business RLS. It grants
+no business-table access and retains no business/provisioning connection. Explicit one-shot role
+setup and actual effective-grant checks remain sample policy; inbox tenant establishment,
+ordinary workflow defaults and library interfaces are unchanged. The
+[report](reports/a2-8-sales-outbox-dispatch.md) records proofs and remaining limits.
+
+The owner's [A2.9 inbox continuation](plans/a2-9-sales-inbox-rls.md) selects a bounded WF2
+reply processor per admitted Organization. Scoped factories establish immutable tenancy and the
+receiver-owned system actor before the existing processor starts its native transaction. The
+current interceptor initializes PostgreSQL automatically; inbox/workflow policies then protect
+raw claims, business state, completion and retry. A module entry checks the existing context
+without rebinding it. The original message-established handler retains the same continuation.
+Outgoing INSERTs require the transaction tenant through a command-specific policy; global queue
+read/delivery policies preserve the separate restricted dispatcher. No Gloaming interface,
+implementation, new transaction owner or schema migration is added. The
+[report](reports/a2-9-sales-inbox-rls.md) distinguishes fresh evidence and deployment/coverage limits.
 
 `Gloaming.ActorIdentity` covers executing actor kind/key, optional initiator, its
 accessor lifecycle and explicitly invoked identity-presence checks. Actor denotes attribution,

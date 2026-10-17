@@ -42,15 +42,19 @@
   <Folder Name="/Libraries/Tenancy/">
     <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
     <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/Gloaming.Tenancy.AspNetCore.csproj" />
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
   </Folder>
   <Folder Name="/Libraries/Tenancy/Tests/">
     <Project Path="src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj" />
     <Project Path="src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Persistence/">
     <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
   </Folder>
   <Folder Name="/Libraries/Persistence/Tests/">
+    <Project Path="src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj" />
     <Project Path="src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj" />
     <Project Path="src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj" />
   </Folder>

@@ -52,10 +52,18 @@ the transaction and dispose the scope. Retry the whole business operation from f
 There is no acknowledgment, transaction binding, post-save drain or execution-strategy retry.
 
 SQL/bulk writes, direct ADO.NET and options omitting this extension bypass this integration. Explicit
-feature validators remain supported for consumers choosing their own save integration. Other native
-interceptor families remain research possibilities rather than supplied capabilities. No template
+feature validators remain supported for consumers choosing their own save integration. Feature-specific native
+interception is installed by the owning optional package, outside this save coordinator. No template
 preset is added.
 
 See the [implementation report](../../docs/reports/ef1-1-capability-composition.md),
 [research](../../docs/reports/ef1-capability-interception-research.md) and
 [MassTransit comparison](../../docs/reports/ef1-masstransit-applicable-patterns.md).
+
+
+The optional [PostgreSQL ownership adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+uses `.UseRls<TContext>(provider)` to install its own native transaction/command interceptor
+and this existing save coordinator. No general native-interceptor registry is supplied here;
+this package retains only EF Core and DI Abstractions dependencies. The
+[transaction refinement report](../../docs/reports/a2-5-transaction-rls-simplification.md)
+records the replacement of the earlier session/registry experiment.

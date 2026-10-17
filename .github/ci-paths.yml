@@ -49,11 +49,13 @@ EventReactions:
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
 Persistence:
   - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
@@ -72,6 +74,7 @@ EventSourcing:
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'samples/EventStorageDemo{,.Tests}/**'
   - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
@@ -85,6 +88,7 @@ Messaging:
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'samples/{OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
   - 'samples/Wholesale/ServiceDefaults/**'
@@ -95,6 +99,7 @@ Messaging:
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
+  - 'samples/Wholesale/CqrsDemo{,.Tests}/**'
   - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,DomainEventsDemo,DomainEventsDemo.Tests,modules,ServiceDefaults}/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'

@@ -9,6 +9,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 internal sealed class DraftOrderCommands(
     SalesDbContext database,
     IActorContextAccessor actor,
+    DraftOrderAuthorization authorization,
     IStockCatalog catalog,
     IEventSink<SalesModule> events
 ) : IDraftOrderCommands
@@ -53,6 +54,16 @@ internal sealed class DraftOrderCommands(
             return new DraftOrderChangeResult.UnknownSku(missing);
 
         database.DraftOrders.Add(DraftOrderRow.Create(database.RequiredOrganizationKey, candidate));
+        database.DraftOrderGrants.Add(
+            new DraftOrderGrantRow
+            {
+                OrganizationKey = database.RequiredOrganizationKey,
+                OrderId = candidate.Id,
+                SubjectKind = ActorKind.Human,
+                SubjectKey = actor.Current.Actor.Id!.Value,
+                Permission = DraftOrderAction.Edit,
+            }
+        );
         return new DraftOrderChangeResult.Changed(candidate.ToView());
     }
 
@@ -71,8 +82,9 @@ internal sealed class DraftOrderCommands(
         ArgumentOutOfRangeException.ThrowIfLessThan(changes.Length, 1);
 
         RequireWriteScope();
-        var row = await database
-            .DraftOrders.Include(value => value.Lines)
+        var row = await authorization
+            .Allowed(DraftOrderAction.Edit)
+            .Include(value => value.Lines)
             .AsSingleQuery()
             .SingleOrDefaultAsync(value => value.Id == request.Id, cancellationToken);
         if (row is null)
@@ -149,8 +161,9 @@ internal sealed class DraftOrderCommands(
         ArgumentOutOfRangeException.ThrowIfEqual(request.ExpectedVersion, long.MaxValue);
 
         RequireWriteScope();
-        var row = await database
-            .DraftOrders.Include(value => value.Lines)
+        var row = await authorization
+            .Allowed(DraftOrderAction.Edit)
+            .Include(value => value.Lines)
             .AsSingleQuery()
             .SingleOrDefaultAsync(value => value.Id == request.Id, cancellationToken);
         if (row is null)

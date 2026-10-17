@@ -5,6 +5,9 @@ and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.m
 cookie/OIDC authentication and separate PostgreSQL-backed Access/Inventory/Sales modules.
 Business reads and profile edits use module Contracts and tenant-owned rows.
 
+[Private draft permissions](#private-draft-permissions) add Sales-owned resource grants,
+complete permitted lists/counts and late native HTTP resource checks.
+
 [Membership administration](#membership-administration) now supplies the consumer-owned
 suspend/reactivate journey with current scoped authority, native concurrency and atomic audit.
 
@@ -35,7 +38,11 @@ Environment variables use double underscores instead of colons.
 
 | Key | Meaning |
 | --- | --- |
-| `ConnectionStrings:Access` | Shared PostgreSQL connection passed explicitly to Access, Inventory and Sales. |
+| `ConnectionStrings:Access` | Access/Inventory runtime connection; also Sales when its optional separate connection is absent. Finite demo initialization uses this connection as migration authority. |
+| `ConnectionStrings:Sales` | Optional separate restricted Sales runtime connection; selects automatic transaction-local RLS for profile/draft HTTP operations. |
+| `ConnectionStrings:SalesMigrations` | Sales table owner, used only by `--initialize-sales-rls`. Keep this credential out of normal HTTP configuration. |
+| `ConnectionStrings:Setup` | Administrative provisioning authority, used only by the optional Aspire `--initialize-rls-demo` mode. Never pass it to normal HTTP. |
+| `RuntimePasswords:Access`, `RuntimePasswords:Sales` | Optional separate secret passwords for password-free runtime connection strings. Program combines them through Npgsql before setup/service registration. |
 | `Oidc:Authority` | HTTPS OIDC provider authority for HTTP login. |
 | `Oidc:ClientId` | Registered authorization-code client. |
 | `Oidc:ClientSecret` | Credential when that client registration requires one. |
@@ -292,8 +299,126 @@ Keycloak login/callback and native session cookies against HTTPS Kestrel, with n
 authentication cookie or OIDC form replay. Their scope/limits are recorded in
 [E3.7](../../../docs/plans/e3-7-oidc-browser-journey.md).
 
-User creation/linking, invitations, membership administration, roles/permissions,
+Focused membership administration and private draft grants are supported as documented here.
+User creation/linking, invitations, general grant administration and configurable roles,
 logout/provider end-session, session invalidation, external provider/proxy topology, tenant-aware
-native authorization handlers and shared module transactions remain separate increments. Inventory availability does not establish reservation
-logic or the future event-sourced stock model. The bounded E3 ingress scope is implemented
-through E3.7 and pending owner review; these remaining capabilities are not implied by it.
+native authorization handlers and shared module transactions remain separate increments.
+The catalog read alone establishes no reservation/workflow guarantee; those have separate
+consumer proofs. E3.7's dated browser-provider evidence does not prove later permission features.
+
+## Private draft permissions
+
+Explicit `--initialize-demo` setup now seeds a private draft with ID
+`a2000000-0000-0000-0000-000000000001` in each Organization. Alpha's North draft totals 40
+and is editable by `application-alpha`; Beta's South draft totals 70 and is editable by
+`application-beta`. Alpha's active South membership grants no access to Beta's draft.
+The fixed ID collision demonstrates that resource identity always includes Organization.
+Apply migrations through explicit setup, never HTTP startup. Existing databases receive no
+inferred grants for historical drafts; the finite demo initializer requires a disposable DB.
+
+| Route under `/organizations/{organization}` | Consumer behavior |
+| --- | --- |
+| `GET /draft-orders?minimumTotal=30&limit=1` | Sales combines resource grants and business filters before count/page; unauthorized rows never fill the page or totals. Other optional filters are `customerNameContains`, `currency`, `offset`. |
+| `GET /draft-orders/{draftId}` | Late native `IAuthorizationService` Read check, followed by the module's own permission-filtered detail read. Unknown/inaccessible resources both return 404. |
+| `PUT /draft-orders/{draftId}/line` | Native authentication/admission/antiforgery, late Edit check, then module Edit enforcement and native Sales save/commit. JSON: `{"expectedVersion":1,"lineId":"a2000000-0000-0000-0000-000000000002","quantity":2,"unitPrice":25}`. Success returns version 2/total 50; stale versions return 409. |
+
+Read/Edit grants are positive and scoped to a canonical human/system kind+key; Edit includes
+Read. Membership administrators receive no implicit grant. The host's boolean resource
+decision is not cached authority: direct module calls enforce grants too. HTTP admission
+still checks current Active membership before tenant publication; already-admitted contexts
+stay immutable. Native challenge/forbid and the public catalog exception retain their order.
+
+Direct callers establish trusted actor/tenant contexts, perform fresh human admission or
+select an explicit system mandate, and call the same Contracts. New draft creation stages
+the creator's Edit grant in its existing transaction. System read requires its own grant,
+and a human initiator contributes no authority. Sales commands retain their human requirement.
+The response's lines/customer display fields share draft visibility in this bounded sample.
+
+Count and page use separate native statements; choose RepeatableRead for one snapshot when
+required. Grant changes can affect a later statement while the actor/tenant stay fixed.
+This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
+or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
+[scope](../../../docs/plans/a2-1-sales-resource-permissions.md) and
+[proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).
+
+## Optional Sales HTTP row security
+
+Supplying `ConnectionStrings:Sales` selects the optional
+[PostgreSQL capability](../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+for **all profile/draft HTTP requests**. It retains EF filters and Sales resource predicates.
+Tenant admission still runs once in the existing HTTP middleware order. Endpoint reads and
+late resource checks begin short native Sales transactions; profile writes and draft edits
+retain their existing transaction owners. The interceptor supplies the admitted tenant before
+the first protected statement. No endpoint calls a tenant-database setup helper or creates
+another operation scope. Native command failures still produce server errors.
+
+| Sales table | Runtime privileges; database boundary |
+| --- | --- |
+| `customer_profiles`, `customer_addresses`, `draft_orders`, `draft_order_lines` | SELECT/INSERT/UPDATE/DELETE, tenant equality through USING and WITH CHECK. |
+| `draft_order_grants` | SELECT only, tenant equality; this HTTP composition edits existing drafts and does not create grants. |
+| `audit_entries` | SELECT/INSERT, tenant equality; accepted profile audit commits with its business rows. |
+| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. |
+| Access/Inventory | Separate restricted connection for global admission and catalog work; no Sales table privileges. No new RLS policy. |
+
+Use a fresh disposable database, a migration-owner login and two separate runtime logins.
+Provision those logins independently, without superuser/BYPASSRLS/CREATEROLE/CREATEDB,
+privileged role memberships or Sales schema CREATE. Give the owner database/schema creation
+authority for finite migrations. Do not reuse the AppHost's default PostgreSQL admin credential.
+There is no automatic role/password creation.
+
+The separate [Aspire opt-in](../AppHost/README.md#optional-sales-rls-graph) supplies a finite
+`--initialize-rls-demo` mode that creates the two named disposable-demo runtime logins before
+the migrations/seed/policy steps. That mode alone receives `ConnectionStrings:Setup`; it is
+not called by ordinary HTTP startup. Use that graph's workflow instead of the manual role
+provisioning steps below. Normal RLS HTTP startup rejects nonempty setup/migration/admin
+parameter credentials; empty overrides are used to remove known inherited AppHost values.
+
+1. Run `--initialize-demo` with `ConnectionStrings:Access` temporarily supplied as the owner
+   connection. This applies the ordinary module migrations and seeds before RLS is installed.
+2. As the owner, grant the Access runtime role USAGE on `access`/`inventory`, SELECT/INSERT/
+   UPDATE/DELETE on the existing Access tables, and SELECT on `inventory.stock_availability`.
+   For example, for a separately provisioned `wholesale_access` login:
+
+   ```sql
+   GRANT USAGE ON SCHEMA access, inventory TO wholesale_access;
+   GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA access TO wholesale_access;
+   GRANT SELECT ON inventory.stock_availability TO wholesale_access;
+   ```
+
+3. Set `ConnectionStrings:Access` to that restricted login, `ConnectionStrings:Sales` to
+   the separate Sales login, and `ConnectionStrings:SalesMigrations` to the table owner.
+   All three connections target that same database. Run:
+
+   ```bash
+   dotnet run --project samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj -- --initialize-sales-rls
+   ```
+
+4. Remove the migration credential from HTTP configuration and start HTTP normally.
+
+The finite [installer](SalesHttpRowSecurity.cs) applies explicit ENABLE/FORCE and USING/
+WITH CHECK operations plus only the listed Sales grants in one transaction. It does not
+change ordinary EF migration history, reconcile existing policies or support repeated setup.
+Keep this database separate from the earlier CQRS five-table RLS demonstration. Future
+policy changes need reviewed consumer migrations; model declarations do not scaffold policies.
+
+Startup checks the actual two runtime credentials, tenantless Sales baseline, finite table
+flags, policy shape/count and required/forbidden privileges. A failed check stops startup.
+This is a bounded catalog check, not certification of policy expression bodies, views/functions,
+other secrets, or subsequent administrative changes. Review those separately. Readiness retains
+its existing connectivity/schema check; it does not continually re-attest RLS policy.
+Never pass migration credentials to the HTTP host or enable these credentials in transport
+workers. The standard AppHost graph retains its existing credentials; its separate RLS opt-in
+now provisions restricted credentials through explicit setup. Default single-connection
+HTTP mode remains supported and also uses the explicit read transactions; it enables no RLS.
+
+RLS supplies database tenant equality, not private-draft permissions, authentication or
+membership freshness. A credential holder can forge the custom tenant setting; same-tenant
+private rows still require Sales predicates. Missing/tenantless context and missing caller
+transactions reject protected EF work. DbContext pooling, external poolers and failover are
+not proved by this composition. Direct module callers in this selected mode must begin their
+own native Sales transaction around reads, resource checks and writes.
+
+[HTTP/PostgreSQL proofs](../HttpIdentityDemo.Tests/RowSecurityTests.cs) exercise native HTTP
+admission, actual restricted roles, Alpha/Beta/Alpha backend reuse, deliberately unfiltered SQL,
+exact varchar keys, read/list/edit permissions, raw write rejection and profile/audit rollback.
+The [slice report](../../../docs/reports/a2-6-sales-http-rls.md) records verification and limits.
