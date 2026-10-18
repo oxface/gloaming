@@ -273,6 +273,158 @@ rebuilder. It adds no serialization/provider dependency, projector engine or aut
 consumer complexity removed, separately from historical ES2 evidence. The reader is checkpointed
 as `91542a6`; subsequent upcasting is checkpointed as `b597717`.
 
+## ES3: optional regeneration executor (interface review)
+
+Status: owner approved the initial executor interface on 2026-10-17 and the ergonomics revision
+on 2026-10-18. The current reviewed surface below is implemented; the stock-position executable
+adopts it, and a tenant-free ledger exercises independent use.
+See the [scope, usage, failure rules and proof matrix](es3-aggregate-regeneration-operations.md#executor-proposal-for-owner-review).
+
+The addition lives in `Gloaming.EventSourcing.EntityFrameworkCore`. It provides one
+complete regeneration operation over the existing provided rebuilder. Its own native transaction
+is explicit in this operation's contract; existing `IAggregateRebuilder` remains a staging
+operation with caller-owned save/commit. There is no ambient or cross-module transaction adoption.
+
+Owner-reviewed public surface (declaration overview; package source defines the implementation):
+
+```csharp
+public sealed class AggregateRegenerator<TAggregate, TContext>
+    where TAggregate : class
+    where TContext : DbContext
+{
+    public AggregateRegenerator(IServiceScopeFactory scopes);
+
+    public Task<AggregateRegenerationResult> RegenerateAsync(
+        Guid id,
+        AggregateRegenerationOptions options,
+        IProgress<AggregateRegenerationProgress>? progress = null,
+        CancellationToken cancellationToken = default);
+}
+
+public sealed record AggregateRegenerationOptions
+{
+    public int MaxAttempts { get; init; } = 1;
+    public TimeSpan RetryDelay { get; init; } = TimeSpan.Zero;
+}
+
+public enum AggregateRegenerationStatus
+{
+    Completed = 1,
+    NotFound = 2,
+    Conflict = 3,
+    Cancelled = 4,
+    Failed = 5,
+    Indeterminate = 6,
+}
+
+public sealed record AggregateRegenerationResult(
+    AggregateRegenerationStatus Status,
+    int Attempts,
+    AggregateRebuildResult? CapturedHead,
+    Exception? Error);
+
+public enum AggregateRegenerationPhase
+{
+    Started = 1,
+    Replayed = 2,
+    Retrying = 3,
+}
+
+public sealed record AggregateRegenerationProgress(
+    int Attempt,
+    AggregateRegenerationPhase Phase,
+    AggregateRebuildResult? CapturedHead = null,
+    Exception? Error = null);
+```
+
+The constructor's native scope factory returns a fully initialized scope for each attempt.
+Inventory supplies a consumer-owned decorator that establishes the already-authorized immutable
+tenant before returning a scope or resolving its DbContext. The factory disposes its scope on
+initialization failure; asynchronous admission completes before invoking regeneration. Independent
+consumers without operation context use the ordinary native factory. EventSourcing gains no
+tenancy/actor dependency or new scope abstraction.
+
+The concrete class owns scope creation, resolves `TContext` and `IAggregateRebuilder<TAggregate>`
+from that scope, verifies their existing private native maintenance association after replay,
+then saves/commits. It can be constructed directly or registered with native DI; no new factory,
+registration builder, public scope abstraction, executor interface or hosted service is introduced.
+
+The consumer chooses positive `MaxAttempts` and a constant nonnegative `RetryDelay`; the sample
+selects three attempts and 100 ms between attempts. Invalid options/empty IDs/null dependencies
+throw native argument errors before an attempt. Delay must fit the native `Task.Delay(TimeSpan)`
+range. Other operation failures return the typed result after cleanup. Cancellation before the
+first attempt returns `Cancelled` with zero attempts. A target that is not found is terminal.
+
+The executor calls `progress.Report` in phase order: start after an initialized scope is returned,
+successfully staged full replay, and retry after disposal. Delivery belongs to the IProgress
+implementation. The CLI uses an inline reporter; standard Progress<T> may deliver asynchronously.
+Terminal outcomes are returned, not sent to a post-commit observer.
+The host owns invocation/target identity, timestamps, JSON/text formatting, logging and exit codes.
+A synchronous Report failure before commit aborts the attempt and returns `Failed`. An asynchronous
+handler error is outside the executor's returned outcome. No Report call is made after an
+acknowledged commit. `CapturedHead` describes replay metadata, never independent
+proof of durability. An acknowledged commit returns `Completed`; a commit attempt without an
+acknowledgment returns `Indeterminate`, including cancellation, with no automatic retry. Cleanup
+errors retain the known commit outcome and are available in `Error`; they do not turn an
+acknowledged commit into an unknown one. Error values are diagnostic exceptions for the host to
+format deliberately, not messages automatically written to stdout.
+
+Automatic retry recognizes only the provided rebuilder's verified changed-header race and native
+`DbUpdateConcurrencyException` entries from that attempt's exact private maintenance association.
+Scope-factory/Report exceptions, unrelated concurrency entries, arbitrary SQL constraints and
+integrity/decoding failures are not retryable. No message matching, consumer-wide predicate or
+provider dependency is added. Exhausted recognized contention returns `Conflict`; other pre-commit
+failure returns `Failed`. The [detailed scope](es3-aggregate-regeneration-operations.md#executor-proposal-for-owner-review)
+specifies the ahead-state check and the remaining provider-constraint limitation.
+
+This implementation supersedes the initial assessment that all runner logic must stay consumer-owned.
+The reusable execution obligation is now exercised through both consumers; retry values,
+admission and host presentation remain consumer policy. The [slice report](../reports/es3-aggregate-regeneration-operations.md)
+records new library adoption separately from the initial consumer-only executions.
+
+### ES3 ergonomics follow-up (approved, 2026-10-18)
+
+The owner requested alternatives to per-call progress and scope-initialization callbacks and
+approved this replacement. The surface above and the declaration below are now current:
+
+```csharp
+public Task<AggregateRegenerationResult> RegenerateAsync(
+    Guid id,
+    AggregateRegenerationOptions options,
+    IProgress<AggregateRegenerationProgress>? progress = null,
+    CancellationToken cancellationToken = default);
+```
+
+Use native `IProgress<T>` for typed progress. The executor calls `Report` in phase order, while
+delivery belongs to the reporter. A synchronous console reporter can flush ordered JSON directly;
+a UI may choose the standard `Progress<T>`. Standard `Progress<T>` dispatches via its captured
+SynchronizationContext or the thread pool, so callbacks need not finish before the operation
+returns and their asynchronous exceptions cannot be converted into its returned outcome. A
+synchronous exception from `Report` before commit can still produce Failed. Terminal completion
+remains the returned result, independent of notification delivery. No new reporter abstraction
+or background queue is introduced. See [IProgress<T>](https://learn.microsoft.com/en-us/dotnet/api/system.iprogress-1)
+and [Progress<T> dispatch](https://learn.microsoft.com/en-us/dotnet/api/system.progress-1#remarks).
+
+The per-call initialization callback is removed; the constructor still receives native
+`IServiceScopeFactory`. Inventory supplies a consumer-owned decorator that
+creates a native scope, publishes the already-authorized immutable tenant (and any required
+actor context), then returns the scope. It must dispose that scope if initialization fails.
+Each retry invokes the factory again; no operation context is rebound. Independent ledger
+adoption continues to supply the ordinary native scope factory.
+
+The existing Inventory technical entry constructs that initialized-scope factory once for
+the selected immutable operation context, then constructs the executor. This keeps the
+aggregate internal and removes per-call service-provider initialization code from execution.
+There is no new Gloaming scope-factory interface, provider dependency or scope catalog.
+Started means scope creation/initialization finished; initialization failure returns
+Failed without a Started notification. Counts still include that attempted scope creation.
+
+Revised proofs exercise both reporters and factory failure cleanup, as well as fresh scopes,
+disposal-before-retry, typed context pairing, native conflict classification and commit certainty.
+Native DI owns scoped dependencies; the consumer factory owns failure cleanup before returning
+a scope. Both PostgreSQL adopters and process interruption proofs are included in the
+[dated verification report](../reports/es3-aggregate-regeneration-operations.md).
+
 ## Current ES2: reviewed native EF replacement
 
 The owner approved [the exact interface/file/behavior scope](es2-native-ef-simplification.md)
@@ -281,7 +433,11 @@ Version/ConcurrencyStamp concurrency. Remove public Prepare/Stage handles, manda
 history bindings, cooperative gates, the provider package and dormant summary storage.
 State/event encoding finishes before tracked changes; native save/commit remains caller-owned.
 The main inline aggregate stays at the head. Native Queries/Filters and consumer live views are
-the read side. Catch-up, other persisted views and maintenance workers remain deferred.
+the read side. Catch-up and other persisted views remain deferred. The later owner-selected
+[ES3 command](es3-aggregate-regeneration-operations.md) composes this existing maintenance role
+for one stock position, including finite retries/progress/cancellation/restart. Its later
+owner-approved optional executor supplies the complete operation described above; durable
+maintenance queues/scheduling remain deferred.
 
 The sections below preserve earlier review history, not additional current configuration or
 public surfaces. [ADR 0008](../adr/0008-native-optimistic-aggregate-rebuilding.md) records the

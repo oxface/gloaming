@@ -14,6 +14,10 @@ export WHOLESALE_DEMO_CONNECTION_STRING='<disposable PostgreSQL connection strin
 dotnet run --project samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj
 ```
 
+For an existing stream, the separate [ES3 maintenance command](aggregate-regeneration.md)
+provides explicit stock-position regeneration, JSON progress, finite conflict retries,
+Ctrl+C and restart. It runs independently of the default setup/command journeys.
+
 The caller registers contexts/providers and tenancy explicitly, migrates each module, establishes
 one immutable tenant scope per Organization, stages finite authored histories and saves through
 native EF. A stock position and purchase order share the same stream GUID across two tenants;

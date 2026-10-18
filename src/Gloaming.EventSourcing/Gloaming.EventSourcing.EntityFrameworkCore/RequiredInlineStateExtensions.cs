@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gloaming.EventSourcing.EntityFrameworkCore;
 
@@ -342,19 +344,53 @@ public static class RequiredInlineStateExtensions
 
     // Only library replay may replace state without appending facts. Remember its exact native write
     // for the caller's save guard; scheduling, retries and completion remain outside this record.
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<
-        DbContext,
-        MaintenanceWrite
-    > MaintenanceWrites = new();
+    private static readonly ConditionalWeakTable<DbContext, MaintenanceWrite> MaintenanceWrites =
+        new();
 
     internal static bool HasMaintenanceWrite(DbContext database) =>
         MaintenanceWrites.TryGetValue(database, out _);
+
+    internal static void RequireMaintenanceWrite(
+        DbContext database,
+        Guid id,
+        IDbContextTransaction transaction
+    )
+    {
+        if (
+            !MaintenanceWrites.TryGetValue(database, out var repair)
+            || !ReferenceEquals(repair.Transaction, transaction)
+            || repair.Header.Entity is not IEventStreamRecord header
+            || header.Id != id
+        )
+            Fail(
+                "The provided rebuilder must stage this target in the selected native context/transaction."
+            );
+
+        database.ChangeTracker.DetectChanges();
+        ValidateMaintenanceWrite(database, database.ChangeTracker.Entries().ToArray());
+    }
+
+    internal static bool IsMaintenanceConflict(
+        DbContext database,
+        IDbContextTransaction transaction,
+        DbUpdateConcurrencyException failure
+    ) =>
+        MaintenanceWrites.TryGetValue(database, out var repair)
+        && ReferenceEquals(repair.Transaction, transaction)
+        && failure.Entries.Count > 0
+        && failure.Entries.All(entry =>
+            ReferenceEquals(entry.Context, database)
+            && (
+                ReferenceEquals(entry.Entity, repair.Header.Entity)
+                || ReferenceEquals(entry.Entity, repair.State.Entity)
+            )
+        );
 
     internal static void RecordMaintenanceWrite(
         DbContext database,
         IEventStreamRecord header,
         IInlineStateRecord state,
-        Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction
+        IDbContextTransaction transaction
     )
     {
         database.ChangeTracker.DetectChanges();
@@ -434,7 +470,7 @@ public static class RequiredInlineStateExtensions
     private sealed class MaintenanceWrite(
         EntityEntry header,
         EntityEntry state,
-        Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction
+        IDbContextTransaction transaction
     )
     {
         internal EntityEntry Header { get; } = header;
@@ -445,7 +481,6 @@ public static class RequiredInlineStateExtensions
             header.Property(nameof(IEventStreamRecord.ConcurrencyStamp)).OriginalValue;
         internal object? OriginalStateVersion { get; } =
             state.Property(nameof(IInlineStateRecord.Version)).OriginalValue;
-        internal Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction Transaction { get; } =
-            transaction;
+        internal IDbContextTransaction Transaction { get; } = transaction;
     }
 }

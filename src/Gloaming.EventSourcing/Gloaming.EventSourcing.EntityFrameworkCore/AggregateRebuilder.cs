@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gloaming.EventSourcing.EntityFrameworkCore;
 
@@ -132,7 +133,33 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
             persistedStateRow is IInlineStateRecord stateRow
             && stateRow.Version > observedStream.Version
         )
+        {
+            // Read committed can observe an ordinary append between our header and state reads.
+            var latest = await database
+                .Set<TStreamRecord>()
+                .AsNoTracking()
+                .SingleOrDefaultAsync(streamRecord => streamRecord.Id == id, cancellationToken);
+            if (latest is not null)
+            {
+                EventStreamValidation.ValidateExistingStream(latest, streamType);
+                var key = database.Model.FindEntityType(typeof(TStreamRecord))!.FindPrimaryKey()!;
+                if (
+                    latest.Version > observedStream.Version
+                    && latest.Version >= stateRow.Version
+                    && latest.ConcurrencyStamp != observedStream.ConcurrencyStamp
+                    && latest.CreatedAt.EqualsExact(observedStream.CreatedAt)
+                    && key.Properties.All(property =>
+                        Equals(
+                            property.PropertyInfo!.GetValue(latest),
+                            property.PropertyInfo!.GetValue(observedStream)
+                        )
+                    )
+                )
+                    throw new AggregateCaptureConflict(database, id, transaction);
+            }
+
             throw new InvalidDataException("Rebuild state cannot be ahead of its captured stream.");
+        }
 
         var candidate = stateMapping.ToRow(rebuiltAggregate);
         writer.PopulateMetadata(
@@ -158,4 +185,17 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
         );
         return new(observedStream.Version, observedStream.UpdatedAt);
     }
+}
+
+// Only the provided rebuilder can identify a verified stale capture before a native save.
+internal sealed class AggregateCaptureConflict(
+    DbContext database,
+    Guid id,
+    IDbContextTransaction transaction
+) : DbUpdateConcurrencyException("The stream advanced between captured header and state reads.")
+{
+    internal bool Matches(DbContext candidate, Guid target, IDbContextTransaction current) =>
+        ReferenceEquals(database, candidate)
+        && id == target
+        && ReferenceEquals(transaction, current);
 }

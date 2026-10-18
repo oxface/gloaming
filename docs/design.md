@@ -573,9 +573,26 @@ migrations remain; new migrations add header stamps and remove that active legac
 and summaries use native EF projections/filters over the one current inline aggregate. Consumers
 may reconstruct live views on access through existing readers/reducers. No automatic repair or
 catch-up occurs in ordinary loads. Secondary/async/multi-stream projections remain deferred until
-native query shapes are insufficient. A maintenance worker is still needed eventually, deferred
-to keep this change focused; consumers can host reconciliation and own locking/windows, retry,
-scheduling and scaling. Family grouping remains checkpointed as 39c1ab3; T1 stays event-free.
+native query shapes are insufficient. [ES3](plans/es3-aggregate-regeneration-operations.md) now
+supplies one explicit stock-position command with progress, bounded conflict retries, cancellation
+and process restart. Its initial consumer-only execution and later executor adoption have
+[separate evidence](reports/es3-aggregate-regeneration-operations.md). Durable queues, scheduling, admission and any
+pause/drain window remain separate. Family grouping remains checkpointed as 39c1ab3; T1 stays event-free.
+
+The owner subsequently reviewed and approved the
+[optional ES3 executor](plans/library-extraction.md#es3-optional-regeneration-executor-interface-review),
+now implemented in the existing EventSourcing EF package. It concentrates fresh scopes, native
+read-committed completion, narrow retries and structured outcomes while the consumer supplies
+operation context and policy. Explicit use delegates that operation's transaction/save/commit;
+direct rebuilder calls retain their staging contract. [ADR 0017](adr/0017-explicit-aggregate-regeneration-execution.md)
+records ownership, verified ahead-state race handling and commit/cleanup semantics.
+
+The owner-approved 2026-10-18 refinement uses native IProgress for optional notifications and
+removes per-call scope initialization. A consumer-selected native scope factory returns each
+scope with its immutable authorized context established, owning failure cleanup before return.
+The CLI reports inline; standard Progress<T> can deliver after completion. Report delivery does
+not redefine the executor's returned commit outcome, and asynchronous handler errors remain
+outside that outcome. No new library dependency or scope-factory interface is introduced.
 
 Use options for supported variations, and explicit registration or dependencies for larger
 policy changes. Document how a setting changes a guarantee. Schema names, transport routes,

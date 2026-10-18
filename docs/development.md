@@ -465,6 +465,13 @@ container. It is not a current library regression test and supplies no stamp-con
 Current executable coverage lives in the family/consumer test projects above. See
 [the supported EF contract](../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
 
+## Explicit aggregate regeneration
+
+ES3's separate [stock-position regeneration command](../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+runs against an existing migrated database. Its progress, native-conflict, cancellation and
+process-restart proofs are `StockRegenerationTests` in `EventPersistenceDemo.Tests`, included
+in the existing EventSourcing CI lane. The guide records the invocation and test commands.
+
 ## DDD sample decisions
 
 [DddDemo](../samples/Wholesale/DddDemo/README.md) is a finite comparison of state-stored Sales

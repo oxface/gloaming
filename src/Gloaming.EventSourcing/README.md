@@ -8,11 +8,13 @@ public contract and dependencies; the family is not an umbrella runtime package.
 | Package | Responsibility and dependencies |
 | --- | --- |
 | [Gloaming.EventSourcing](Gloaming.EventSourcing/README.md) | Package-free aggregate contract and optional immutable state/pending-event base. |
-| [Gloaming.EventSourcing.EntityFrameworkCore](Gloaming.EventSourcing.EntityFrameworkCore/README.md) | References the core, Events.History, EF Core Relational and DI abstractions; provided IEventStore, bounded EventHistoryReader, independent AggregateRebuilder, scoped role registration, stream/envelope mapping, ordered append and one required inline aggregate state/save validation. |
+| [Gloaming.EventSourcing.EntityFrameworkCore](Gloaming.EventSourcing.EntityFrameworkCore/README.md) | References the core, Events.History, EF Core Relational and DI abstractions; provided IEventStore, bounded EventHistoryReader, independent AggregateRebuilder, optional complete AggregateRegenerator, scoped role registration, stream/envelope mapping, ordered append and one required inline aggregate state/save validation. |
 
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.
 The [executable consumer](../../samples/Wholesale/EventPersistenceDemo/README.md) demonstrates adoption.
+Its separate [ES3 regeneration command](../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+demonstrates finite consumer maintenance, native conflicts, cancellation and restart.
 
 Library tests:
 
