@@ -158,7 +158,9 @@ await transaction.CommitAsync(token);
 Use a fresh context for one terminal rebuild. It returns null for a missing filtered stream.
 It validates prefix length/order/UTC endpoints and reconstructed identity/version/no pending
 facts, then inserts missing state or copies encoded values into the observed row. It can repair
-an unreadable body without decoding it. Ahead state rejects repair. Healthy state need not be
+an unreadable body without decoding it. Persistent ahead state rejects repair. If a fresh header
+read verifies that an append advanced the head/stamp to cover the observed state, the stale
+capture instead raises a native concurrency exception. Healthy state need not be
 rewritten. Repair preserves facts, event version and recorded times, changing only the header's
 technical stamp. A private exact write association lets the native save guard accept this
 state replacement; it is not a public bypass or maintenance scheduling framework.
@@ -169,6 +171,100 @@ already captured rebuild. Two repairs compete through the same token. This is op
 maintenance: operations can overlap and fail at save; they do not block before loading. Repair
 cannot undo a bad command already committed before capture. Consumers may add operational
 exclusion, retries from fresh loads or maintenance windows as their policy requires.
+
+## Complete regeneration operations
+
+`AggregateRegenerator<TAggregate,TContext>` is an optional executor over the provided rebuilder.
+Calling it delegates one complete maintenance operation, including its native transaction,
+save/commit and cleanup. Direct `IAggregateRebuilder<TAggregate>` calls above remain staging
+operations whose caller saves/commits. Ordinary stores and reads never invoke regeneration.
+There is no new package, provider dependency, scheduler or hosted service.
+
+Register the native typed context and existing `AddAggregateRebuilder<TAggregate,TRebuilder>()`.
+The executor can be constructed directly or registered using native DI; its only constructor
+dependency is `IServiceScopeFactory`. Each attempt creates a new scope, resolves the selected
+`TContext` and rebuilder and begins a native read-committed transaction. Successful replay must
+have the existing private maintenance association in that exact context/transaction for the
+requested ID; an unrelated rebuilder/context pairing fails before save.
+
+```csharp
+var executor = new AggregateRegenerator<Ledger, LedgerDatabase>(scopes);
+var result = await executor.RegenerateAsync(
+    id,
+    new AggregateRegenerationOptions
+    {
+        MaxAttempts = 3,
+        RetryDelay = TimeSpan.FromMilliseconds(100),
+    },
+    progress: progress, // IProgress<AggregateRegenerationProgress>, or omit progress entirely
+    cancellationToken: token);
+```
+
+The [independent direct-JSON ledger proofs](../tests/EventSourcingPostgresTests/RegenerationTests.cs)
+exercise this public executor without Wholesale, tenancy or serialization packages. The
+[stock-position adoption](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionMaintenance.cs)
+supplies a consumer-owned native scope-factory decorator that publishes its already-authorized
+immutable tenant before returning each scope. Initialize required context before resolving the
+attempt's DbContext; complete asynchronous admission before invoking the executor. A factory
+must dispose a created scope if initialization fails before returning it. Inventory resolves
+only synchronous context-establishment services before that return. Initialization failure
+returns Failed without Started progress and counts as one attempt. Consumers needing no
+operation context use the ordinary native scope factory. Context establishment grants no authority.
+
+Options default to one attempt and zero delay. MaxAttempts must be positive; RetryDelay is a
+constant nonnegative interval within native Task.Delay's supported range. Invalid arguments
+throw before an attempt. Cancellation before the first attempt returns Cancelled with zero
+attempts. Other operational failures are returned after cleanup. Ambient transactions and
+nonfresh contexts are rejected; there is no adoption of another operation's transaction.
+
+| Result status | Meaning |
+| --- | --- |
+| Completed | Commit acknowledged. CapturedHead identifies the repaired head at that commit. |
+| NotFound | No stream within the consumer's native filter. |
+| Conflict | Recognized contention exhausted the selected attempt budget. |
+| Cancelled | Cancellation before entering commit; work/context discarded. |
+| Failed | Other pre-commit failure, including integrity, scope creation, synchronous Report or SQL errors. |
+| Indeterminate | Commit was attempted but acknowledgment failed/cancelled; no automatic retry. |
+
+The result carries Attempts, optional CapturedHead and diagnostic Error. CapturedHead alone
+never establishes durability. Cleanup errors remain available in Error without replacing an
+acknowledged Completed status; inspect Error even after completion if cleanup diagnostics matter.
+The executor attempts both transaction and scope disposal. Failed cleanup prevents automatic retry.
+It does not log exception messages; the consumer chooses safe presentation and exit codes.
+
+The optional native `IProgress<AggregateRegenerationProgress>` receives Report calls in order:
+Started after initialized scope creation, Replayed after staging/association validation, and
+Retrying after disposing a failed attempt. Values carry attempt, optional captured metadata
+and optional diagnostic error. Notification delivery belongs to the reporter: standard
+`Progress<T>` posts through its captured SynchronizationContext or the thread pool, so handlers
+may run after completion and their errors are outside the returned outcome. A synchronous
+Report failure before commit stops the operation. Terminal outcomes are returned, with no
+Report calls after acknowledged commit. Later notification delivery/cancellation cannot change
+that known outcome. See [native progress dispatch](https://learn.microsoft.com/en-us/dotnet/api/system.progress-1#remarks).
+
+The CLI supplies an inline `IProgress<T>` implementation to flush ordered JSON. UI consumers can
+choose standard `Progress<T>`; they must not treat delivered progress as a commit ledger or
+assume notifications are drained when the operation task completes.
+
+Only verified stale captures and native save concurrency entries belonging to that attempt's
+exact maintenance association permit retry. The ahead-state check re-reads the filtered header
+and requires a valid advanced version/new stamp, the same complete key/creation metadata and a
+head covering the observed state. An arbitrary InvalidDataException, unrelated concurrency
+entry or SQL constraint is not contention. Two repairs inserting the same missing state may
+produce a provider-specific unique violation before a header conflict; that remains Failed.
+Dispose/restart explicitly after correcting an error or inspecting an indeterminate outcome.
+
+Replay must be deterministic and free of external effects. Explicit restart replays the full
+current prefix and may change the technical stamp again. Full history remains materialized in
+memory; synchronous consumer evolution is uninterrupted. Cancellation is checked at IO/stage
+boundaries, with no large-stream performance or mid-evolution latency guarantee. Continuous
+writes can exhaust retries. Admission, retry values, logs, reducer rollout, any pause/drain
+window and scheduling remain consumer-owned. Bad retained facts and previously committed bad
+business decisions are not repaired by regenerating derived state.
+
+The [ES3 CLI guide](../../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+documents the finite operator journey, and the [slice report](../../../docs/reports/es3-aggregate-regeneration-operations.md)
+separates new execution evidence from earlier research and consumer-only proofs.
 
 ## Registration, errors and recovery
 
@@ -189,9 +285,11 @@ constraint failures before the header UPDATE. Codec errors, overflow and cancell
 Do not classify unrelated constraints as stream conflicts. Equal UTC recorded times are allowed.
 
 Dispose the whole transaction/context and aggregate after faults or rollback; reload and decide
-again. There is no automatic retry, tracker rollback, concurrent context use, ambiguous-commit
-recovery or fencing of uncooperative writers. Complete key/tenant admission and final completion
-remain consumer-owned. PostgreSQL tests exercise actual native SQL, rollback and fresh recovery.
+again. Direct store/rebuilder calls have no automatic retry or completion; the optional executor
+above supplies bounded maintenance execution only. There is no tracker rollback, concurrent
+context use, automatic ambiguous-commit reconciliation or fencing of uncooperative writers.
+Complete key/tenant admission remains consumer-owned. PostgreSQL tests exercise actual native
+SQL, rollback and fresh recovery.
 
 See [current capabilities and deferred directions](docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),

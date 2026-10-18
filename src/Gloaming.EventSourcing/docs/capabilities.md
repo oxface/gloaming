@@ -31,11 +31,27 @@ reader-before-writer rollout remain consumer decisions. See the [codec contract]
 and [upcasting evidence](../../../docs/reports/event-payload-upcasting.md). This EF package gains
 no serialization dependency.
 
+## Explicit consumer operations
+
+The [ES3 stock-position command](../../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+demonstrates one finite operation with progress, bounded native-conflict retries, cancellation
+and process restart. The optional `AggregateRegenerator<TAggregate,TContext>` now owns fresh
+attempt scopes/read-committed transactions, replay/save/commit, cleanup and typed outcomes over
+the provided rebuilder. An independent ledger adopts it without tenancy/codec dependencies.
+Verified changed-header read races and exact maintenance save-concurrency entries permit retry;
+persistent ahead state and unrelated failures remain terminal. Acknowledged commit is retained
+even if cleanup fails; uncertain commit is not automatically retried. See
+[the package contract](../Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations).
+Scheduling, durable queues, multi-target progress and scaling remain deferred. Admission,
+retry values, presentation and online/pause policy belong to the consumer. Full replay remains
+in-memory, with cancellation at IO/stage boundaries and uninterrupted synchronous evolution.
+Native scope factories own required context establishment before returning each scope; no
+per-call initialization hook is needed. Optional IProgress receives ordered Report calls,
+while delivery belongs to the reporter. The CLI uses inline reporting; standard Progress<T>
+can deliver after completion, with asynchronous handler errors outside the returned outcome.
+
 ## Planned capabilities and their proof obligations
 
-- Maintenance worker: still needed eventually; deferred to keep this change focused. Consumers
-  can host reconciliation now, owning scheduling, locking/windows, authorization, retries and
-  scaling. Future jobs must prove crash recovery, idempotence and safe coordination with writers.
 - Async projections and durable checkpoints: prove ordering, duplicate handling, rollback,
   restart and fault recovery. Not just an implementation exercise.
 - Multi-stream projections and extra inline views: reassess native EF joins/filter translation
