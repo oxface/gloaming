@@ -135,3 +135,35 @@ duration, global execution cap, cleanup scheduler, durable cleanup ledger, onlin
 or capacity benchmark is selected. Inbox retention, queued-schema evolution and lease renewal
 remain separate; payload editing and completed-message replay remain excluded. This work stays
 unstaged/uncommitted and the originally empty index is preserved. No push or pull request was requested.
+
+## PR #41 CI follow-up
+
+The supplied PR CI log exposed an outdated native-exception assertion in
+[InboxDemo BrokerTests](../../samples/InboxDemo.Tests/BrokerTests.cs). That suite was absent
+from the original retention verification above. Its forced completion rejection correctly
+produces the previously documented OutboxCompletionException. The existing RabbitMQ proof
+now checks that signal, its original PostgreSQL CheckViolation and proof_completion constraint,
+and its MessageId against the accepted delivery. Receiver deduplication and the single local
+business effect remain asserted. The targeted test failed before this correction and passed after it.
+
+Running every command in the [Messaging CI job](../../.github/workflows/ci.yml) exposed a second
+failure in LocalWorkflowDemo process recovery: the observer read a stream, a real worker committed,
+then the observer read newer inline state under ReadCommitted. Its fresh context ruled out retained
+tracking. The [test observer](../../samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowProof.cs)
+now selects a short RepeatableRead transaction for each stock observation. A new
+[PostgreSQL barrier proof](../../samples/Wholesale/LocalWorkflowDemo.Tests/StockObservationTests.cs)
+forces the worker commit between those reads. It reproduced the same concurrency exception
+before the fix; afterward it observes the old consistent snapshot, while a fresh observation
+sees the committed reservation. The worker commits while the observer is paused.
+
+The other ten Messaging CI groups passed all 451 tests. After the observer correction,
+LocalWorkflowDemo reran successfully with 15 tests, including all three process-kill/restart
+cuts and the new deterministic regression. The latest project results therefore cover all
+eleven CI groups with 466 passing tests and zero failures/skips. A separate fresh architecture
+run passed 96 tests. Changed-file style/analyzer verification, CSharpier and whitespace checks
+passed. The initial failing runs and the corrected duplicate-import build error are excluded
+from these successful results.
+
+These are consumer-proof corrections; library runtime, public interfaces, schema, grants and
+template output are unchanged. No new reusable mechanism was proven. The four changed/new
+files remain unstaged for owner review, with the originally empty index preserved.
