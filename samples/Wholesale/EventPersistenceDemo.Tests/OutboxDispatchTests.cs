@@ -35,7 +35,7 @@ public sealed class OutboxDispatchTests(PostgreSqlFixture postgres, RabbitMqFixt
             .CreateServices(connectionString)
             .BuildServiceProvider();
         await using (var scope = provider.CreateAsyncScope())
-            await Assert.ThrowsAsync<PostgresException>(() =>
+            await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 Dispatcher(scope, channel).DispatchNextAsync(Token)
             );
         var first = await ReceiveAsync(channel);

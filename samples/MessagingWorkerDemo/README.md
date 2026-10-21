@@ -50,7 +50,8 @@ an existing queue. They neither migrate/seed nor delete the durable queue when s
 `Worker__LeaseSeconds` configures the dispatch lease (default 30 seconds); native sample
 publication has a five-second deadline. A lease is not an external exactly-once promise.
 Both library workers poll idle work at 100 ms and delay ordinary processing failures for one
-second. An inbox failure-accounting fault instead faults its worker without another poll.
+second. Inbox/outbox failure-accounting faults and outbox completion faults instead fault
+their worker without another poll; native host supervision applies.
 Generic Host owns Ctrl+C/SIGTERM cancellation and its default shutdown deadline. An abrupt
 process death follows the storage protocol, rather than requiring a graceful callback.
 This console executable uses `Microsoft.AspNetCore.App` for native Hosting/DI APIs and its
@@ -79,6 +80,12 @@ existing receiver dependency; install that shared framework even though it expos
 - Dispatch releases the database lock after committing a lease. Death after broker acceptance
   but before completion leaves the lease to expire. A replacement may publish the same
   MessageId again; retained inbox deduplication suppresses repeated local handling.
+- OutboxCompletionException means publication returned normally but completion could not be
+  confirmed. The dispatch worker logs a distinct critical diagnostic and faults; native
+  StopHost begins host shutdown. Inspect fresh storage after repair before restarting:
+  completion may already have committed. A pending claim waits for expiry and can repeat
+  the same delivery; completion faults never consume publisher-failure counts or automatically
+  dead-letter work. Other dispatchers and external restarts remain consumer supervision policy.
 - Graceful stopping cancels native operations and disposes this process's long-lived connection
   and channel. Unacknowledged deliveries are recoverable on channel closure. Queues remain durable.
 - Broker connections are established once and automatic recovery is disabled. Initial connection
@@ -145,3 +152,11 @@ exported spans, logs and metrics. It forces post-publication completion and tran
 handler failures, restarts in fresh processes, and verifies duplicate intake preserves its
 first context. An unreachable-collector case verifies business progress independently.
 This is OTLP export evidence, not an Aspire dashboard inspection or throughput benchmark.
+
+The process suite also launches the built optional OutboxDemo HTTP/worker host. Its
+[outbox recovery proofs](../MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) cover
+death during accounting, persisted failure budgets and dead letters across restart, authorized
+retry, and accounting SQL fault → StopHost → repair/restart under the same message identity.
+The existing RabbitMQ dispatch role retains indefinite retry policy; HTTP classification stays
+with its adopter. See the [outbox contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md)
+for counts, lease fencing, completion uncertainty and rollout/grant obligations.

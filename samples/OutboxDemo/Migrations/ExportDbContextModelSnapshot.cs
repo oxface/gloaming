@@ -63,9 +63,38 @@ namespace OutboxDemo.Migrations
                         .HasColumnType("text")
                         .HasColumnName("correlation_id");
 
+                    b.Property<DateTimeOffset?>("DeadLetteredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("dead_lettered_at");
+
                     b.Property<DateTimeOffset?>("DispatchedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("dispatched_at");
+
+                    b.Property<long>("FailureCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failure_count");
+
+                    b.Property<long>("FailuresSinceRedrive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failures_since_redrive");
+
+                    b.Property<DateTimeOffset?>("LastFailedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_failed_at");
+
+                    b.Property<string>("LastFailureCode")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("last_failure_code");
+
+                    b.Property<DateTimeOffset?>("LastRedrivenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_redriven_at");
 
                     b.Property<Guid?>("LeaseToken")
                         .HasColumnType("uuid")
@@ -89,6 +118,18 @@ namespace OutboxDemo.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("queued_at")
                         .HasDefaultValueSql("clock_timestamp()");
+
+                    b.Property<long>("RedriveCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("redrive_count");
+
+                    b.Property<long>("Revision")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("revision");
 
                     b.Property<string>("RouteKey")
                         .IsRequired()
@@ -114,7 +155,14 @@ namespace OutboxDemo.Migrations
                     b.HasKey("MessageId");
 
                     b.HasIndex("AvailableAt", "LeaseUntil", "MessageId")
-                        .HasFilter("dispatched_at IS NULL");
+                        .HasFilter("dispatched_at IS NULL AND dead_lettered_at IS NULL");
+
+                    b.HasIndex("RouteKey", "DeadLetteredAt", "MessageId")
+                        .HasFilter("dispatched_at IS NULL AND dead_lettered_at IS NOT NULL");
+
+                    b.HasIndex("RouteKey", "DispatchedAt", "MessageId")
+                        .HasDatabaseName("ix_exports_outbox_completed_retention")
+                        .HasFilter("dispatched_at IS NOT NULL");
 
                     b.ToTable(
                         "outgoing_work",
@@ -124,8 +172,28 @@ namespace OutboxDemo.Migrations
                             t.HasCheckConstraint("ck_outbox_attempts", "attempts >= 0");
 
                             t.HasCheckConstraint(
+                                "ck_outbox_failure_metadata",
+                                "(failure_count = 0 AND last_failed_at IS NULL AND last_failure_code IS NULL AND dead_lettered_at IS NULL) OR (failure_count > 0 AND last_failed_at IS NOT NULL AND last_failure_code IS NOT NULL AND length(btrim(last_failure_code)) > 0)"
+                            );
+
+                            t.HasCheckConstraint(
                                 "ck_outbox_lease",
                                 "(lease_token IS NULL) = (lease_until IS NULL)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_outbox_recovery_counts",
+                                "revision >= 0 AND failure_count >= 0 AND failures_since_redrive >= 0 AND failures_since_redrive <= failure_count AND failure_count <= attempts AND redrive_count >= 0"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_outbox_recovery_state",
+                                "(dispatched_at IS NULL OR dead_lettered_at IS NULL) AND ((dispatched_at IS NULL AND dead_lettered_at IS NULL) OR lease_token IS NULL)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_outbox_redrive_metadata",
+                                "(redrive_count = 0 AND last_redriven_at IS NULL) OR (redrive_count > 0 AND last_redriven_at IS NOT NULL)"
                             );
 
                             t.HasCheckConstraint("ck_outbox_schema", "schema_version > 0");

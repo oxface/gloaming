@@ -139,7 +139,7 @@ public sealed class AdoptionTests(PostgreSqlFixture postgres) : IClassFixture<Po
         await using var receiver = await HttpReceiver.StartAsync(Token);
         using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
         await using (var context = ExportDbContext.Create(connection))
-            await Assert.ThrowsAsync<PostgresException>(() =>
+            await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 Dispatcher(context, client, receiver.Endpoint).DispatchNextAsync(Token)
             );
         await SqlAsync(
@@ -228,6 +228,8 @@ internal sealed class HttpReceiver(WebApplication application, Uri endpoint) : I
 {
     internal Uri Endpoint { get; } = endpoint;
     internal ConcurrentQueue<(Guid MessageId, JsonElement Payload)> Messages { get; } = new();
+    internal int StatusCode { get; set; } = 202;
+    internal bool LoseResponse { get; set; }
 
     internal static async Task<HttpReceiver> StartAsync(CancellationToken cancellationToken)
     {
@@ -245,7 +247,10 @@ internal sealed class HttpReceiver(WebApplication application, Uri endpoint) : I
                 );
                 Guid id = Guid.Parse(context.Request.Headers["X-Message-Id"].ToString());
                 receiver!.Messages.Enqueue((id, payload.RootElement.Clone()));
-                context.Response.StatusCode = 202;
+                if (receiver.LoseResponse)
+                    context.Abort();
+                else
+                    context.Response.StatusCode = receiver.StatusCode;
             }
         );
         await application.StartAsync(cancellationToken);

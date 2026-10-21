@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Security.Cryptography;
 using System.Text.Json;
 using System.Transactions;
 using Gloaming.Messaging.EntityFrameworkCore;
@@ -13,6 +14,42 @@ namespace Gloaming.Messaging.InboxTests;
 
 public sealed class DeadLetterTests(PostgreSqlFixture postgres)
 {
+    [Fact]
+    public async Task SharedCodecPreservesTheExistingInboxCursorRepresentation()
+    {
+        string connection = await DatabaseAsync(postgres);
+        await using var provider = DeadLetterProvider(connection);
+        await RetainFailureAsync(provider, Message());
+        await RetainFailureAsync(provider, Message());
+        await using var scope = provider.CreateAsyncScope();
+        var letters = scope.ServiceProvider.GetRequiredService<IInboxDeadLetters<InboxConsumer>>();
+        var first = await letters.ListAsync("render", "exports", new(1, "review"), Token);
+        var item = Assert.Single(first.Items);
+        // The format below is the pre-extraction private inbox codec, assembled independently.
+        string[] lane = ["render", "exports", "review"];
+        string fingerprint = Convert.ToHexString(
+            SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(lane))
+        );
+        string legacy = Convert
+            .ToBase64String(
+                JsonSerializer.SerializeToUtf8Bytes(
+                    new
+                    {
+                        Version = 1,
+                        Scope = fingerprint,
+                        item.DeadLetteredAt,
+                        item.MessageId,
+                    }
+                )
+            )
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
+        Assert.Equal(legacy, first.NextCursor);
+        var next = await letters.ListAsync("render", "exports", new(1, "review", legacy), Token);
+        Assert.NotEqual(item.MessageId, Assert.Single(next.Items).MessageId);
+    }
+
     [Fact]
     public async Task PagesUseDatabaseUuidOrderAtTiedTimesAndFilterExactLaneAndCode()
     {

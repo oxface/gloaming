@@ -33,10 +33,28 @@ Optionally register `AddOutboxWorker<TDbContext>(new OutboxWorkerOptions(idleDel
 after a concrete dispatcher and native logging registration. It starts no migrations and
 discovers no modules. Each sequential invocation gets a fresh async scope, disposed before
 waiting. Dependency/model/provider failures during resolution fail startup/execution;
-publication/storage failures are logged and retried with failureDelay. IdleDelay applies on
+ordinary claim/publication failures are logged and retried with failureDelay when any required
+failure accounting was confirmed. IdleDelay applies on
 NoWork; both delays must be positive and within native Task.Delay bounds. Cooperative host
 cancellation stops new work and reaches the publisher. A non-cooperative publisher can still
 hold shutdown; leases do not forcibly terminate code. Callable dispatch requires no worker.
+
+Optional IOutboxFailurePolicy selects delayed retry or dead-letter state using durable
+publisher-exception observations. Attempts remains committed claims; failures do not prove
+transport rejection. Independently registered IOutboxDeadLetters concentrates bounded metadata
+List/Get and revision-conditional retry of the unchanged envelope. OutboxFailureAccountingException
+preserves both errors. OutboxCompletionException identifies unconfirmed completion after publication
+returns normally, retaining MessageId and the original InnerException, including completion-stage
+cancellation. Both faults stop the optional worker without another poll; native host supervision
+governs shutdown. Requested shutdown ends the worker normally. Completion faults never trigger
+publication-failure accounting and may follow an actual commit. See
+[outbox recovery, authority and rollout](../docs/outbox-recovery.md).
+
+OutboxBacklogSnapshot is detached aggregate metadata: pending/eligible/delayed/leased and
+dead-letter counts, database observation time and nullable oldest eligible age. The PostgreSQL
+package supplies its callable read independently of dispatch/recovery. Health, sampling,
+instrument names and alert thresholds stay consumer wiring; see
+[backlog and worker health](../docs/outbox-observability.md).
 
 Inbox composition is independent: IInbox<TDbContext> retains delivery in a caller-owned
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.

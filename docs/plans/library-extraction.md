@@ -199,6 +199,44 @@ on 2026-10-21. Dead-letter terminology and one context-typed list/detail/retry i
 the existing revision-checked transition. The [new report](../reports/m2-inbox-dead-letters.md)
 distinguishes paging/metadata inspection proofs from the earlier recovery/supervision evidence.
 
+On 2026-10-21 the owner selected the comparable outbox continuation. The
+[concrete outbox proposal](m2-outbox-dead-letters.md) received owner interface/scope approval
+before implementation. The [local contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md)
+and [slice report](../reports/m2-outbox-dead-letters.md) describe lease-fenced failure accounting,
+inspection/retry, schema/restricted-grant changes and new PostgreSQL/HTTP/process proofs. Attempts
+retains its committed-claim meaning; publication/commit uncertainty does not establish
+transport rejection. Existing inbox contracts remain intact, with only matching cursor
+internals consolidated. Classification, budgets, acceptance definitions and operator authority
+remain consumer-owned. No template preset or generic queue framework is added.
+
+After approving that implementation, the owner authorized checkpoint `6bcdf9c` and selected
+[completion-failure supervision](m2-outbox-completion-supervision.md) on 2026-10-21.
+OutboxCompletionException carries MessageId and the original InnerException after publication
+returns normally but completion is unconfirmed. The optional worker faults without another
+poll; native host options and consumer repair/inspection/restart govern recovery. Existing
+lease fencing, failure counters and conditional operator retry retain their semantics.
+No schema, grant, dependency, recovery interface or worker-option change is needed. The
+[separate report](../reports/m2-outbox-completion-supervision.md) records fresh evidence for
+line-by-line review, including the completion-stage cancellation contract change.
+
+The owner approved and checkpointed completion supervision as `020a292`, then selected
+[outbox operational visibility](outbox-operational-visibility.md). Its review surface is a
+detached OutboxBacklogSnapshot and ReadPostgresOutboxBacklogAsync context extension: exact-route
+counts and oldest eligible age using one database statement time, without dispatch/recovery
+registration or mutation. Native sample health checks and cached gauges retain consumer policy;
+restricted Sales independently adopts the same read. The [current family contract](../../src/Gloaming.Messaging/docs/outbox-observability.md)
+and [slice report](../reports/outbox-operational-visibility.md) record fresh proof boundaries.
+No health/recovery framework, schema/grant changes or template preset is introduced.
+
+After approving visibility checkpoint `2125860`, the owner selected
+[bounded completed-outbox retention](outbox-completed-retention.md). The callable PostgreSQL
+context extension admits an exact route, explicit completion cutoff and batch size 1–1000,
+returning the observed committed deletion count. A separate finite Exports maintenance role
+and consumer-owned partial index/migration exercise adoption. Native grants/RLS remain
+authority; dispatch credentials are unchanged. Deletion removes sender identity/evidence
+history without altering inbox lifetime or stopping obsolete publishers. The [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md)
+and [new report](../reports/outbox-completed-retention.md) record current boundaries and proofs.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

@@ -197,9 +197,17 @@ public sealed class DispatchTests(PostgreSqlFixture postgres)
         );
         var publisher = new RecordingPublisher();
         await using (var context = Context(connection))
-            await Assert.ThrowsAsync<PostgresException>(() =>
+        {
+            var failure = await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 Dispatcher(context, publisher).DispatchNextAsync(Token)
             );
+            Assert.Equal(message.MessageId, failure.MessageId);
+            Assert.Equal(
+                PostgresErrorCodes.CheckViolation,
+                Assert.IsType<PostgresException>(failure.InnerException).SqlState
+            );
+        }
+
         await SqlAsync(connection, "ALTER TABLE messages.pending DROP CONSTRAINT test_completion");
         await ExpireAsync(connection);
         await using var recovered = Context(connection);
@@ -272,7 +280,7 @@ public sealed class DispatchTests(PostgreSqlFixture postgres)
             },
         };
         await using var context = Context(connection);
-        var failure = await Assert.ThrowsAsync<AggregateException>(() =>
+        var failure = await Assert.ThrowsAsync<OutboxFailureAccountingException>(() =>
             Dispatcher(context, publisher).DispatchNextAsync(Token)
         );
         Assert.Same(publication, failure.InnerExceptions[0]);

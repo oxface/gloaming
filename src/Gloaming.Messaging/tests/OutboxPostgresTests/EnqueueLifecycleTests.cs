@@ -10,6 +10,30 @@ namespace Gloaming.Messaging.Tests;
 [Collection("Messaging PostgreSQL")]
 public sealed class EnqueueLifecycleTests(PostgreSqlFixture postgres)
 {
+    [Theory]
+    [InlineData(nameof(OutboxMessageRecord.Revision))]
+    [InlineData(nameof(OutboxMessageRecord.FailureCount))]
+    [InlineData(nameof(OutboxMessageRecord.FailuresSinceRedrive))]
+    [InlineData(nameof(OutboxMessageRecord.RedriveCount))]
+    [InlineData(nameof(OutboxMessageRecord.LastFailedAt))]
+    [InlineData(nameof(OutboxMessageRecord.LastFailureCode))]
+    [InlineData(nameof(OutboxMessageRecord.DeadLetteredAt))]
+    [InlineData(nameof(OutboxMessageRecord.LastRedrivenAt))]
+    public async Task ProducerCannotAssignRecoveryState(string property)
+    {
+        string connection = await DatabaseAsync(postgres);
+        await using var writer = Context(connection);
+        await using var transaction = await writer.Database.BeginTransactionAsync(Token);
+        new EfOutbox<OutboxConsumer>(writer).Enqueue(Message());
+        var entry = writer.ChangeTracker.Entries<OutboxMessageRecord>().Single();
+        var target = entry.Property(property);
+        target.CurrentValue =
+            target.Metadata.ClrType == typeof(long) ? 1L
+            : target.Metadata.ClrType == typeof(string) ? "assigned-by-producer"
+            : DateTimeOffset.UtcNow;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => writer.SaveChangesAsync(Token));
+    }
+
     [Fact]
     public async Task SqlSaveFailureCanRetryTheOriginalMessageInTheSameNativeTransaction()
     {

@@ -40,7 +40,8 @@ public static class DemoJourneys
         var dispatcher = new PostgresOutboxDispatcher<ExportDbContext>(
             dispatchContext,
             new HttpCommandPublisher(client, receiver),
-            new(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(5))
+            new(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(5)),
+            failurePolicy: new ExportOutboxFailurePolicy()
         );
         var result = await dispatcher.DispatchNextAsync(cancellationToken);
         output.WriteLine($"export {id}: submitted; one dispatch={result}");

@@ -11,6 +11,18 @@ the implementation is checkpointed as `ecab884`, refined as `863456b` and merged
 [the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
 M2 adds [durable failure accounting and operator retry](inbox-recovery.md) after owner
 interface review, with [separate current evidence](../../../docs/reports/m2-inbox-failure-recovery.md).
+Its [outbox continuation](outbox-recovery.md) adds lease-fenced publisher-exception accounting,
+consumer-selected dead letters and bounded inspection/conditional retry, with
+[new PostgreSQL/HTTP/process evidence](../../../docs/reports/m2-outbox-dead-letters.md).
+The [completion supervision follow-up](../../../docs/reports/m2-outbox-completion-supervision.md)
+adds OutboxCompletionException and stops the optional worker on unconfirmed completion.
+Native host options, consumer repair and external restart policy govern recovery.
+The [operational visibility slice](outbox-observability.md) adds a separately callable
+PostgreSQL route snapshot. Native sample gauges and health checks keep sampling, readiness
+policy and alert thresholds with the consumer; no new recovery or health framework is supplied.
+Separately authorized [completed-outbox retention](outbox-retention.md) now provides one
+bounded PostgreSQL deletion batch. Evidence windows and unique identities after deletion
+remain consumer obligations; inbox retention is independent.
 
 ## Current composition
 
@@ -71,6 +83,11 @@ fields, operation outcomes, timing options and registration responsibilities.
   acceptance and a committed outbox completion. ClaimLost means publication returned normally
   but the claim expired or changed before completion could be recorded. Failures throw;
   successful dispatch does not prove downstream business processing.
+- OutboxCompletionException means the publisher returned normally but completion was not
+  confirmed. MessageId and the original InnerException identify the uncertain operation.
+  The optional worker faults without another poll; requested shutdown ends normally.
+  Completion may already have committed. Failure policy/accounting is never invoked for it;
+  direct callers own supervision and fresh-state inspection. ClaimLost stays an ordinary result.
 - ValidateOutboxChanges is an explicit tracked-save guard. Native transaction atomicity and
   dispatcher claim fencing do not depend on calling it. However, omitting it removes protection
   against tracked edits/deletes, envelope changes and saving new work in a different transaction.
@@ -199,8 +216,8 @@ branch and does not release resources it did not create.
 ## Deferred capabilities
 
 Receipt-only mode if an adopter needs it;
-queued-message compatibility/upcasting rollout proofs; retention/deduplication windows;
-outbox redrive/poison handling; caps on inbox executions including crashes; lease renewal; parallel/batch dispatch;
+queued-message compatibility/upcasting rollout proofs; inbox retention/deduplication windows;
+caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
 transactions; template messaging presets. Event-sourcing maintenance/async projections remain

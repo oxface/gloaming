@@ -731,6 +731,42 @@ DeadLetter/DeadLetteredAt replace public quarantine names while retaining the st
 Live paging uses database timestamp/UUID order and reserves no work; inspection and mutation
 authority remain consumer policy. A forward metadata index supports the lookup.
 
+The owner-approved [outbox continuation](plans/m2-outbox-dead-letters.md) applies comparable
+dead-letter inspection and conditional retry to retained outgoing work. Publication remains
+outside the transaction; accounting and completion lock and recheck the unexpired token
+before the final write. Attempts retains its committed-claim meaning, while separate counts
+record publisher-exception observations without asserting transport rejection. Unconfirmed
+accounting faults the worker. Inbox and outbox keep their distinct public stores and storage
+protocols, sharing only a private cursor codec. [ADR 0019](adr/0019-lease-fenced-outbox-dead-letters.md),
+the [local contract](../src/Gloaming.Messaging/docs/outbox-recovery.md) and
+[fresh evidence](reports/m2-outbox-dead-letters.md) record the boundaries and rollout obligations.
+
+The owner-selected [completion supervision follow-up](plans/m2-outbox-completion-supervision.md)
+adds a distinct OutboxCompletionException after normal publication return and stops the optional
+worker without another poll. The original storage error remains InnerException; unconfirmed
+completion can already have committed. Native host supervision and consumer repair/restart
+remain explicit. No failure accounting, compensating write or schema change is introduced;
+[new proofs](reports/m2-outbox-completion-supervision.md) distinguish containment from global
+execution caps and from the existing ClaimLost result.
+
+The owner-selected [operational visibility slice](plans/outbox-operational-visibility.md)
+adds one PostgreSQL route-scoped aggregate observation on a fresh context, with one database
+time and native grants/RLS. It reserves no work and adds no recovery interface. OutboxDemo
+composes native health checks and cached gauges; restricted Sales adopts the same callable
+read without a broker. Sampling, readiness topology, exporters, alert thresholds and restart
+policy remain consumer-owned. The [local contract](../src/Gloaming.Messaging/docs/outbox-observability.md)
+and [fresh proof report](reports/outbox-operational-visibility.md) record authority, staleness
+and duplicate-observer limits. No persistence, lease or schema protocol changes.
+
+The subsequent owner-selected [completed-outbox retention](plans/outbox-completed-retention.md)
+adds an explicit bounded PostgreSQL cleanup batch. Ordinary DELETE locking avoids granting
+maintenance UPDATE rights; competing calls can wait and remove fewer rows. Native grants/RLS,
+consumer-selected evidence windows and repetition remain explicit. Cleanup removes sender
+identity history and cannot stop late external publication or define inbox deduplication
+lifetime. Exports owns its finite credential-checked command and optional completed-row index;
+dispatch permissions and lifecycle protocols remain unchanged. See the [current contract](../src/Gloaming.Messaging/docs/outbox-retention.md)
+and [fresh evidence](reports/outbox-completed-retention.md).
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

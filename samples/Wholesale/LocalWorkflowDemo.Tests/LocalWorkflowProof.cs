@@ -1,8 +1,10 @@
+using System.Data;
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
@@ -31,7 +33,8 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
 
     internal static async Task<LocalWorkflowProof> CreateAsync(
         PostgreSqlFixture postgres,
-        CancellationToken token
+        CancellationToken token,
+        DbCommandInterceptor? interceptor = null
     )
     {
         string sales = await postgres.CreateDatabaseAsync(token);
@@ -39,6 +42,11 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddLocalReservationDemo(sales, inventory, TimeSpan.FromSeconds(2));
+        if (interceptor is not null)
+            services.AddDbContext<InventoryDbContext>(options =>
+                options.AddInterceptors(interceptor)
+            );
+
         var provider = services.BuildServiceProvider(
             new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }
         );
@@ -105,6 +113,12 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
     internal async Task<StockPositionHistory> StockAsync(Guid stock, CancellationToken token)
     {
         await using var scope = Scope();
+        var database = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+        // Poll one snapshot while the real workers can commit between the stream and state reads.
+        await using var transaction = await database.Database.BeginTransactionAsync(
+            IsolationLevel.RepeatableRead,
+            token
+        );
         return (
             await scope
                 .ServiceProvider.GetRequiredService<IStockPositionQueries>()

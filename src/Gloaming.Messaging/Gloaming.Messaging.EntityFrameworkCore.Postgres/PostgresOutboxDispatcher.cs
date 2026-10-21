@@ -1,11 +1,6 @@
 using System.Data;
-using System.Data.Common;
 using System.Text.Json;
-using System.Transactions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using IsolationLevel = System.Data.IsolationLevel;
 
@@ -20,6 +15,8 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
     private readonly IMessagePublisher publisher;
     private readonly OutboxDispatchOptions options;
     private readonly string table;
+    private readonly PostgresOutboxStorage storage;
+    private readonly IOutboxFailurePolicy<TDbContext>? failurePolicy;
     private readonly ILogger<PostgresOutboxDispatcher<TDbContext>>? logger;
 
     /// <summary>Validates options and native EF model metadata without opening a database connection.</summary>
@@ -31,7 +28,8 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
         TDbContext database,
         IMessagePublisher publisher,
         OutboxDispatchOptions options,
-        ILogger<PostgresOutboxDispatcher<TDbContext>>? logger = null
+        ILogger<PostgresOutboxDispatcher<TDbContext>>? logger = null,
+        IOutboxFailurePolicy<TDbContext>? failurePolicy = null
     )
     {
         ArgumentNullException.ThrowIfNull(database);
@@ -39,15 +37,13 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
         ArgumentNullException.ThrowIfNull(options);
 
         ValidateOptions(options);
-        ValidateModel(database);
+        storage = new(database);
         this.database = database;
         this.publisher = publisher;
         this.options = options;
         this.logger = logger;
-        var entity = database.Model.FindEntityType(typeof(OutboxMessageRecord))!;
-        table = database
-            .GetService<ISqlGenerationHelper>()
-            .DelimitIdentifier(entity.GetTableName()!, entity.GetSchema());
+        table = storage.Table;
+        this.failurePolicy = failurePolicy;
     }
 
     /// <inheritdoc />
@@ -56,7 +52,7 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
     )
     {
         cancellationToken.ThrowIfCancellationRequested();
-        RequireIndependentOperation();
+        storage.RequireIndependentOperation();
         var claim = await ClaimAsync(cancellationToken);
         if (claim is null)
             return OutboxDispatchResult.NoWork;
@@ -84,12 +80,12 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
             {
                 try
                 {
-                    await FinishAsync(claim, completed: false, cancellationToken);
+                    await RecordFailureAsync(claim, publicationFailure, cancellationToken);
                 }
                 catch (Exception storageFailure)
                 {
-                    throw new AggregateException(
-                        "Publication and retry scheduling both failed.",
+                    throw new OutboxFailureAccountingException(
+                        claim.Message.MessageId,
                         publicationFailure,
                         storageFailure
                     );
@@ -98,11 +94,28 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
                 throw;
             }
 
-            bool completed = await FinishAsync(claim, completed: true, cancellationToken);
+            bool completed;
+            try
+            {
+                completed = await CompleteAsync(claim, cancellationToken);
+            }
+            catch (Exception completionFailure)
+            {
+                throw new OutboxCompletionException(claim.Message.MessageId, completionFailure);
+            }
+
             attempt.Complete(completed ? "published" : "claim_lost");
             return completed ? OutboxDispatchResult.Published : OutboxDispatchResult.ClaimLost;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            attempt.Cancel();
+            throw;
+        }
+        catch (OutboxCompletionException failure)
+            when (cancellationToken.IsCancellationRequested
+                && failure.InnerException is OperationCanceledException
+            )
         {
             attempt.Cancel();
             throw;
@@ -137,68 +150,8 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
             );
     }
 
-    internal static void ValidateModel(DbContext database)
-    {
-        if (database.Database.ProviderName != "Npgsql.EntityFrameworkCore.PostgreSQL")
-            throw new InvalidOperationException(
-                "This outbox implementation requires native Npgsql EF PostgreSQL."
-            );
-        var entity = database.Model.FindEntityType(typeof(OutboxMessageRecord));
-        if (
-            entity?.FindAnnotation("Gloaming:OutboxProvider")?.Value is not "Postgres"
-            || entity.GetTableName() is not { } name
-            || entity.GetSchema() is not { } schema
-        )
-            throw new InvalidOperationException(
-                "ConfigurePostgresOutbox must register the provided record and explicit table/schema."
-            );
-        var store = StoreObjectIdentifier.Table(name, schema);
-        var columns = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            [nameof(OutboxMessageRecord.MessageId)] = "message_id",
-            [nameof(OutboxMessageRecord.RouteKey)] = "destination",
-            [nameof(OutboxMessageRecord.MessageName)] = "message_name",
-            [nameof(OutboxMessageRecord.SchemaVersion)] = "schema_version",
-            [nameof(OutboxMessageRecord.Payload)] = "payload",
-            [nameof(OutboxMessageRecord.TenantKey)] = "owner_key",
-            [nameof(OutboxMessageRecord.CorrelationId)] = "correlation_id",
-            [nameof(OutboxMessageRecord.CausationId)] = "causation_id",
-            [nameof(OutboxMessageRecord.TraceParent)] = "trace_parent",
-            [nameof(OutboxMessageRecord.TraceState)] = "trace_state",
-            [nameof(OutboxMessageRecord.QueuedAt)] = "queued_at",
-            [nameof(OutboxMessageRecord.AvailableAt)] = "available_at",
-            [nameof(OutboxMessageRecord.DispatchedAt)] = "dispatched_at",
-            [nameof(OutboxMessageRecord.LeaseToken)] = "lease_token",
-            [nameof(OutboxMessageRecord.LeaseUntil)] = "lease_until",
-            [nameof(OutboxMessageRecord.Attempts)] = "attempts",
-        };
-        if (
-            columns.Any(pair => entity.FindProperty(pair.Key)?.GetColumnName(store) != pair.Value)
-            || entity.FindProperty(nameof(OutboxMessageRecord.Payload))!.GetColumnType() != "jsonb"
-            || entity.FindProperty(nameof(OutboxMessageRecord.QueuedAt))!.GetDefaultValueSql()
-                != "clock_timestamp()"
-            || entity.FindProperty(nameof(OutboxMessageRecord.AvailableAt))!.GetDefaultValueSql()
-                != "clock_timestamp()"
-            || entity.FindPrimaryKey()?.Properties.Count != 1
-            || entity.FindPrimaryKey()!.Properties[0].Name != nameof(OutboxMessageRecord.MessageId)
-        )
-            throw new InvalidOperationException(
-                "Retain the supported outbox column/key/JSONB/database-time mapping."
-            );
-    }
-
-    private void RequireIndependentOperation()
-    {
-        if (
-            database.Database.CurrentTransaction is not null
-            || Transaction.Current is not null
-            || database.Database.GetEnlistedTransaction() is not null
-            || database.ChangeTracker.HasChanges()
-        )
-            throw new InvalidOperationException(
-                "Dispatch requires an independent context without a producer, enlisted or ambient transaction or pending business changes."
-            );
-    }
+    internal static void ValidateModel(DbContext database) =>
+        PostgresOutboxStorage.ValidateModel(database);
 
     private async Task<Claim?> ClaimAsync(CancellationToken cancellationToken)
     {
@@ -206,27 +159,27 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
             IsolationLevel.ReadCommitted,
             cancellationToken
         );
-        await using var command = Command(
+        await using var command = storage.Command(
             transaction,
             $"""
             WITH candidate AS (
                 SELECT message_id FROM {table}
-                WHERE dispatched_at IS NULL AND available_at <= clock_timestamp()
+                WHERE dispatched_at IS NULL AND dead_lettered_at IS NULL AND available_at <= clock_timestamp()
                   AND (lease_until IS NULL OR lease_until <= clock_timestamp())
                 ORDER BY available_at, queued_at, message_id
                 FOR UPDATE SKIP LOCKED LIMIT 1
             )
             UPDATE {table} AS outgoing
             SET lease_token = @token, lease_until = clock_timestamp() + @duration,
-                attempts = outgoing.attempts + 1
+                attempts = outgoing.attempts + 1, revision = outgoing.revision + 1
             FROM candidate WHERE outgoing.message_id = candidate.message_id
             RETURNING outgoing.message_id, destination, message_name, schema_version, payload, owner_key,
                       correlation_id, causation_id, trace_parent, trace_state
             """
         );
         Guid token = Guid.NewGuid();
-        Parameter(command, "token", token);
-        Parameter(command, "duration", options.LeaseDuration);
+        PostgresOutboxStorage.Parameter(command, "token", token);
+        PostgresOutboxStorage.Parameter(command, "duration", options.LeaseDuration);
         Claim? claim = null;
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
         {
@@ -254,52 +207,129 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
         return claim;
     }
 
-    private async Task<bool> FinishAsync(
-        Claim claim,
-        bool completed,
-        CancellationToken cancellationToken
-    )
+    private async Task<bool> CompleteAsync(Claim claim, CancellationToken cancellationToken)
     {
-        RequireIndependentOperation();
+        storage.RequireIndependentOperation();
         await using var transaction = await database.Database.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
             cancellationToken
         );
-        string assignment = completed
-            ? "dispatched_at = clock_timestamp()"
-            : "available_at = clock_timestamp() + @retry";
-        await using var command = Command(
+        // Establish the row lock before the final expiry predicate. A lock wait must not
+        // allow a lease that expired while waiting to complete with an earlier clock value.
+        await using (
+            var locked = storage.Command(
+                transaction,
+                $"""
+                SELECT message_id FROM {table}
+                WHERE message_id = @id AND lease_token = @token AND dispatched_at IS NULL
+                  AND dead_lettered_at IS NULL AND lease_until > clock_timestamp()
+                FOR UPDATE
+                """
+            )
+        )
+        {
+            PostgresOutboxStorage.Parameter(locked, "id", claim.Message.MessageId);
+            PostgresOutboxStorage.Parameter(locked, "token", claim.Token);
+            if (await locked.ExecuteScalarAsync(cancellationToken) is null)
+                return false;
+        }
+
+        await using var command = storage.Command(
             transaction,
             $"""
-            UPDATE {table} SET {assignment}, lease_token = NULL, lease_until = NULL
+            UPDATE {table}
+            SET dispatched_at = clock_timestamp(), lease_token = NULL, lease_until = NULL,
+                revision = revision + 1
             WHERE message_id = @id AND lease_token = @token AND dispatched_at IS NULL
-              AND lease_until > clock_timestamp()
+              AND dead_lettered_at IS NULL AND lease_until > clock_timestamp()
             """
         );
-        Parameter(command, "id", claim.Message.MessageId);
-        Parameter(command, "token", claim.Token);
-        if (!completed)
-            Parameter(command, "retry", options.RetryDelay);
+        PostgresOutboxStorage.Parameter(command, "id", claim.Message.MessageId);
+        PostgresOutboxStorage.Parameter(command, "token", claim.Token);
         int changed = await command.ExecuteNonQueryAsync(cancellationToken);
+        // A missing commit response is ambiguous; never classify it as a publication failure.
         await transaction.CommitAsync(cancellationToken);
         return changed == 1;
     }
 
-    private DbCommand Command(IDbContextTransaction transaction, string sql)
+    private async Task RecordFailureAsync(
+        Claim claim,
+        Exception publicationFailure,
+        CancellationToken cancellationToken
+    )
     {
-        var command = database.Database.GetDbConnection().CreateCommand();
-        command.Transaction = transaction.GetDbTransaction();
-        command.CommandText = sql;
-        command.CommandTimeout = database.Database.GetCommandTimeout() ?? 30;
-        return command;
-    }
+        storage.RequireIndependentOperation();
+        await using var transaction = await database.Database.BeginTransactionAsync(
+            IsolationLevel.ReadCommitted,
+            cancellationToken
+        );
+        long failureCount;
+        long failuresSinceRedrive;
+        await using (
+            var select = storage.Command(
+                transaction,
+                $"""
+                SELECT failure_count, failures_since_redrive FROM {table}
+                WHERE message_id = @id AND lease_token = @token AND dispatched_at IS NULL
+                  AND dead_lettered_at IS NULL AND lease_until > clock_timestamp()
+                FOR UPDATE
+                """
+            )
+        )
+        {
+            PostgresOutboxStorage.Parameter(select, "id", claim.Message.MessageId);
+            PostgresOutboxStorage.Parameter(select, "token", claim.Token);
+            await using var reader = await select.ExecuteReaderAsync(cancellationToken);
+            if (!await reader.ReadAsync(cancellationToken))
+                return;
 
-    private static void Parameter(DbCommand command, string name, object value)
-    {
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = name;
-        parameter.Value = value;
-        command.Parameters.Add(parameter);
+            failureCount = checked(reader.GetInt64(0) + 1);
+            failuresSinceRedrive = checked(reader.GetInt64(1) + 1);
+        }
+
+        var decision = failurePolicy is null
+            ? new OutboxFailureDecision.RetryAfter(options.RetryDelay, "publication-failed")
+            : failurePolicy.Decide(
+                new(claim.Message, publicationFailure, failureCount, failuresSinceRedrive)
+            );
+        (string code, TimeSpan? delay) = decision switch
+        {
+            OutboxFailureDecision.RetryAfter retry when retry.Delay >= TimeSpan.Zero => (
+                retry.Code,
+                retry.Delay
+            ),
+            OutboxFailureDecision.DeadLetter deadLetter => (deadLetter.Code, (TimeSpan?)null),
+            _ => throw new InvalidOperationException(
+                "An outbox policy must select nonnegative delayed retry or dead-letter state."
+            ),
+        };
+        if (string.IsNullOrWhiteSpace(code) || code.Length > 128)
+            throw new InvalidOperationException(
+                "An outbox failure code must be nonblank and at most 128 characters."
+            );
+
+        // Locking the row does not renew its lease. Recheck expiry at the final write.
+        await using var command = storage.Command(
+            transaction,
+            $"""
+            UPDATE {table}
+            SET failure_count = failure_count + 1, failures_since_redrive = failures_since_redrive + 1,
+                revision = revision + 1, last_failed_at = clock_timestamp(), last_failure_code = @code,
+                dead_lettered_at = CASE WHEN @deadLetter THEN clock_timestamp() ELSE NULL END,
+                available_at = CASE WHEN @deadLetter THEN available_at ELSE clock_timestamp() + @delay END,
+                lease_token = NULL, lease_until = NULL
+            WHERE message_id = @id AND lease_token = @token AND dispatched_at IS NULL
+              AND dead_lettered_at IS NULL AND lease_until > clock_timestamp()
+            """
+        );
+        PostgresOutboxStorage.Parameter(command, "id", claim.Message.MessageId);
+        PostgresOutboxStorage.Parameter(command, "token", claim.Token);
+        PostgresOutboxStorage.Parameter(command, "code", code);
+        PostgresOutboxStorage.Parameter(command, "deadLetter", delay is null);
+        PostgresOutboxStorage.Parameter(command, "delay", delay ?? TimeSpan.Zero);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+        // Do not issue compensating accounting after a missing commit response.
+        await transaction.CommitAsync(cancellationToken);
     }
 
     private sealed record Claim(OutgoingMessage Message, Guid Token);

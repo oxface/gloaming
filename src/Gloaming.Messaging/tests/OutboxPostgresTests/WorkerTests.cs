@@ -14,8 +14,12 @@ namespace Gloaming.Messaging.Tests;
 [Collection("Messaging PostgreSQL")]
 public sealed class WorkerTests(PostgreSqlFixture postgres)
 {
-    [Fact]
-    public async Task OptionalWorkerRecoversInFreshScopesAndStopsAnIdleLoop()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task OptionalWorkerRecoversFromPublicationFailureOrClaimLossInFreshScopes(
+        bool claimLost
+    )
     {
         string connection = await DatabaseAsync(postgres);
         var message = await EnqueueAsync(connection);
@@ -25,15 +29,23 @@ public sealed class WorkerTests(PostgreSqlFixture postgres)
         var services = Services(connection);
         services.AddScoped(provider => new RecordingPublisher
         {
-            OnPublish = (_, _) =>
+            OnPublish = async (_, _) =>
             {
                 contexts.Enqueue(
                     provider.GetRequiredService<OutboxConsumer>().ContextId.InstanceId
                 );
                 if (Interlocked.Increment(ref attempts) == 1)
+                {
+                    if (claimLost)
+                    {
+                        await ExpireAsync(connection);
+                        return;
+                    }
+
                     throw new IOException("first publication fails");
+                }
+
                 accepted.TrySetResult();
-                return Task.CompletedTask;
             },
         });
         services.AddPostgresOutboxDispatcher<OutboxConsumer, RecordingPublisher>(
@@ -74,6 +86,10 @@ public sealed class WorkerTests(PostgreSqlFixture postgres)
         Assert.Equal(2, attempts);
         Assert.Equal(2, contexts.Distinct().Count());
         await using var read = Context(connection);
+        Assert.Equal(
+            claimLost ? 0 : 1,
+            (await read.Set<OutboxMessageRecord>().SingleAsync(Token)).FailureCount
+        );
         Assert.Equal(
             message.MessageId,
             (await read.Set<OutboxMessageRecord>().SingleAsync(Token)).MessageId

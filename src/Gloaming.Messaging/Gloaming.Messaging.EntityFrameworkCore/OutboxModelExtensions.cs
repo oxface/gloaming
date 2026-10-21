@@ -40,6 +40,18 @@ public static class OutboxModelExtensions
         row.Property(item => item.LeaseToken).HasColumnName("lease_token");
         row.Property(item => item.LeaseUntil).HasColumnName("lease_until");
         row.Property(item => item.Attempts).HasColumnName("attempts");
+        row.Property(item => item.Revision).HasColumnName("revision").HasDefaultValue(0L);
+        row.Property(item => item.FailureCount).HasColumnName("failure_count").HasDefaultValue(0L);
+        row.Property(item => item.FailuresSinceRedrive)
+            .HasColumnName("failures_since_redrive")
+            .HasDefaultValue(0L);
+        row.Property(item => item.LastFailedAt).HasColumnName("last_failed_at");
+        row.Property(item => item.LastFailureCode)
+            .HasColumnName("last_failure_code")
+            .HasMaxLength(128);
+        row.Property(item => item.DeadLetteredAt).HasColumnName("dead_lettered_at");
+        row.Property(item => item.RedriveCount).HasColumnName("redrive_count").HasDefaultValue(0L);
+        row.Property(item => item.LastRedrivenAt).HasColumnName("last_redriven_at");
         row.HasIndex(item => new
         {
             item.AvailableAt,
@@ -95,6 +107,14 @@ public static class OutboxModelExtensions
                 || row.LeaseToken is not null
                 || row.LeaseUntil is not null
                 || row.Attempts != 0
+                || row.Revision != 0
+                || row.FailureCount != 0
+                || row.FailuresSinceRedrive != 0
+                || row.LastFailedAt is not null
+                || row.LastFailureCode is not null
+                || row.DeadLetteredAt is not null
+                || row.RedriveCount != 0
+                || row.LastRedrivenAt is not null
             )
                 throw new InvalidOperationException(
                     "Do not change the enqueued envelope or assign its database-managed lifecycle."

@@ -234,11 +234,17 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         var services = new ServiceCollection();
         InboxDemoHost.Register(services, receiver);
         await using var provider = services.BuildServiceProvider();
+        OutboxCompletionException failure;
         await using (var database = ExportDbContext.Create(sender))
-            await Assert.ThrowsAsync<PostgresException>(() =>
+            failure = await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 Dispatcher(database, channel, queue).DispatchNextAsync(Token)
             );
+
+        var completionError = Assert.IsType<PostgresException>(failure.InnerException);
+        Assert.Equal(PostgresErrorCodes.CheckViolation, completionError.SqlState);
+        Assert.Equal("proof_completion", completionError.ConstraintName);
         var first = await DeliveryAsync(channel, queue);
+        Assert.Equal(failure.MessageId.ToString(), first.BasicProperties.MessageId);
         var intake = new RabbitMqRenderReceiver(
             channel,
             provider.GetRequiredService<IServiceScopeFactory>()

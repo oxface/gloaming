@@ -16,6 +16,47 @@ namespace Gloaming.Messaging.Tests;
 public sealed class RegistrationTests(PostgreSqlFixture postgres)
 {
     [Fact]
+    public async Task PolicyAndDeadLetterRegistrationAreIndependentScopedAndRejectConflictingPolicies()
+    {
+        var services = new ServiceCollection();
+        services.AddDbContext<OutboxConsumer>(options =>
+            options.UseNpgsql("Host=not-opened;Database=unused;Username=unused")
+        );
+        services.AddOutboxFailurePolicy<OutboxConsumer, RegisteredPolicy>();
+        Assert.Throws<InvalidOperationException>(() =>
+            services.AddOutboxFailurePolicy<OutboxConsumer, RegisteredPolicy>()
+        );
+        services.AddPostgresOutboxDeadLetters<OutboxConsumer>();
+        services.AddPostgresOutboxDeadLetters<OutboxConsumer>();
+        await using var provider = services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
+        );
+        await using var first = provider.CreateAsyncScope();
+        await using var second = provider.CreateAsyncScope();
+        Assert.Same(
+            first.ServiceProvider.GetRequiredService<IOutboxDeadLetters<OutboxConsumer>>(),
+            first.ServiceProvider.GetRequiredService<IOutboxDeadLetters<OutboxConsumer>>()
+        );
+        Assert.NotSame(
+            first.ServiceProvider.GetRequiredService<IOutboxDeadLetters<OutboxConsumer>>(),
+            second.ServiceProvider.GetRequiredService<IOutboxDeadLetters<OutboxConsumer>>()
+        );
+        Assert.NotSame(
+            first.ServiceProvider.GetRequiredService<IOutboxFailurePolicy<OutboxConsumer>>(),
+            second.ServiceProvider.GetRequiredService<IOutboxFailurePolicy<OutboxConsumer>>()
+        );
+        Assert.Null(first.ServiceProvider.GetService<IOutboxDispatcher<OutboxConsumer>>());
+        Assert.Null(first.ServiceProvider.GetService<IOutbox<OutboxConsumer>>());
+        Assert.Empty(provider.GetServices<IHostedService>());
+    }
+
+    public sealed class RegisteredPolicy : IOutboxFailurePolicy<OutboxConsumer>
+    {
+        public OutboxFailureDecision Decide(OutboxFailure failure) =>
+            new OutboxFailureDecision.DeadLetter("review");
+    }
+
+    [Fact]
     public async Task TypedModuleRegistrationsAndQuotedTablesRemainIndependent()
     {
         string connection = await DatabaseAsync(postgres);

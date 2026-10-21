@@ -20,10 +20,13 @@ internal sealed class ChildHost : IAsyncDisposable
     )
     {
         secrets = environment
-            .Values.Where(value =>
-                value.Contains("Password=", StringComparison.OrdinalIgnoreCase)
-                || value.StartsWith("amqp", StringComparison.Ordinal)
+            .Where(item =>
+                item.Value.Contains("Password=", StringComparison.OrdinalIgnoreCase)
+                || item.Value.StartsWith("amqp", StringComparison.Ordinal)
+                || item.Key.EndsWith("_TOKEN", StringComparison.OrdinalIgnoreCase)
             )
+            .Select(item => item.Value)
+            .Where(value => value.Length > 0)
             .ToArray();
         var start = new ProcessStartInfo(
             Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet"
@@ -45,6 +48,7 @@ internal sealed class ChildHost : IAsyncDisposable
                     key.StartsWith("ConnectionStrings__", StringComparison.OrdinalIgnoreCase)
                     || key.StartsWith("RabbitMQ__", StringComparison.OrdinalIgnoreCase)
                     || key.StartsWith("OTEL_", StringComparison.OrdinalIgnoreCase)
+                    || key.StartsWith("OUTBOX_DEMO_", StringComparison.OrdinalIgnoreCase)
                 )
                 .ToArray()
         )

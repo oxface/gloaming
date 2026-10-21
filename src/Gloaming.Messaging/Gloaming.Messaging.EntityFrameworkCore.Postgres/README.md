@@ -39,14 +39,22 @@ and attempt increment are committed before publication. Completion or retry requ
 same token, undispatched status and an unexpired lease. Stale publishers cannot complete or
 defer a successor's claim. No database transaction/row lock is held during network work.
 
-Publisher failure schedules the configured database-time retry and rethrows. If retry SQL
-also fails, AggregateException preserves both errors. Cancellation/abandonment and completion
-failure leave retained claims recoverable after expiry; publication may already have succeeded.
+Publisher failure records lease-fenced failure observations and selects the consumer's delayed
+retry or dead-letter decision, then rethrows. Without a policy, the configured retry delay
+remains indefinite. OutboxFailureAccountingException preserves publication/accounting errors
+and faults the optional worker. OutboxCompletionException carries MessageId and the original
+InnerException when completion is unconfirmed after normal publication return, including
+completion-stage cancellation. It also faults the worker without another poll; requested host
+shutdown ends normally. An uncommitted completion leaves the claim recoverable after expiry;
+a missing commit response may leave the row completed. Inspect fresh storage after repair.
+Completion faults never invoke publisher-failure accounting. Publication cancellation/abandonment
+can likewise leave retained claims for expiry; transport acceptance remains uncertain.
 RetryDelay may be zero; LeaseDuration must be positive. No hidden producer or transport retry.
 
 The schema has a stable GUID primary key, JSONB payload, optional tenant key, database-generated
 queued/available timestamps, dispatched timestamp, lease token/expiry and long attempts.
-Consumer migrations create/update it. The candidate index excludes dispatched records;
+Consumer migrations create/update it, including recovery counts, revision, safe failure metadata
+and dead-letter/redrive times. Attempts counts committed claims. The candidate index excludes dispatched/dead-lettered records;
 retention still belongs to a later capability. Retain the fixed column/key/JSONB/default mapping;
 schema/table names and ownership/filter configuration are customizable.
 JSONB preserves JSON meaning, not original text formatting, property order or numeric spelling.
@@ -59,9 +67,26 @@ scope. This dispatcher does not impersonate each owner or infer trust from the p
 
 At-least-once delivery requires continued dispatch, accepting transport and retained records.
 Duplicate effects remain receiver-owned. There is no FIFO, global concurrency cap, lease
-renewal, poison policy, pruning, redrive or exactly-once promise. See the
+renewal, pruning or exactly-once promise. Consumer-selected stop policy and separately registered
+AddPostgresOutboxDeadLetters provide bounded List/Get and identity-preserving Retry. See
+[outbox recovery, supervision and schema/grant obligations](../docs/outbox-recovery.md), the
 [supported and deferred contract](../docs/capabilities.md) and actual
 [Inventory RabbitMQ publisher](../../../samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs).
+
+`await database.ReadPostgresOutboxBacklogAsync(routeKey, cancellationToken)` reads aggregate
+counts and oldest eligible age using one database statement time on a fresh independent context.
+It registers no services and takes no claims/row locks. Native grants/RLS apply; EF filters do
+not. A metadata-only SELECT role needs six lifecycle columns and schema USAGE, with no payload
+SELECT or UPDATE. Existing dispatch grants suffice. See [snapshot semantics and native consumer
+health/metrics](../docs/outbox-observability.md); no schema/grant migration is introduced.
+
+`await database.DeleteCompletedPostgresOutboxBatchAsync(routeKey, completedBefore, batchSize, token)`
+is separately authorized maintenance on a fresh context. It deletes at most 1–1000 completed
+rows strictly before an admitted, nonfuture database-clock cutoff. Native DELETE locking can
+wait; a missing commit response may leave deletion committed. It requires DELETE plus six-column
+metadata SELECT, with no UPDATE or payload read. Dispatcher grants remain unchanged. Consumers
+own retention windows, index/migration choice and repetition. See [retention, identity history
+and maintenance authority](../docs/outbox-retention.md).
 
 Inbox-only consumers configure/register the inbox independently and need no outbox table or
 publisher. Intake requires caller-owned native ReadCommitted isolation. A retained key combines

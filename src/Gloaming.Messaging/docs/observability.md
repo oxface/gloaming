@@ -61,6 +61,13 @@ Subscribe to `ActivitySource` **`Gloaming.Messaging`**:
 | `gloaming.inbox.process` | Consumer | After locked selection: handler, save, completion and observed commit; failure includes savepoint rollback and failure accounting/dead-letter state. |
 
 A link to retained context is supplied at activity creation, so samplers can inspect it.
+Outbox publisher-exception accounting and consumer dead-letter decisions remain failed attempts;
+they never report Published. Unconfirmed accounting faults emit the worker's distinct critical
+supervision diagnostic. OutboxCompletionException likewise emits a distinct critical worker
+diagnostic and faults that worker without another poll. Completion failures remain ambiguous
+and do not invoke publication policy; completion-stage requested cancellation reports cancelled
+while preserving the typed fault for direct callers;
+see [outbox recovery](outbox-recovery.md). No new telemetry instrument or sensitive payload attribute is added.
 Each retry receives its own activity; an existing local ambient parent is preserved.
 NoWork polls and failures before selection do not create a message activity. Native DB
 instrumentation can independently cover claim/selection.
@@ -101,7 +108,10 @@ The only dimensions are `operation` (`dispatch`, `process`) and `result` (`publi
 `claim_lost`, `processed`, `failed`, `cancelled`). NoWork polls are excluded. Attempt metrics
 do not depend on trace sampling; process termination before disposal cannot emit a finished
 attempt. They do not count every committed lease, broker delivery or business effect.
-No per-message/tenant/route labels, backlog gauges or alert policy are supplied.
+No per-message/tenant/route labels, backlog gauges or alert policy are supplied by this meter.
+The [outbox snapshot and native consumer example](outbox-observability.md) now provide a separate
+callable read, sample-owned backlog gauges and worker/storage readiness. Those instruments
+use their own consumer meter and explicitly expose observation age.
 
 ## Native host and transport wiring
 
@@ -174,7 +184,9 @@ including process exit, completion/handler failure, new send spans, duplicate in
 unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)
 separates fresh results from earlier worker/recovery evidence.
 
-Backlog/oldest-age monitoring, alerts, dashboard inspection, durable telemetry, automatic
-tenant/actor propagation and worker supervision/scaling remain deferred. OTLP export can
+Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
+Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic
+tenant/actor propagation and deployment supervision/scaling remain deferred. Typed accounting/
+completion faults already use native host supervision as described above. OTLP export can
 target an Aspire dashboard, but Collector tests are not dashboard UX evidence. Publication
 remains at least once; no exactly-once or new shutdown-deadline guarantee is introduced.

@@ -11,6 +11,9 @@ public interface IOutboxDispatcher<TDbContext>
     /// <remarks>
     /// Use an independent context without pending business changes or an existing transaction.
     /// Publication and storage failures propagate; acceptance may already have occurred when storage fails.
+    /// Unconfirmed completion after normal publication return throws OutboxCompletionException,
+    /// including completion-stage cancellation. Its InnerException preserves the original error.
+    /// Publisher exceptions whose failure accounting is unconfirmed throw OutboxFailureAccountingException.
     /// </remarks>
     Task<OutboxDispatchResult> DispatchNextAsync(CancellationToken cancellationToken = default);
 }

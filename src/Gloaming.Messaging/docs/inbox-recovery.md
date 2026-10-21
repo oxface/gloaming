@@ -2,7 +2,8 @@
 
 PostgreSQL inbox processing records confirmed failures durably, supports consumer-selected
 dead-letter state, and provides separately registered retry of the unchanged retained delivery.
-This extends [ordinary inbox processing](inbox.md); it does not change outbox recovery.
+This extends [ordinary inbox processing](inbox.md). The comparable
+[outbox store](outbox-recovery.md) retains its separate lease-fenced publication protocol.
 A dead letter is the original retained row in a stopped state, not a second physical queue.
 The public name replaces quarantine; DeadLetteredAt retains the physical `quarantined_at` column.
 
@@ -185,6 +186,6 @@ Sales roles need an explicit grant update; finite provisioning is not a role rec
 performs no DDL. [Sales setup](../../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) documents
 that consumer. [InboxDemo](../../../samples/InboxDemo/README.md) shows optional operator usage;
 [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md) records current evidence
-separately from the original M2 recovery/supervision results. Outbox
-recovery, cleanup, payload editing, schema-evolution rollout, global execution caps and template
+separately from the original M2 recovery/supervision results. Cleanup, payload editing,
+schema-evolution rollout, global execution caps and template
 presets remain deferred.

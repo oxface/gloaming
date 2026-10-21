@@ -28,6 +28,13 @@ and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.m
 See [inbox setup and transaction ownership](docs/inbox.md).
 See [failed inbox work and authorized retry](docs/inbox-recovery.md) for durable failure
 accounting, consumer-selected dead-letter state, revision-conditional redrive and upgrade obligations.
+See [outbox dead letters and operator retry](docs/outbox-recovery.md) for publication-failure
+observations, lease fencing, acceptance uncertainty, inspection, completion/accounting supervision
+and restricted-grant upgrades.
+See [outbox backlog and worker health](docs/outbox-observability.md) for the callable route
+snapshot, native consumer gauges/readiness and metadata-only authority.
+See [completed-outbox retention](docs/outbox-retention.md) for an authorized, finite cleanup
+batch, separate maintenance credentials and the sender identity-history boundary.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:
