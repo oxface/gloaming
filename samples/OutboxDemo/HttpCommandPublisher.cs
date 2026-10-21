@@ -11,11 +11,12 @@ public sealed class HttpCommandPublisher(HttpClient client, Uri receiver) : IMes
         if (
             message.RouteKey != "exports.render"
             || message.MessageName != "exports.render"
-            || message.SchemaVersion != 1
+            || message.SchemaVersion is not (1 or 2)
         )
             throw new InvalidDataException(
-                "This publisher handles the exports.render v1 destination only."
+                "This publisher handles the exports.render v1/v2 destination only."
             );
+
         using var request = new HttpRequestMessage(HttpMethod.Post, receiver);
         request.Headers.Add("X-Message-Id", message.MessageId.ToString());
         request.Headers.Add("X-Message-Name", message.MessageName);

@@ -22,7 +22,7 @@ rollout is not certified. Shape-compatible upgrades need not rebuild correct inl
 Changes in projection meaning require a separate consumer rollout/rebuild decision.
 
 Deferred capabilities include generated discovery, alternative serializers, AOT certification,
-transport compatibility and schema-migration orchestration. No domain-event bus follows from
+other transport/deployment compatibility and schema-migration orchestration. No domain-event bus follows from
 this registry. EventSourcing maintenance workers, extra inline views and multi-stream/async
 projections remain separate deferred capabilities in their owning family's catalog.
 
@@ -31,4 +31,5 @@ Evidence and adoption:
 - [Pure codec proofs](../../tests/EventSerializationTests/UpcastingTests.cs): explicit routing, optional defaults, strict fields, original-identity errors and JSON lifetime ownership.
 - [Standalone chained/nested adopter](../../../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs) and [literal proofs](../../../../samples/Wholesale/EventCodecDemo.Tests/UpcastingCompatibilityTests.cs).
 - [Inventory receipt upgrade](../../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs) and [PostgreSQL mixed-schema/rebuild proofs](../../../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.Upcasting.cs).
+- [Rendering message-payload adoption](../../../Gloaming.Messaging/docs/schema-compatibility.md) and its [fresh consumer proof report](../../../../docs/reports/queued-message-schema-compatibility.md): original-envelope deduplication, retained schemas, HTTP/RabbitMQ, operator retry and process recovery using the existing codec.
 - [Reviewed scope](../../../../docs/plans/event-payload-upcasting.md) and [dated slice report](../../../../docs/reports/event-payload-upcasting.md), separating new results from historical evidence.

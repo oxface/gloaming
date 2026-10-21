@@ -22,6 +22,67 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
 {
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 
+    [Theory]
+    [InlineData(
+        3,
+        "{\"ExportRequestId\":\"a1fbbfda-a359-4f29-9bc6-f8c9349f515c\",\"PageCount\":3}"
+    )]
+    [InlineData(2, "{}")]
+    [InlineData(2, "{\"ExportRequestId\":\"a1fbbfda-a359-4f29-9bc6-f8c9349f515c\",\"Pages\":3}")]
+    public async Task UnsupportedBrokerWorkIsNotAcknowledgedAndRemainsAvailableForRedelivery(
+        int schema,
+        string json
+    )
+    {
+        string receiver = await ReceiverAsync();
+        await using var connection = await ConnectAsync();
+        await using var channel = await ChannelAsync(connection);
+        string queue = await QueueAsync(channel);
+        string id = Guid.NewGuid().ToString();
+        var properties = new BasicProperties
+        {
+            Persistent = true,
+            MessageId = id,
+            Type = "exports.render",
+            Headers = new Dictionary<string, object?>
+            {
+                ["producer-module"] = "exports",
+                ["schema-version"] = schema,
+            },
+        };
+        byte[] body = System.Text.Encoding.UTF8.GetBytes(json);
+        await channel.BasicPublishAsync("", queue, true, properties, body, Token);
+        var services = new ServiceCollection();
+        InboxDemoHost.Register(services, receiver);
+        await using var provider = services.BuildServiceProvider();
+        var intake = new RabbitMqRenderReceiver(
+            channel,
+            provider.GetRequiredService<IServiceScopeFactory>()
+        );
+        var delivery = await DeliveryAsync(channel, queue);
+        await Assert.ThrowsAsync<InvalidDataException>(() => intake.ReceiveAsync(delivery, Token));
+        await using (var read = RenderDbContext.Create(receiver))
+        {
+            Assert.Empty(await read.Set<InboxMessageRecord>().ToArrayAsync(Token));
+            Assert.Empty(await read.Set<RenderJob>().ToArrayAsync(Token));
+        }
+
+        await channel.CloseAsync(
+            200,
+            "proof requeue rejected schema",
+            abort: false,
+            cancellationToken: Token
+        );
+        await using var recovered = await ChannelAsync(connection);
+        var repeated = await DeliveryAsync(recovered, queue);
+        Assert.True(repeated.Redelivered);
+        Assert.Equal(id, repeated.BasicProperties.MessageId);
+        Assert.Equal(body, repeated.Body.ToArray());
+        // The fixture now discards only its own rejected delivery after proving it was not acknowledged.
+        await recovered.BasicAckAsync(repeated.DeliveryTag, multiple: false, Token);
+        await recovered.QueueDeleteAsync(queue, ifUnused: false, ifEmpty: true, Token);
+    }
+
     [Fact]
     public async Task NativeSendUsesTheLocalContextWithoutOldRetainedVendorState()
     {
@@ -202,8 +263,12 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         Assert.Equal("parent", row.CausationId);
     }
 
-    [Fact]
-    public async Task SenderCompletionFailureRepeatsDeliveryButCompletedInboxDoesNotRepeatBusinessWork()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public async Task SenderCompletionFailureRepeatsDeliveryButCompletedInboxDoesNotRepeatBusinessWork(
+        int schema
+    )
     {
         string sender = await postgres.CreateDatabaseAsync(Token);
         string receiver = await ReceiverAsync();
@@ -218,7 +283,8 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
                 ExportSubmissionResult.Accepted,
                 await new ExportRequestCommands(
                     database,
-                    new EfOutbox<ExportDbContext>(database)
+                    new EfOutbox<ExportDbContext>(database),
+                    renderSchemaVersion: schema
                 ).SubmitAsync(id, 1, Token)
             );
             await database.SaveChangesAsync(Token);
@@ -245,6 +311,8 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         Assert.Equal("proof_completion", completionError.ConstraintName);
         var first = await DeliveryAsync(channel, queue);
         Assert.Equal(failure.MessageId.ToString(), first.BasicProperties.MessageId);
+        var firstEnvelope = RabbitMqRenderReceiver.Parse(first);
+        Assert.Equal(schema, firstEnvelope.SchemaVersion);
         var intake = new RabbitMqRenderReceiver(
             channel,
             provider.GetRequiredService<IServiceScopeFactory>()
@@ -262,11 +330,18 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
             );
         var second = await DeliveryAsync(channel, queue);
         Assert.Equal(first.BasicProperties.MessageId, second.BasicProperties.MessageId);
+        var secondEnvelope = RabbitMqRenderReceiver.Parse(second);
+        Assert.Equal(schema, secondEnvelope.SchemaVersion);
+        Assert.True(JsonElement.DeepEquals(firstEnvelope.Payload, secondEnvelope.Payload));
         Assert.Equal(InboxReceiveResult.AlreadyReceived, await intake.ReceiveAsync(second, Token));
         Assert.Equal(InboxProcessingResult.NoWork, await ProcessAsync(provider));
         await using var read = RenderDbContext.Create(receiver);
         Assert.Single(await read.Set<RenderJob>().ToArrayAsync(Token));
         Assert.Single(await read.Set<InboxMessageRecord>().ToArrayAsync(Token));
+        await using var senderRead = ExportDbContext.Create(sender);
+        var retained = await senderRead.Set<OutboxMessageRecord>().SingleAsync(Token);
+        Assert.Equal(schema, retained.SchemaVersion);
+        Assert.True(JsonElement.DeepEquals(firstEnvelope.Payload, retained.Payload));
     }
 
     [Fact]

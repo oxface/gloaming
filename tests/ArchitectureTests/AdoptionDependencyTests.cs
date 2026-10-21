@@ -263,7 +263,7 @@ public sealed class AdoptionDependencyTests
         );
         Check(
             "InboxDemo",
-            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres", "Gloaming.Events.Serialization"],
             ["Microsoft.EntityFrameworkCore.Design"]
         );
 

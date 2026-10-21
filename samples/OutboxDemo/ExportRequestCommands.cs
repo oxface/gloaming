@@ -47,11 +47,23 @@ public enum ExportSubmissionResult
 
 public sealed record RenderExportV1(Guid ExportRequestId, int Pages);
 
+public sealed record RenderExportV2(Guid ExportRequestId, int PageCount);
+
 /// <summary>Sample application command handler: decides submission from tracked state and enqueues accepted work.</summary>
 /// <remarks>The caller supplies the native transaction and performs the final SaveChanges/commit.</remarks>
-public sealed class ExportRequestCommands(ExportDbContext database, IOutbox<ExportDbContext> outbox)
+public sealed class ExportRequestCommands(
+    ExportDbContext database,
+    IOutbox<ExportDbContext> outbox,
+    int renderSchemaVersion = 1
+)
 {
     private static readonly JsonSerializerOptions WireJson = new();
+    private readonly int schemaVersion = renderSchemaVersion is 1 or 2
+        ? renderSchemaVersion
+        : throw new ArgumentOutOfRangeException(
+            nameof(renderSchemaVersion),
+            "Select render schema 1 or 2."
+        );
 
     public async Task<ExportSubmissionResult> SubmitAsync(
         Guid id,
@@ -70,12 +82,14 @@ public sealed class ExportRequestCommands(ExportDbContext database, IOutbox<Expo
             return ExportSubmissionResult.Ineligible;
         // A directed integration command, using ordinary JSON without an event codec or aggregate store.
         outbox.Enqueue(
-            OutgoingMessage.FromPayload(
+            OutgoingMessage.FromPayload<object>(
                 Guid.NewGuid(),
                 "exports.render",
                 "exports.render",
-                1,
-                new RenderExportV1(request.Id, request.Pages),
+                schemaVersion,
+                schemaVersion == 1
+                    ? new RenderExportV1(request.Id, request.Pages)
+                    : new RenderExportV2(request.Id, request.Pages),
                 WireJson,
                 traceParent: Activity.Current?.Id,
                 traceState: Activity.Current?.TraceStateString

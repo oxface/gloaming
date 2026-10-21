@@ -336,7 +336,6 @@ public sealed class AssemblyDependencyTests
                 Actor,
                 Tenancy,
                 Persistence,
-                EventSerialization,
                 History,
                 AggregateCore,
                 Storage,
@@ -346,6 +345,13 @@ public sealed class AssemblyDependencyTests
             NoDependency("OutboxDemo", forbidden).Check(Architecture);
             NoDependency("InboxDemo", forbidden).Check(Architecture);
         }
+
+        // Only the receiving sample opts into historical payload decoding; Messaging stays codec-free.
+        NoDependency("OutboxDemo", EventSerialization).Check(Architecture);
+        Assert.Contains(
+            typeof(Samples.InboxDemo.InboxDemoHost).Assembly.GetReferencedAssemblies(),
+            reference => reference.Name == EventSerialization
+        );
         NoDependency("InboxDemo", "OutboxDemo").Check(Architecture);
     }
 

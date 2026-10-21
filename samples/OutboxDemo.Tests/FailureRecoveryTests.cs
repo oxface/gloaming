@@ -255,7 +255,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Guid.NewGuid(),
             "exports.render",
             "exports.render",
-            2,
+            3,
             new { Pages = 3 },
             new JsonSerializerOptions()
         );
@@ -278,7 +278,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             var stopped = await ReadAsync(connection);
             Assert.Equal("export-contract-unsupported", stopped.LastFailureCode);
             Assert.Equal(cycle + 1, stopped.FailureCount);
-            Assert.Equal(2, stopped.SchemaVersion);
+            Assert.Equal(3, stopped.SchemaVersion);
             if (cycle == 0)
             {
                 var services = new ServiceCollection();

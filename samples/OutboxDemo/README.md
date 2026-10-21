@@ -4,7 +4,7 @@ An independent, tenantless consumer of Gloaming.Messaging's EF/PostgreSQL outbox
 EventSourcing, ActorIdentity, Tenancy, Persistence or module-layout dependency.
 
 A draft export with pages can be submitted once. Native expected-version checks and EF's
-version predicate reject stale competitors. Submission stages a direct-JSON RenderExportV1
+version predicate reject stale competitors. Default submission stages a direct-JSON RenderExportV1
 command in the same native transaction. ExportRequestCommands is the application handler;
 it uses typed OutgoingMessage.FromPayload with explicit JSON options. Save/commit remain
 explicit. Invalid/empty/already
@@ -31,6 +31,24 @@ then dispatches at most one eligible row. It can dispatch an older retained row 
 exists; it does not promise global ordering. Tests run actual Kestrel HTTP and PostgreSQL,
 including acceptance-before-completion failure followed by identity-preserving redelivery.
 They also prove eligibility, competing submissions, rollback and fresh-context recovery.
+
+## Explicit writer schema
+
+Existing callers write exports.render schema 1 with ExportRequestId/Pages. After upgrading
+the dispatch publisher and every receiver/processor, select schema 2 explicitly:
+
+```csharp
+var commands = new ExportRequestCommands(database,
+    new EfOutbox<ExportDbContext>(database), renderSchemaVersion: 2);
+```
+
+Schema 2 writes RenderExportV2 with ExportRequestId/PageCount, preserving the page requirement.
+Only 1 and 2 are accepted at construction. SubmitAsync and the caller's save/commit are unchanged;
+rollback also rolls back the v2 enqueue. Ordinary JSON remains sufficient for the producer.
+Publishers preserve the selected schema/payload, including redelivery after unconfirmed completion.
+Existing queued v1 rows are never rewritten. The [compatibility journey](../MessagingDemo/README.md#schema-compatibility-journey)
+and [deployment contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md) cover rollout,
+reader rollback limits and identity-preserving operator retry. This adds no migration or worker.
 
 ## Dead letters and operator retry
 

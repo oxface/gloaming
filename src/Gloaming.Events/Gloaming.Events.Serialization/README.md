@@ -77,7 +77,7 @@ registry/options. There is no disposal, operation scope or I/O inside the codec.
 Use ordinary construction or your chosen DI lifetime. The codec provides no discovery,
 registration middleware, domain-event collection, dispatch, persistence, transaction, retry,
 generated application code or stream metadata. Other serialization engines, AOT support and
-transport compatibility require separate proofs.
+transport/deployment topologies beyond the demonstrated consumer require separate proofs.
 
 The typed registration factory has one local CA1000 suppression: the family type belongs on
 the registration and the method selects its concrete event type. There is no global analyzer
@@ -134,6 +134,21 @@ decode use existing `InvalidPayload`. Unknown/future/undeclared identities use `
 before payload inspection. Failures retain the original requested stored name/version.
 Other consumer failures and disposed elements propagate natively. Serialization never invokes
 upcasters: the registered runtime type determines the current write identity.
+
+## Durable message payload adoption
+
+The [Rendering consumer](../../../samples/InboxDemo/RenderExportHandler.cs) also uses this existing
+codec for explicit exports.render message schemas. Its receiver-local v1-to-v2 transformation
+renames Pages to PageCount without changing the retained message. A concrete command record can
+serve as TEvent; no event base, marker interface or event-store dependency is required.
+
+Only the receiving sample references Serialization. Messaging libraries and the native-JSON
+producer do not. Intake retains the original schema/payload for duplicate comparison; the
+handler decodes again during processing. EventDecodingException is translated into the
+consumer's admission/failure-policy boundary. Codec registrations do not grant operator authority
+or perform message retry. See the [executable journey](../../../samples/MessagingDemo/README.md#schema-compatibility-journey)
+and [Messaging contract](../../Gloaming.Messaging/docs/schema-compatibility.md) for the selected
+PostgreSQL/HTTP/RabbitMQ and deployment/rollback boundaries.
 
 ## Event-store composition and deferred direction
 

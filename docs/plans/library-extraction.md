@@ -237,6 +237,19 @@ authority; dispatch credentials are unchanged. Deletion removes sender identity/
 history without altering inbox lifetime or stopping obsolete publishers. The [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md)
 and [new report](../reports/outbox-completed-retention.md) record current boundaries and proofs.
 
+## Queued-message schema compatibility
+
+After squash-merging the outbox series and CI fixes into origin/main `86331de` (PR #41),
+the owner selected and approved the [concrete consumer scope](queued-message-schema-compatibility.md)
+after the [current-caller assessment](../reports/queued-message-schema-compatibility-assessment.md).
+Exports keeps default v1 writes and explicitly selects v2, renaming Pages to PageCount.
+Rendering independently adopts the existing optional JSON codec and preserves original
+envelopes for deduplication. HTTP/RabbitMQ, conditional retry after reader replacement and
+actual worker recovery are recorded in the [fresh report](../reports/queued-message-schema-compatibility.md).
+The [family contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md) owns deployment,
+rollback and compatibility limits. No new library mechanism, schema migration or template file
+was added; producer, admission, classification and operator authority remain consumer-owned.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

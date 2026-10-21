@@ -35,6 +35,8 @@ See [outbox backlog and worker health](docs/outbox-observability.md) for the cal
 snapshot, native consumer gauges/readiness and metadata-only authority.
 See [completed-outbox retention](docs/outbox-retention.md) for an authorized, finite cleanup
 batch, separate maintenance credentials and the sender identity-history boundary.
+See [retained-message schema compatibility](docs/schema-compatibility.md) for an optional existing
+JSON codec, original-envelope deduplication and a concrete reader-before-writer consumer rollout.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:

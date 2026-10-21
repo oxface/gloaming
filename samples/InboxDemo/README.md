@@ -1,12 +1,14 @@
 # Ordinary EF durable incoming render jobs
 
 An independent inbox-only receiver using Gloaming.Messaging's PostgreSQL runtime, native EF
-and Kestrel. No outbox table/publisher, Events, EventSourcing, Tenancy, ActorIdentity, Persistence
-or peer implementation dependency. The wire contract is exports.render v1, matching the
-[OutboxDemo sender](../OutboxDemo/README.md) through an explicit receiver-local DTO.
+and Kestrel. No outbox table/publisher, EventSourcing, Tenancy, ActorIdentity, Persistence or peer
+implementation dependency. Rendering opts into Gloaming.Events.Serialization for receiver-local
+historical JSON decoding. The wire contract is exports.render v1/v2, matching the
+[OutboxDemo sender](../OutboxDemo/README.md) through independently defined DTOs.
 
 POST /commands requires X-Message-Id, X-Message-Name and X-Message-Schema plus JSON
-ExportRequestId/Pages. Optional X-Correlation-Id/X-Causation-Id are retained. This finite
+ExportRequestId/Pages for schema 1 or ExportRequestId/PageCount for schema 2.
+Optional X-Correlation-Id/X-Causation-Id are retained. This finite
 demo endpoint binds the producer namespace to exports and rejects tenant metadata; it does
 not authenticate arbitrary callers. Production replaces its admission/endpoint permissions.
 
@@ -37,6 +39,24 @@ Tests run real PostgreSQL/Kestrel and native RabbitMQ through the composition sa
 prove commit-before-response, conflict handling, SQL-failure recovery, metadata preservation,
 semantic job deduplication, worker opt-in and the separate broker acknowledgement windows.
 [Family contract](../../src/Gloaming.Messaging/docs/inbox.md) documents ownership and limitations.
+
+## Retained schemas and deployment
+
+The handler registers the current receiver-local command at schema 2 and an explicit v1-to-v2
+JSON transformation in the existing optional codec. Admission and processing both decode, but
+intake retains the original schema/payload. The sender's CLR DTOs are not referenced.
+
+Original v1 redelivery therefore still deduplicates after upgrading. Reusing that delivery ID
+for v2 conflicts even when the decoded export/pages are equal; a new delivery ID can use the
+existing semantic job key. Operator retry reexecutes the current decoder without editing
+payloads. Installing compatible code can resolve an old reader's dead letter; unsupported
+future schemas remain unsupported after retry.
+
+Upgrade every receiving/processing instance and the publishers before enabling v2 writes.
+Keep v1 support for retained work and late delivery. Producer rollback can resume v1 while the
+compatible reader remains deployed; a reader rollback cannot assume all v2 work has disappeared.
+See the [finite executable journey](../MessagingDemo/README.md#schema-compatibility-journey)
+and [full compatibility contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md).
 
 ## Failed work and authorized operator retry
 
