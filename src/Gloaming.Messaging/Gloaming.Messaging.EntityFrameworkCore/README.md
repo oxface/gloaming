@@ -50,6 +50,12 @@ governs shutdown. Requested shutdown ends the worker normally. Completion faults
 publication-failure accounting and may follow an actual commit. See
 [outbox recovery, authority and rollout](../docs/outbox-recovery.md).
 
+OutboxBacklogSnapshot is detached aggregate metadata: pending/eligible/delayed/leased and
+dead-letter counts, database observation time and nullable oldest eligible age. The PostgreSQL
+package supplies its callable read independently of dispatch/recovery. Health, sampling,
+instrument names and alert thresholds stay consumer wiring; see
+[backlog and worker health](../docs/outbox-observability.md).
+
 Inbox composition is independent: IInbox<TDbContext> retains delivery in a caller-owned
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.
 Optional subscription-keyed IInboxFailurePolicy selects delayed retry or dead-letter state using

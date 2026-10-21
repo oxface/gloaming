@@ -1,5 +1,7 @@
+using System.Data.Common;
 using System.Security.Claims;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -10,12 +12,45 @@ internal static partial class ExportOutboxOperations
 {
     internal static void Map(WebApplication app)
     {
+        app.MapGet("/operations/outbox/status", StatusAsync)
+            .RequireAuthorization(ExportOperatorAuthenticationHandler.Permission);
         var operations = app.MapGroup("/operations/outbox/dead-letters")
             .RequireAuthorization(ExportOperatorAuthenticationHandler.Permission);
         operations.MapGet("", ListAsync);
         operations.MapGet("/{messageId:guid}", ReadAsync);
         operations.MapPost("/{messageId:guid}/retry", RetryAsync);
     }
+
+    private static async Task<IResult> StatusAsync(
+        ExportDbContext database,
+        HttpContext context,
+        ILoggerFactory logs,
+        CancellationToken cancellation
+    )
+    {
+        context.Response.Headers.CacheControl = "no-store";
+        try
+        {
+            return Results.Ok(
+                await database.ReadPostgresOutboxBacklogAsync("exports.render", cancellation)
+            );
+        }
+        catch (Exception failure)
+            when (failure
+                    is DbException
+                        or InvalidOperationException { InnerException: DbException }
+            )
+        {
+            BacklogUnavailable(logs.CreateLogger("Exports.OutboxOperations"), failure);
+            return Results.StatusCode(StatusCodes.Status503ServiceUnavailable);
+        }
+    }
+
+    [LoggerMessage(
+        Level = LogLevel.Warning,
+        Message = "Export outbox backlog could not be observed."
+    )]
+    private static partial void BacklogUnavailable(ILogger logger, Exception exception);
 
     private static async Task<IResult> ListAsync(
         IOutboxDeadLetters<ExportDbContext> deadLetters,

@@ -79,7 +79,7 @@ if (role == "setup-sales-dispatch")
     return;
 }
 
-if (role == "dispatch-sales")
+if (role is "dispatch-sales" or "inspect-sales-outbox")
 {
     foreach (
         string key in new[]
@@ -102,6 +102,31 @@ if (role == "dispatch-sales")
 
     string runtime = Required("ConnectionStrings:SalesDispatch");
     await SalesDispatchDatabase.VerifyAsync(runtime, startup.Token);
+    if (role == "inspect-sales-outbox")
+    {
+        await using var database = new SalesOutboxDbContext(
+            new DbContextOptionsBuilder<SalesOutboxDbContext>().UseNpgsql(runtime).Options
+        );
+        foreach (
+            string route in new[]
+            {
+                "inventory.issue-stock",
+                "inventory.reserve-stock",
+                "inventory.release-reservation",
+            }
+        )
+        {
+            var backlog = await database.ReadPostgresOutboxBacklogAsync(route, startup.Token);
+            Console.WriteLine(
+                System.Text.Json.JsonSerializer.Serialize(
+                    new { RouteKey = route, Backlog = backlog }
+                )
+            );
+        }
+
+        return;
+    }
+
     await using var dispatchBroker = await WorkflowBroker.OpenAsync(
         Required("ConnectionStrings:RabbitMq"),
         builder.Configuration["QueuePrefix"] ?? "wf1",

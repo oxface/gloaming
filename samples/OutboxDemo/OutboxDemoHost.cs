@@ -1,10 +1,13 @@
+using System.Diagnostics.Metrics;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ModulithFoundry.Samples.OutboxDemo;
 
@@ -16,7 +19,8 @@ public static class OutboxDemoHost
         Uri? receiver = null,
         bool worker = false,
         string? operatorToken = null,
-        TimeSpan? leaseDuration = null
+        TimeSpan? leaseDuration = null,
+        TimeSpan? observationInterval = null
     )
     {
         var builder = WebApplication.CreateBuilder(
@@ -29,6 +33,22 @@ public static class OutboxDemoHost
         builder.Services.Configure<HostOptions>(options =>
             options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.StopHost
         );
+        builder.Services.AddSingleton(provider => new ExportOutboxHealthCheck(
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            provider,
+            provider.GetRequiredService<IHostApplicationLifetime>(),
+            worker
+        ));
+        builder
+            .Services.AddHealthChecks()
+            .AddCheck<ExportOutboxHealthCheck>("exports-outbox", timeout: TimeSpan.FromSeconds(3));
+        builder.Services.AddMetrics();
+        builder.Services.AddSingleton<IHostedService>(provider => new ExportOutboxMetrics(
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            provider.GetRequiredService<IMeterFactory>(),
+            provider.GetRequiredService<ILogger<ExportOutboxMetrics>>(),
+            observationInterval ?? TimeSpan.FromSeconds(5)
+        ));
         if (worker)
         {
             ArgumentNullException.ThrowIfNull(receiver);
@@ -78,6 +98,9 @@ public static class OutboxDemoHost
         }
 
         var app = builder.Build();
+        app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false })
+            .AllowAnonymous();
+        app.MapHealthChecks("/health/ready").AllowAnonymous();
         if (operatorToken is not null)
             ExportOutboxOperations.Map(app);
 

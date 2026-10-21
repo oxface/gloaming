@@ -19,6 +19,9 @@ if (args.Contains("--serve", StringComparer.Ordinal))
 {
     string? receiverAddress = Environment.GetEnvironmentVariable("OUTBOX_DEMO_RECEIVER");
     string? seconds = Environment.GetEnvironmentVariable("OUTBOX_DEMO_LEASE_SECONDS");
+    string? observationSeconds = Environment.GetEnvironmentVariable(
+        "OUTBOX_DEMO_OBSERVATION_SECONDS"
+    );
     await using var app = OutboxDemoHost.Build(
         connection,
         Environment.GetEnvironmentVariable("OUTBOX_DEMO_URL") ?? "http://localhost:5088",
@@ -29,6 +32,11 @@ if (args.Contains("--serve", StringComparer.Ordinal))
             ? null
             : TimeSpan.FromSeconds(
                 int.Parse(seconds, System.Globalization.CultureInfo.InvariantCulture)
+            ),
+        observationSeconds is null
+            ? null
+            : TimeSpan.FromSeconds(
+                int.Parse(observationSeconds, System.Globalization.CultureInfo.InvariantCulture)
             )
     );
     await app.RunAsync();

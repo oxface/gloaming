@@ -107,12 +107,12 @@ internal sealed class PostgresOutboxStorage
             );
     }
 
-    internal void RequireFreshContext()
+    internal void RequireFreshContext(string operation = "Outbox dead-letter operations")
     {
         RequireIndependentOperation();
         if (database.ChangeTracker.Entries().Any())
             throw new InvalidOperationException(
-                "Outbox dead-letter operations require a fresh context without tracked entities."
+                $"{operation} require a fresh context without tracked entities."
             );
     }
 

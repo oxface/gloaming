@@ -17,6 +17,9 @@ consumer-selected dead letters and bounded inspection/conditional retry, with
 The [completion supervision follow-up](../../../docs/reports/m2-outbox-completion-supervision.md)
 adds OutboxCompletionException and stops the optional worker on unconfirmed completion.
 Native host options, consumer repair and external restart policy govern recovery.
+The [operational visibility slice](outbox-observability.md) adds a separately callable
+PostgreSQL route snapshot. Native sample gauges and health checks keep sampling, readiness
+policy and alert thresholds with the consumer; no new recovery or health framework is supplied.
 
 ## Current composition
 

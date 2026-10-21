@@ -31,6 +31,8 @@ accounting, consumer-selected dead-letter state, revision-conditional redrive an
 See [outbox dead letters and operator retry](docs/outbox-recovery.md) for publication-failure
 observations, lease fencing, acceptance uncertainty, inspection, completion/accounting supervision
 and restricted-grant upgrades.
+See [outbox backlog and worker health](docs/outbox-observability.md) for the callable route
+snapshot, native consumer gauges/readiness and metadata-only authority.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:

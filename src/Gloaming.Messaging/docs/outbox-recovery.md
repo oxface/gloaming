@@ -222,3 +222,7 @@ records the subsequent native-host, cancellation, backend-death and restart proo
 follow-up requires no schema, grant or registration changes.
 Payload editing, completed-message replay, retention, lease renewal, a generic administration
 framework and a template preset are excluded.
+
+Read-only [backlog snapshots and consumer worker health](outbox-observability.md) are separately
+available without acquiring claims or retry authority. Counts are observations; their age and
+native worker task state do not resolve transport/completion uncertainty.

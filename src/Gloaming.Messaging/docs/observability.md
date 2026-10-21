@@ -108,7 +108,10 @@ The only dimensions are `operation` (`dispatch`, `process`) and `result` (`publi
 `claim_lost`, `processed`, `failed`, `cancelled`). NoWork polls are excluded. Attempt metrics
 do not depend on trace sampling; process termination before disposal cannot emit a finished
 attempt. They do not count every committed lease, broker delivery or business effect.
-No per-message/tenant/route labels, backlog gauges or alert policy are supplied.
+No per-message/tenant/route labels, backlog gauges or alert policy are supplied by this meter.
+The [outbox snapshot and native consumer example](outbox-observability.md) now provide a separate
+callable read, sample-owned backlog gauges and worker/storage readiness. Those instruments
+use their own consumer meter and explicitly expose observation age.
 
 ## Native host and transport wiring
 
@@ -181,7 +184,8 @@ including process exit, completion/handler failure, new send spans, duplicate in
 unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)
 separates fresh results from earlier worker/recovery evidence.
 
-Backlog/oldest-age monitoring, alerts, dashboard inspection, durable telemetry, automatic
+Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
+Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic
 tenant/actor propagation and deployment supervision/scaling remain deferred. Typed accounting/
 completion faults already use native host supervision as described above. OTLP export can
 target an Aspire dashboard, but Collector tests are not dashboard UX evidence. Publication

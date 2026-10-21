@@ -103,3 +103,26 @@ records fresh results and limitations. **No new reusable mechanism or template o
 introduced:** context selection, role grants and executable composition remain sample policy.
 The [M2 outbox report](../../../docs/reports/m2-outbox-dead-letters.md) records the new library
 accounting/retry proofs and restricted-credential follow-up separately from that A2.8 history.
+
+## Backlog inspection
+
+Inspect using the same admitted runtime credential without opening a broker or starting dispatch:
+
+```sh
+ConnectionStrings__SalesDispatch='Host=localhost;Database=sales;Username=wholesale_sales_dispatch;Password=local-dispatch' \
+  dotnet run --project samples/Wholesale/WorkflowDemo -- --role inspect-sales-outbox
+```
+
+The finite role retains the existing credential/environment verification. It prints one JSON
+line per fixed Inventory command route: inventory.issue-stock, inventory.reserve-stock and
+inventory.release-reservation. Each line contains RouteKey and a detached Backlog snapshot;
+the three reads have independent observation times. No claims, counter updates, payloads,
+tenant identities or broker connections are involved. Existing dispatch SELECT privileges
+suffice; there is no grant/schema change. A failed query fails inspection rather than
+reporting an empty queue. Native grants/RLS still define visible rows across tenants.
+
+Pending is partitioned into Eligible, Delayed and Leased; DeadLetters is separate. These
+observations do not establish transport acceptance or reserve work. The [family contract](../../../src/Gloaming.Messaging/docs/outbox-observability.md)
+defines database-clock age, metadata-only reader grants and native consumer health/metrics.
+The [visibility report](../../../docs/reports/outbox-operational-visibility.md) records the
+new restricted child-process proof separately from the earlier dispatch and recovery results.

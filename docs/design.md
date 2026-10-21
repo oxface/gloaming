@@ -749,6 +749,15 @@ remain explicit. No failure accounting, compensating write or schema change is i
 [new proofs](reports/m2-outbox-completion-supervision.md) distinguish containment from global
 execution caps and from the existing ClaimLost result.
 
+The owner-selected [operational visibility slice](plans/outbox-operational-visibility.md)
+adds one PostgreSQL route-scoped aggregate observation on a fresh context, with one database
+time and native grants/RLS. It reserves no work and adds no recovery interface. OutboxDemo
+composes native health checks and cached gauges; restricted Sales adopts the same callable
+read without a broker. Sampling, readiness topology, exporters, alert thresholds and restart
+policy remain consumer-owned. The [local contract](../src/Gloaming.Messaging/docs/outbox-observability.md)
+and [fresh proof report](reports/outbox-operational-visibility.md) record authority, staleness
+and duplicate-observer limits. No persistence, lease or schema protocol changes.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

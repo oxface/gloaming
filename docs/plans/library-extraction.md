@@ -219,6 +219,15 @@ No schema, grant, dependency, recovery interface or worker-option change is need
 [separate report](../reports/m2-outbox-completion-supervision.md) records fresh evidence for
 line-by-line review, including the completion-stage cancellation contract change.
 
+The owner approved and checkpointed completion supervision as `020a292`, then selected
+[outbox operational visibility](outbox-operational-visibility.md). Its review surface is a
+detached OutboxBacklogSnapshot and ReadPostgresOutboxBacklogAsync context extension: exact-route
+counts and oldest eligible age using one database statement time, without dispatch/recovery
+registration or mutation. Native sample health checks and cached gauges retain consumer policy;
+restricted Sales independently adopts the same read. The [current family contract](../../src/Gloaming.Messaging/docs/outbox-observability.md)
+and [slice report](../reports/outbox-operational-visibility.md) record fresh proof boundaries.
+No health/recovery framework, schema/grant changes or template preset is introduced.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

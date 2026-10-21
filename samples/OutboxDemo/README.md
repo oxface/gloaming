@@ -104,6 +104,50 @@ also prove HTTP acceptance followed by a completion SQL fault stops the host aft
 repair and restart permit the same message to complete without increasing its failure budget.
 See [the current protocol and rollout/grant obligations](../../src/Gloaming.Messaging/docs/outbox-recovery.md).
 
+## Backlog and health
+
+The existing `--serve` composition supplies native process/storage health and a fixed-route
+backlog sampler. `--serve --worker` additionally expects its dispatch worker to keep running.
+Setup remains the explicit `--setup` command above. The status route shares the configured
+operator credential/permission with dead-letter operations:
+
+```bash
+curl --fail -H "Authorization: Bearer $OUTBOX_DEMO_OPERATOR_TOKEN" \
+  'http://localhost:5088/operations/outbox/status'
+curl --fail 'http://localhost:5088/health/live'
+curl --fail 'http://localhost:5088/health/ready'
+```
+
+Status returns a fresh database-time snapshot for exports.render, with no-store caching.
+Pending = Eligible + Delayed + Leased; DeadLetters is separate and completed work is excluded.
+OldestEligibleAge measures age since original insertion for currently eligible work, including
+time spent in previous attempts. No payload, tenant, message ID, lease token or error text is
+returned. Unauthorized callers receive 401; a missing operator credential removes the status
+route. Database failures return 503 with no details, rather than a false empty backlog.
+
+Public health responses contain only Healthy/Unhealthy. Liveness checks the process. Readiness
+performs a fresh storage read and, in worker mode, checks the dedicated host's one expected
+dispatch BackgroundService. A faulted/stopped worker under native Ignore makes the live host
+unready. The configured StopHost normally shuts the host down instead. Idle or delayed work
+does not itself fail readiness; the task check does not establish transport availability or
+business progress. Health checks perform no recovery and do not restart workers.
+
+Native meter `ModulithFoundry.OutboxDemo.Outbox` supplies cached observable gauges for pending,
+eligible, delayed, leased and dead-letter counts, oldest eligible age and observation age.
+The sampler uses a five-second interval after each read and requests a three-second query
+deadline. Positive OUTBOX_DEMO_OBSERVATION_SECONDS customizes the interval within Task.Delay
+bounds. Query faults retain the last values while observation age increases; before any
+success gauges are absent. Callbacks perform no database I/O. Exporter/resource setup and
+alert thresholds are consumer choices. Multiple replicas can observe the same backlog, so
+their counts must not be summed as independent work.
+
+The [complete contract](../../src/Gloaming.Messaging/docs/outbox-observability.md) lists
+instrument names, six-column SELECT-only grants, staleness/aggregation rules and native OTel
+subscription. Tests exercise actual PostgreSQL/Kestrel, native MeterListener callbacks while
+the table is locked, storage faults/repair and worker readiness under Ignore. The
+[slice report](../../docs/reports/outbox-operational-visibility.md) separates these proofs
+from the earlier transport/attempt telemetry evidence.
+
 See [the family contract](../../src/Gloaming.Messaging/docs/capabilities.md) for setup/errors
 and independent inbox composition, workers and deferred ordering policy. PostgreSQL is currently the supported provider.
 

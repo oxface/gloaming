@@ -73,6 +73,13 @@ AddPostgresOutboxDeadLetters provide bounded List/Get and identity-preserving Re
 [supported and deferred contract](../docs/capabilities.md) and actual
 [Inventory RabbitMQ publisher](../../../samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs).
 
+`await database.ReadPostgresOutboxBacklogAsync(routeKey, cancellationToken)` reads aggregate
+counts and oldest eligible age using one database statement time on a fresh independent context.
+It registers no services and takes no claims/row locks. Native grants/RLS apply; EF filters do
+not. A metadata-only SELECT role needs six lifecycle columns and schema USAGE, with no payload
+SELECT or UPDATE. Existing dispatch grants suffice. See [snapshot semantics and native consumer
+health/metrics](../docs/outbox-observability.md); no schema/grant migration is introduced.
+
 Inbox-only consumers configure/register the inbox independently and need no outbox table or
 publisher. Intake requires caller-owned native ReadCommitted isolation. A retained key combines
 subscription, producer and message ID; incompatible envelope redelivery throws rather than
