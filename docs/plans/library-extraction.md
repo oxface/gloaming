@@ -176,6 +176,23 @@ a business requirement for an Organization writer gate or a useful receiver proj
 No feed API, library interface or template preset remains. Any later implementation needs a
 new reviewed consumer scope and fresh proofs; B2 snapshot/bootstrap is not automatically next.
 
+## M2: inbox failure recovery (interface review)
+
+On 2026-10-18 the owner selected failed inbox messages and authorized operator redrive as
+one bounded inbox-only capability. The [concrete proposal](m2-inbox-failure-recovery.md)
+traces processing/retry callers and presents consumer usage, public types, savepoint failure
+semantics, schema/grant changes and PostgreSQL proofs. The owner approved implementation after
+review. The [current family contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md) and
+[slice report](../reports/m2-inbox-failure-recovery.md) record implementation/evidence prepared
+for line-by-line review. Consumer classification, admission and operator authority remain policy;
+outbox recovery, retention, payload editing and queued-schema evolution remain excluded.
+
+The owner approved the [failure-accounting supervision follow-up](m2-inbox-failure-supervision.md)
+on 2026-10-20. It implements a typed accounting fault and explicit worker/host supervision after
+review found that the
+previous broad worker catch could repeatedly select work whose failure could not be recorded.
+No lease or schema change is added; consumer repair/restart policy remains explicit.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

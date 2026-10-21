@@ -8,6 +8,18 @@ namespace Gloaming.Messaging.EntityFrameworkCore.Postgres;
 /// <summary>Independent intake and local processing registration for an explicit module context.</summary>
 public static class PostgresInboxServiceCollectionExtensions
 {
+    /// <summary>Registers separately callable recovery. Consumer code must authorize each invocation.</summary>
+    public static IServiceCollection AddPostgresInboxRecovery<TDbContext>(
+        this IServiceCollection services
+    )
+        where TDbContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddScoped<IInboxRecovery<TDbContext>, PostgresInboxRecovery<TDbContext>>();
+        return services;
+    }
+
     /// <summary>Registers scoped retained intake. Requires no handler, outbox, publisher or worker.</summary>
     public static IServiceCollection AddPostgresInbox<TDbContext>(this IServiceCollection services)
         where TDbContext : DbContext

@@ -13,7 +13,17 @@ internal static class SalesReplyDatabase
         ["workflow_instances"] = "TenantKey",
         ["inbox_messages"] = "tenant_key",
     };
-    private static readonly string[] InboxUpdates = ["processed_at", "available_at"];
+    private static readonly string[] InboxUpdates =
+    [
+        "processed_at",
+        "available_at",
+        "revision",
+        "failure_count",
+        "failures_since_redrive",
+        "last_failed_at",
+        "last_failure_code",
+        "quarantined_at",
+    ];
     private static readonly string[] OutboxReads = ["queued_at", "available_at"];
 
     internal static async Task ProvisionAsync(

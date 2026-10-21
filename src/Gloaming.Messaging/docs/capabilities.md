@@ -9,6 +9,8 @@ Its [interface/scope](../../../docs/plans/inbox1-durable-intake-processing.md) i
 the implementation is checkpointed as `ecab884`, refined as `863456b` and merged as `0f4d8bf`.
 [Inbox setup and guarantees](inbox.md) and
 [the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
+M2 adds [durable failure accounting and operator retry](inbox-recovery.md) after owner
+interface review, with [separate current evidence](../../../docs/reports/m2-inbox-failure-recovery.md).
 
 ## Current composition
 
@@ -116,6 +118,12 @@ failure. PostgreSQL and consumer proofs additionally cover duplicate/racing inta
 failure/recovery, connection-loss rollback and fresh-context processing. This becomes a useful service-splitting pattern without a distributed transaction.
 A local durable handoff adapter can be compared later.
 
+Failure accounting faults now have a distinct InboxFailureAccountingException carrying delivery
+identity and both errors. The optional inbox worker faults without repeatedly selecting the
+same delivery; native host supervision and consumer repair/restart policy govern recovery.
+This contains an accounting-fault loop, but does not guarantee progress while that worker is
+stopped or count unrecorded crashes. See [failure accounting and supervision](inbox-recovery.md).
+
 MessageId identifies one delivery and must remain stable on retry. Define deduplication
 scope explicitly: receiving module/handler identity matters when one delivery fans out.
 CorrelationId groups a workflow/conversation; CausationId identifies its immediate cause.
@@ -186,7 +194,7 @@ branch and does not release resources it did not create.
 
 Receipt-only mode if an adopter needs it;
 queued-message compatibility/upcasting rollout proofs; retention/deduplication windows;
-identity-preserving redrive; poison/attempt-cap policy; lease renewal; parallel/batch dispatch;
+outbox redrive/poison handling; caps on inbox executions including crashes; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
 transactions; template messaging presets. Event-sourcing maintenance/async projections remain

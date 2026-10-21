@@ -112,12 +112,13 @@ in the same DI scope. Different deliveries touching the same business row still 
 constraints/version predicates; inbox exclusion is only per retained delivery.
 
 Failures before commit roll back business effects, completion and outgoing work, including an
-earlier save inside the same transaction. A separate conditional retry update defers still-pending
-work by positive RetryDelay using database time. It cannot reverse a successor's completion.
-Scheduling failure preserves both exceptions in AggregateException. Cancellation does not force
-a retry update. Connection loss releases the lock; dispose the failed context and attempt again
-in a fresh scope. A lost commit response can be ambiguous: committed completion, rather than
-an assumption of rollback, determines whether work remains.
+earlier save. A savepoint established after locking the delivery permits local rollback and
+durable failure accounting while retaining that original lock. A keyed consumer policy selects
+delayed retry or quarantine; omission retains indefinite positive RetryDelay. Accounting failure
+preserves both errors and delivery identity in InboxFailureAccountingException, derived from
+AggregateException. Cancellation or an unrecoverable transaction does
+not force accounting. Dispose the failed scope; commit response loss remains ambiguous. See
+[failure accounting and authorized retry](inbox-recovery.md) for counters, policy and migration obligations.
 
 This local database protocol needs no expiring inbox lease, renewal or ClaimLost result.
 Outbox transport publication retains its separate lease/fencing protocol because acceptance
@@ -131,16 +132,19 @@ and sets causation to the incoming MessageId. Consumers perform this explicit ma
 no ambient Gloaming metadata runtime.
 
 The sequential worker validates processor/model/handler binding at startup, invokes fresh scoped
-attempts, logs operational failures and applies positive idle/failure delays. It does not apply
+attempts, logs ordinary processing failures and applies positive idle/failure delays.
+InboxFailureAccountingException instead faults the worker without another poll. Native host
+supervision chooses the host response (StopHost by default); Ignore leaves the worker faulted.
+Repair/restart and health monitoring remain consumer-owned. It does not apply
 migrations, bind tenants or subscribe/acknowledge transport. Cooperative cancellation reaches
 the handler; non-cooperative work can still delay shutdown and retain a database lock. Keep
 handlers bounded, local and cancellable.
 
-Completed rows are retained indefinitely in this slice. No pruning/dedup window, poison threshold,
-dead-letter management, redrive, attempt counter, batch/parallel worker, global ordering, automatic
-upcasting or other-provider guarantee is supplied. Unsupported payload/admission failures stay
-visible and retryable until consumer intervention/compatibility changes. A positive retry delay
-permits other work rather than spinning on the oldest failure.
+Completed and quarantined rows remain retained indefinitely. Consumer-selected quarantine and
+identity-preserving operator retry are supported; classification, admission, thresholds and
+operator authority remain consumer-owned. Counters record confirmed failures rather than every
+execution/crash. No pruning/dedup window, second dead-letter queue, batch/parallel worker, global
+ordering, automatic upcasting or other-provider guarantee is supplied.
 
 Executable references: [HTTP inbox-only receiver](../../../samples/InboxDemo/README.md),
 [separate-context RabbitMQ round trip](../../../samples/MessagingDemo/README.md),

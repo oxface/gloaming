@@ -710,6 +710,21 @@ external-publication lease protocol. No transport/ack facade or common Gloaming 
 introduced. [ADR 0010](adr/0010-durable-inbox-local-processing.md) records the settled boundary;
 [the family contract](../src/Gloaming.Messaging/docs/inbox.md) gives standalone setup and limits.
 
+The owner-approved [M2 continuation](plans/m2-inbox-failure-recovery.md) extends this protocol:
+lock before savepoint, roll failed local work back while retaining the delivery lock, then
+commit only failure accounting and a consumer-selected retry/quarantine decision. Separately
+authorized operator retry uses the observed lifecycle revision and preserves the envelope.
+Counters record committed observations, not every crash/cancelled execution. Classification,
+admission, operator authority and presentation remain consumer code. [ADR 0018](adr/0018-serialized-inbox-failure-recovery.md)
+and the [local recovery contract](../src/Gloaming.Messaging/docs/inbox-recovery.md) record the
+mechanism, upgrade obligations and limits; outbox recovery and retention remain separate.
+
+The [owner-approved accounting supervision follow-up](plans/m2-inbox-failure-supervision.md)
+adds a typed exception preserving delivery identity and both errors. Unconfirmed accounting
+faults the optional inbox worker instead of polling again; native host supervision governs
+host shutdown. Consumer repair/restart policy remains explicit. No lease or schema change
+is introduced; stopped workers do not promise progress until restarted.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

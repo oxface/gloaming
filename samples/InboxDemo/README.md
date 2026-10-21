@@ -16,7 +16,7 @@ are not accepted. Intake does not imply the job was processed or a PDF rendered.
 
 RenderExportHandler separately creates a local RenderJob using ExportRequestId as a semantic
 business key. Another delivery ID with identical requirements does not create another job.
-Incompatible pages fail processing and remain pending for consumer intervention. External
+Incompatible pages fail processing and quarantine for consumer intervention. External
 rendering, file writes, scheduling and completion are outside this locked local handler.
 
 ```bash
@@ -37,6 +37,56 @@ Tests run real PostgreSQL/Kestrel and native RabbitMQ through the composition sa
 prove commit-before-response, conflict handling, SQL-failure recovery, metadata preservation,
 semantic job deduplication, worker opt-in and the separate broker acknowledgement windows.
 [Family contract](../../src/Gloaming.Messaging/docs/inbox.md) documents ownership and limitations.
+
+## Failed work and authorized operator retry
+
+Rendering owns failure policy: invalid/conflicting commands and unclassified errors quarantine
+immediately. Recognized PostgreSQL serialization/deadlock failures retry after one second,
+stopping at three recorded failures since the last applied operator retry. The library supplies
+counters, locking and conditional transitions; classification, limits and codes remain editable
+consumer policy. A killed/cancelled attempt may leave no recorded failure; see the
+[recovery contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md).
+
+If failure accounting itself fails, the library throws InboxFailureAccountingException with
+delivery identity and both errors. The optional worker logs a critical diagnostic and faults
+without invoking another handler. Register explicitly selects native StopHost supervision:
+the entire sample host shuts down, including HTTP endpoints. Repair the database/grant/policy
+fault before restarting. Inspect fresh state because an accounting commit response can be lost;
+only an actually quarantined delivery needs authorized operator retry. A worker fault alone
+does not quarantine the row, and no particular exit code or deployment restart is supplied.
+
+Enable the optional operator routes by setting `INBOX_DEMO_OPERATOR_TOKEN` to a private credential
+of at least 32 characters. Without it the routes are absent. Native ASP.NET Core authentication
+compares bearer-credential SHA-256 digests in constant time and grants the fixed
+`rendering.inbox.retry` permission to `rendering-operator`. Replace this finite demo policy with
+your production identity/permission policy; use HTTPS for remote credential-bearing requests.
+
+Inspect and resolve the consumer precondition, then submit the exact revision returned by GET:
+
+```sh
+curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
+  "http://localhost:5087/operations/inbox/$MESSAGE_ID"
+curl -X POST -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
+  -H 'Content-Type: application/json' -d '{"expectedRevision":1}' \
+  "http://localhost:5087/operations/inbox/$MESSAGE_ID/retry"
+```
+
+The fixed subscription/producer are `rendering.jobs`/`exports`; callers cannot select another
+lane. GET returns lifecycle/counts/revision/safe reason, excluding payload and exception text.
+POST returns 204 for applied retry and 409 for stale/inapplicable state. Missing/wrong credentials
+return 401 before storage work. Requests/results log the fixed principal, delivery ID and revision;
+durable approval/audit is a separate consumer choice.
+
+Retry preserves identity, payload, metadata and total failures, resets only the cycle count and
+makes the retained row eligible. Processing repeats current admission/business rules; permanent
+conflicts can quarantine again. Stale requests cannot reopen that later quarantine. After response
+loss reuse the same revision, not an automatically refreshed one. Equivalent intake deduplicates
+throughout.
+
+Apply `--setup` with old processors stopped before using the updated model. The additive recovery
+migration preserves historical pending/completed rows, setting unknown past counts to zero. Old
+processors ignore quarantine: mixed versions/binary rollback need a separately reviewed plan.
+Startup still performs no migration.
 
 Optional message diagnostic context and native telemetry setup are documented in the
 [Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).

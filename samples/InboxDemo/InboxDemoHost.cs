@@ -9,13 +9,45 @@ namespace ModulithFoundry.Samples.InboxDemo;
 
 public static class InboxDemoHost
 {
-    public static WebApplication Build(string connection, string url, bool worker = false)
+    public static WebApplication Build(
+        string connection,
+        string url,
+        bool worker = false,
+        string? operatorToken = null
+    )
     {
         var builder = WebApplication.CreateBuilder(
             new WebApplicationOptions { ApplicationName = typeof(InboxDemoHost).Assembly.FullName }
         );
         builder.WebHost.UseUrls(url);
         Register(builder.Services, connection);
+        if (operatorToken is not null)
+        {
+            builder.Services.AddSingleton(new RenderOperatorCredential(operatorToken));
+            builder
+                .Services.AddAuthentication(RenderOperatorAuthenticationHandler.SchemeName)
+                .AddScheme<
+                    Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions,
+                    RenderOperatorAuthenticationHandler
+                >(RenderOperatorAuthenticationHandler.SchemeName, _ => { });
+            builder.Services.AddAuthorization(options =>
+                options.AddPolicy(
+                    RenderOperatorAuthenticationHandler.Permission,
+                    policy =>
+                        policy
+                            .AddAuthenticationSchemes(
+                                RenderOperatorAuthenticationHandler.SchemeName
+                            )
+                            .RequireAuthenticatedUser()
+                            .RequireClaim(
+                                "permission",
+                                RenderOperatorAuthenticationHandler.Permission
+                            )
+                )
+            );
+            builder.Services.AddPostgresInboxRecovery<RenderDbContext>();
+        }
+
         if (worker)
             builder.Services.AddInboxWorker<RenderDbContext>(
                 RenderExportHandler.Subscription,
@@ -23,17 +55,27 @@ public static class InboxDemoHost
             );
         var app = builder.Build();
         app.MapPost("/commands", ReceiveAsync);
+        if (operatorToken is not null)
+            RenderInboxOperations.Map(app);
+
         return app;
     }
 
     public static void Register(IServiceCollection services, string connection)
     {
+        // Consumer supervision: a faulted background worker stops this sample host.
+        services.Configure<HostOptions>(options =>
+            options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.StopHost
+        );
         services.AddDbContext<RenderDbContext>(options =>
             RenderDbContext.Configure(options, connection)
         );
         services.AddPostgresInbox<RenderDbContext>();
         services.AddPostgresInboxProcessor<RenderDbContext>(new(TimeSpan.FromSeconds(1)));
         services.AddInboxHandler<RenderDbContext, RenderExportHandler>(
+            RenderExportHandler.Subscription
+        );
+        services.AddInboxFailurePolicy<RenderDbContext, RenderInboxFailurePolicy>(
             RenderExportHandler.Subscription
         );
     }

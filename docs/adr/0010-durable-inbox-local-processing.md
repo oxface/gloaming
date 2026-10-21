@@ -1,5 +1,10 @@
 # ADR 0010: Durable intake and separate local inbox processing
 
+M2's [ADR 0018](0018-serialized-inbox-failure-recovery.md) supersedes the separate retry-write
+path below with savepoint rollback, serialized failure accounting and authorized conditional
+retry. The original I1 decision/evidence remains historical; retained intake/identity and local
+success atomicity are preserved.
+
 Status: interface and scope owner-approved, 2026-10-08. Implementation remains unstaged for
 line-by-line review. [Reviewed scope](../plans/inbox1-durable-intake-processing.md).
 

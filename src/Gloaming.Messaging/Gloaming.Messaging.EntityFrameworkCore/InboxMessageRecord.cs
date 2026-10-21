@@ -48,4 +48,28 @@ public sealed class InboxMessageRecord
 
     /// <summary>Database time of committed local handling, or null while pending.</summary>
     public DateTimeOffset? ProcessedAt { get; private set; }
+
+    /// <summary>Monotonic revision of committed failure, completion and operator retry transitions.</summary>
+    public long Revision { get; private set; }
+
+    /// <summary>Lifetime committed observations of failed local work; excludes cancellation and unrecorded crashes.</summary>
+    public long FailureCount { get; private set; }
+
+    /// <summary>Confirmed failures since the latest applied operator retry.</summary>
+    public long FailuresSinceRedrive { get; private set; }
+
+    /// <summary>Database time of the latest recorded failure.</summary>
+    public DateTimeOffset? LastFailedAt { get; private set; }
+
+    /// <summary>Safe consumer reason; exception text and payloads do not belong here.</summary>
+    public string? LastFailureCode { get; private set; }
+
+    /// <summary>Database time automatic processing stopped, or null when not quarantined.</summary>
+    public DateTimeOffset? QuarantinedAt { get; private set; }
+
+    /// <summary>Number of committed operator retry transitions.</summary>
+    public long RedriveCount { get; private set; }
+
+    /// <summary>Database time of the latest applied operator retry.</summary>
+    public DateTimeOffset? LastRedrivenAt { get; private set; }
 }
