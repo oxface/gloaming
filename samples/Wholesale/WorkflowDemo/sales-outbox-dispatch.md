@@ -62,7 +62,7 @@ messaging/RabbitMQ telemetry subscriptions are retained.
 | Target | Allowed | Denied / limitation |
 | --- | --- | --- |
 | Outbox envelopes | SELECT all rows, including payloads for every queued tenant and retained completed messages. | No INSERT, DELETE or TRUNCATE. No UPDATE of IDs, owner, payload, route, schema version, attribution/trace fields or enqueue timestamp. |
-| Delivery state | UPDATE `lease_token`, `lease_until`, `attempts`, `available_at`, `dispatched_at`. | These privileges do not prove that a caller actually published a message. A compromised dispatcher can manipulate delivery state or publish readable payloads. |
+| Delivery state | UPDATE `lease_token`, `lease_until`, `attempts`, `available_at`, `dispatched_at`, `revision`, `failure_count`, `failures_since_redrive`, `last_failed_at`, `last_failure_code`, `dead_lettered_at`. | No UPDATE on operator-only `redrive_count`/`last_redriven_at`. These privileges do not prove publication or enforce legal transitions. A compromised dispatcher can manipulate permitted delivery fields or publish readable payloads. |
 | Other application relations | No effective table/column or sequence access in the connected database. | Startup checks current non-system relation grants, including PUBLIC and column grants. It does not certify every database, function, extension, SECURITY DEFINER path, trigger body or future privilege change. |
 | Authority | Sales schema USAGE and the existing native delivery transactions. | No superuser, BYPASSRLS, role membership, database/schema creation, role/database administration, replication or grant options on the outbox. |
 | Tenant scope | Queue delivery deliberately scans all tenants without an operation tenant context. | This is transport authority, not cross-tenant business access or within-tenant authorization. A forged tenant GUC does not confer missing table privileges. |
@@ -78,10 +78,28 @@ these object privileges; its owner/superuser/BYPASSRLS exceptions are described 
 
 The role is not passed to the HTTP API or the ordinary workflow `run` process. Native hosting
 owns shutdown; each dispatch attempt still gets a fresh scope. Lease duration remains ten
-seconds and failed publication delays availability by one second. No lease renewal, exactly
-once delivery, poison/redrive policy, production provisioning or default rollout is added.
+seconds and failed publication delays availability by one second. Durable publisher-exception
+accounting is now required. This role keeps its existing indefinite retry default and registers
+no failure policy or operator store. Other consumers can independently select
+[dead-letter policy and authorized inspection/retry](../../../src/Gloaming.Messaging/docs/outbox-recovery.md).
+No lease renewal, exactly-once delivery, production provisioning or default rollout is added.
+
+Before upgrading an existing installation, apply the Sales AddOutboxDeadLetters migration and
+an explicitly reviewed grant update for the six new accounting columns listed above. Stop old
+dispatchers before relying on dead-letter state; they ignore it. Finite provisioning still
+rejects existing role names and startup performs no DDL. Its effective-grant check rejects
+missing accounting privileges and extra operator-column privileges. Neither the dispatch login
+nor its runtime environment gains producer or business credentials.
+
+An unconfirmed failure-accounting write throws OutboxFailureAccountingException and faults
+the optional worker without another poll. Native host supervision owns shutdown; repair grants/
+storage before restarting. An accounting commit response may be lost after a real commit;
+fresh storage determines the retained state. Completion failures remain ambiguous and are
+never counted as publisher failures.
 
 Run the existing workflow test project to exercise the new proofs as well as the retained
 workflow journeys. The [slice report](../../../docs/reports/a2-8-sales-outbox-dispatch.md)
 records fresh results and limitations. **No new reusable mechanism or template output is
 introduced:** context selection, role grants and executable composition remain sample policy.
+The [M2 outbox report](../../../docs/reports/m2-outbox-dead-letters.md) records the new library
+accounting/retry proofs and restricted-credential follow-up separately from that A2.8 history.

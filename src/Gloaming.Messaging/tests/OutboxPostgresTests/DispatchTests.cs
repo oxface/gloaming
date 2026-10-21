@@ -272,7 +272,7 @@ public sealed class DispatchTests(PostgreSqlFixture postgres)
             },
         };
         await using var context = Context(connection);
-        var failure = await Assert.ThrowsAsync<AggregateException>(() =>
+        var failure = await Assert.ThrowsAsync<OutboxFailureAccountingException>(() =>
             Dispatcher(context, publisher).DispatchNextAsync(Token)
         );
         Assert.Same(publication, failure.InnerExceptions[0]);

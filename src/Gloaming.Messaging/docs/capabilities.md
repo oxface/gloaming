@@ -11,6 +11,9 @@ the implementation is checkpointed as `ecab884`, refined as `863456b` and merged
 [the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
 M2 adds [durable failure accounting and operator retry](inbox-recovery.md) after owner
 interface review, with [separate current evidence](../../../docs/reports/m2-inbox-failure-recovery.md).
+Its [outbox continuation](outbox-recovery.md) adds lease-fenced publisher-exception accounting,
+consumer-selected dead letters and bounded inspection/conditional retry, with
+[new PostgreSQL/HTTP/process evidence](../../../docs/reports/m2-outbox-dead-letters.md).
 
 ## Current composition
 
@@ -200,7 +203,7 @@ branch and does not release resources it did not create.
 
 Receipt-only mode if an adopter needs it;
 queued-message compatibility/upcasting rollout proofs; retention/deduplication windows;
-outbox redrive/poison handling; caps on inbox executions including crashes; lease renewal; parallel/batch dispatch;
+caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
 transactions; template messaging presets. Event-sourcing maintenance/async projections remain

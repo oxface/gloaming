@@ -61,6 +61,10 @@ Subscribe to `ActivitySource` **`Gloaming.Messaging`**:
 | `gloaming.inbox.process` | Consumer | After locked selection: handler, save, completion and observed commit; failure includes savepoint rollback and failure accounting/dead-letter state. |
 
 A link to retained context is supplied at activity creation, so samplers can inspect it.
+Outbox publisher-exception accounting and consumer dead-letter decisions remain failed attempts;
+they never report Published. Unconfirmed accounting faults emit the worker's distinct critical
+supervision diagnostic. Completion failures remain ambiguous and do not invoke publication policy;
+see [outbox recovery](outbox-recovery.md). No new telemetry instrument or sensitive payload attribute is added.
 Each retry receives its own activity; an existing local ambient parent is preserved.
 NoWork polls and failures before selection do not create a message activity. Native DB
 instrumentation can independently cover claim/selection.

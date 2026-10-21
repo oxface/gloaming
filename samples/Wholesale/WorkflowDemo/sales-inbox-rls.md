@@ -26,6 +26,13 @@ UPDATE on `revision`, `failure_count`, `failures_since_redrive`, `last_failed_at
 setup includes these columns and startup validates the exact grant inventory. Updating an already
 provisioned role remains an explicit owner action; setup is not a grant reconciler.
 
+The outbox M2 upgrade also requires SELECT on generated insertion defaults `revision`,
+`failure_count`, `failures_since_redrive` and `redrive_count`, alongside the existing
+queued/available timestamps. EF reads these through INSERT RETURNING. Fresh provisioning
+and effective-grant checks include the exact inventory. Apply an explicitly reviewed
+grant update to existing reply roles before upgrading; this adds no outbox payload SELECT
+or lifecycle UPDATE authority. See [outbox rollout](../../../src/Gloaming.Messaging/docs/outbox-recovery.md).
+
 First apply the existing [module/queue setup](README.md#run-the-executable). The new finite
 setup mode operates on those existing tables and needs no broker or Inventory connection:
 
@@ -80,7 +87,7 @@ rows are denied by the policies, and this selected model requires a tenant.
 | --- | --- | --- |
 | `workflow_instances` | SELECT and UPDATE. | ENABLE/FORCE with tenant equality in USING/WITH CHECK; raw/bulk/filter bypass stays tenant-scoped. No INSERT/DELETE or within-tenant workflow-type/field permission policy. |
 | `inbox_messages` | SELECT; UPDATE completion, availability, revision, failure counts/code/time and dead-letter state. | ENABLE/FORCE restricts selection, completion and accounting to the admitted tenant. No intake INSERT, redrive count/time UPDATE, envelope mutation or DELETE. Same-tenant subscriptions are not a separate database permission boundary. |
-| `outbox_messages` append | INSERT; SELECT generated timestamps. | ENABLE/FORCE with tenant equality specifically for INSERT WITH CHECK. Missing/foreign context rejects native writes. Tracked outgoing ownership/save validation remains. Timestamp columns/counts are readable across queued tenants; payloads are not. |
+| `outbox_messages` append | INSERT; SELECT generated timestamps and initial recovery counters. | ENABLE/FORCE with tenant equality specifically for INSERT WITH CHECK. Missing/foreign context rejects native writes. Tracked outgoing ownership/save validation remains. The six generated-default columns are readable across queued tenants; payloads are not. |
 | Outbox delivery | Processor has no lifecycle UPDATE or payload SELECT. | Read and delivery UPDATE policies remain global. A2.8's separately granted dispatcher scans every queued tenant, with no INSERT rights and no RLS bypass flag. |
 | Other application relations | No table/column/sequence access. | Startup checks effective grants and ownership, including PUBLIC and role memberships. Other databases, routines/SECURITY DEFINER paths, extension/trigger bodies and later privilege changes need separate review. |
 | Operation identity | Trusted host configuration establishes tenant and receiver-owned system actor once per scope. | Envelope checks and original continuation/correlation rules remain consumer authorization. RLS does not authenticate tenants or recheck an initiating human's current membership. A credential holder can forge the mutable GUC. |

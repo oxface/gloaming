@@ -62,6 +62,8 @@ public sealed partial class SalesDispatchTests
     [InlineData("database-owner-revoked")]
     [InlineData("grant-option")]
     [InlineData("missing-column")]
+    [InlineData("missing-accounting-column")]
+    [InlineData("operator-column")]
     [InlineData("outbox-rls")]
     public async Task StartupRejectsUnsafeEffectiveRolesAndColumnGrants(string fault)
     {
@@ -95,6 +97,10 @@ public sealed partial class SalesDispatchTests
                         $"GRANT UPDATE (attempts) ON sales.outbox_messages TO {role} WITH GRANT OPTION",
                     "missing-column" =>
                         $"REVOKE UPDATE (attempts) ON sales.outbox_messages FROM {role}",
+                    "missing-accounting-column" =>
+                        $"REVOKE UPDATE (failure_count) ON sales.outbox_messages FROM {role}",
+                    "operator-column" =>
+                        $"GRANT UPDATE (redrive_count) ON sales.outbox_messages TO {role}",
                     "outbox-rls" => "ALTER TABLE sales.outbox_messages ENABLE ROW LEVEL SECURITY",
                     _ => throw new InvalidOperationException("Unknown privilege fault."),
                 },

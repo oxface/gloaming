@@ -258,7 +258,8 @@ public sealed class AdoptionDependencyTests
         Check(
             "OutboxDemo",
             ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
-            ["Microsoft.EntityFrameworkCore.Design"]
+            ["Microsoft.EntityFrameworkCore.Design"],
+            ["Microsoft.AspNetCore.App"]
         );
         Check(
             "InboxDemo",
@@ -266,7 +267,12 @@ public sealed class AdoptionDependencyTests
             ["Microsoft.EntityFrameworkCore.Design"]
         );
 
-        static void Check(string project, string[] projects, string[] packages)
+        static void Check(
+            string project,
+            string[] projects,
+            string[] packages,
+            string[]? frameworks = null
+        )
         {
             var declaration = XDocument.Load(
                 Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", project + ".csproj")
@@ -287,7 +293,12 @@ public sealed class AdoptionDependencyTests
                     .Select(reference => (string)reference.Attribute("Include")!)
                     .Order(StringComparer.Ordinal)
             );
-            Assert.Empty(declaration.Descendants("FrameworkReference"));
+            Assert.Equal(
+                frameworks ?? [],
+                declaration
+                    .Descendants("FrameworkReference")
+                    .Select(reference => (string)reference.Attribute("Include")!)
+            );
         }
     }
 

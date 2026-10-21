@@ -199,6 +199,16 @@ on 2026-10-21. Dead-letter terminology and one context-typed list/detail/retry i
 the existing revision-checked transition. The [new report](../reports/m2-inbox-dead-letters.md)
 distinguishes paging/metadata inspection proofs from the earlier recovery/supervision evidence.
 
+On 2026-10-21 the owner selected the comparable outbox continuation. The
+[concrete outbox proposal](m2-outbox-dead-letters.md) received owner interface/scope approval
+before implementation. The [local contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md)
+and [slice report](../reports/m2-outbox-dead-letters.md) describe lease-fenced failure accounting,
+inspection/retry, schema/restricted-grant changes and new PostgreSQL/HTTP/process proofs. Attempts
+retains its committed-claim meaning; publication/commit uncertainty does not establish
+transport rejection. Existing inbox contracts remain intact, with only matching cursor
+internals consolidated. Classification, budgets, acceptance definitions and operator authority
+remain consumer-owned. No template preset or generic queue framework is added.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

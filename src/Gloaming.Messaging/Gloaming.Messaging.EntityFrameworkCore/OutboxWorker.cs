@@ -41,6 +41,14 @@ internal sealed partial class OutboxWorker<TDbContext>(
                 {
                     return;
                 }
+                catch (OutboxFailureAccountingException failure)
+                {
+                    if (stoppingToken.IsCancellationRequested)
+                        return;
+
+                    AccountingNotConfirmed(logger, failure, failure.MessageId);
+                    throw;
+                }
                 catch (Exception failure)
                 {
                     DispatchFailed(logger, failure);
@@ -51,6 +59,16 @@ internal sealed partial class OutboxWorker<TDbContext>(
                 await Task.Delay(delay, stoppingToken);
         }
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Critical,
+        Message = "Outbox failure accounting was not confirmed for {MessageId}; stopping the worker."
+    )]
+    private static partial void AccountingNotConfirmed(
+        ILogger logger,
+        Exception exception,
+        Guid messageId
+    );
 
     [LoggerMessage(
         Level = LogLevel.Error,

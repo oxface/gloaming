@@ -145,3 +145,11 @@ exported spans, logs and metrics. It forces post-publication completion and tran
 handler failures, restarts in fresh processes, and verifies duplicate intake preserves its
 first context. An unreachable-collector case verifies business progress independently.
 This is OTLP export evidence, not an Aspire dashboard inspection or throughput benchmark.
+
+The process suite also launches the built optional OutboxDemo HTTP/worker host. Its
+[outbox recovery proofs](../MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) cover
+death during accounting, persisted failure budgets and dead letters across restart, authorized
+retry, and accounting SQL fault → StopHost → repair/restart under the same message identity.
+The existing RabbitMQ dispatch role retains indefinite retry policy; HTTP classification stays
+with its adopter. See the [outbox contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md)
+for counts, lease fencing, completion uncertainty and rollout/grant obligations.

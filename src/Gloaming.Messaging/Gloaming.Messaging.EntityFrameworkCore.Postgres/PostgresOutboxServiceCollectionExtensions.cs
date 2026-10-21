@@ -8,6 +8,21 @@ namespace Gloaming.Messaging.EntityFrameworkCore.Postgres;
 /// <summary>Independent producer/dispatcher registration bound to an explicit module context.</summary>
 public static class PostgresOutboxServiceCollectionExtensions
 {
+    /// <summary>Registers bounded metadata inspection and conditional retry; authorize each invocation in consumer code.</summary>
+    public static IServiceCollection AddPostgresOutboxDeadLetters<TDbContext>(
+        this IServiceCollection services
+    )
+        where TDbContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddScoped<
+            IOutboxDeadLetters<TDbContext>,
+            PostgresOutboxDeadLetters<TDbContext>
+        >();
+        return services;
+    }
+
     /// <summary>Registers scoped enqueue support and validates the native model when the service is resolved.</summary>
     /// <typeparam name="TDbContext">The separately registered owning Npgsql context.</typeparam>
     public static IServiceCollection AddPostgresOutbox<TDbContext>(this IServiceCollection services)
@@ -43,7 +58,8 @@ public static class PostgresOutboxServiceCollectionExtensions
                 provider.GetRequiredService<TDbContext>(),
                 provider.GetRequiredService<TPublisher>(),
                 options,
-                provider.GetService<ILogger<PostgresOutboxDispatcher<TDbContext>>>()
+                provider.GetService<ILogger<PostgresOutboxDispatcher<TDbContext>>>(),
+                provider.GetService<IOutboxFailurePolicy<TDbContext>>()
             )
         );
         return services;

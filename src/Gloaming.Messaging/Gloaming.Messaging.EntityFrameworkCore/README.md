@@ -33,10 +33,18 @@ Optionally register `AddOutboxWorker<TDbContext>(new OutboxWorkerOptions(idleDel
 after a concrete dispatcher and native logging registration. It starts no migrations and
 discovers no modules. Each sequential invocation gets a fresh async scope, disposed before
 waiting. Dependency/model/provider failures during resolution fail startup/execution;
-publication/storage failures are logged and retried with failureDelay. IdleDelay applies on
+ordinary publication/storage failures are logged and retried with failureDelay. IdleDelay applies on
 NoWork; both delays must be positive and within native Task.Delay bounds. Cooperative host
 cancellation stops new work and reaches the publisher. A non-cooperative publisher can still
 hold shutdown; leases do not forcibly terminate code. Callable dispatch requires no worker.
+
+Optional IOutboxFailurePolicy selects delayed retry or dead-letter state using durable
+publisher-exception observations. Attempts remains committed claims; failures do not prove
+transport rejection. Independently registered IOutboxDeadLetters concentrates bounded metadata
+List/Get and revision-conditional retry of the unchanged envelope. OutboxFailureAccountingException
+preserves both errors and faults the optional worker without another poll; native host supervision
+governs shutdown. Completion faults never trigger publication-failure accounting. See
+[outbox recovery, authority and rollout](../docs/outbox-recovery.md).
 
 Inbox composition is independent: IInbox<TDbContext> retains delivery in a caller-owned
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.

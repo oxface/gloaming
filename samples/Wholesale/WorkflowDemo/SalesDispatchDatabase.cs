@@ -12,6 +12,12 @@ internal static class SalesDispatchDatabase
         "attempts",
         "available_at",
         "dispatched_at",
+        "revision",
+        "failure_count",
+        "failures_since_redrive",
+        "last_failed_at",
+        "last_failure_code",
+        "dead_lettered_at",
     ];
 
     internal static async Task ProvisionAsync(

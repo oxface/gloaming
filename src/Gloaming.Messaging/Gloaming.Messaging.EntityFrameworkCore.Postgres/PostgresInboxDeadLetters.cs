@@ -53,7 +53,7 @@ internal sealed class PostgresInboxDeadLetters<TDbContext>(TDbContext database)
                 )
             )
         );
-        var cursor = query.After is null ? null : DecodeCursor(query.After, scope);
+        var cursor = query.After is null ? null : DeadLetterCursor.Decode(query.After, scope);
         cancellationToken.ThrowIfCancellationRequested();
         storage.RequireFreshContext();
 
@@ -80,7 +80,12 @@ internal sealed class PostgresInboxDeadLetters<TDbContext>(TDbContext database)
         var items = observed.Take(query.PageSize).ToArray();
         string? next =
             observed.Length > query.PageSize
-                ? EncodeCursor(new(1, scope, items[^1].DeadLetteredAt, items[^1].MessageId))
+                ? new DeadLetterCursor(
+                    1,
+                    scope,
+                    items[^1].DeadLetteredAt,
+                    items[^1].MessageId
+                ).Encode()
                 : null;
         await transaction.CommitAsync(cancellationToken);
         return new(items, next);
@@ -124,56 +129,6 @@ internal sealed class PostgresInboxDeadLetters<TDbContext>(TDbContext database)
                 && row.ProcessedAt == null
                 && row.DeadLetteredAt != null
             );
-
-    private sealed record Cursor(
-        int Version,
-        string Scope,
-        DateTimeOffset DeadLetteredAt,
-        Guid MessageId
-    );
-
-    private static string EncodeCursor(Cursor cursor) =>
-        Convert
-            .ToBase64String(JsonSerializer.SerializeToUtf8Bytes(cursor))
-            .TrimEnd('=')
-            .Replace('+', '-')
-            .Replace('/', '_');
-
-    private static Cursor DecodeCursor(string token, string scope)
-    {
-        if (string.IsNullOrWhiteSpace(token) || token.Length > 1024)
-            throw new ArgumentException(
-                "Use a continuation from this exact dead-letter query.",
-                nameof(token)
-            );
-
-        try
-        {
-            string base64 = token.Replace('-', '+').Replace('_', '/');
-            base64 = base64.PadRight((base64.Length + 3) / 4 * 4, '=');
-            var cursor = JsonSerializer.Deserialize<Cursor>(Convert.FromBase64String(base64));
-            if (
-                cursor is null
-                || cursor.Version != 1
-                || cursor.Scope != scope
-                || cursor.MessageId == Guid.Empty
-                || cursor.DeadLetteredAt.Offset != TimeSpan.Zero
-            )
-                throw new FormatException(
-                    "The continuation has an invalid version, scope or position."
-                );
-
-            return cursor;
-        }
-        catch (Exception failure) when (failure is FormatException or JsonException)
-        {
-            throw new ArgumentException(
-                "Use a continuation from this exact dead-letter query.",
-                nameof(token),
-                failure
-            );
-        }
-    }
 
     public async Task<InboxRetryResult> RetryAsync(
         string subscriptionKey,

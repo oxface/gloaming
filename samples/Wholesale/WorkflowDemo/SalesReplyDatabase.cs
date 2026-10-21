@@ -24,7 +24,17 @@ internal static class SalesReplyDatabase
         "last_failure_code",
         "quarantined_at",
     ];
-    private static readonly string[] OutboxReads = ["queued_at", "available_at"];
+
+    // EF returns generated insertion defaults. This grants no envelope SELECT or lifecycle UPDATE.
+    private static readonly string[] OutboxReads =
+    [
+        "queued_at",
+        "available_at",
+        "revision",
+        "failure_count",
+        "failures_since_redrive",
+        "redrive_count",
+    ];
 
     internal static async Task ProvisionAsync(
         string setupConnection,

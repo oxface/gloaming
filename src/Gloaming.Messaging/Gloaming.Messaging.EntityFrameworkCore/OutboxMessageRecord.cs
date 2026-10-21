@@ -69,4 +69,28 @@ public sealed class OutboxMessageRecord
 
     /// <summary>Number of committed claims, including claims abandoned before publication.</summary>
     public long Attempts { get; private set; }
+
+    /// <summary>Monotonic revision of committed lifecycle transitions.</summary>
+    public long Revision { get; private set; }
+
+    /// <summary>Lifetime committed observations of publisher exceptions; not confirmed transport rejection.</summary>
+    public long FailureCount { get; private set; }
+
+    /// <summary>Recorded publisher exceptions since the latest applied operator retry.</summary>
+    public long FailuresSinceRedrive { get; private set; }
+
+    /// <summary>Database time of the latest recorded publisher exception.</summary>
+    public DateTimeOffset? LastFailedAt { get; private set; }
+
+    /// <summary>Consumer-safe reason for the latest observation, excluding exception text.</summary>
+    public string? LastFailureCode { get; private set; }
+
+    /// <summary>Database time automatic claims stopped; cannot cancel an obsolete in-flight publisher.</summary>
+    public DateTimeOffset? DeadLetteredAt { get; private set; }
+
+    /// <summary>Number of applied operator retries.</summary>
+    public long RedriveCount { get; private set; }
+
+    /// <summary>Database time of the latest applied operator retry.</summary>
+    public DateTimeOffset? LastRedrivenAt { get; private set; }
 }

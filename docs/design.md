@@ -731,6 +731,16 @@ DeadLetter/DeadLetteredAt replace public quarantine names while retaining the st
 Live paging uses database timestamp/UUID order and reserves no work; inspection and mutation
 authority remain consumer policy. A forward metadata index supports the lookup.
 
+The owner-approved [outbox continuation](plans/m2-outbox-dead-letters.md) applies comparable
+dead-letter inspection and conditional retry to retained outgoing work. Publication remains
+outside the transaction; accounting and completion lock and recheck the unexpired token
+before the final write. Attempts retains its committed-claim meaning, while separate counts
+record publisher-exception observations without asserting transport rejection. Unconfirmed
+accounting faults the worker. Inbox and outbox keep their distinct public stores and storage
+protocols, sharing only a private cursor codec. [ADR 0019](adr/0019-lease-fenced-outbox-dead-letters.md),
+the [local contract](../src/Gloaming.Messaging/docs/outbox-recovery.md) and
+[fresh evidence](reports/m2-outbox-dead-letters.md) record the boundaries and rollout obligations.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

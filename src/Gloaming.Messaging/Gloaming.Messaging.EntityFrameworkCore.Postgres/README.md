@@ -39,14 +39,17 @@ and attempt increment are committed before publication. Completion or retry requ
 same token, undispatched status and an unexpired lease. Stale publishers cannot complete or
 defer a successor's claim. No database transaction/row lock is held during network work.
 
-Publisher failure schedules the configured database-time retry and rethrows. If retry SQL
-also fails, AggregateException preserves both errors. Cancellation/abandonment and completion
+Publisher failure records lease-fenced failure observations and selects the consumer's delayed
+retry or dead-letter decision, then rethrows. Without a policy, the configured retry delay
+remains indefinite. OutboxFailureAccountingException preserves publication/accounting errors
+and faults the optional worker. Cancellation/abandonment and completion
 failure leave retained claims recoverable after expiry; publication may already have succeeded.
 RetryDelay may be zero; LeaseDuration must be positive. No hidden producer or transport retry.
 
 The schema has a stable GUID primary key, JSONB payload, optional tenant key, database-generated
 queued/available timestamps, dispatched timestamp, lease token/expiry and long attempts.
-Consumer migrations create/update it. The candidate index excludes dispatched records;
+Consumer migrations create/update it, including recovery counts, revision, safe failure metadata
+and dead-letter/redrive times. Attempts counts committed claims. The candidate index excludes dispatched/dead-lettered records;
 retention still belongs to a later capability. Retain the fixed column/key/JSONB/default mapping;
 schema/table names and ownership/filter configuration are customizable.
 JSONB preserves JSON meaning, not original text formatting, property order or numeric spelling.
@@ -59,7 +62,9 @@ scope. This dispatcher does not impersonate each owner or infer trust from the p
 
 At-least-once delivery requires continued dispatch, accepting transport and retained records.
 Duplicate effects remain receiver-owned. There is no FIFO, global concurrency cap, lease
-renewal, poison policy, pruning, redrive or exactly-once promise. See the
+renewal, pruning or exactly-once promise. Consumer-selected stop policy and separately registered
+AddPostgresOutboxDeadLetters provide bounded List/Get and identity-preserving Retry. See
+[outbox recovery, supervision and schema/grant obligations](../docs/outbox-recovery.md), the
 [supported and deferred contract](../docs/capabilities.md) and actual
 [Inventory RabbitMQ publisher](../../../samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs).
 

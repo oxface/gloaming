@@ -228,6 +228,8 @@ internal sealed class HttpReceiver(WebApplication application, Uri endpoint) : I
 {
     internal Uri Endpoint { get; } = endpoint;
     internal ConcurrentQueue<(Guid MessageId, JsonElement Payload)> Messages { get; } = new();
+    internal int StatusCode { get; set; } = 202;
+    internal bool LoseResponse { get; set; }
 
     internal static async Task<HttpReceiver> StartAsync(CancellationToken cancellationToken)
     {
@@ -245,7 +247,10 @@ internal sealed class HttpReceiver(WebApplication application, Uri endpoint) : I
                 );
                 Guid id = Guid.Parse(context.Request.Headers["X-Message-Id"].ToString());
                 receiver!.Messages.Enqueue((id, payload.RootElement.Clone()));
-                context.Response.StatusCode = 202;
+                if (receiver.LoseResponse)
+                    context.Abort();
+                else
+                    context.Response.StatusCode = receiver.StatusCode;
             }
         );
         await application.StartAsync(cancellationToken);
