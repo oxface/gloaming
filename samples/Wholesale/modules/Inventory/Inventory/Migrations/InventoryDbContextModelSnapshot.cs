@@ -410,6 +410,10 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         .HasColumnType("text")
                         .HasColumnName("correlation_id");
 
+                    b.Property<DateTimeOffset?>("DeadLetteredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("quarantined_at");
+
                     b.Property<long>("FailureCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
@@ -447,10 +451,6 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                     b.Property<DateTimeOffset?>("ProcessedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("processed_at");
-
-                    b.Property<DateTimeOffset?>("QuarantinedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("quarantined_at");
 
                     b.Property<DateTimeOffset>("ReceivedAt")
                         .ValueGeneratedOnAdd()
@@ -492,6 +492,9 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
 
                     b.HasIndex("SubscriptionKey", "AvailableAt", "ReceivedAt")
                         .HasFilter("processed_at IS NULL AND quarantined_at IS NULL");
+
+                    b.HasIndex("SubscriptionKey", "ProducerKey", "DeadLetteredAt", "MessageId")
+                        .HasFilter("processed_at IS NULL AND quarantined_at IS NOT NULL");
 
                     b.ToTable(
                         "inbox_messages",

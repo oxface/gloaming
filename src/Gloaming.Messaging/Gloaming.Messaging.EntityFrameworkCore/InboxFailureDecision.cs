@@ -10,5 +10,5 @@ public abstract record InboxFailureDecision
 
     /// <summary>Exclude retained work from automatic processing until an authorized retry.</summary>
     /// <param name="Code">Safe nonblank consumer reason of at most 128 characters; never exception text or payload.</param>
-    public sealed record Quarantine(string Code) : InboxFailureDecision;
+    public sealed record DeadLetter(string Code) : InboxFailureDecision;
 }

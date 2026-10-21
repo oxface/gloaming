@@ -114,7 +114,7 @@ constraints/version predicates; inbox exclusion is only per retained delivery.
 Failures before commit roll back business effects, completion and outgoing work, including an
 earlier save. A savepoint established after locking the delivery permits local rollback and
 durable failure accounting while retaining that original lock. A keyed consumer policy selects
-delayed retry or quarantine; omission retains indefinite positive RetryDelay. Accounting failure
+delayed retry or dead-letter state; omission retains indefinite positive RetryDelay. Accounting failure
 preserves both errors and delivery identity in InboxFailureAccountingException, derived from
 AggregateException. Cancellation or an unrecoverable transaction does
 not force accounting. Dispose the failed scope; commit response loss remains ambiguous. See
@@ -140,7 +140,7 @@ migrations, bind tenants or subscribe/acknowledge transport. Cooperative cancell
 the handler; non-cooperative work can still delay shutdown and retain a database lock. Keep
 handlers bounded, local and cancellable.
 
-Completed and quarantined rows remain retained indefinitely. Consumer-selected quarantine and
+Completed and dead-lettered rows remain retained indefinitely. Consumer-selected dead-letter state and
 identity-preserving operator retry are supported; classification, admission, thresholds and
 operator authority remain consumer-owned. Counters record confirmed failures rather than every
 execution/crash. No pruning/dedup window, second dead-letter queue, batch/parallel worker, global

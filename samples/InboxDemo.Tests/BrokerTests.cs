@@ -287,7 +287,7 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         );
         var services = new ServiceCollection();
         InboxDemoHost.Register(services, receiver);
-        services.AddPostgresInboxRecovery<RenderDbContext>();
+        services.AddPostgresInboxDeadLetters<RenderDbContext>();
         await using var provider = services.BuildServiceProvider();
         await new RabbitMqRenderReceiver(
             channel,
@@ -305,13 +305,13 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         {
             await using var observer = RenderDbContext.Create(receiver);
             var stopped = await observer.Set<InboxMessageRecord>().SingleAsync(Token);
-            Assert.NotNull(stopped.QuarantinedAt);
+            Assert.NotNull(stopped.DeadLetteredAt);
             Assert.Equal(1, stopped.FailureCount);
             // This trusted fixture acts as operator; HTTP authorization is exercised separately.
             Assert.Equal(
                 InboxRetryResult.Retried,
                 await recoveryScope
-                    .ServiceProvider.GetRequiredService<IInboxRecovery<RenderDbContext>>()
+                    .ServiceProvider.GetRequiredService<IInboxDeadLetters<RenderDbContext>>()
                     .RetryAsync(
                         stopped.SubscriptionKey,
                         stopped.ProducerKey,

@@ -16,7 +16,7 @@ are not accepted. Intake does not imply the job was processed or a PDF rendered.
 
 RenderExportHandler separately creates a local RenderJob using ExportRequestId as a semantic
 business key. Another delivery ID with identical requirements does not create another job.
-Incompatible pages fail processing and quarantine for consumer intervention. External
+Incompatible pages fail processing and are dead-lettered for consumer intervention. External
 rendering, file writes, scheduling and completion are outside this locked local handler.
 
 ```bash
@@ -40,7 +40,7 @@ semantic job deduplication, worker opt-in and the separate broker acknowledgemen
 
 ## Failed work and authorized operator retry
 
-Rendering owns failure policy: invalid/conflicting commands and unclassified errors quarantine
+Rendering owns failure policy: invalid/conflicting commands and unclassified errors are dead-lettered
 immediately. Recognized PostgreSQL serialization/deadlock failures retry after one second,
 stopping at three recorded failures since the last applied operator retry. The library supplies
 counters, locking and conditional transitions; classification, limits and codes remain editable
@@ -52,8 +52,8 @@ delivery identity and both errors. The optional worker logs a critical diagnosti
 without invoking another handler. Register explicitly selects native StopHost supervision:
 the entire sample host shuts down, including HTTP endpoints. Repair the database/grant/policy
 fault before restarting. Inspect fresh state because an accounting commit response can be lost;
-only an actually quarantined delivery needs authorized operator retry. A worker fault alone
-does not quarantine the row, and no particular exit code or deployment restart is supplied.
+only an actually dead-lettered delivery needs authorized operator retry. A worker fault alone
+does not dead-letter the row, and no particular exit code or deployment restart is supplied.
 
 Enable the optional operator routes by setting `INBOX_DEMO_OPERATOR_TOKEN` to a private credential
 of at least 32 characters. Without it the routes are absent. Native ASP.NET Core authentication
@@ -65,28 +65,35 @@ Inspect and resolve the consumer precondition, then submit the exact revision re
 
 ```sh
 curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
-  "http://localhost:5087/operations/inbox/$MESSAGE_ID"
+  "http://localhost:5087/operations/inbox/dead-letters?pageSize=25"
+curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
+  "http://localhost:5087/operations/inbox/dead-letters/$MESSAGE_ID"
 curl -X POST -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
   -H 'Content-Type: application/json' -d '{"expectedRevision":1}' \
-  "http://localhost:5087/operations/inbox/$MESSAGE_ID/retry"
+  "http://localhost:5087/operations/inbox/dead-letters/$MESSAGE_ID/retry"
 ```
 
 The fixed subscription/producer are `rendering.jobs`/`exports`; callers cannot select another
-lane. GET returns lifecycle/counts/revision/safe reason, excluding payload and exception text.
+lane. List GET returns Items/NextCursor; use `after=<NextCursor>` for continuation and optionally
+filter an exact `failureCode`. Page size is 1–100 (default 50); malformed query/cursor input
+returns 400. Detail GET returns current dead-letter metadata or 404, excluding payload, tenant,
+diagnostic context and exception text. Pending/redriven/completed work is absent. Pages observe
+live state: retry removes a row and a later failure can put it back. Inspection reserves nothing.
 POST returns 204 for applied retry and 409 for stale/inapplicable state. Missing/wrong credentials
 return 401 before storage work. Requests/results log the fixed principal, delivery ID and revision;
 durable approval/audit is a separate consumer choice.
 
 Retry preserves identity, payload, metadata and total failures, resets only the cycle count and
 makes the retained row eligible. Processing repeats current admission/business rules; permanent
-conflicts can quarantine again. Stale requests cannot reopen that later quarantine. After response
+conflicts can be dead-lettered again. Stale requests cannot reopen that later dead-letter state. After response
 loss reuse the same revision, not an automatically refreshed one. Equivalent intake deduplicates
 throughout.
 
 Apply `--setup` with old processors stopped before using the updated model. The additive recovery
 migration preserves historical pending/completed rows, setting unknown past counts to zero. Old
-processors ignore quarantine: mixed versions/binary rollback need a separately reviewed plan.
-Startup still performs no migration.
+processors ignore dead-letter state: mixed versions/binary rollback need a separately reviewed plan.
+Startup still performs no migration. The additional lookup migration only creates the dead-letter
+index; DeadLetteredAt retains the physical `quarantined_at` column and existing row data/grants.
 
 Optional message diagnostic context and native telemetry setup are documented in the
 [Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).

@@ -92,7 +92,7 @@ public sealed class FailureSupervisionTests(PostgreSqlFixture postgres)
         Assert.Equal(0, row.FailureCount);
         Assert.Equal(0, row.Revision);
         Assert.Null(row.ProcessedAt);
-        Assert.Null(row.QuarantinedAt);
+        Assert.Null(row.DeadLetteredAt);
         Assert.Equal(original.MessageId, row.MessageId);
         Assert.True(JsonElement.DeepEquals(original.Payload, row.Payload));
     }

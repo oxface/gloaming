@@ -712,7 +712,7 @@ introduced. [ADR 0010](adr/0010-durable-inbox-local-processing.md) records the s
 
 The owner-approved [M2 continuation](plans/m2-inbox-failure-recovery.md) extends this protocol:
 lock before savepoint, roll failed local work back while retaining the delivery lock, then
-commit only failure accounting and a consumer-selected retry/quarantine decision. Separately
+commit only failure accounting and a consumer-selected retry/dead-letter state decision. Separately
 authorized operator retry uses the observed lifecycle revision and preserves the envelope.
 Counters record committed observations, not every crash/cancelled execution. Classification,
 admission, operator authority and presentation remain consumer code. [ADR 0018](adr/0018-serialized-inbox-failure-recovery.md)
@@ -724,6 +724,12 @@ adds a typed exception preserving delivery identity and both errors. Unconfirmed
 faults the optional inbox worker instead of polling again; native host supervision governs
 host shutdown. Consumer repair/restart policy remains explicit. No lease or schema change
 is introduced; stopped workers do not promise progress until restarted.
+
+The [approved dead-letter operations](plans/m2-inbox-dead-letters.md) deepen that recovery
+interface into IInboxDeadLetters: bounded metadata list/detail and the same conditional retry.
+DeadLetter/DeadLetteredAt replace public quarantine names while retaining the storage column.
+Live paging uses database timestamp/UUID order and reserves no work; inspection and mutation
+authority remain consumer policy. A forward metadata index supports the lookup.
 
 ## Explicit accepted-change audit
 

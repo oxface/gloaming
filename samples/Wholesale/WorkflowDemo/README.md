@@ -134,8 +134,10 @@ behavior, not another dashboard/export contract; OBS1 contains those separate pr
 
 The demo rejects malformed transport intake without requeueing; provision a dead-letter queue
 before using that policy in a deployed consumer. Processing conflicts/invalid outcomes remain
-pending and are retried by the current inbox worker. Poison quarantine, attempt caps, operator
-redrive, retention and deduplication expiry are not implemented. Queue prefix/producer identity
+pending and use the consumer's default delayed-retry policy. The Messaging library supports
+an optional dead-letter policy and metadata/retry store; this workflow host does not register
+operator operations. Retention, execution caps including crashes and deduplication expiry
+remain separate. Queue prefix/producer identity
 must remain stable across restarts; changing them is a deployment policy change.
 
 The host colocates roles for a small executable journey. Workers can be placed separately as

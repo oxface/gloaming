@@ -64,7 +64,7 @@ public sealed class InboxRecoveryProcessTests(PostgreSqlFixture postgres, Rabbit
         Assert.Equal(original.Revision, unrecorded.Revision);
         Assert.Equal(0, unrecorded.FailureCount);
         Assert.Null(unrecorded.LastFailedAt);
-        Assert.Null(unrecorded.QuarantinedAt);
+        Assert.Null(unrecorded.DeadLetteredAt);
 
         await ExecuteAsync(
             topology.Rendering,
@@ -184,7 +184,7 @@ public sealed class InboxRecoveryProcessTests(PostgreSqlFixture postgres, Rabbit
         var second = await topology.StartWorkerAsync("process", "proof-recovery-second", token);
         await WorkerTopology.EventuallyAsync(
             async () =>
-                (await ReadAsync(topology.Rendering, messageId, token)).QuarantinedAt is not null,
+                (await ReadAsync(topology.Rendering, messageId, token)).DeadLetteredAt is not null,
             token
         );
         await second.StopAsync(token);
@@ -201,7 +201,7 @@ public sealed class InboxRecoveryProcessTests(PostgreSqlFixture postgres, Rabbit
         await third.StopAsync(token);
         var retained = await ReadAsync(topology.Rendering, messageId, token);
         Assert.Equal(stopped.Revision, retained.Revision);
-        Assert.Equal(stopped.QuarantinedAt, retained.QuarantinedAt);
+        Assert.Equal(stopped.DeadLetteredAt, retained.DeadLetteredAt);
         Assert.Equal(3, retained.FailureCount);
         await ExecuteAsync(
             topology.Rendering,

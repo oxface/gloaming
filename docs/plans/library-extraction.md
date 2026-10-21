@@ -193,6 +193,12 @@ review found that the
 previous broad worker catch could repeatedly select work whose failure could not be recorded.
 No lease or schema change is added; consumer repair/restart policy remains explicit.
 
+The owner checkpointed M2 as `f7d38d4`, then requested finishing inbox dead-letter operations
+on the same branch before merge. The owner approved the [concrete follow-up](m2-inbox-dead-letters.md)
+on 2026-10-21. Dead-letter terminology and one context-typed list/detail/retry interface use
+the existing revision-checked transition. The [new report](../reports/m2-inbox-dead-letters.md)
+distinguishes paging/metadata inspection proofs from the earlier recovery/supervision evidence.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

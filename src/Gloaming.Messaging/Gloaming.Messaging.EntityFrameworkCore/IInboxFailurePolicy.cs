@@ -7,6 +7,6 @@ namespace Gloaming.Messaging.EntityFrameworkCore;
 public interface IInboxFailurePolicy<TDbContext>
     where TDbContext : DbContext
 {
-    /// <summary>Select retry eligibility or quarantine after local work has rolled back.</summary>
+    /// <summary>Select retry eligibility or dead-letter state after local work has rolled back.</summary>
     InboxFailureDecision Decide(InboxFailure failure);
 }

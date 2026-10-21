@@ -1,5 +1,8 @@
 # M2: failed inbox messages and operator redrive
 
+The [dead-letter follow-up](m2-inbox-dead-letters.md) replaces the public quarantine/recovery
+names below and adds bounded metadata inspection. This opening proposal retains review history.
+
 Status: interface/scope approved by the owner's “proceed with implementation”, 2026-10-18.
 The opening proposal below preserves the reviewed design. Implementation and proofs accompany
 the [current family contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md) and

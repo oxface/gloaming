@@ -51,7 +51,7 @@ public static class InboxModelExtensions
         row.Property(item => item.LastFailureCode)
             .HasColumnName("last_failure_code")
             .HasMaxLength(128);
-        row.Property(item => item.QuarantinedAt).HasColumnName("quarantined_at");
+        row.Property(item => item.DeadLetteredAt).HasColumnName("quarantined_at");
         row.Property(item => item.RedriveCount).HasColumnName("redrive_count").HasDefaultValue(0L);
         row.Property(item => item.LastRedrivenAt).HasColumnName("last_redriven_at");
         row.HasIndex(item => new

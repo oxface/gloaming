@@ -1,5 +1,8 @@
 # M2 follow-up: failure-accounting supervision
 
+The later [dead-letter report](m2-inbox-dead-letters.md) records current naming and metadata
+inspection; this report retains its dated supervision evidence.
+
 Date: 2026-10-20. Branch: `feat/inbox-failure-recovery`, continuing the original M2 work.
 The owner approved the [concrete exception and behavior](../plans/m2-inbox-failure-supervision.md)
 before implementation. The existing staged M2 review snapshot is preserved; this follow-up

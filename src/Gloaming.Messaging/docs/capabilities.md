@@ -124,6 +124,12 @@ same delivery; native host supervision and consumer repair/restart policy govern
 This contains an accounting-fault loop, but does not guarantee progress while that worker is
 stopped or count unrecorded crashes. See [failure accounting and supervision](inbox-recovery.md).
 
+The current context-typed IInboxDeadLetters concentrates bounded metadata list/detail and
+the existing conditional retry. Native timestamp/UUID keyset paging reserves no work and
+observes live state. Rendering's authenticated operator endpoints and restricted Sales proofs
+exercise the interface; [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md)
+records fresh paging, authority and checkpoint-migration evidence. No console or payload editor.
+
 MessageId identifies one delivery and must remain stable on retry. Define deduplication
 scope explicitly: receiving module/handler identity matters when one delivery fans out.
 CorrelationId groups a workflow/conversation; CausationId identifies its immediate cause.

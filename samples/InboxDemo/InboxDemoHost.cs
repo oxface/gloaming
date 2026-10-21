@@ -45,7 +45,7 @@ public static class InboxDemoHost
                             )
                 )
             );
-            builder.Services.AddPostgresInboxRecovery<RenderDbContext>();
+            builder.Services.AddPostgresInboxDeadLetters<RenderDbContext>();
         }
 
         if (worker)

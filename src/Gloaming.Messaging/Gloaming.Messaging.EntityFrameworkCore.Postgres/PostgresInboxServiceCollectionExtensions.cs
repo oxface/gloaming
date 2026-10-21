@@ -8,15 +8,18 @@ namespace Gloaming.Messaging.EntityFrameworkCore.Postgres;
 /// <summary>Independent intake and local processing registration for an explicit module context.</summary>
 public static class PostgresInboxServiceCollectionExtensions
 {
-    /// <summary>Registers separately callable recovery. Consumer code must authorize each invocation.</summary>
-    public static IServiceCollection AddPostgresInboxRecovery<TDbContext>(
+    /// <summary>Registers bounded dead-letter inspection and conditional retry. Authorize each invocation in consumer code.</summary>
+    public static IServiceCollection AddPostgresInboxDeadLetters<TDbContext>(
         this IServiceCollection services
     )
         where TDbContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddScoped<IInboxRecovery<TDbContext>, PostgresInboxRecovery<TDbContext>>();
+        services.TryAddScoped<
+            IInboxDeadLetters<TDbContext>,
+            PostgresInboxDeadLetters<TDbContext>
+        >();
         return services;
     }
 

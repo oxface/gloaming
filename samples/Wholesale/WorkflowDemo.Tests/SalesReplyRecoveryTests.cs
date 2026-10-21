@@ -70,7 +70,7 @@ public sealed partial class SalesReplyTests
             await SalesReplyProof.ProcessAsync(services, token)
         );
         await using var scope = services.CreateAsyncScope();
-        Assert.Null(scope.ServiceProvider.GetService<IInboxRecovery<SalesDbContext>>());
+        Assert.Null(scope.ServiceProvider.GetService<IInboxDeadLetters<SalesDbContext>>());
     }
 
     [Fact(Timeout = 60_000)]
@@ -130,6 +130,6 @@ public sealed partial class SalesReplyTests
     public sealed class StopReplyPolicy : IInboxFailurePolicy<SalesDbContext>
     {
         public InboxFailureDecision Decide(InboxFailure failure) =>
-            new InboxFailureDecision.Quarantine("reply-review");
+            new InboxFailureDecision.DeadLetter("reply-review");
     }
 }
