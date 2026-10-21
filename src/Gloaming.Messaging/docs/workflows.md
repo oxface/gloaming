@@ -171,7 +171,9 @@ throughput, bounded-history or pruning claim is made. One registered definition 
 per binding. Parallel requests/joins, deadlines, cancellation, scheduled signals, durable operator
 commands, graph/replay engines, workflow state upgrades, retention, dashboards and generic
 compensation selection are deferred. Missing replies do not imply business failure. Existing inbox
-retry has no workflow-specific poison policy. These are separate proofs before runtime expansion.
+retry can compose [consumer-selected inbox quarantine/retry](inbox-recovery.md), but no
+workflow-specific classification or operator workflow command is supplied. Those require
+separate consumer decisions and proofs before runtime expansion.
 
 ## Executable references
 

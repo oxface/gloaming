@@ -58,7 +58,7 @@ Subscribe to `ActivitySource` **`Gloaming.Messaging`**:
 | Activity | Kind | Boundary |
 | --- | --- | --- |
 | `gloaming.outbox.dispatch` | Internal | After a committed claim: publication through observed fenced completion, or failure/cancellation. |
-| `gloaming.inbox.process` | Consumer | After locked selection: handler, save, completion and observed commit; failure includes rollback/disposal and retry scheduling. |
+| `gloaming.inbox.process` | Consumer | After locked selection: handler, save, completion and observed commit; failure includes savepoint rollback and failure accounting/quarantine. |
 
 A link to retained context is supplied at activity creation, so samplers can inspect it.
 Each retry receives its own activity; an existing local ambient parent is preserved.

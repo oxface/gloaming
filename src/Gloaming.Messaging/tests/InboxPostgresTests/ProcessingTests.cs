@@ -120,6 +120,12 @@ public sealed class ProcessingTests(PostgreSqlFixture fixture)
             var row = await read.Set<InboxMessageRecord>().SingleAsync(Token);
             Assert.Null(row.ProcessedAt);
             Assert.True(row.AvailableAt > row.ReceivedAt);
+            Assert.Equal(1, row.FailureCount);
+            Assert.Equal(1, row.FailuresSinceRedrive);
+            Assert.Equal(1, row.Revision);
+            Assert.NotNull(row.LastFailedAt);
+            Assert.Equal("processing-failed", row.LastFailureCode);
+            Assert.Null(row.QuarantinedAt);
         }
         scenario.OnHandle = null;
         if (fault == "save")
@@ -231,6 +237,8 @@ public sealed class ProcessingTests(PostgreSqlFixture fixture)
         var retained = await fresh.Set<InboxMessageRecord>().SingleAsync(Token);
         Assert.NotNull(retained.ProcessedAt);
         Assert.Equal(originalAvailability, retained.AvailableAt);
+        Assert.Equal(0, retained.FailureCount);
+        Assert.Equal(1, retained.Revision);
     }
 
     [Fact]

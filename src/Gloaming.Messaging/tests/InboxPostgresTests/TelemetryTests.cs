@@ -60,12 +60,15 @@ public sealed class TelemetryTests(PostgreSqlFixture postgres)
             Message(first.MessageId, "changed-attempt")
         );
         await InboxProof.WaitAsync(async () =>
-            await database
-                .Database.SqlQueryRaw<long>(
-                    "SELECT count(*) AS \"Value\" FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock'"
-                )
-                .SingleAsync(InboxProof.Token) > 0
-        );
+        {
+            // Poll outside the intake transaction so PostgreSQL does not retain an old statistics snapshot.
+            await using var observer = InboxProof.Context(connection);
+            return await observer
+                    .Database.SqlQueryRaw<long>(
+                        "SELECT count(*) AS \"Value\" FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock'"
+                    )
+                    .SingleAsync(InboxProof.Token) > 0;
+        });
         await transaction.CommitAsync(InboxProof.Token);
         Assert.Equal(InboxReceiveResult.AlreadyReceived, await duplicate);
 

@@ -125,6 +125,7 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
         await firstProcess.StopAsync(token);
         await topology.AssertCountsAsync(1, 0, 0, token);
         await SqlAsync(topology.Rendering, "DROP TRIGGER proof_job ON rendering.jobs", token);
+        await topology.RetryRenderingAsync(token);
         var secondProcess = await topology.StartWorkerAsync(
             "process",
             "proof-process-recovered",

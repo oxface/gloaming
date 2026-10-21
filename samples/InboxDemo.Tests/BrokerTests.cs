@@ -287,6 +287,7 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
         );
         var services = new ServiceCollection();
         InboxDemoHost.Register(services, receiver);
+        services.AddPostgresInboxRecovery<RenderDbContext>();
         await using var provider = services.BuildServiceProvider();
         await new RabbitMqRenderReceiver(
             channel,
@@ -299,10 +300,28 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
             Assert.Empty(await observer.Set<RenderJob>().ToArrayAsync(Token));
             Assert.Null((await observer.Set<InboxMessageRecord>().SingleAsync(Token)).ProcessedAt);
         }
-        await SqlAsync(
-            receiver,
-            "ALTER TABLE rendering.jobs DROP CONSTRAINT proof_render; UPDATE rendering.incoming_work SET available_at = clock_timestamp() - interval '1 second'"
-        );
+        await SqlAsync(receiver, "ALTER TABLE rendering.jobs DROP CONSTRAINT proof_render");
+        await using (var recoveryScope = provider.CreateAsyncScope())
+        {
+            await using var observer = RenderDbContext.Create(receiver);
+            var stopped = await observer.Set<InboxMessageRecord>().SingleAsync(Token);
+            Assert.NotNull(stopped.QuarantinedAt);
+            Assert.Equal(1, stopped.FailureCount);
+            // This trusted fixture acts as operator; HTTP authorization is exercised separately.
+            Assert.Equal(
+                InboxRetryResult.Retried,
+                await recoveryScope
+                    .ServiceProvider.GetRequiredService<IInboxRecovery<RenderDbContext>>()
+                    .RetryAsync(
+                        stopped.SubscriptionKey,
+                        stopped.ProducerKey,
+                        stopped.MessageId,
+                        stopped.Revision,
+                        Token
+                    )
+            );
+        }
+
         Assert.Equal(InboxProcessingResult.Processed, await ProcessAsync(provider));
         Assert.Null(await channel.BasicGetAsync(queue, autoAck: false, Token));
         await using var read = RenderDbContext.Create(receiver);

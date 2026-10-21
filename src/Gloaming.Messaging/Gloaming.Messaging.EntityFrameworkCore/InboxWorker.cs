@@ -48,6 +48,20 @@ internal sealed partial class InboxWorker<TDbContext>(
                 {
                     return;
                 }
+                catch (InboxFailureAccountingException failure)
+                {
+                    if (stoppingToken.IsCancellationRequested)
+                        return;
+
+                    AccountingNotConfirmed(
+                        logger,
+                        failure,
+                        failure.SubscriptionKey,
+                        failure.ProducerKey,
+                        failure.MessageId
+                    );
+                    throw;
+                }
                 catch (Exception failure)
                 {
                     ProcessingFailed(logger, failure, subscriptionKey);
@@ -59,6 +73,18 @@ internal sealed partial class InboxWorker<TDbContext>(
                 await Task.Delay(delay, stoppingToken);
         }
     }
+
+    [LoggerMessage(
+        Level = LogLevel.Critical,
+        Message = "Inbox failure accounting was not confirmed for {SubscriptionKey}/{ProducerKey}/{MessageId}; stopping the worker."
+    )]
+    private static partial void AccountingNotConfirmed(
+        ILogger logger,
+        Exception exception,
+        string subscriptionKey,
+        string producerKey,
+        Guid messageId
+    );
 
     [LoggerMessage(
         Level = LogLevel.Error,

@@ -141,6 +141,31 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .HasColumnType("text")
                         .HasColumnName("correlation_id");
 
+                    b.Property<long>("FailureCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failure_count");
+
+                    b.Property<long>("FailuresSinceRedrive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failures_since_redrive");
+
+                    b.Property<DateTimeOffset?>("LastFailedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_failed_at");
+
+                    b.Property<string>("LastFailureCode")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("last_failure_code");
+
+                    b.Property<DateTimeOffset?>("LastRedrivenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_redriven_at");
+
                     b.Property<string>("MessageName")
                         .IsRequired()
                         .HasColumnType("text")
@@ -154,11 +179,27 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("processed_at");
 
+                    b.Property<DateTimeOffset?>("QuarantinedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("quarantined_at");
+
                     b.Property<DateTimeOffset>("ReceivedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("received_at")
                         .HasDefaultValueSql("clock_timestamp()");
+
+                    b.Property<long>("RedriveCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("redrive_count");
+
+                    b.Property<long>("Revision")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("revision");
 
                     b.Property<int>("SchemaVersion")
                         .HasColumnType("integer")
@@ -181,13 +222,33 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                     b.HasKey("SubscriptionKey", "ProducerKey", "MessageId");
 
                     b.HasIndex("SubscriptionKey", "AvailableAt", "ReceivedAt")
-                        .HasFilter("processed_at IS NULL");
+                        .HasFilter("processed_at IS NULL AND quarantined_at IS NULL");
 
                     b.ToTable(
                         "inbox_messages",
                         "sales",
                         t =>
                         {
+                            t.HasCheckConstraint(
+                                "ck_inbox_failure_metadata",
+                                "(failure_count = 0 AND last_failed_at IS NULL AND last_failure_code IS NULL AND quarantined_at IS NULL) OR (failure_count > 0 AND last_failed_at IS NOT NULL AND last_failure_code IS NOT NULL AND length(btrim(last_failure_code)) > 0)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_recovery_counts",
+                                "revision >= 0 AND failure_count >= 0 AND failures_since_redrive >= 0 AND failures_since_redrive <= failure_count AND redrive_count >= 0"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_recovery_state",
+                                "processed_at IS NULL OR quarantined_at IS NULL"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_redrive_metadata",
+                                "(redrive_count = 0 AND last_redriven_at IS NULL) OR (redrive_count > 0 AND last_redriven_at IS NOT NULL)"
+                            );
+
                             t.HasCheckConstraint("ck_inbox_schema", "schema_version > 0");
                         }
                     );

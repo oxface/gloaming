@@ -42,6 +42,18 @@ public static class InboxModelExtensions
         row.Property(item => item.ReceivedAt).HasColumnName("received_at").ValueGeneratedOnAdd();
         row.Property(item => item.AvailableAt).HasColumnName("available_at").ValueGeneratedOnAdd();
         row.Property(item => item.ProcessedAt).HasColumnName("processed_at");
+        row.Property(item => item.Revision).HasColumnName("revision").HasDefaultValue(0L);
+        row.Property(item => item.FailureCount).HasColumnName("failure_count").HasDefaultValue(0L);
+        row.Property(item => item.FailuresSinceRedrive)
+            .HasColumnName("failures_since_redrive")
+            .HasDefaultValue(0L);
+        row.Property(item => item.LastFailedAt).HasColumnName("last_failed_at");
+        row.Property(item => item.LastFailureCode)
+            .HasColumnName("last_failure_code")
+            .HasMaxLength(128);
+        row.Property(item => item.QuarantinedAt).HasColumnName("quarantined_at");
+        row.Property(item => item.RedriveCount).HasColumnName("redrive_count").HasDefaultValue(0L);
+        row.Property(item => item.LastRedrivenAt).HasColumnName("last_redriven_at");
         row.HasIndex(item => new
         {
             item.SubscriptionKey,

@@ -1,6 +1,4 @@
-using System.Transactions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -24,15 +22,7 @@ internal sealed partial class PostgresInboxProcessor<TDbContext>(
         ArgumentException.ThrowIfNullOrWhiteSpace(subscriptionKey);
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (
-            database.Database.CurrentTransaction is not null
-            || Transaction.Current is not null
-            || database.Database.GetEnlistedTransaction() is not null
-            || database.ChangeTracker.Entries().Any()
-        )
-            throw new InvalidOperationException(
-                "Inbox processing requires a fresh context without tracked entities or native/ambient/enlisted transactions."
-            );
+        storage.RequireFreshContext();
 
         var handler = services.GetRequiredKeyedService<IInboxHandler<TDbContext>>(subscriptionKey);
         IncomingMessage? delivery = null;
@@ -43,10 +33,15 @@ internal sealed partial class PostgresInboxProcessor<TDbContext>(
                 System.Data.IsolationLevel.ReadCommitted,
                 cancellationToken
             );
-            delivery = await storage.LockNextAsync(transaction, subscriptionKey, cancellationToken);
-            if (delivery is null)
+            var locked = await storage.LockNextAsync(
+                transaction,
+                subscriptionKey,
+                cancellationToken
+            );
+            if (locked is null)
                 return InboxProcessingResult.NoWork;
 
+            delivery = locked.Message;
             attempt = new MessagingTelemetry.Attempt(
                 "process",
                 delivery.MessageId,
@@ -56,15 +51,83 @@ internal sealed partial class PostgresInboxProcessor<TDbContext>(
                 delivery.TraceState
             );
 
-            // Local effects and outgoing work remain inside the row lock's transaction.
-            await handler.HandleAsync(delivery, cancellationToken);
-            if (!ReferenceEquals(transaction, database.Database.CurrentTransaction))
-                throw new InvalidOperationException(
-                    "Inbox handlers must retain the processor's native transaction."
-                );
+            // The delivery lock predates this savepoint, so rollback of local effects retains
+            // exclusion through failure accounting. Never schedule through a later transaction.
+            const string savepoint = "gloaming_inbox_work";
+            await transaction.CreateSavepointAsync(savepoint, cancellationToken);
+            try
+            {
+                await handler.HandleAsync(delivery, cancellationToken);
+                if (!ReferenceEquals(transaction, database.Database.CurrentTransaction))
+                    throw new InvalidOperationException(
+                        "Inbox handlers must retain the processor's native transaction."
+                    );
 
-            await database.SaveChangesAsync(cancellationToken);
-            await storage.CompleteAsync(transaction, subscriptionKey, delivery, cancellationToken);
+                await database.SaveChangesAsync(cancellationToken);
+                await storage.CompleteAsync(
+                    transaction,
+                    subscriptionKey,
+                    delivery,
+                    cancellationToken
+                );
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception processingFailure)
+            {
+                try
+                {
+                    await transaction.RollbackToSavepointAsync(savepoint, cancellationToken);
+                    // Failed tracked proposals are discarded with the scope, never saved again.
+                    var policy = services.GetKeyedService<IInboxFailurePolicy<TDbContext>>(
+                        subscriptionKey
+                    );
+                    var decision =
+                        policy?.Decide(
+                            new InboxFailure(
+                                subscriptionKey,
+                                delivery,
+                                processingFailure,
+                                checked(locked.FailureCount + 1),
+                                checked(locked.FailuresSinceRedrive + 1)
+                            )
+                        )
+                        ?? (
+                            policy is null
+                                ? new InboxFailureDecision.RetryAfter(
+                                    options.RetryDelay,
+                                    "processing-failed"
+                                )
+                                : throw new InvalidOperationException(
+                                    "An inbox failure policy returned no decision."
+                                )
+                        );
+                    await storage.RecordFailureAsync(
+                        transaction,
+                        subscriptionKey,
+                        delivery,
+                        decision,
+                        cancellationToken
+                    );
+                    await transaction.CommitAsync(cancellationToken);
+                }
+                catch (Exception recoveryFailure)
+                {
+                    throw new InboxFailureAccountingException(
+                        subscriptionKey,
+                        delivery.ProducerKey,
+                        delivery.MessageId,
+                        processingFailure,
+                        recoveryFailure
+                    );
+                }
+
+                throw;
+            }
+
+            // Commit errors are ambiguous. They must never trigger a compensating failure write.
             await transaction.CommitAsync(cancellationToken);
             attempt.Complete("processed");
             return InboxProcessingResult.Processed;
@@ -75,36 +138,11 @@ internal sealed partial class PostgresInboxProcessor<TDbContext>(
             // Disposal rolls back pending local work. A commit response can still be ambiguous.
             throw;
         }
-        catch (Exception processingFailure) when (delivery is not null)
+        catch (Exception failure) when (delivery is not null)
         {
-            // The processing transaction has been disposed before this catch. Do not save its
-            // tracked proposal again: only conditional retry metadata uses a new small transaction.
-            try
-            {
-                await storage.DeferAsync(
-                    subscriptionKey,
-                    delivery,
-                    options.RetryDelay,
-                    cancellationToken
-                );
-            }
-            catch (Exception schedulingFailure)
-            {
-                var combined = new AggregateException(
-                    "Inbox processing and retry scheduling both failed.",
-                    processingFailure,
-                    schedulingFailure
-                );
-                attempt?.Fail(combined);
-                if (logger is not null)
-                    AttemptFailed(logger, "process", delivery.MessageId, combined);
-
-                throw combined;
-            }
-
-            attempt?.Fail(processingFailure);
+            attempt?.Fail(failure);
             if (logger is not null)
-                AttemptFailed(logger, "process", delivery.MessageId, processingFailure);
+                AttemptFailed(logger, "process", delivery.MessageId, failure);
 
             throw;
         }

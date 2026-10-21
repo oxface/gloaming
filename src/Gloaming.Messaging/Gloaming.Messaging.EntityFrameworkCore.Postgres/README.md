@@ -71,9 +71,17 @@ Payload equality uses PostgreSQL JSONB values, including numeric equality, not a
 
 Processing holds FOR UPDATE SKIP LOCKED through bounded local handler work, SaveChanges,
 completion and native commit. No inbox lease expires while the handler owns that transaction.
-On failure before commit the transaction rolls back; a separate conditional database-clock
-retry write defers pending work. Positive RetryDelay is required. Cancellation does not force
-a retry write. Connection loss releases the lock; a commit response may be ambiguous.
+On failure before commit, savepoint rollback undoes local effects while retaining the original
+delivery lock. Native SQL commits only failure accounting and consumer-selected retry/quarantine.
+No later transaction writes obsolete retry metadata after releasing the lock. Without a keyed
+policy, positive RetryDelay remains the default. Separately registered recovery re-enables a
+quarantined row at an observed revision. Consumer authority, forward migrations and restricted
+grants remain explicit; see [recovery setup](../docs/inbox-recovery.md). Cancellation/connection
+loss may leave no recorded failure; a commit response may be ambiguous.
+Rollback/policy/accounting SQL or accounting-commit failure throws
+InboxFailureAccountingException with delivery identity and both original errors. Accounting
+is unconfirmed, not necessarily uncommitted. The optional inbox worker faults on this exception;
+native host supervision and consumer repair/restart policy govern what follows.
 
 This protocol does not make another module/context or external side effect atomic. Native
 business concurrency predicates remain necessary for different deliveries touching shared state.

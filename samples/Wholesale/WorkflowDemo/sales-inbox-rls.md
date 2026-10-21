@@ -12,10 +12,19 @@ automatically establishes `app.tenant_key` before its raw claim SQL runs. RLS re
 claim to the admitted tenant. The module's admitted entry validates the reply and requires the
 matching established tenant/system actor; it does not initialize them again. Workflow effects,
 the next outgoing command and inbox completion retain one save/commit boundary. Failure rolls
-that transaction back; the existing processor defers the retained row in another local transaction
-under the same immutable tenant. The worker discards that scope before its next attempt.
+local work back to a savepoint established after delivery locking. It records failure metadata
+under the retained lock and admitted tenant, then commits only that accounting. The default policy
+defers work; this host registers no stop policy or operator recovery. It discards the scope before
+each next attempt. See [inbox recovery](../../../src/Gloaming.Messaging/docs/inbox-recovery.md).
 
 ## Explicit setup and execution
+
+M2 adds native inbox recovery columns in the Sales forward migration. Apply it before deploying
+the updated processor, with old processors stopped. Existing restricted reply roles also need
+UPDATE on `revision`, `failure_count`, `failures_since_redrive`, `last_failed_at`,
+`last_failure_code` and `quarantined_at`; redrive count/time rights are not granted. Fresh finite
+setup includes these columns and startup validates the exact grant inventory. Updating an already
+provisioned role remains an explicit owner action; setup is not a grant reconciler.
 
 First apply the existing [module/queue setup](README.md#run-the-executable). The new finite
 setup mode operates on those existing tables and needs no broker or Inventory connection:
@@ -70,7 +79,7 @@ rows are denied by the policies, and this selected model requires a tenant.
 | Target | Runtime authority | Protection / limitation |
 | --- | --- | --- |
 | `workflow_instances` | SELECT and UPDATE. | ENABLE/FORCE with tenant equality in USING/WITH CHECK; raw/bulk/filter bypass stays tenant-scoped. No INSERT/DELETE or within-tenant workflow-type/field permission policy. |
-| `inbox_messages` | SELECT; UPDATE only completion and availability. | ENABLE/FORCE restricts raw claims, completion and retry to the operation tenant. No intake INSERT, envelope mutation or DELETE. Same-tenant subscriptions are not a separate database permission boundary. |
+| `inbox_messages` | SELECT; UPDATE completion, availability, revision, failure counts/code/time and quarantine. | ENABLE/FORCE restricts selection, completion and accounting to the admitted tenant. No intake INSERT, redrive count/time UPDATE, envelope mutation or DELETE. Same-tenant subscriptions are not a separate database permission boundary. |
 | `outbox_messages` append | INSERT; SELECT generated timestamps. | ENABLE/FORCE with tenant equality specifically for INSERT WITH CHECK. Missing/foreign context rejects native writes. Tracked outgoing ownership/save validation remains. Timestamp columns/counts are readable across queued tenants; payloads are not. |
 | Outbox delivery | Processor has no lifecycle UPDATE or payload SELECT. | Read and delivery UPDATE policies remain global. A2.8's separately granted dispatcher scans every queued tenant, with no INSERT rights and no RLS bypass flag. |
 | Other application relations | No table/column/sequence access. | Startup checks effective grants and ownership, including PUBLIC and role memberships. Other databases, routines/SECURITY DEFINER paths, extension/trigger bodies and later privilege changes need separate review. |

@@ -26,6 +26,8 @@ and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.m
 [Sales → Inventory request/reply progress](../../samples/Wholesale/WorkflowDemo/README.md) and
 [two-line reservations with compensation](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
+See [failed inbox work and authorized retry](docs/inbox-recovery.md) for durable failure
+accounting, consumer-selected quarantine, revision-conditional redrive and upgrade obligations.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:

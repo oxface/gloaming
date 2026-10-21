@@ -16,6 +16,7 @@ if (args.Contains("--setup", StringComparer.Ordinal))
 await using var app = InboxDemoHost.Build(
     connection,
     Environment.GetEnvironmentVariable("INBOX_DEMO_URL") ?? "http://localhost:5087",
-    args.Contains("--worker", StringComparer.Ordinal)
+    args.Contains("--worker", StringComparer.Ordinal),
+    Environment.GetEnvironmentVariable("INBOX_DEMO_OPERATOR_TOKEN")
 );
 await app.RunAsync();

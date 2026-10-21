@@ -1,7 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.InboxDemo;
 using ModulithFoundry.Samples.MessagingProducerDemo;
 using ModulithFoundry.Samples.OutboxDemo;
@@ -184,6 +186,34 @@ internal sealed class WorkerTopology(
             cancellationToken: cancellation
         );
         Assert.Null(await channel.BasicGetAsync(queue, autoAck: false, cancellation));
+    }
+
+    // The fixture is a trusted operator. HTTP credential/authorization proofs live in InboxDemo.Tests.
+    internal async Task RetryRenderingAsync(CancellationToken cancellation)
+    {
+        await using var read = RenderDbContext.Create(rendering);
+        var stopped = await read.Set<InboxMessageRecord>()
+            .AsNoTracking()
+            .SingleAsync(row => row.QuarantinedAt != null, cancellation);
+        var services = new ServiceCollection();
+        services.AddDbContext<RenderDbContext>(options =>
+            RenderDbContext.Configure(options, rendering)
+        );
+        services.AddPostgresInboxRecovery<RenderDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        Assert.Equal(
+            InboxRetryResult.Retried,
+            await scope
+                .ServiceProvider.GetRequiredService<IInboxRecovery<RenderDbContext>>()
+                .RetryAsync(
+                    stopped.SubscriptionKey,
+                    stopped.ProducerKey,
+                    stopped.MessageId,
+                    stopped.Revision,
+                    cancellation
+                )
+        );
     }
 
     internal static async Task EventuallyAsync(

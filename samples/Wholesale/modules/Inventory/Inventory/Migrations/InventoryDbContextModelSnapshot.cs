@@ -19,6 +19,11 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("inventory")
+                .HasAnnotation("Gloaming:Requires:audit", true)
+                .HasAnnotation("Gloaming:Requires:event-streams", true)
+                .HasAnnotation("Gloaming:Requires:inbox", true)
+                .HasAnnotation("Gloaming:Requires:outbox", true)
+                .HasAnnotation("Gloaming:Requires:tenant-ownership", true)
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -367,13 +372,13 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
 
                     b.ToTable("audit_entries", "inventory");
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Audit", true)
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Inventory.InventoryDbContext, Inventory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Audit", true);
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 
@@ -405,6 +410,31 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         .HasColumnType("text")
                         .HasColumnName("correlation_id");
 
+                    b.Property<long>("FailureCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failure_count");
+
+                    b.Property<long>("FailuresSinceRedrive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("failures_since_redrive");
+
+                    b.Property<DateTimeOffset?>("LastFailedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_failed_at");
+
+                    b.Property<string>("LastFailureCode")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("last_failure_code");
+
+                    b.Property<DateTimeOffset?>("LastRedrivenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_redriven_at");
+
                     b.Property<string>("MessageName")
                         .IsRequired()
                         .HasColumnType("text")
@@ -418,11 +448,27 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("processed_at");
 
+                    b.Property<DateTimeOffset?>("QuarantinedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("quarantined_at");
+
                     b.Property<DateTimeOffset>("ReceivedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("received_at")
                         .HasDefaultValueSql("clock_timestamp()");
+
+                    b.Property<long>("RedriveCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("redrive_count");
+
+                    b.Property<long>("Revision")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L)
+                        .HasColumnName("revision");
 
                     b.Property<int>("SchemaVersion")
                         .HasColumnType("integer")
@@ -445,25 +491,45 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                     b.HasKey("SubscriptionKey", "ProducerKey", "MessageId");
 
                     b.HasIndex("SubscriptionKey", "AvailableAt", "ReceivedAt")
-                        .HasFilter("processed_at IS NULL");
+                        .HasFilter("processed_at IS NULL AND quarantined_at IS NULL");
 
                     b.ToTable(
                         "inbox_messages",
                         "inventory",
                         t =>
                         {
+                            t.HasCheckConstraint(
+                                "ck_inbox_failure_metadata",
+                                "(failure_count = 0 AND last_failed_at IS NULL AND last_failure_code IS NULL AND quarantined_at IS NULL) OR (failure_count > 0 AND last_failed_at IS NOT NULL AND last_failure_code IS NOT NULL AND length(btrim(last_failure_code)) > 0)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_recovery_counts",
+                                "revision >= 0 AND failure_count >= 0 AND failures_since_redrive >= 0 AND failures_since_redrive <= failure_count AND redrive_count >= 0"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_recovery_state",
+                                "processed_at IS NULL OR quarantined_at IS NULL"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_redrive_metadata",
+                                "(redrive_count = 0 AND last_redriven_at IS NULL) OR (redrive_count > 0 AND last_redriven_at IS NOT NULL)"
+                            );
+
                             t.HasCheckConstraint("ck_inbox_schema", "schema_version > 0");
                         }
                     );
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Inbox", true)
+                        .HasAnnotation("Gloaming:InboxProvider", "Postgres")
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Inventory.InventoryDbContext, Inventory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Inbox", true)
-                        .HasAnnotation("Gloaming:InboxProvider", "Postgres");
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 
@@ -560,14 +626,14 @@ namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations
                         }
                     );
 
-                    b.HasAnnotation(
+                    b.HasAnnotation("Gloaming:Outbox", true)
+                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres")
+                        .HasAnnotation(
                             "ModulithFoundry:TenantContextMember",
                             "ModulithFoundry.Samples.Wholesale.Inventory.InventoryDbContext, Inventory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
-                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey")
-                        .HasAnnotation("Gloaming:Outbox", true)
-                        .HasAnnotation("Gloaming:OutboxProvider", "Postgres");
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
                 }
             );
 

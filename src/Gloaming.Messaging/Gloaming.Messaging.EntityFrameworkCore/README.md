@@ -40,11 +40,18 @@ hold shutdown; leases do not forcibly terminate code. Callable dispatch requires
 
 Inbox composition is independent: IInbox<TDbContext> retains delivery in a caller-owned
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.
+Optional subscription-keyed IInboxFailurePolicy selects delayed retry or quarantine using
+durable confirmed-failure counts. Independently registered IInboxRecovery supplies one
+revision-conditional retry; caller authorization remains consumer wiring.
 AddInboxHandler<TDbContext,THandler>(subscriptionKey) binds a consumer-owned scoped handler
 through native keyed DI. The handler stages bounded local effects on that context, including
 optional outbox work. It does not commit or perform external effects. No public lease or
 prepared-message handle is introduced. AddInboxWorker<TDbContext>(subscriptionKey,options)
 is separately selected and uses fresh scopes, native logging and cooperative cancellation.
+An InboxFailureAccountingException retains delivery identity and both original errors when
+failure accounting is unconfirmed. It faults the optional inbox worker without another poll;
+native host supervision decides whether the host stops. The library installs no host-wide
+setting. Ordinary recorded handler failures still use the worker's failure delay.
 
 ConfigureInbox supplies relational mapping, specialized by ConfigurePostgresInbox for the
 supported runtime. Call ValidateInboxChanges in both save overrides: tracked inserts/edits/
@@ -53,7 +60,8 @@ registry or transaction field is needed. DbSet properties are optional.
 
 Keep domain eligibility, whole-operation retry, tenant admission and deployment policy with
 the consumer. Producer/intake final save/commit remain explicit; the processor owns its bounded
-local processing transaction. See [inbox setup](../docs/inbox.md) and
+local processing transaction. See [inbox setup](../docs/inbox.md),
+[failure/recovery obligations](../docs/inbox-recovery.md) and
 [complete obligations](../docs/capabilities.md).
 
 See [durable message observability](../docs/observability.md) for optional W3C context, schema upgrades, native
