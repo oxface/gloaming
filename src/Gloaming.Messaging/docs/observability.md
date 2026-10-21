@@ -63,7 +63,10 @@ Subscribe to `ActivitySource` **`Gloaming.Messaging`**:
 A link to retained context is supplied at activity creation, so samplers can inspect it.
 Outbox publisher-exception accounting and consumer dead-letter decisions remain failed attempts;
 they never report Published. Unconfirmed accounting faults emit the worker's distinct critical
-supervision diagnostic. Completion failures remain ambiguous and do not invoke publication policy;
+supervision diagnostic. OutboxCompletionException likewise emits a distinct critical worker
+diagnostic and faults that worker without another poll. Completion failures remain ambiguous
+and do not invoke publication policy; completion-stage requested cancellation reports cancelled
+while preserving the typed fault for direct callers;
 see [outbox recovery](outbox-recovery.md). No new telemetry instrument or sensitive payload attribute is added.
 Each retry receives its own activity; an existing local ambient parent is preserved.
 NoWork polls and failures before selection do not create a message activity. Native DB
@@ -179,6 +182,7 @@ unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-mes
 separates fresh results from earlier worker/recovery evidence.
 
 Backlog/oldest-age monitoring, alerts, dashboard inspection, durable telemetry, automatic
-tenant/actor propagation and worker supervision/scaling remain deferred. OTLP export can
+tenant/actor propagation and deployment supervision/scaling remain deferred. Typed accounting/
+completion faults already use native host supervision as described above. OTLP export can
 target an Aspire dashboard, but Collector tests are not dashboard UX evidence. Publication
 remains at least once; no exactly-once or new shutdown-deadline guarantee is introduced.

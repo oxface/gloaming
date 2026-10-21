@@ -139,7 +139,7 @@ public sealed class AdoptionTests(PostgreSqlFixture postgres) : IClassFixture<Po
         await using var receiver = await HttpReceiver.StartAsync(Token);
         using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
         await using (var context = ExportDbContext.Create(connection))
-            await Assert.ThrowsAsync<PostgresException>(() =>
+            await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 Dispatcher(context, client, receiver.Endpoint).DispatchNextAsync(Token)
             );
         await SqlAsync(

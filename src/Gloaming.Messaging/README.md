@@ -29,7 +29,8 @@ See [inbox setup and transaction ownership](docs/inbox.md).
 See [failed inbox work and authorized retry](docs/inbox-recovery.md) for durable failure
 accounting, consumer-selected dead-letter state, revision-conditional redrive and upgrade obligations.
 See [outbox dead letters and operator retry](docs/outbox-recovery.md) for publication-failure
-observations, lease fencing, acceptance uncertainty, inspection and restricted-grant upgrades.
+observations, lease fencing, acceptance uncertainty, inspection, completion/accounting supervision
+and restricted-grant upgrades.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:

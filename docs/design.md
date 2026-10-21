@@ -741,6 +741,14 @@ protocols, sharing only a private cursor codec. [ADR 0019](adr/0019-lease-fenced
 the [local contract](../src/Gloaming.Messaging/docs/outbox-recovery.md) and
 [fresh evidence](reports/m2-outbox-dead-letters.md) record the boundaries and rollout obligations.
 
+The owner-selected [completion supervision follow-up](plans/m2-outbox-completion-supervision.md)
+adds a distinct OutboxCompletionException after normal publication return and stops the optional
+worker without another poll. The original storage error remains InnerException; unconfirmed
+completion can already have committed. Native host supervision and consumer repair/restart
+remain explicit. No failure accounting, compensating write or schema change is introduced;
+[new proofs](reports/m2-outbox-completion-supervision.md) distinguish containment from global
+execution caps and from the existing ClaimLost result.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

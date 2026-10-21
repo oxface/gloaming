@@ -42,8 +42,13 @@ defer a successor's claim. No database transaction/row lock is held during netwo
 Publisher failure records lease-fenced failure observations and selects the consumer's delayed
 retry or dead-letter decision, then rethrows. Without a policy, the configured retry delay
 remains indefinite. OutboxFailureAccountingException preserves publication/accounting errors
-and faults the optional worker. Cancellation/abandonment and completion
-failure leave retained claims recoverable after expiry; publication may already have succeeded.
+and faults the optional worker. OutboxCompletionException carries MessageId and the original
+InnerException when completion is unconfirmed after normal publication return, including
+completion-stage cancellation. It also faults the worker without another poll; requested host
+shutdown ends normally. An uncommitted completion leaves the claim recoverable after expiry;
+a missing commit response may leave the row completed. Inspect fresh storage after repair.
+Completion faults never invoke publisher-failure accounting. Publication cancellation/abandonment
+can likewise leave retained claims for expiry; transport acceptance remains uncertain.
 RetryDelay may be zero; LeaseDuration must be positive. No hidden producer or transport retry.
 
 The schema has a stable GUID primary key, JSONB payload, optional tenant key, database-generated

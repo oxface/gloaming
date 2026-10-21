@@ -77,8 +77,21 @@ attribution and changes eligibility only. The next dispatcher repeats current va
 an incompatible schema can dead-letter again under the same identity/payload.
 
 The host explicitly uses native StopHost supervision. OutboxFailureAccountingException
-stops its worker after one accounting fault; repair the dependency and restart. A retained
-lease then waits for expiry; a committed dead letter still requires authorized retry.
+or OutboxCompletionException stops its worker without another poll. A completion fault means
+the publisher returned normally but completion was not confirmed; the original storage error
+is InnerException. Repair the dependency and inspect fresh storage with an admitted credential:
+
+```sql
+SELECT message_id, dispatched_at, lease_until, attempts, failure_count, dead_lettered_at
+FROM exports.outgoing_work
+WHERE message_id = 'MESSAGE_ID';
+```
+
+Restart with the same `--serve --worker` command after repair. A retained lease waits for
+expiry before redelivery of the same envelope. A completed row is already excluded; a committed
+dead letter still requires authorized retry. The dead-letter endpoint cannot retry pending
+or completed work. Missing commit responses can leave completion or accounting committed.
+This follow-up requires no new migrations, grants or configuration.
 Attempts counts committed claims, while FailureCount counts committed publisher-exception
 observations. Crash/cancellation, expired claims and acceptance followed by completion failure
 need not consume that budget. Receiver deduplication remains necessary.
@@ -86,7 +99,9 @@ need not consume that budget. Receiver deduplication remains necessary.
 Tests add real HTTP budget, authorization, identity-preserving retry, response-loss and
 legacy-schema upgrade evidence. The separate
 [process proofs](../MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) launch this built
-host, kill it during accounting, restart it and exercise operator retry after restart.
+host, kill it during accounting, restart it and exercise operator retry after restart. They
+also prove HTTP acceptance followed by a completion SQL fault stops the host after one send;
+repair and restart permit the same message to complete without increasing its failure budget.
 See [the current protocol and rollout/grant obligations](../../src/Gloaming.Messaging/docs/outbox-recovery.md).
 
 See [the family contract](../../src/Gloaming.Messaging/docs/capabilities.md) for setup/errors

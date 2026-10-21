@@ -209,6 +209,16 @@ transport rejection. Existing inbox contracts remain intact, with only matching 
 internals consolidated. Classification, budgets, acceptance definitions and operator authority
 remain consumer-owned. No template preset or generic queue framework is added.
 
+After approving that implementation, the owner authorized checkpoint `6bcdf9c` and selected
+[completion-failure supervision](m2-outbox-completion-supervision.md) on 2026-10-21.
+OutboxCompletionException carries MessageId and the original InnerException after publication
+returns normally but completion is unconfirmed. The optional worker faults without another
+poll; native host options and consumer repair/inspection/restart govern recovery. Existing
+lease fencing, failure counters and conditional operator retry retain their semantics.
+No schema, grant, dependency, recovery interface or worker-option change is needed. The
+[separate report](../reports/m2-outbox-completion-supervision.md) records fresh evidence for
+line-by-line review, including the completion-stage cancellation contract change.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

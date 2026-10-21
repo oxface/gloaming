@@ -285,7 +285,13 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Assert.IsType<IOException>(error.AccountingFailure);
         }
         else
-            await Assert.ThrowsAsync<IOException>(() => dispatcher.DispatchNextAsync(Token));
+        {
+            var error = await Assert.ThrowsAsync<OutboxCompletionException>(() =>
+                dispatcher.DispatchNextAsync(Token)
+            );
+            Assert.Equal(original.MessageId, error.MessageId);
+            Assert.IsType<IOException>(error.InnerException);
+        }
 
         var row = await ReadAsync(connection, original.MessageId);
         Assert.Equal(publicationFails ? 1 : 0, row.FailureCount);

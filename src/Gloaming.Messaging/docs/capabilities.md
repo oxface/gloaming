@@ -14,6 +14,9 @@ interface review, with [separate current evidence](../../../docs/reports/m2-inbo
 Its [outbox continuation](outbox-recovery.md) adds lease-fenced publisher-exception accounting,
 consumer-selected dead letters and bounded inspection/conditional retry, with
 [new PostgreSQL/HTTP/process evidence](../../../docs/reports/m2-outbox-dead-letters.md).
+The [completion supervision follow-up](../../../docs/reports/m2-outbox-completion-supervision.md)
+adds OutboxCompletionException and stops the optional worker on unconfirmed completion.
+Native host options, consumer repair and external restart policy govern recovery.
 
 ## Current composition
 
@@ -74,6 +77,11 @@ fields, operation outcomes, timing options and registration responsibilities.
   acceptance and a committed outbox completion. ClaimLost means publication returned normally
   but the claim expired or changed before completion could be recorded. Failures throw;
   successful dispatch does not prove downstream business processing.
+- OutboxCompletionException means the publisher returned normally but completion was not
+  confirmed. MessageId and the original InnerException identify the uncertain operation.
+  The optional worker faults without another poll; requested shutdown ends normally.
+  Completion may already have committed. Failure policy/accounting is never invoked for it;
+  direct callers own supervision and fresh-state inspection. ClaimLost stays an ordinary result.
 - ValidateOutboxChanges is an explicit tracked-save guard. Native transaction atomicity and
   dispatcher claim fencing do not depend on calling it. However, omitting it removes protection
   against tracked edits/deletes, envelope changes and saving new work in a different transaction.

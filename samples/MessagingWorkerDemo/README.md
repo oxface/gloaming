@@ -50,7 +50,8 @@ an existing queue. They neither migrate/seed nor delete the durable queue when s
 `Worker__LeaseSeconds` configures the dispatch lease (default 30 seconds); native sample
 publication has a five-second deadline. A lease is not an external exactly-once promise.
 Both library workers poll idle work at 100 ms and delay ordinary processing failures for one
-second. An inbox failure-accounting fault instead faults its worker without another poll.
+second. Inbox/outbox failure-accounting faults and outbox completion faults instead fault
+their worker without another poll; native host supervision applies.
 Generic Host owns Ctrl+C/SIGTERM cancellation and its default shutdown deadline. An abrupt
 process death follows the storage protocol, rather than requiring a graceful callback.
 This console executable uses `Microsoft.AspNetCore.App` for native Hosting/DI APIs and its
@@ -79,6 +80,12 @@ existing receiver dependency; install that shared framework even though it expos
 - Dispatch releases the database lock after committing a lease. Death after broker acceptance
   but before completion leaves the lease to expire. A replacement may publish the same
   MessageId again; retained inbox deduplication suppresses repeated local handling.
+- OutboxCompletionException means publication returned normally but completion could not be
+  confirmed. The dispatch worker logs a distinct critical diagnostic and faults; native
+  StopHost begins host shutdown. Inspect fresh storage after repair before restarting:
+  completion may already have committed. A pending claim waits for expiry and can repeat
+  the same delivery; completion faults never consume publisher-failure counts or automatically
+  dead-letter work. Other dispatchers and external restarts remain consumer supervision policy.
 - Graceful stopping cancels native operations and disposes this process's long-lived connection
   and channel. Unacknowledged deliveries are recoverable on channel closure. Queues remain durable.
 - Broker connections are established once and automatic recovery is disabled. Initial connection

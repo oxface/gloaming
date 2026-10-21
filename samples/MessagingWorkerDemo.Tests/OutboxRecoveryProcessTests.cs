@@ -183,6 +183,66 @@ public sealed class OutboxRecoveryProcessTests(PostgreSqlFixture postgres)
         );
     }
 
+    [Fact(Timeout = 90_000)]
+    public async Task AcceptedHttpPublicationThenCompletionFaultStopsHostAndRepairAllowsSameMessageAfterRestart()
+    {
+        var token = TestContext.Current.CancellationToken;
+        string connection = await DatabaseAsync();
+        var original = await EnqueueAsync(connection);
+        await SqlAsync(
+            connection,
+            "ALTER TABLE exports.outgoing_work ADD CONSTRAINT completion_unavailable CHECK (dispatched_at IS NULL)"
+        );
+        await using var receiver = await Receiver.StartAsync();
+        receiver.StatusCode = 202;
+        await using (var broken = Worker(connection, receiver.Endpoint, "completion-broken"))
+        {
+            await broken.WaitForExitAsync(token);
+            Assert.Contains(
+                "Outbox completion was not confirmed for " + original.MessageId,
+                broken.Output,
+                StringComparison.Ordinal
+            );
+            Assert.Contains("stopping the worker", broken.Output, StringComparison.Ordinal);
+            Assert.Contains("StopHost", broken.Output, StringComparison.Ordinal);
+        }
+
+        Assert.Single(receiver.Messages);
+        var unconfirmed = await ReadAsync(connection, original.MessageId);
+        Assert.Equal(1, unconfirmed.Attempts);
+        Assert.Equal(1, unconfirmed.Revision);
+        Assert.Equal(0, unconfirmed.FailureCount);
+        Assert.Equal(0, unconfirmed.FailuresSinceRedrive);
+        Assert.Null(unconfirmed.LastFailureCode);
+        Assert.Null(unconfirmed.DispatchedAt);
+        Assert.Null(unconfirmed.DeadLetteredAt);
+        Assert.NotNull(unconfirmed.LeaseToken);
+        await SqlAsync(
+            connection,
+            "ALTER TABLE exports.outgoing_work DROP CONSTRAINT completion_unavailable"
+        );
+        await using var repaired = Worker(connection, receiver.Endpoint, "completion-repaired");
+        await WaitAsync(async () =>
+            (await ReadAsync(connection, original.MessageId)).DispatchedAt is not null
+        );
+        await repaired.StopAsync(token);
+        var completed = await ReadAsync(connection, original.MessageId);
+        Assert.Equal(2, completed.Attempts);
+        Assert.Equal(3, completed.Revision);
+        Assert.Equal(0, completed.FailureCount);
+        Assert.Equal(0, completed.RedriveCount);
+        Assert.Null(completed.LeaseToken);
+        Assert.Equal(2, receiver.Messages.Count);
+        Assert.All(
+            receiver.Messages,
+            received =>
+            {
+                Assert.Equal(original.MessageId, received.MessageId);
+                Assert.True(JsonElement.DeepEquals(original.Payload, received.Payload));
+            }
+        );
+    }
+
     private static ChildHost Worker(
         string connection,
         Uri receiver,

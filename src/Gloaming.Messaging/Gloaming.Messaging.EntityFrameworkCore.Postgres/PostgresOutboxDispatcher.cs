@@ -94,11 +94,28 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
                 throw;
             }
 
-            bool completed = await CompleteAsync(claim, cancellationToken);
+            bool completed;
+            try
+            {
+                completed = await CompleteAsync(claim, cancellationToken);
+            }
+            catch (Exception completionFailure)
+            {
+                throw new OutboxCompletionException(claim.Message.MessageId, completionFailure);
+            }
+
             attempt.Complete(completed ? "published" : "claim_lost");
             return completed ? OutboxDispatchResult.Published : OutboxDispatchResult.ClaimLost;
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            attempt.Cancel();
+            throw;
+        }
+        catch (OutboxCompletionException failure)
+            when (cancellationToken.IsCancellationRequested
+                && failure.InnerException is OperationCanceledException
+            )
         {
             attempt.Cancel();
             throw;

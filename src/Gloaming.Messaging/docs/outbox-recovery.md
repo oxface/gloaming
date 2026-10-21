@@ -59,12 +59,12 @@ expired claims make no accounting change. The original publication exception sti
 
 After normal publication return, completion locks the current row and rechecks the same
 fence at its final write. Published requires observed completion commit; zero changed rows
-returns ClaimLost. Completion SQL/commit failures propagate directly: they never invoke
+returns ClaimLost. Completion SQL/commit failures throw OutboxCompletionException: they never invoke
 failure policy or a compensating failure write. A lease can expire while waiting for a lock;
 both completion and accounting recheck after that wait. Competing dispatchers skip locked
 rows and can process unrelated work during accounting.
 
-Cancellation retains the claim for expiry. Successful acceptance followed by uncommitted
+Publication cancellation retains the claim for expiry. Successful acceptance followed by uncommitted
 completion failure can redeliver the same MessageId/envelope after expiry. A missing commit
 response can instead leave completion or accounting committed. Inspect fresh storage; do
 not infer rollback or issue an unconditional recovery write. An obsolete publisher can
@@ -72,7 +72,7 @@ still accept externally after successor dead-lettering/operator retry, but its d
 completion/accounting cannot change the successor's state. Receiver deduplication remains
 necessary. No external exactly-once, global execution cap, FIFO or bounded shutdown guarantee.
 
-## Accounting faults and supervision
+## Accounting and completion faults, supervision
 
 Lock/read, policy/validation, metadata SQL or accounting-commit failure throws
 OutboxFailureAccountingException, derived from AggregateException. MessageId identifies the
@@ -81,18 +81,45 @@ also in that order in InnerExceptions. Accounting is unconfirmed, not necessaril
 The operation disposes its transaction/context without a second accounting attempt or
 unconditional lease release.
 
+After the publisher returns normally, failure starting, executing, committing or disposing
+the completion transaction throws OutboxCompletionException. MessageId identifies the retained
+work and InnerException preserves the original error. It means completion was not confirmed;
+the transaction may already have committed. It never invokes publication policy, consumes the
+failure budget, marks a dead letter or releases the lease with a compensating write.
+ClaimLost remains an ordinary result for a lost/expired fence; it does not fault the worker.
+
 AddOutboxWorker logs a distinct critical diagnostic and faults without another dispatch
-poll on this exception. Native HostOptions.BackgroundServiceExceptionBehavior governs the
+poll on either exception. Native HostOptions.BackgroundServiceExceptionBehavior governs the
 host: StopHost begins host shutdown; Ignore leaves this worker faulted and does not restart
 it. The library installs no host-wide option. Direct dispatcher callers own equivalent
-supervision. Requested shutdown during accounting ends the worker without another poll;
-direct callers still receive both errors. Ordinary dispatch failures retain FailureDelay
-and fresh scopes.
+supervision. For example, the executable OutboxDemo host explicitly selects:
 
-Repair accounting dependencies, restart, and inspect fresh state. A retained abandoned claim
+```csharp
+services.AddOutboxWorker<ExportDbContext>(
+    new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
+services.Configure<HostOptions>(options =>
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.StopHost);
+```
+
+Callable consumers can catch OutboxCompletionException, record its MessageId, suspend that
+dispatch lane and inspect fresh storage after repair. Existing catches for native completion
+SQL/IO errors must now inspect InnerException. Completion-stage requested cancellation also
+throws this typed fault with the original OperationCanceledException inside; attempt telemetry
+still reports cancelled. Publication-stage requested cancellation keeps its existing
+OperationCanceledException contract. Requested shutdown during accounting or completion ends
+the optional worker normally without another poll. Direct callers still receive the typed
+fault. Ordinary claim/publication failures retain FailureDelay and fresh scopes, provided
+publication-failure accounting was confirmed.
+
+Repair the failing dependency and inspect fresh state before restarting dispatch. A retained abandoned claim
 waits for expiry. A dead letter requires separately authorized retry; restarting a worker
-does not retry stopped work. Completion faults remain ambiguous and can cause repeated
-accepted deliveries after expiry, without consuming the failure budget. Host exit code,
+does not retry stopped work. A completed row needs no action. An undispatched row can publish
+again after expiry with the same identity/payload. The existing dead-letter Retry is inapplicable
+to both pending and completed work. There is no new recovery command for completion faults.
+
+Stopping one worker contains its polling loop. Other dispatchers or an external supervisor
+that repeatedly restarts an unrepaired host can still repeat accepted deliveries after expiry,
+without consuming the failure budget. Host exit code,
 alerting, readiness, process restart policy and progress while the worker is stopped remain
 consumer responsibilities.
 
@@ -190,5 +217,8 @@ to clear it. Database grants/RLS and trusted application authority remain separa
 [OutboxDemo](../../../samples/OutboxDemo/README.md) provides executable fixed-route operator
 endpoints and HTTP policy. [The slice report](../../../docs/reports/m2-outbox-dead-letters.md)
 separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 results.
+The [completion supervision report](../../../docs/reports/m2-outbox-completion-supervision.md)
+records the subsequent native-host, cancellation, backend-death and restart proofs; this
+follow-up requires no schema, grant or registration changes.
 Payload editing, completed-message replay, retention, lease renewal, a generic administration
 framework and a template preset are excluded.

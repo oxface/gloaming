@@ -142,7 +142,8 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         using var sender = new HttpClient();
         var policy = new ObservedPolicy();
         await using (var database = ExportDbContext.Create(connection))
-            await Assert.ThrowsAsync<PostgresException>(() =>
+        {
+            var failure = await Assert.ThrowsAsync<OutboxCompletionException>(() =>
                 new PostgresOutboxDispatcher<ExportDbContext>(
                     database,
                     new HttpCommandPublisher(sender, receiver.Endpoint),
@@ -150,6 +151,10 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
                     failurePolicy: policy
                 ).DispatchNextAsync(Token)
             );
+            Assert.Equal(message, failure.MessageId);
+            Assert.IsType<PostgresException>(failure.InnerException);
+        }
+
         var ambiguous = await ReadAsync(connection);
         Assert.Equal(0, policy.Calls);
         Assert.Equal(0, ambiguous.FailureCount);

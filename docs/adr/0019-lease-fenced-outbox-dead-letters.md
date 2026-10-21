@@ -1,7 +1,7 @@
 # Lease fenced outbox failure accounting and operator retry
 
-Status: interface and scope approved by the owner on 2026-10-21; implementation prepared
-for owner line-by-line review. Extends [ADR 0009](0009-module-owned-transactional-outbox.md).
+Status: interface, scope and implementation approved by the owner on 2026-10-21;
+checkpointed as `6bcdf9c`. Extends [ADR 0009](0009-module-owned-transactional-outbox.md).
 
 ## Context
 
@@ -35,6 +35,14 @@ OutboxFailureAccountingException preserves publication/accounting errors. The op
 faults without another poll; native host supervision and consumer repair/restart govern
 recovery. Consumer code owns classification, budgets, acceptance, admission, operator authority,
 credentials, presentation and audit. Column grants do not enforce legal lifecycle transitions.
+
+The subsequently owner-selected [completion supervision follow-up](../plans/m2-outbox-completion-supervision.md)
+uses OutboxCompletionException for unconfirmed completion after normal publication return,
+retaining MessageId and the original InnerException. It also faults the optional worker
+without another poll. This signal preserves completion uncertainty and never triggers
+publisher-failure accounting or a compensating write. Requested worker shutdown ends normally;
+direct callers retain the typed stage/error signal, including completion-stage cancellation.
+The [separate report](../reports/m2-outbox-completion-supervision.md) records new proof evidence.
 
 ## Consequences
 

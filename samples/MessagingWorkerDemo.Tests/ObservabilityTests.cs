@@ -59,7 +59,12 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
             leaseSeconds: 2
         );
         await firstDispatch.WaitForOutputAsync($"Message {message} dispatch attempt failed", token);
-        await firstDispatch.StopAsync(token);
+        await firstDispatch.WaitForExitAsync(token);
+        Assert.Contains(
+            "Outbox completion was not confirmed",
+            firstDispatch.Output,
+            StringComparison.Ordinal
+        );
         var intake = await topology.StartWorkerAsync("receive", "proof-intake", token);
         await intake.WaitForOutputAsync(
             $"Delivery {message} retained and acknowledged: Queued",
