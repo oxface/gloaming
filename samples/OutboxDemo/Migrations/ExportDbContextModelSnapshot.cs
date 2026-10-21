@@ -160,6 +160,10 @@ namespace OutboxDemo.Migrations
                     b.HasIndex("RouteKey", "DeadLetteredAt", "MessageId")
                         .HasFilter("dispatched_at IS NULL AND dead_lettered_at IS NOT NULL");
 
+                    b.HasIndex("RouteKey", "DispatchedAt", "MessageId")
+                        .HasDatabaseName("ix_exports_outbox_completed_retention")
+                        .HasFilter("dispatched_at IS NOT NULL");
+
                     b.ToTable(
                         "outgoing_work",
                         "exports",

@@ -228,6 +228,15 @@ restricted Sales independently adopts the same read. The [current family contrac
 and [slice report](../reports/outbox-operational-visibility.md) record fresh proof boundaries.
 No health/recovery framework, schema/grant changes or template preset is introduced.
 
+After approving visibility checkpoint `2125860`, the owner selected
+[bounded completed-outbox retention](outbox-completed-retention.md). The callable PostgreSQL
+context extension admits an exact route, explicit completion cutoff and batch size 1–1000,
+returning the observed committed deletion count. A separate finite Exports maintenance role
+and consumer-owned partial index/migration exercise adoption. Native grants/RLS remain
+authority; dispatch credentials are unchanged. Deletion removes sender identity/evidence
+history without altering inbox lifetime or stopping obsolete publishers. The [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md)
+and [new report](../reports/outbox-completed-retention.md) record current boundaries and proofs.
+
 ## Retained delivery context
 
 The existing [durable message observability proposal](durable-message-observability.md)

@@ -1,5 +1,48 @@
+using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.OutboxDemo;
+
+if (args.Contains("--cleanup", StringComparer.Ordinal))
+{
+    if (args.Length != 1)
+        throw new ArgumentException("Use --cleanup as a separate finite maintenance role.");
+
+    string maintenance =
+        Environment.GetEnvironmentVariable("OUTBOX_DEMO_MAINTENANCE_CONNECTION_STRING")
+        ?? throw new InvalidOperationException(
+            "Set OUTBOX_DEMO_MAINTENANCE_CONNECTION_STRING for cleanup."
+        );
+    string? cutoff = Environment.GetEnvironmentVariable("OUTBOX_DEMO_COMPLETED_BEFORE");
+    if (
+        !DateTimeOffset.TryParseExact(
+            cutoff,
+            ["yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.FFFFFFF'Z'"],
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal,
+            out var completedBefore
+        )
+    )
+        throw new ArgumentException(
+            "Set OUTBOX_DEMO_COMPLETED_BEFORE to an explicit UTC timestamp ending in Z."
+        );
+
+    int batchSize = int.Parse(
+        Environment.GetEnvironmentVariable("OUTBOX_DEMO_CLEANUP_BATCH_SIZE")
+            ?? throw new InvalidOperationException(
+                "Set OUTBOX_DEMO_CLEANUP_BATCH_SIZE from 1 through 1000."
+            ),
+        CultureInfo.InvariantCulture
+    );
+    using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+    await ExportOutboxRetention.RunAsync(
+        maintenance,
+        completedBefore,
+        batchSize,
+        Console.Out,
+        deadline.Token
+    );
+    return;
+}
 
 string connection =
     Environment.GetEnvironmentVariable("OUTBOX_DEMO_CONNECTION_STRING")

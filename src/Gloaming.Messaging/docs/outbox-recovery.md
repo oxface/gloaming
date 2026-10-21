@@ -220,9 +220,13 @@ separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 resu
 The [completion supervision report](../../../docs/reports/m2-outbox-completion-supervision.md)
 records the subsequent native-host, cancellation, backend-death and restart proofs; this
 follow-up requires no schema, grant or registration changes.
-Payload editing, completed-message replay, retention, lease renewal, a generic administration
+Payload editing, completed-message replay, lease renewal, a generic administration
 framework and a template preset are excluded.
 
 Read-only [backlog snapshots and consumer worker health](outbox-observability.md) are separately
 available without acquiring claims or retry authority. Counts are observations; their age and
 native worker task state do not resolve transport/completion uncertainty.
+
+[Completed-outbox retention](outbox-retention.md) is a separately authorized maintenance
+operation. It never deletes pending/dead-letter work or gives dispatchers deletion authority.
+Deleting sender history does not alter receiver deduplication or retract external acceptance.

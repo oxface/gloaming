@@ -148,6 +148,55 @@ the table is locked, storage faults/repair and worker readiness under Ignore. Th
 [slice report](../../docs/reports/outbox-operational-visibility.md) separates these proofs
 from the earlier transport/attempt telemetry evidence.
 
+## Completed-outbox cleanup
+
+Apply the forward completed-row index migration explicitly with the existing `--setup`
+command. An owner provisions a separate maintenance login; it receives metadata SELECT and
+DELETE, with no UPDATE, payload SELECT, ownership, role membership or business-table access:
+
+```sql
+CREATE ROLE exports_outbox_maintenance LOGIN PASSWORD 'replace-with-a-private-password'
+  NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOREPLICATION NOINHERIT;
+GRANT USAGE ON SCHEMA exports TO exports_outbox_maintenance;
+GRANT SELECT (message_id, destination, dispatched_at, dead_lettered_at, lease_token, lease_until)
+  ON exports.outgoing_work TO exports_outbox_maintenance;
+GRANT DELETE ON exports.outgoing_work TO exports_outbox_maintenance;
+```
+
+Review existing PUBLIC/inherited privileges and row-security policies with the owner. A DELETE
+grant is table-wide; native RLS is a separate way to constrain arbitrary SQL to admitted completed
+rows. Enabling policies must account for all existing producer/dispatcher roles. This sample
+performs no role provisioning or policy reconciliation itself.
+
+Choose the evidence cutoff explicitly and run one finite batch using only the maintenance
+connection. The example timestamp is a consumer choice, not a default retention window:
+
+```bash
+export OUTBOX_DEMO_MAINTENANCE_CONNECTION_STRING='Host=localhost;Database=outbox_demo;Username=exports_outbox_maintenance;Password=replace-with-a-private-password'
+export OUTBOX_DEMO_COMPLETED_BEFORE='2026-10-01T00:00:00Z'
+export OUTBOX_DEMO_CLEANUP_BATCH_SIZE='100'
+dotnet run --project samples/OutboxDemo -- --cleanup
+```
+
+Cleanup requires a separate `--cleanup` invocation, a UTC timestamp ending in Z and a batch
+size from 1 through 1000. It verifies the actual login/effective grants, fixes exports.render,
+requests a thirty-second cancellation deadline and prints RouteKey/CompletedBefore/BatchSize/
+Deleted only after observed commit. It needs no ordinary producer connection, receiver URI,
+operator token or worker. Startup applies no migrations and starts no HTTP host or sampler.
+
+Only completed rows strictly before the cutoff qualify. Pending, delayed, leased and dead-letter
+work is preserved. Competing cleaners may wait and return fewer or zero; zero does not prove
+exhaustion. After commit-response loss, deletion may already have happened. Repeating the
+command may remove the next batch; scheduling, reconciliation and totals remain owner policy.
+Dispatch credentials and HTTP operator authority gain no DELETE permission.
+
+Deletion removes sender identity/envelope/failure history and permits the database to accept
+that MessageId again. Keep identities unique and choose the evidence window deliberately.
+Obsolete publishers may still accept externally after completion/deletion. Inbox deduplication
+retention remains independent. The [current contract](../../src/Gloaming.Messaging/docs/outbox-retention.md)
+and [slice report](../../docs/reports/outbox-completed-retention.md) record concurrency, authority,
+index/deployment limits and actual PostgreSQL/process proofs.
+
 See [the family contract](../../src/Gloaming.Messaging/docs/capabilities.md) for setup/errors
 and independent inbox composition, workers and deferred ordering policy. PostgreSQL is currently the supported provider.
 

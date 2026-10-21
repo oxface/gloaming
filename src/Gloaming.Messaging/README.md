@@ -33,6 +33,8 @@ observations, lease fencing, acceptance uncertainty, inspection, completion/acco
 and restricted-grant upgrades.
 See [outbox backlog and worker health](docs/outbox-observability.md) for the callable route
 snapshot, native consumer gauges/readiness and metadata-only authority.
+See [completed-outbox retention](docs/outbox-retention.md) for an authorized, finite cleanup
+batch, separate maintenance credentials and the sender identity-history boundary.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
 
 Tests run from the repository root:

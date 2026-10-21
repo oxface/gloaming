@@ -80,6 +80,14 @@ not. A metadata-only SELECT role needs six lifecycle columns and schema USAGE, w
 SELECT or UPDATE. Existing dispatch grants suffice. See [snapshot semantics and native consumer
 health/metrics](../docs/outbox-observability.md); no schema/grant migration is introduced.
 
+`await database.DeleteCompletedPostgresOutboxBatchAsync(routeKey, completedBefore, batchSize, token)`
+is separately authorized maintenance on a fresh context. It deletes at most 1–1000 completed
+rows strictly before an admitted, nonfuture database-clock cutoff. Native DELETE locking can
+wait; a missing commit response may leave deletion committed. It requires DELETE plus six-column
+metadata SELECT, with no UPDATE or payload read. Dispatcher grants remain unchanged. Consumers
+own retention windows, index/migration choice and repetition. See [retention, identity history
+and maintenance authority](../docs/outbox-retention.md).
+
 Inbox-only consumers configure/register the inbox independently and need no outbox table or
 publisher. Intake requires caller-owned native ReadCommitted isolation. A retained key combines
 subscription, producer and message ID; incompatible envelope redelivery throws rather than

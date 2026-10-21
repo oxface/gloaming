@@ -122,4 +122,6 @@ uses the same callable read for three fixed command routes without opening a bro
 [slice report](../../../docs/reports/outbox-operational-visibility.md) distinguishes new
 PostgreSQL/native-metrics/HTTP/process evidence from earlier attempt telemetry and recovery
 proofs. Inbox backlog, automatic alert delivery, durable telemetry, payload editing, replay,
-retention and lease renewal remain separate capabilities.
+inbox retention and lease renewal remain separate capabilities. Separately authorized
+[completed-outbox retention](outbox-retention.md) is now available; it does not change these
+backlog/worker observations or grant maintenance authority to this reader.

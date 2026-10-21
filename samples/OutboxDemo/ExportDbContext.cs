@@ -23,6 +23,17 @@ public sealed class ExportDbContext(DbContextOptions<ExportDbContext> options) :
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ConfigurePostgresOutbox("exports", "outgoing_work");
+        modelBuilder
+            .Entity<OutboxMessageRecord>()
+            .HasIndex(row => new
+            {
+                row.RouteKey,
+                row.DispatchedAt,
+                row.MessageId,
+            })
+            .HasDatabaseName("ix_exports_outbox_completed_retention")
+            .HasFilter("dispatched_at IS NOT NULL");
+
         var request = modelBuilder.Entity<ExportRequest>();
         request.ToTable("requests", "exports");
         request.HasKey(row => row.Id);

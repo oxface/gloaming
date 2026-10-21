@@ -758,6 +758,15 @@ policy remain consumer-owned. The [local contract](../src/Gloaming.Messaging/doc
 and [fresh proof report](reports/outbox-operational-visibility.md) record authority, staleness
 and duplicate-observer limits. No persistence, lease or schema protocol changes.
 
+The subsequent owner-selected [completed-outbox retention](plans/outbox-completed-retention.md)
+adds an explicit bounded PostgreSQL cleanup batch. Ordinary DELETE locking avoids granting
+maintenance UPDATE rights; competing calls can wait and remove fewer rows. Native grants/RLS,
+consumer-selected evidence windows and repetition remain explicit. Cleanup removes sender
+identity history and cannot stop late external publication or define inbox deduplication
+lifetime. Exports owns its finite credential-checked command and optional completed-row index;
+dispatch permissions and lifecycle protocols remain unchanged. See the [current contract](../src/Gloaming.Messaging/docs/outbox-retention.md)
+and [fresh evidence](reports/outbox-completed-retention.md).
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

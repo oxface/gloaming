@@ -20,6 +20,9 @@ Native host options, consumer repair and external restart policy govern recovery
 The [operational visibility slice](outbox-observability.md) adds a separately callable
 PostgreSQL route snapshot. Native sample gauges and health checks keep sampling, readiness
 policy and alert thresholds with the consumer; no new recovery or health framework is supplied.
+Separately authorized [completed-outbox retention](outbox-retention.md) now provides one
+bounded PostgreSQL deletion batch. Evidence windows and unique identities after deletion
+remain consumer obligations; inbox retention is independent.
 
 ## Current composition
 
@@ -213,7 +216,7 @@ branch and does not release resources it did not create.
 ## Deferred capabilities
 
 Receipt-only mode if an adopter needs it;
-queued-message compatibility/upcasting rollout proofs; retention/deduplication windows;
+queued-message compatibility/upcasting rollout proofs; inbox retention/deduplication windows;
 caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
