@@ -160,3 +160,18 @@ retry, and accounting SQL fault → StopHost → repair/restart under the same m
 The existing RabbitMQ dispatch role retains indefinite retry policy; HTTP classification stays
 with its adopter. See the [outbox contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md)
 for counts, lease fencing, completion uncertainty and rollout/grant obligations.
+
+## Message schema deployment
+
+The existing dispatch, receive and process roles now understand exports.render schemas 1 and 2.
+Schema 2 renames Pages to PageCount with the same business meaning. Upgrade all three roles
+across every instance before a producer selects v2. The default producer API continues writing
+v1; explicit application wiring or the [finite compatibility journey](../MessagingDemo/README.md#schema-compatibility-journey)
+selects v2. No extra worker role or scheduling setting is required.
+
+Rendering opts into the existing optional JSON codec; the stored schema/payload remain unchanged.
+The process suite seeds independent historical v1 outbox/inbox JSON plus a new v2 submission,
+kills dispatch/processing at native barriers, and recovers through replacement roles after real
+lease expiry. Keep compatible readers deployed when rolling a producer back to v1. Reader
+downgrade, retention and deployment coordination remain consumer obligations; see the
+[schema compatibility contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md).

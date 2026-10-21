@@ -13,9 +13,12 @@ public sealed class RabbitMqExportPublisher(IChannel channel, string queue) : IM
         if (
             message.RouteKey != "exports.render"
             || message.MessageName != "exports.render"
-            || message.SchemaVersion != 1
+            || message.SchemaVersion is not (1 or 2)
         )
-            throw new InvalidDataException("Only exports.render v1 is routed by this publisher.");
+            throw new InvalidDataException(
+                "Only exports.render v1/v2 is routed by this publisher."
+            );
+
         var properties = new BasicProperties
         {
             Persistent = true,

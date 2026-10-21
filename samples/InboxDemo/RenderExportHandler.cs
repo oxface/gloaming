@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,13 @@ public sealed class RenderExportHandler(RenderDbContext database) : IInboxHandle
     public const string Subscription = "rendering.jobs";
 
     // Receiver-local DTO: the wire alias/schema is the contract, not a peer implementation reference.
-    private sealed record RenderCommand(Guid ExportRequestId, int Pages);
+    private sealed record RenderCommand(Guid ExportRequestId, int PageCount);
+
+    private static readonly JsonEventCodec<RenderCommand> Codec = new(
+        new JsonSerializerOptions { RespectRequiredConstructorParameters = true },
+        [EventRegistration<RenderCommand>.For<RenderCommand>("exports.render", 2)],
+        [new RenderV1ToV2()]
+    );
 
     public static void Validate(IncomingMessage message) => Decode(message);
 
@@ -19,17 +26,30 @@ public sealed class RenderExportHandler(RenderDbContext database) : IInboxHandle
         if (
             message.ProducerKey != "exports"
             || message.MessageName != "exports.render"
-            || message.SchemaVersion != 1
             || message.TenantKey is not null
         )
             throw new InvalidDataException(
-                "This receiver accepts tenantless exports.render v1 from its configured producer only."
+                "This receiver accepts tenantless exports.render from its configured producer only."
             );
 
-        var command =
-            message.Payload.Deserialize<RenderCommand>()
-            ?? throw new InvalidDataException("A render command is required.");
-        if (command.ExportRequestId == Guid.Empty || command.Pages <= 0)
+        RenderCommand command;
+        try
+        {
+            command = Codec.Deserialize(
+                message.MessageName,
+                message.SchemaVersion,
+                message.Payload
+            );
+        }
+        catch (EventDecodingException failure)
+        {
+            throw new InvalidDataException(
+                "An unsupported or invalid render command was supplied.",
+                failure
+            );
+        }
+
+        if (command.ExportRequestId == Guid.Empty || command.PageCount <= 0)
             throw new InvalidDataException(
                 "A render command needs an export identity and positive pages."
             );
@@ -47,8 +67,8 @@ public sealed class RenderExportHandler(RenderDbContext database) : IInboxHandle
                 cancellationToken
             );
         if (existing is null)
-            database.Add(RenderJob.Create(command.ExportRequestId, command.Pages));
-        else if (existing.Pages != command.Pages)
+            database.Add(RenderJob.Create(command.ExportRequestId, command.PageCount));
+        else if (existing.Pages != command.PageCount)
             throw new InvalidDataException(
                 "An export job identity was reused with different rendering requirements."
             );

@@ -26,7 +26,7 @@ delivery. It dispatches/processes at most one eligible retained row, which may b
 when run on databases with a backlog. Use disposable databases for the demonstrated single-job
 output. No broker/transport runtime moves into Gloaming.
 
-The adapters bind the known exports producer and exact schema. Broker permissions/trusted
+The adapters bind the known exports producer and explicitly supported schemas 1 and 2. Broker permissions/trusted
 producer mapping are consumer obligations, not authenticated by a producer header. Production
 consumers own prefetch, subscriptions, reconnect, rejection/dead-letter policy and scaling.
 
@@ -35,6 +35,36 @@ before commit, fail sender completion after confirmed publication, and fail loca
 after acknowledged intake. Redelivery retains identity; fresh processing recovers without
 repeating a completed job. Tests terminate no production infrastructure.
 [Supported protocol](../../src/Gloaming.Messaging/docs/inbox.md).
+
+## Schema compatibility journey
+
+Use fresh disposable empty module databases with the same connection/broker settings above:
+
+```bash
+dotnet run --project samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
+```
+
+This finite mode submits v1, dispatches it and commits intake without processing. After disposing
+the initial scopes, it explicitly selects v2 for a second submission. Fresh receiving/processing
+scopes interpret both versions and create two local jobs. The journey checks original retained
+schemas/payloads in both databases and prints message IDs plus:
+
+```text
+retained schemas=1,2; local jobs=2; original envelopes unchanged
+```
+
+V1 uses ExportRequestId/Pages; v2 renames Pages to PageCount without changing business meaning.
+Rendering independently adopts the existing optional JSON codec. The original stored/wire
+envelope remains the inbox's duplicate-comparison evidence; the producer stays codec-free.
+Reusing the databases rejects rather than replaying completed work. The default single-v1 journey
+remains available; no long-running host, migration worker or deployment coordinator is added.
+
+Upgrade publishers, intake adapters and processors before selecting v2 writes. Keep v1 support
+for delayed/redriven work; rolling readers back to v1-only code remains unsafe while v2 work
+can arrive. Real process tests additionally kill dispatch/processing while historical v1 and new
+v2 work is retained, then recover through the existing roles and lease/locking protocols.
+The [family contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md) records exact
+deduplication, rejection, operator retry and rollout/rollback limits.
 
 For a long-running API plus separate dispatch/intake/processing processes using these same
 adapters, see [the worker host](../MessagingWorkerDemo/README.md). The finite journey remains

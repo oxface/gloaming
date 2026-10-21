@@ -767,6 +767,18 @@ lifetime. Exports owns its finite credential-checked command and optional comple
 dispatch permissions and lifecycle protocols remain unchanged. See the [current contract](../src/Gloaming.Messaging/docs/outbox-retention.md)
 and [fresh evidence](reports/outbox-completed-retention.md).
 
+The owner-approved [queued-message compatibility continuation](plans/queued-message-schema-compatibility.md)
+uses the existing optional JSON codec in the receiving sample. Exports deliberately selects
+v1 or v2 writes; Rendering interprets a field rename without changing business meaning or
+retained envelopes. Original schemas/payloads remain inbox duplicate-comparison evidence;
+operator retry reexecutes the current decoder under existing authority and revision checks.
+Messaging libraries and the native-JSON producer gain no codec dependency. The
+[local contract](../src/Gloaming.Messaging/docs/schema-compatibility.md) and
+[new report](reports/queued-message-schema-compatibility.md) record HTTP/RabbitMQ, old-reader,
+retained-work and process-recovery evidence plus reader-before-writer/rollback obligations.
+No new public library interface, persistence schema, deployment coordinator or template preset
+was established.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

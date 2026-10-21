@@ -24,6 +24,11 @@ Separately authorized [completed-outbox retention](outbox-retention.md) now prov
 bounded PostgreSQL deletion batch. Evidence windows and unique identities after deletion
 remain consumer obligations; inbox retention is independent.
 
+[Queued-message schema compatibility](schema-compatibility.md) demonstrates retained v1 work
+and explicitly selected v2 writes through independent consumer contexts and HTTP/RabbitMQ.
+Rendering opts into the existing JSON codec; Messaging packages gain no serializer dependency.
+Original-envelope deduplication, conditional retry and the outbox's acceptance uncertainty remain.
+
 ## Current composition
 
 Each module selects its own typed DbContext, schema/table, business/integration contracts,
@@ -215,8 +220,11 @@ branch and does not release resources it did not create.
 
 ## Deferred capabilities
 
+The schema compatibility guide proves one consumer evolution. Different contract changes and
+deployment/rollback topologies require their own evidence; no rollout orchestrator is supplied.
+
 Receipt-only mode if an adopter needs it;
-queued-message compatibility/upcasting rollout proofs; inbox retention/deduplication windows;
+inbox retention/deduplication windows;
 caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module

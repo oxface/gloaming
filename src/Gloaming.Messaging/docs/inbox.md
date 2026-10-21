@@ -155,3 +155,6 @@ fresh results from O1 and archived receipt-only evidence.
 TraceParent/TraceState are optional diagnostic fields, excluded from duplicate comparison.
 The first committed intake retains its context even when equivalent retries carry different
 send spans. See [observability](observability.md) for processing links, metrics and collection.
+
+For explicit receiver-local historical decoding while retaining original schema/payload
+deduplication evidence, see [queued-message compatibility](schema-compatibility.md).
