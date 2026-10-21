@@ -194,18 +194,18 @@ internal sealed class WorkerTopology(
         await using var read = RenderDbContext.Create(rendering);
         var stopped = await read.Set<InboxMessageRecord>()
             .AsNoTracking()
-            .SingleAsync(row => row.QuarantinedAt != null, cancellation);
+            .SingleAsync(row => row.DeadLetteredAt != null, cancellation);
         var services = new ServiceCollection();
         services.AddDbContext<RenderDbContext>(options =>
             RenderDbContext.Configure(options, rendering)
         );
-        services.AddPostgresInboxRecovery<RenderDbContext>();
+        services.AddPostgresInboxDeadLetters<RenderDbContext>();
         await using var provider = services.BuildServiceProvider();
         await using var scope = provider.CreateAsyncScope();
         Assert.Equal(
             InboxRetryResult.Retried,
             await scope
-                .ServiceProvider.GetRequiredService<IInboxRecovery<RenderDbContext>>()
+                .ServiceProvider.GetRequiredService<IInboxDeadLetters<RenderDbContext>>()
                 .RetryAsync(
                     stopped.SubscriptionKey,
                     stopped.ProducerKey,

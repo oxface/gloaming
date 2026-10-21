@@ -9,7 +9,7 @@ public sealed class RenderInboxFailurePolicy : IInboxFailurePolicy<RenderDbConte
     public InboxFailureDecision Decide(InboxFailure failure)
     {
         if (failure.Exception is InvalidDataException or System.Text.Json.JsonException)
-            return new InboxFailureDecision.Quarantine("render-command-conflict");
+            return new InboxFailureDecision.DeadLetter("render-command-conflict");
 
         Exception error = failure.Exception;
         while (error.InnerException is { } inner)
@@ -24,8 +24,8 @@ public sealed class RenderInboxFailurePolicy : IInboxFailurePolicy<RenderDbConte
         )
             return failure.FailuresSinceRedrive < 3
                 ? new InboxFailureDecision.RetryAfter(TimeSpan.FromSeconds(1), "render-transient")
-                : new InboxFailureDecision.Quarantine("render-retry-limit");
+                : new InboxFailureDecision.DeadLetter("render-retry-limit");
 
-        return new InboxFailureDecision.Quarantine("render-review-required");
+        return new InboxFailureDecision.DeadLetter("render-review-required");
     }
 }

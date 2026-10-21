@@ -1,5 +1,8 @@
 # M2: failed inbox messages and operator redrive
 
+Current naming, the metadata store and later proof results are recorded in the
+[dead-letter report](m2-inbox-dead-letters.md); terminology below retains dated M2 history.
+
 The [2026-10-20 supervision follow-up](m2-inbox-failure-supervision.md) adds a typed accounting
 fault and worker containment, with fresh evidence separate from this original report.
 

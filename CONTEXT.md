@@ -40,6 +40,11 @@ _Avoid_: DDD foundation, Reactive Streams
 The product's model of users, Organizations, memberships, invitations, roles and permissions.
 _Avoid_: Execution context, authentication provider
 
+**Inbox dead letter**:
+A retained delivery excluded from automatic processing by the consumer's failure policy.
+Authorized operator retry makes the same delivery eligible again; it preserves delivery
+identity and payload. The earlier inbox implementation called this state quarantine.
+
 **Application user**:
 A person represented by a stable product identity, independently of their login provider
 or tenant memberships.

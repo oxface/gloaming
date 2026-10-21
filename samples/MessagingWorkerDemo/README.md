@@ -63,17 +63,17 @@ existing receiver dependency; install that shared framework even though it expos
   that transaction; another process can retry its retained delivery.
 - The processing role adopts Rendering's explicit failure policy: recognized PostgreSQL
   serialization/deadlock failures stop at three recorded failures; conflicts/unclassified
-  failures quarantine immediately. Counts/quarantine survive process restarts. A killed attempt
+  failures are dead-lettered immediately. Counts and dead-letter state survive process restarts. A killed attempt
   may leave no count. The optional [InboxDemo operator host](../InboxDemo/README.md#failed-work-and-authorized-operator-retry)
   can use the same receiving database for authenticated, revision-conditional retry. The worker
   itself exposes no operator endpoint. Apply the forward migration with old processors stopped;
   see [the complete recovery contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md).
 - Rendering registration explicitly selects native StopHost supervision. An
   InboxFailureAccountingException logs a critical diagnostic and stops the process host;
-  it does not repeatedly invoke the handler or automatically quarantine the delivery.
+  it does not repeatedly invoke the handler or automatically dead-letter the delivery.
   Repair the accounting dependency before restarting, then inspect fresh storage: a lost
   accounting-commit response may have committed metadata. An unrecorded failure needs no
-  operator redrive unless the row is actually quarantined. No specific exit code is promised,
+  operator redrive unless the row is actually dead-lettered. No specific exit code is promised,
   and unrelated work on this worker pauses until restart. Deployment monitoring/restart
   policy remains consumer-owned.
 - Dispatch releases the database lock after committing a lease. Death after broker acceptance

@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Gloaming.Messaging.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.InboxDemo;
 
@@ -8,41 +7,53 @@ internal static partial class RenderInboxOperations
 {
     internal static void Map(WebApplication app)
     {
-        var operations = app.MapGroup("/operations/inbox")
+        var operations = app.MapGroup("/operations/inbox/dead-letters")
             .RequireAuthorization(RenderOperatorAuthenticationHandler.Permission);
+        operations.MapGet("", ListAsync);
         operations.MapGet("/{messageId:guid}", ReadAsync);
         operations.MapPost("/{messageId:guid}/retry", RetryAsync);
     }
 
-    private static async Task<IResult> ReadAsync(
-        Guid messageId,
-        RenderDbContext database,
+    private static async Task<IResult> ListAsync(
+        IInboxDeadLetters<RenderDbContext> deadLetters,
+        int? pageSize,
+        string? failureCode,
+        string? after,
         CancellationToken cancellation
     )
     {
-        var state = await database
-            .Set<InboxMessageRecord>()
-            .AsNoTracking()
-            .Where(row =>
-                row.SubscriptionKey == RenderExportHandler.Subscription
-                && row.ProducerKey == "exports"
-                && row.MessageId == messageId
-            )
-            .Select(row => new
-            {
-                row.MessageId,
-                row.Revision,
-                row.FailureCount,
-                row.FailuresSinceRedrive,
-                row.ProcessedAt,
-                row.QuarantinedAt,
-                row.AvailableAt,
-                row.LastFailureCode,
-                row.LastFailedAt,
-                row.RedriveCount,
-                row.LastRedrivenAt,
-            })
-            .SingleOrDefaultAsync(cancellation);
+        try
+        {
+            return Results.Ok(
+                await deadLetters.ListAsync(
+                    RenderExportHandler.Subscription,
+                    "exports",
+                    new(pageSize ?? 50, failureCode, after),
+                    cancellation
+                )
+            );
+        }
+        catch (ArgumentException)
+        {
+            return Results.BadRequest();
+        }
+    }
+
+    private static async Task<IResult> ReadAsync(
+        Guid messageId,
+        IInboxDeadLetters<RenderDbContext> deadLetters,
+        CancellationToken cancellation
+    )
+    {
+        if (messageId == Guid.Empty)
+            return Results.BadRequest();
+
+        var state = await deadLetters.GetAsync(
+            RenderExportHandler.Subscription,
+            "exports",
+            messageId,
+            cancellation
+        );
         return state is null ? Results.NotFound() : Results.Ok(state);
     }
 
@@ -52,7 +63,7 @@ internal static partial class RenderInboxOperations
         Guid messageId,
         RetryRequest request,
         ClaimsPrincipal user,
-        IInboxRecovery<RenderDbContext> recovery,
+        IInboxDeadLetters<RenderDbContext> recovery,
         ILoggerFactory logs,
         CancellationToken cancellation
     )

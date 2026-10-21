@@ -64,8 +64,8 @@ public sealed class InboxMessageRecord
     /// <summary>Safe consumer reason; exception text and payloads do not belong here.</summary>
     public string? LastFailureCode { get; private set; }
 
-    /// <summary>Database time automatic processing stopped, or null when not quarantined.</summary>
-    public DateTimeOffset? QuarantinedAt { get; private set; }
+    /// <summary>Database time automatic processing stopped, or null when not dead-lettered. Maps to the retained quarantined_at column.</summary>
+    public DateTimeOffset? DeadLetteredAt { get; private set; }
 
     /// <summary>Number of committed operator retry transitions.</summary>
     public long RedriveCount { get; private set; }

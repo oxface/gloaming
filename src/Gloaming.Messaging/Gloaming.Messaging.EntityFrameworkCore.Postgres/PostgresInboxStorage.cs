@@ -54,7 +54,7 @@ internal sealed class PostgresInboxStorage
             [nameof(InboxMessageRecord.FailuresSinceRedrive)] = "failures_since_redrive",
             [nameof(InboxMessageRecord.LastFailedAt)] = "last_failed_at",
             [nameof(InboxMessageRecord.LastFailureCode)] = "last_failure_code",
-            [nameof(InboxMessageRecord.QuarantinedAt)] = "quarantined_at",
+            [nameof(InboxMessageRecord.DeadLetteredAt)] = "quarantined_at",
             [nameof(InboxMessageRecord.RedriveCount)] = "redrive_count",
             [nameof(InboxMessageRecord.LastRedrivenAt)] = "last_redriven_at",
         };
@@ -194,9 +194,9 @@ internal sealed class PostgresInboxStorage
                 retry.Code,
                 retry.Delay
             ),
-            InboxFailureDecision.Quarantine quarantine => (quarantine.Code, (TimeSpan?)null),
+            InboxFailureDecision.DeadLetter deadLetter => (deadLetter.Code, (TimeSpan?)null),
             _ => throw new InvalidOperationException(
-                "An inbox failure policy must select positive delayed retry or quarantine."
+                "An inbox failure policy must select positive delayed retry or dead-letter state."
             ),
         };
         if (string.IsNullOrWhiteSpace(code) || code.Length > 128)
@@ -210,15 +210,15 @@ internal sealed class PostgresInboxStorage
             UPDATE {Table}
             SET failure_count = failure_count + 1, failures_since_redrive = failures_since_redrive + 1,
                 revision = revision + 1, last_failed_at = clock_timestamp(), last_failure_code = @code,
-                quarantined_at = CASE WHEN @quarantine THEN clock_timestamp() ELSE NULL END,
-                available_at = CASE WHEN @quarantine THEN available_at ELSE clock_timestamp() + @delay END
+                quarantined_at = CASE WHEN @deadLetter THEN clock_timestamp() ELSE NULL END,
+                available_at = CASE WHEN @deadLetter THEN available_at ELSE clock_timestamp() + @delay END
             WHERE subscription_key = @subscription AND producer_key = @producer AND message_id = @id
                 AND processed_at IS NULL AND quarantined_at IS NULL
             """
         );
         IdentityParameters(command, subscriptionKey, message);
         Parameter(command, "code", code);
-        Parameter(command, "quarantine", delay is null);
+        Parameter(command, "deadLetter", delay is null);
         Parameter(command, "delay", delay ?? TimeSpan.Zero);
         if (await command.ExecuteNonQueryAsync(cancellationToken) != 1)
             throw new DbUpdateConcurrencyException(

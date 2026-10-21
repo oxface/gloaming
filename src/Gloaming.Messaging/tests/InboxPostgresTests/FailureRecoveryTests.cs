@@ -21,7 +21,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             failure =>
                 failure.FailuresSinceRedrive < 2
                     ? new InboxFailureDecision.RetryAfter(TimeSpan.FromSeconds(10), "temporary")
-                    : new InboxFailureDecision.Quarantine("review");
+                    : new InboxFailureDecision.DeadLetter("review");
     }
 
     public sealed class Policy(FailureScenario scenario) : IInboxFailurePolicy<InboxConsumer>
@@ -39,7 +39,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var services = Services(connection, handler);
         services.AddSingleton(policy ?? new FailureScenario());
         services.AddInboxFailurePolicy<InboxConsumer, Policy>("render");
-        services.AddPostgresInboxRecovery<InboxConsumer>();
+        services.AddPostgresInboxDeadLetters<InboxConsumer>();
         if (interceptor is not null)
             services.AddDbContext<InboxConsumer>(options => options.AddInterceptors(interceptor));
 
@@ -56,7 +56,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
     {
         await using var scope = provider.CreateAsyncScope();
         return await scope
-            .ServiceProvider.GetRequiredService<IInboxRecovery<InboxConsumer>>()
+            .ServiceProvider.GetRequiredService<IInboxDeadLetters<InboxConsumer>>()
             .RetryAsync("render", message.ProducerKey, message.MessageId, revision, Token);
     }
 
@@ -120,7 +120,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             await Assert.ThrowsAsync<IOException>(() => ProcessAsync(first));
             var row = await ReadAsync(connection, message.MessageId);
             Assert.Equal(1, row.FailureCount);
-            Assert.Null(row.QuarantinedAt);
+            Assert.Null(row.DeadLetteredAt);
             Assert.Equal(InboxProcessingResult.NoWork, await ProcessAsync(first));
         }
 
@@ -131,7 +131,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(2, stopped.FailureCount);
         Assert.Equal(2, stopped.FailuresSinceRedrive);
         Assert.Equal("review", stopped.LastFailureCode);
-        Assert.NotNull(stopped.QuarantinedAt);
+        Assert.NotNull(stopped.DeadLetteredAt);
         Assert.Equal(InboxProcessingResult.NoWork, await ProcessAsync(restarted));
         Assert.Equal(InboxReceiveResult.AlreadyReceived, await ReceiveAsync(restarted, message));
         await Assert.ThrowsAsync<InboxMessageConflictException>(() =>
@@ -146,7 +146,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             await RetryAsync(restarted, message, stopped.Revision)
         );
         var retried = await ReadAsync(connection, message.MessageId);
-        Assert.Null(retried.QuarantinedAt);
+        Assert.Null(retried.DeadLetteredAt);
         Assert.Equal(0, retried.FailuresSinceRedrive);
         Assert.Equal(2, retried.FailureCount);
         Assert.Equal(1, retried.RedriveCount);
@@ -155,7 +155,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         // A different consumer decision after deployment can stop immediately; stale retry stays stale.
         var stop = new FailureScenario
         {
-            Decide = _ => new InboxFailureDecision.Quarantine("permanent"),
+            Decide = _ => new InboxFailureDecision.DeadLetter("permanent"),
         };
         await using var changed = RecoveryProvider(connection, handler, stop);
         await Assert.ThrowsAsync<IOException>(() => ProcessAsync(changed));
@@ -203,7 +203,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var handler = new HandlerScenario { OnHandle = FailAfterSaveAsync };
         var policy = new FailureScenario
         {
-            Decide = _ => new InboxFailureDecision.Quarantine("review"),
+            Decide = _ => new InboxFailureDecision.DeadLetter("review"),
         };
         await using var provider = RecoveryProvider(connection, handler, policy);
         await ReceiveAsync(provider, message);
@@ -242,6 +242,22 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Assert.Empty(await read.Set<HandledItem>().ToArrayAsync(Token));
             Assert.Empty(await read.Set<OutboxMessageRecord>().ToArrayAsync(Token));
             Assert.Equal(0, (await ReadAsync(connection, message.MessageId)).FailureCount);
+            await using var inspection = provider.CreateAsyncScope();
+            var deadLetters = inspection.ServiceProvider.GetRequiredService<
+                IInboxDeadLetters<InboxConsumer>
+            >();
+            Assert.Null(
+                await deadLetters
+                    .GetAsync("render", "exports", message.MessageId, Token)
+                    .WaitAsync(TimeSpan.FromSeconds(5), Token)
+            );
+            Assert.Empty(
+                (
+                    await deadLetters
+                        .ListAsync("render", "exports", new(), Token)
+                        .WaitAsync(TimeSpan.FromSeconds(5), Token)
+                ).Items
+            );
             await using var lockProbe = Context(connection);
             var blocked = await Assert.ThrowsAsync<PostgresException>(() =>
                 lockProbe.Database.ExecuteSqlRawAsync(
@@ -269,7 +285,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         }
 
         await Assert.ThrowsAsync<IOException>(() => pending);
-        Assert.NotNull((await ReadAsync(connection, message.MessageId)).QuarantinedAt);
+        Assert.NotNull((await ReadAsync(connection, message.MessageId)).DeadLetteredAt);
         Assert.Equal(InboxProcessingResult.NoWork, await ProcessAsync(provider));
     }
 
@@ -281,7 +297,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var provider = RecoveryProvider(
             connection,
             new HandlerScenario { OnHandle = FailAfterSaveAsync },
-            new FailureScenario { Decide = _ => new InboxFailureDecision.Quarantine("review") }
+            new FailureScenario { Decide = _ => new InboxFailureDecision.DeadLetter("review") }
         );
         await ReceiveAsync(provider, message);
         await Assert.ThrowsAsync<IOException>(() => ProcessAsync(provider));
@@ -365,7 +381,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var row = await ReadAsync(connection, message.MessageId);
         Assert.Equal(0, row.FailureCount);
         Assert.Equal(0, row.Revision);
-        Assert.Null(row.QuarantinedAt);
+        Assert.Null(row.DeadLetteredAt);
         Assert.Null(row.ProcessedAt);
         await using var read = Context(connection);
         Assert.Empty(await read.Set<HandledItem>().ToArrayAsync(Token));
@@ -386,7 +402,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var provider = RecoveryProvider(
             connection,
             handler,
-            new FailureScenario { Decide = _ => new InboxFailureDecision.Quarantine("review") },
+            new FailureScenario { Decide = _ => new InboxFailureDecision.DeadLetter("review") },
             new LostCommitResponse()
         );
         if (handlerFails)
@@ -404,7 +420,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var row = await ReadAsync(connection, message.MessageId);
         Assert.Equal(1, row.Revision);
         Assert.Equal(handlerFails ? 1 : 0, row.FailureCount);
-        Assert.Equal(handlerFails, row.QuarantinedAt is not null);
+        Assert.Equal(handlerFails, row.DeadLetteredAt is not null);
         Assert.Equal(!handlerFails, row.ProcessedAt is not null);
         await using var read = Context(connection);
         Assert.Equal(handlerFails ? 0 : 1, await read.Set<HandledItem>().CountAsync(Token));
@@ -422,7 +438,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var provider = RecoveryProvider(connection, new HandlerScenario());
         await using var scope = provider.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<InboxConsumer>();
-        var recovery = scope.ServiceProvider.GetRequiredService<IInboxRecovery<InboxConsumer>>();
+        var recovery = scope.ServiceProvider.GetRequiredService<IInboxDeadLetters<InboxConsumer>>();
         database.Add(new HandledItem { Id = Guid.NewGuid() });
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             recovery.RetryAsync("render", "exports", Guid.NewGuid(), 0, Token)
@@ -471,7 +487,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var provider = RecoveryProvider(
             connection,
             handler,
-            new FailureScenario { Decide = _ => new InboxFailureDecision.Quarantine("new-attempt") }
+            new FailureScenario { Decide = _ => new InboxFailureDecision.DeadLetter("new-attempt") }
         );
         var message = Message();
         await ReceiveAsync(provider, message);
@@ -488,7 +504,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             handler.OnHandle = FailAfterSaveAsync;
             await Assert.ThrowsAsync<IOException>(() => ProcessAsync(provider));
             successor = await ReadAsync(connection, message.MessageId);
-            Assert.NotNull(successor.QuarantinedAt);
+            Assert.NotNull(successor.DeadLetteredAt);
             Assert.Equal(1, successor.FailureCount);
         }
         finally
@@ -502,7 +518,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var retained = await ReadAsync(connection, message.MessageId);
         Assert.Equal(successor!.Revision, retained.Revision);
         Assert.Equal(successor.AvailableAt, retained.AvailableAt);
-        Assert.Equal(successor.QuarantinedAt, retained.QuarantinedAt);
+        Assert.Equal(successor.DeadLetteredAt, retained.DeadLetteredAt);
         Assert.Equal("new-attempt", retained.LastFailureCode);
         Assert.Equal(1, retained.FailureCount);
         await using var read = Context(connection);
@@ -521,7 +537,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var provider = RecoveryProvider(
             connection,
             handler,
-            new FailureScenario { Decide = _ => new InboxFailureDecision.Quarantine("review") }
+            new FailureScenario { Decide = _ => new InboxFailureDecision.DeadLetter("review") }
         );
         var message = Message();
         await ReceiveAsync(provider, message);
@@ -553,7 +569,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             );
             var unchanged = await ReadAsync(connection, message.MessageId);
             Assert.Equal(stopped.Revision, unchanged.Revision);
-            Assert.Equal(stopped.QuarantinedAt, unchanged.QuarantinedAt);
+            Assert.Equal(stopped.DeadLetteredAt, unchanged.DeadLetteredAt);
             Assert.Equal(1, unchanged.FailuresSinceRedrive);
             Assert.Equal(0, unchanged.RedriveCount);
             await SqlAsync(connection, "ALTER TABLE receiver.inbox DROP CONSTRAINT reject_redrive");
@@ -568,7 +584,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(1, retried.FailureCount);
         Assert.Equal(0, retried.FailuresSinceRedrive);
         Assert.Equal(1, retried.RedriveCount);
-        Assert.Null(retried.QuarantinedAt);
+        Assert.Null(retried.DeadLetteredAt);
     }
 
     private sealed class RollbackFailure : DbTransactionInterceptor

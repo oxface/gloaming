@@ -25,6 +25,14 @@ public static class PostgresInboxModelExtensions
                 item.ReceivedAt,
             })
             .HasFilter("processed_at IS NULL AND quarantined_at IS NULL");
+        row.HasIndex(item => new
+            {
+                item.SubscriptionKey,
+                item.ProducerKey,
+                item.DeadLetteredAt,
+                item.MessageId,
+            })
+            .HasFilter("processed_at IS NULL AND quarantined_at IS NOT NULL");
         row.ToTable(
             table,
             schema,

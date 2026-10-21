@@ -40,9 +40,9 @@ hold shutdown; leases do not forcibly terminate code. Callable dispatch requires
 
 Inbox composition is independent: IInbox<TDbContext> retains delivery in a caller-owned
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.
-Optional subscription-keyed IInboxFailurePolicy selects delayed retry or quarantine using
-durable confirmed-failure counts. Independently registered IInboxRecovery supplies one
-revision-conditional retry; caller authorization remains consumer wiring.
+Optional subscription-keyed IInboxFailurePolicy selects delayed retry or dead-letter state using
+durable confirmed-failure counts. Independently registered IInboxDeadLetters supplies bounded
+metadata list/detail and revision-conditional retry; caller authorization remains consumer wiring.
 AddInboxHandler<TDbContext,THandler>(subscriptionKey) binds a consumer-owned scoped handler
 through native keyed DI. The handler stages bounded local effects on that context, including
 optional outbox work. It does not commit or perform external effects. No public lease or

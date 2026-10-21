@@ -125,7 +125,7 @@ public sealed class ProcessingTests(PostgreSqlFixture fixture)
             Assert.Equal(1, row.Revision);
             Assert.NotNull(row.LastFailedAt);
             Assert.Equal("processing-failed", row.LastFailureCode);
-            Assert.Null(row.QuarantinedAt);
+            Assert.Null(row.DeadLetteredAt);
         }
         scenario.OnHandle = null;
         if (fault == "save")
