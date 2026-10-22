@@ -32,7 +32,9 @@ import {
 } from "./create.ts";
 
 const forbidden =
-  /Wholesale|archive[/\\]proof-sample|FoundryApplication|ConsumerRoot|EventSourcing|(?:Gloaming|ModulithFoundry)\.Events|Rebus|RabbitMQ|ServiceBus|Marten|Outbox|Inbox|AddHostedService|BackgroundService/i;
+  /Wholesale|archive[/\\]proof-sample|FoundryApplication|ConsumerRoot|EventSourcing|(?:Gloaming|ModulithFoundry)\.Events|Rebus|RabbitMQ|ServiceBus|Marten|Outbox|Inbox/i;
+const workerOnly =
+  /CatalogWorker|Microsoft\.Extensions\.Hosting|AddHostedService|BackgroundService/i;
 const creator = join(import.meta.dirname, "create.ts");
 
 function run(
@@ -136,6 +138,8 @@ function inspect(output: string, config: Configuration): void {
   for (const [path, bytes] of content) {
     const source = bytes.toString("utf8");
     assert(!forbidden.test(`${path}\n${source}`), path);
+    if (!config.catalogWorker && path !== "foundry.json")
+      assert(!workerOnly.test(`${path}\n${source}`), path);
     assert(!source.includes(root), path);
     assert(!isAbsolute(path));
     if (path.endsWith(".csproj")) {
@@ -161,7 +165,21 @@ function inspect(output: string, config: Configuration): void {
     xml(Buffer.from(text(content, `${config.applicationName}.slnx`))),
     "Project",
   );
-  assert.equal(projects.length, 8);
+  assert.equal(projects.length, config.catalogWorker ? 9 : 8);
+  assert.equal(
+    [...content.keys()].some((path) => path.includes("CatalogWorker/")),
+    !!config.catalogWorker,
+  );
+  assert(
+    content.has(
+      `modules/Catalog/${config.applicationName}.Catalog/CatalogCommands.cs`,
+    ),
+  );
+  assert(
+    content.has(
+      `modules/Catalog/${config.applicationName}.Catalog/CatalogFilters.cs`,
+    ),
+  );
   for (const project of projects) {
     assert(typeof project.Path === "string");
     assert(content.has(project.Path), project.Path);
@@ -219,6 +237,8 @@ async function creationFailures(
     "{}",
     '{"applicationName":"OnlyName"}',
     '{"applicationName":"A","rootNamespace":"B","eventSourcing":true}',
+    '{"applicationName":"A","rootNamespace":"B","catalogWorker":"true"}',
+    '{"applicationName":"A","rootNamespace":"B","catalogWorker":true,"transport":"rabbitmq"}',
     '{"applicationName":"A","applicationName":"B","rootNamespace":"C"}',
     '{"applicationName":true,"rootNamespace":"B"}',
     '{"applicationName":"../escape","rootNamespace":"B"}',
@@ -330,13 +350,14 @@ async function creationFailures(
   );
 }
 
-function inspectRestoredGraph(output: string): void {
+function inspectRestoredGraph(output: string, worker: boolean): void {
   for (const [path, bytes] of files(output)) {
     if (!path.endsWith("project.assets.json")) continue;
     const data: unknown = JSON.parse(bytes.toString("utf8"));
     assert(object(data) && object(data.libraries));
     for (const [name, dependency] of Object.entries(data.libraries)) {
       assert(!forbidden.test(name), name);
+      if (!worker) assert(!workerOnly.test(name), name);
       assert(object(dependency));
       if (dependency.type === "project") {
         assert(typeof dependency.path === "string");
@@ -370,10 +391,20 @@ async function main(): Promise<void> {
     });
     if (parentSdk.error) throw parentSdk.error;
     assert(parentSdk.status !== 0 || parentSdk.stdout.trim() === "9.0.100");
-    const consumers: { config: string; output: string; name: string }[] = [];
+    const consumers: {
+      config: string;
+      output: string;
+      name: string;
+      worker: boolean;
+    }[] = [];
     for (const config of [
       { applicationName: "Cedar", rootNamespace: "Acme.Cedar" },
       { applicationName: "HarborDesk", rootNamespace: "Task" },
+      {
+        applicationName: "CedarWorker",
+        rootNamespace: "Acme.Worker",
+        catalogWorker: true,
+      },
     ]) {
       const path = join(scratch, `${config.applicationName}.json`);
       writeFileSync(path, JSON.stringify(config));
@@ -384,16 +415,46 @@ async function main(): Promise<void> {
         readFileSync(join(scratch, "global.json"), "utf8"),
         parentPin,
       );
-      consumers.push({ config: path, output, name: config.applicationName });
+      consumers.push({
+        config: path,
+        output,
+        name: config.applicationName,
+        worker: "catalogWorker" in config && !!config.catalogWorker,
+      });
     }
     const first = consumers[0];
     assert(first);
     const identical = join(scratch, "identical");
     invoke(first.config, identical);
     assert.deepEqual(files(identical), files(first.output));
+    const offConfig = join(scratch, "explicit-off.json");
+    writeFileSync(
+      offConfig,
+      JSON.stringify({
+        applicationName: "Cedar",
+        rootNamespace: "Acme.Cedar",
+        catalogWorker: false,
+      }),
+    );
+    const offOutput = join(scratch, "explicit-off");
+    invoke(offConfig, offOutput);
+    inspect(offOutput, {
+      applicationName: "Cedar",
+      rootNamespace: "Acme.Cedar",
+      catalogWorker: false,
+    });
+    const offFiles = files(offOutput);
+    const defaultFiles = files(first.output);
+    offFiles.delete("foundry.json");
+    defaultFiles.delete("foundry.json");
+    assert.deepEqual(offFiles, defaultFiles);
     await creationFailures(scratch, first.config, first.output);
-    for (const { output, name } of consumers) {
-      run("dotnet", ["restore", `${name}.slnx`], output);
+    for (const { output, name, worker } of consumers) {
+      run(
+        "dotnet",
+        ["restore", `${name}.slnx`, "--disable-parallel", "-m:1"],
+        output,
+      );
       run(
         "dotnet",
         [
@@ -405,7 +466,7 @@ async function main(): Promise<void> {
         ],
         output,
       );
-      inspectRestoredGraph(output);
+      inspectRestoredGraph(output, worker);
       run(
         "dotnet",
         [
@@ -449,7 +510,7 @@ async function main(): Promise<void> {
       );
     }
     console.log(
-      "T1 TypeScript proof passed: two external consumers (including namespace Task), conflicting parent SDK pin, deterministic creation, omission, local references and fresh PostgreSQL journeys.",
+      "T2 TypeScript proof passed: three external consumers (default, namespace Task, optional worker), conflicting parent SDK pin, deterministic creation, omission, local references and fresh PostgreSQL journeys.",
     );
   } finally {
     rmSync(scratch, { recursive: true, force: true });

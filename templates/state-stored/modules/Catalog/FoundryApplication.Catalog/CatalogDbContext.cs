@@ -20,6 +20,8 @@ public sealed class CatalogDbContext(
         item.HasKey(row => row.Id);
         item.Property(row => row.Id).HasColumnName("id").ValueGeneratedNever();
         item.Property(row => row.Name).HasColumnName("name").HasMaxLength(200);
+        item.Property(row => row.Price).HasColumnName("price").HasPrecision(18, 2);
+        item.Property(row => row.Version).HasColumnName("version").IsConcurrencyToken();
         item.Property(row => row.TenantKey).HasColumnName("tenant_key").HasMaxLength(200);
         item.HasTenantOwnership(row => row.TenantKey, () => RequiredTenantKey, "TenantScope");
     }

@@ -18,6 +18,7 @@ public static class CatalogRegistration
                 postgres => postgres.MigrationsHistoryTable("__EFMigrationsHistory", "catalog")
             )
         );
+        services.AddScoped<ICatalogCommands, CatalogCommands>();
         return services.AddScoped<ICatalogQueries, CatalogQueries>();
     }
 }

@@ -42,6 +42,16 @@ namespace ConsumerRoot.Catalog.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("tenant_key");
 
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("price");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint")
+                        .HasColumnName("version");
+
                     b.HasKey("Id");
 
                     b.ToTable("items", "catalog");
