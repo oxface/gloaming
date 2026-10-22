@@ -72,7 +72,7 @@ Templates gain no policy or new framework.
 
 ## Verification
 
-Fresh verification on the final source:
+Fresh verification at the implementation checkpoint `f8b1969`:
 
 | Check | Result / log |
 | --- | --- |
@@ -96,6 +96,28 @@ older membership assertion counting a permitted Beta B2 publication. Corrections
 migration targets and assertions using literal old-schema customer/address rows, complete the
 new native queue fixture, and separately assert blocked Alpha and permitted Beta publications.
 No actual migration or Access fixture was changed.
+
+## Standards and Spec review
+
+The two-axis review of `f8b1969` returned **Spec: zero findings** and **Standards: one
+heuristic P3 finding**. Standards identified identical lease/retry and three-route Sales claim
+policy repeated between the restricted dispatch role and ordinary broker role.
+
+The resolution adds private `BrokerHost.SalesDispatchOptions()` and calls it from both existing
+typed registrations. Source comparison against `f8b1969` confirms that both original policies
+and the new factory have exactly the same 10-second lease, 1-second retry and ordered route keys
+`inventory.issue-stock`, `inventory.reserve-stock`, `inventory.release-reservation`
+(`/tmp/directory-review-policy.log`). Restricted `SalesOutboxDbContext` credentials, ordinary
+`SalesDbContext` credentials, role branches, publishers and worker registrations remain explicit
+and unchanged. This is local consumer policy reuse, with no new library/template mechanism.
+
+Fresh follow-up verification: Worker build with `--no-restore -m:1`, CSharpier check of
+`BrokerHost.cs`, native Worker style verification with `--verify-no-changes --no-restore`, and
+`git diff --check` passed. Logs: `/tmp/directory-review-build.log`,
+`/tmp/directory-review-csharpier.log`, `/tmp/directory-review-style.log`. The earlier 713/108/114
+suite results above are implementation-checkpoint evidence; those suites were not rerun for
+this exact policy deduplication. No new behavioral concern was identified. Follow-up review
+acceptance remains owner-owned.
 
 ## Remaining boundaries
 
