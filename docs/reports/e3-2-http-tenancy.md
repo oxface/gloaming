@@ -171,19 +171,19 @@ Review public interface/outcomes and policy first:
   [candidate helpers](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantCandidates.cs)
   and [explicit registration/metadata helpers](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantContextExtensions.cs),
   plus [native host-options utility](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/HttpTenantHostFilteringExtensions.cs).
-- [Consumer composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-  [Organization resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs),
+- [Consumer composition](../../samples/Wholesale/Api/DemoComposition.cs),
+  [Organization resolver](../../samples/Wholesale/Api/HttpIntegration/OrganizationTenantResolver.cs),
   Organization directory fixture (retained at `cfbac9a`, since replaced by
   [persisted Access](../../samples/Wholesale/modules/Access/Access/ApplicationAccess.cs) in E3.3),
-  [Access registration](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenancyExtensions.cs),
-  [explicit startup](../../samples/Wholesale/HttpIdentityDemo/Program.cs),
-  [global exception mapping](../../samples/Wholesale/HttpIdentityDemo/ContextExceptionHandler.cs)
+  [Access registration](../../samples/Wholesale/Api/HttpIntegration/OrganizationTenancyExtensions.cs),
+  [explicit startup](../../samples/Wholesale/Api/Program.cs),
+  [global exception mapping](../../samples/Wholesale/Api/ContextExceptionHandler.cs)
   and [Inventory capability](../../samples/Wholesale/modules/Inventory/Inventory/StockCatalog.cs).
 - [HTTP proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/HttpTenantTests.cs),
   [failure/lifecycle proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/EstablishmentTests.cs),
   [native pipeline proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/NativePipelineTests.cs),
   [hostname proofs](../../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/HostSelectionTests.cs)
-  and [sample composition](../../samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs).
+  and [sample composition](../../samples/Wholesale/IntegrationTests/Api/CompositionTests.cs).
 
 The implementation and refinements were owner-reviewed before checkpointing.
 [E3.3 proposes persisted Access lookup/admission](../plans/e3-3-persisted-access.md); a tenant-bearing

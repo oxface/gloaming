@@ -125,7 +125,7 @@ helpers and automatic scoped transaction setup through a native transaction inte
 independent of Tenancy and Npgsql. `FindTenantOwnershipProperty` exposes the declared property
 for optional integrations without duplicating private annotation names.
 
-The separate [A2.2 Sales consumer](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md)
+The separate [A2.2 Sales consumer](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 now demonstrates restricted-role policies and explicit native setup, with
 [role/lifecycle proofs and limits](../../../docs/reports/a2-2-sales-postgres-rls.md). It is
 sample-owned SQL, not a capability of this adapter. RLS does not enforce within-tenant

@@ -149,7 +149,7 @@ IMessagePublisher; EF IOutbox/IOutboxDispatcher/options, provided record, model/
 enqueue and worker; PostgreSQL mapping, DI and dispatcher. Inspect
 [consumer mapping](../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueMessages.cs),
 [accepted issue](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
-[native RabbitMQ adapter](../../samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs),
+[native RabbitMQ adapter](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InventoryRabbitMqPublisher.cs),
 [independent commands](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportRequestCommands.cs), new migration/snapshot
 artifacts, public-interface tests and the CI/dependency rules. The exact path map remains in
 the reviewed O1 brief. At the initial handoff there were no staged entries or unrelated edits.

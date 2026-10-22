@@ -62,7 +62,7 @@ business workflow or telemetry framework was extracted.
 - Additive migration/designer/snapshot changes for Exports, Rendering and Inventory;
   [standalone sender upgrade](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/TraceMigrationTests.cs),
   [receiver upgrade](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/TraceMigrationTests.cs) and
-  [Inventory upgrade/adoption](../../samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs).
+  [Inventory upgrade/adoption](../../samples/Wholesale/IntegrationTests/EventPersistence/InboxDispatchTests.cs).
 - [Self-sufficient library contract](../../src/Gloaming.Messaging/docs/observability.md),
   [executable setup](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md),
   [approved scope/file map](../plans/durable-message-observability.md) and

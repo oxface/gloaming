@@ -8,7 +8,7 @@ Implementation authorization: the owner's subsequent instruction to proceed sele
 next increment. It was prepared independently from fetched `origin/main` at `824c95b` in
 `feat/rich-state-stored-aggregate`. At the owner's request, its working-tree changes were moved
 onto `feat/ddd-sample-patterns` after D1 was committed as `041c64a`, retaining both demos.
-[Executable usage](../../samples/Wholesale/RichAggregateDemo/README.md) and
+[Executable usage](../../samples/Wholesale/IntegrationTests/Scenarios/RichAggregate/README.md) and
 [fresh verification/extraction findings](../reports/d1-1-rich-state-stored-aggregate.md)
 were checkpointed as `f55d803` following owner review. Later D2 reactions are a separate scope.
 

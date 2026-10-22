@@ -1,0 +1,169 @@
+using System.Text.Json;
+using Gloaming.ActorIdentity;
+using Gloaming.Tenancy;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using ModulithFoundry.Samples.Wholesale.Inventory;
+using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using ModulithFoundry.Samples.Wholesale.Purchasing;
+using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
+
+namespace ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
+
+// Trusted local operator entry. OS/database access is its admission boundary; it does not impersonate a human.
+public static class BusinessOperations
+{
+    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
+
+    public static async Task<int> RunAsync(
+        IConfiguration configuration,
+        CancellationToken cancellationToken
+    )
+    {
+        var role = Required(configuration, "role");
+        var organization = Required(configuration, "Organization");
+        var operation = Required(configuration, "Operation");
+        var module = role == "inventory" ? "Inventory" : "Purchasing";
+        var connection = Required(configuration, "ConnectionStrings:" + module);
+        var services = new ServiceCollection();
+        services.AddScoped<TenantContextAccessor>();
+        services.AddScoped<ITenantContextAccessor>(provider =>
+            provider.GetRequiredService<TenantContextAccessor>()
+        );
+        services.AddScoped<ITenantContextInitializer>(provider =>
+            provider.GetRequiredService<TenantContextAccessor>()
+        );
+        services.AddScoped<ActorContextAccessor>();
+        services.AddScoped<IActorContextAccessor>(provider =>
+            provider.GetRequiredService<ActorContextAccessor>()
+        );
+        services.AddScoped<IActorContextInitializer>(provider =>
+            provider.GetRequiredService<ActorContextAccessor>()
+        );
+        if (role == "inventory")
+        {
+            services.AddInventoryDatabase(connection);
+            services.AddStockPositionCommands();
+            services.AddStockPositionQueries();
+        }
+        else if (role == "purchasing")
+        {
+            services.AddPurchasingDatabase(connection);
+            services.AddPurchaseOrderCommands();
+            services.AddPurchaseOrderQueries();
+        }
+        else
+            throw new ArgumentException("Choose --role inventory or purchasing.");
+
+        await using var provider = services.BuildServiceProvider(
+            new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
+        );
+        await using var scope = provider.CreateAsyncScope();
+        var operationServices = scope.ServiceProvider;
+        operationServices
+            .GetRequiredService<ITenantContextInitializer>()
+            .Initialize(TenantContext.ForTenant(new TenantId(organization)));
+        operationServices
+            .GetRequiredService<IActorContextInitializer>()
+            .Initialize(new(Actor.System(new ActorId("wholesale.operations"))));
+        DbContext database =
+            role == "inventory"
+                ? operationServices.GetRequiredService<InventoryDbContext>()
+                : operationServices.GetRequiredService<PurchasingDbContext>();
+        // Runtime never migrates/seeds/resets storage. Provision module migrations separately.
+        if (operation == "read")
+        {
+            var id = Guid.Parse(Required(configuration, "Id"));
+            object? current =
+                role == "inventory"
+                    ? await operationServices
+                        .GetRequiredService<IStockPositionQueries>()
+                        .ReadCurrentAsync(id, cancellationToken)
+                    : await operationServices
+                        .GetRequiredService<IPurchaseOrderQueries>()
+                        .ReadCurrentAsync(id, cancellationToken);
+            Console.WriteLine(JsonSerializer.Serialize(current, Json));
+            return current is null ? 2 : 0;
+        }
+
+        using var input = JsonDocument.Parse(
+            await File.ReadAllTextAsync(Required(configuration, "Input"), cancellationToken)
+        );
+        await using var transaction = await database.Database.BeginTransactionAsync(
+            cancellationToken
+        );
+        object result;
+        bool changed;
+        if (role == "inventory")
+        {
+            var commands = operationServices.GetRequiredService<IStockPositionCommands>();
+            var outcome = operation switch
+            {
+                "open" => await commands.OpenAsync(
+                    Read<OpenStockPosition>(input),
+                    cancellationToken
+                ),
+                "receive" => await commands.ReceiveAsync(
+                    Read<ReceiveStock>(input),
+                    cancellationToken
+                ),
+                "issue" => await commands.IssueAsync(Read<IssueStock>(input), cancellationToken),
+                _ => throw new ArgumentException(
+                    "Inventory operations are open, receive, issue and read."
+                ),
+            };
+            result = outcome;
+            changed = outcome is StockPositionChangeResult.Changed;
+        }
+        else
+        {
+            var commands = operationServices.GetRequiredService<IPurchaseOrderCommands>();
+            var outcome = operation switch
+            {
+                "draft" => await commands.DraftAsync(
+                    Read<DraftPurchaseOrder>(input),
+                    cancellationToken
+                ),
+                "change-lines" => await commands.ChangeLinesAsync(
+                    Read<ChangePurchaseOrderLines>(input),
+                    cancellationToken
+                ),
+                _ => throw new ArgumentException(
+                    "Purchasing operations are draft, change-lines and read."
+                ),
+            };
+            result = outcome;
+            changed = outcome is PurchaseOrderChangeResult.Changed;
+        }
+
+        if (changed)
+        {
+            await database.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        Console.WriteLine(
+            JsonSerializer.Serialize(
+                new
+                {
+                    committed = changed,
+                    outcome = result.GetType().Name,
+                    result,
+                },
+                Json
+            )
+        );
+        return changed ? 0 : 2;
+    }
+
+    private static T Read<T>(JsonDocument input)
+        where T : class =>
+        input.RootElement.Deserialize<T>(Json)
+        ?? throw new JsonException("Input must not be null.");
+
+    private static string Required(IConfiguration configuration, string key) =>
+        configuration[key] is { } value && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : throw new InvalidOperationException("Configure " + key + ".");
+}

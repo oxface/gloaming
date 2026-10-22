@@ -3,6 +3,32 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 // Stage demonstration rows; the caller establishes tenancy and owns save/commit.
 public static class SalesDemoSeed
 {
+    // Finite product setup, separate from the fixture seed used by domain/failure proofs.
+    public static void StageOrderAllowance(SalesDbContext database, decimal ceiling = 1000)
+    {
+        ArgumentNullException.ThrowIfNull(database);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(ceiling);
+
+        var organization = database.RequiredOrganizationKey;
+        if (organization is not ("wholesale-alpha" or "wholesale-beta"))
+            throw new ArgumentException(
+                "The demonstration supports Alpha and Beta only.",
+                nameof(database)
+            );
+
+        database.Add(
+            new OrderAllowances.OrderAllowanceRow
+            {
+                OrganizationKey = organization,
+                CustomerId = organization == "wholesale-alpha" ? AlphaCustomerId : BetaCustomerId,
+                Currency = "EUR",
+                Ceiling = ceiling,
+                Reserved = 0,
+                Version = 1,
+            }
+        );
+    }
+
     public static Guid AlphaCustomerId { get; } =
         Guid.Parse("10000000-0000-0000-0000-000000000001");
     public static Guid BetaCustomerId { get; } = Guid.Parse("10000000-0000-0000-0000-000000000002");

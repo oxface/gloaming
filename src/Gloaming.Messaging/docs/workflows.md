@@ -26,7 +26,7 @@ behavior and may fail or require an operator; durable state does not guarantee e
 
 The [D2.3 comparison](../../../docs/reports/d2-3-module-consistency-and-coordination.md) separates
 process state, delivery and transaction ownership. The
-[local reservation consumer](../../../samples/Wholesale/LocalWorkflowDemo/README.md) now demonstrates
+[local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md) now demonstrates
 broker-free delivery through public module intake Contracts using existing inbox/outbox seams.
 Its [proof report](../../../docs/reports/d2-3a-local-durable-module-delivery.md) records adoption
 and process-death evidence without adding a general transport or extending this package to arbitrary

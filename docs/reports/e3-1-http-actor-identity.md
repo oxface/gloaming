@@ -147,11 +147,11 @@ Review [the resolver](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.As
 line by line. The last file owns cancellation checks, authenticated/anonymous branching,
 principal-reference validation and publication after successful core initialization.
 
-Then review [sample registration/pipeline](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-[native authentication](../../samples/Wholesale/HttpIdentityDemo/NativeAuthentication.cs),
-[current actor resolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/ApplicationActorResolver.cs),
+Then review [sample registration/pipeline](../../samples/Wholesale/Api/DemoComposition.cs),
+[native authentication](../../samples/Wholesale/Api/NativeAuthentication.cs),
+[current actor resolver](../../samples/Wholesale/Api/HttpIntegration/ApplicationActorResolver.cs),
 [standalone proofs](../../src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) and
-[sample proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs).
+[sample proofs](../../samples/Wholesale/IntegrationTests/Api/CompositionTests.cs).
 
 E3.3 replaced the original configured directory/resolver with persisted Access. The E3.1
 fixture source remains at `faefc0b`; the current link above points to its
@@ -159,7 +159,7 @@ fixture source remains at `faefc0b`; the current link above points to its
 
 Library: reusable request establishment and typed mapping failure. Template: the exercised,
 editable native registration/pipeline and cookie/OIDC recipe in
-[the sample guide](../../samples/Wholesale/HttpIdentityDemo/README.md). Sample policy: known
+[the sample guide](../../samples/Wholesale/Api/README.md). Sample policy: known
 issuer/subject directory, one authenticated identity, application-user mapping, generic 403
 response, default/fallback authentication requirements and endpoint selection. These do not
 enter the library. No separate generated template file or bootstrap CLI was introduced.

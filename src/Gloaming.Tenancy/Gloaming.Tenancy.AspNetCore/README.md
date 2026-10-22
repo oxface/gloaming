@@ -124,7 +124,7 @@ host-options utility supplies both terminal-dot variants. There is no route/host
 fallback chain. A user-to-tenant resolver can use neither helper.
 
 [Standalone HTTP proofs](../tests/TenancyAspNetCoreTests/HttpTenantTests.cs) exercise the
-adapter without an actor dependency. [The sample](../../../samples/Wholesale/HttpIdentityDemo/README.md)
+adapter without an actor dependency. [The sample](../../../samples/Wholesale/Api/README.md)
 composes both adapters with consumer-owned Organization lookup and guarded Inventory reads.
 [The E3.2 report](../../../docs/reports/e3-2-http-tenancy.md) records executed guarantees and limits.
 

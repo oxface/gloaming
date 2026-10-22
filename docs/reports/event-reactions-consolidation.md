@@ -68,7 +68,7 @@ ceilings, false acceptance, SQL bypass and late callback behavior. Composition p
 tenant and outbox validation with reactions. Architecture checks verify actual assembly boundaries,
 the dependency-free model and consumer-owned inheritance.
 
-Wholesale's [Sales example](../../samples/Wholesale/DomainEventsDemo/README.md) still uses domain
+Wholesale's [Sales example](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) still uses domain
 facts because that is its business meaning. Draft submission reserves customer allowance and records
 the required work in the same module transaction. Its immutable aggregate does not depend on a marker
 or base class. Business constraints, concurrency tokens, handler choices and row mapping stay sample-owned.

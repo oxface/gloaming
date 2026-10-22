@@ -27,13 +27,13 @@ Optional Events.Serialization now provides explicit forward JSON upcasting and P
 for compatible schema changes. Inventory composes it during historical decoding and full replay;
 ordinary inline loading still reads saved state without replay or repair. Event rows are never
 rewritten. Shape-only changes need not rebuild correct state; projection-meaning changes and
-reader-before-writer rollout remain consumer decisions. See the [codec contract](../../../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md)
+reader-before-writer rollout remain consumer decisions. See the [codec contract](../../../Gloaming.Events/Gloaming.Events.Serialization/README.md)
 and [upcasting evidence](../../../../docs/reports/event-payload-upcasting.md). This EF package gains
 no serialization dependency.
 
 ## Explicit consumer operations
 
-The [ES3 stock-position command](../../../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+The [ES3 stock-position command](../../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 demonstrates one finite operation with progress, bounded native-conflict retries, cancellation
 and process restart. The optional `AggregateRegenerator<TAggregate,TContext>` now owns fresh
 attempt scopes/read-committed transactions, replay/save/commit, cleanup and typed outcomes over

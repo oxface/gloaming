@@ -12,8 +12,8 @@ public contract and dependencies; the family is not an umbrella runtime package.
 
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.
-The [executable consumer](../../samples/Wholesale/EventPersistenceDemo/README.md) demonstrates adoption.
-Its separate [ES3 regeneration command](../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+The [executable consumer](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md) demonstrates adoption.
+Its separate [ES3 regeneration command](../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 demonstrates finite consumer maintenance, native conflicts, cancellation and restart.
 
 Library tests:
@@ -21,7 +21,7 @@ Library tests:
 - [EventSourcingTests](tests/EventSourcingTests/EventSourcingTests.csproj)
 - [EventSourcingPostgresTests](tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj) (real PostgreSQL 18.6, standalone direct JSON consumer)
 
-PostgreSQL adoption proofs also live with [Wholesale](../../samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj) and the [independent raw counter](src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj).
+PostgreSQL adoption proofs also live with [Wholesale](../../samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj) and the [independent raw counter](samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj).
 
 Run commands from the repository root. Restore/build the active solution, then test a selected
 project under this family's tests directory with `dotnet test --project <path> --no-build --no-restore`.

@@ -1,6 +1,6 @@
 # D1.1: rich state-stored aggregate and relational children
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
@@ -12,7 +12,7 @@ Date: 2026-10-14. Initially prepared on `feat/rich-state-stored-aggregate`, from
 `origin/main` at `824c95b`, in `/tmp/modulith-foundry-d1-1`. At the owner's request, the changes
 were moved into `/home/oxface/repos/modulith-foundry` on `feat/ddd-sample-patterns` after D1
 was committed as `041c64a`. Both demos, CI checks and project references are retained. [Scope](../plans/d1-1-rich-state-stored-aggregate.md)
-and [consumer usage](../../samples/Wholesale/RichAggregateDemo/README.md) define this increment.
+and [consumer usage](../../samples/Wholesale/IntegrationTests/Scenarios/RichAggregate/README.md) define this increment.
 
 ## Outcome and ownership
 
@@ -151,9 +151,9 @@ describe the independent D1.1 worktree.
   full loading, root fencing, explicit deletion and supported write boundary.
 - [Forward migration](../../samples/Wholesale/modules/Sales/Sales/Migrations/20261014171512_AddDraftOrderChildren.cs)
   and updated snapshot: only two new tables and native relationships/constraints.
-- [Domain proofs](../../samples/Wholesale/RichAggregateDemo.Tests/DomainTests.cs),
-  [consumer proofs](../../samples/Wholesale/RichAggregateDemo.Tests/OrderTests.cs) and
-  [fault/concurrency proofs](../../samples/Wholesale/RichAggregateDemo.Tests/OrderTests.Persistence.cs).
+- [Domain proofs](../../samples/Wholesale/IntegrationTests/DraftOrders/DomainTests.cs),
+  [consumer proofs](../../samples/Wholesale/IntegrationTests/DraftOrders/OrderTests.cs) and
+  [fault/concurrency proofs](../../samples/Wholesale/IntegrationTests/DraftOrders/OrderTests.Persistence.cs).
 
 D1.1 was owner-approved and checkpointed as `f55d803`. The earlier transfer preserved the
 owner's D1 comparison and both indexes while this increment remained under review. D2.1 later

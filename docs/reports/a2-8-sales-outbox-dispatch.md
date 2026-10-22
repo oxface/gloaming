@@ -11,7 +11,7 @@ The workflow executable has two optional roles. `setup-sales-dispatch` creates a
 login and grants against an already migrated outbox. `dispatch-sales` accepts only the dispatch
 and broker connections, verifies effective database privileges, passively checks the existing
 queues and runs the existing hosted worker with a context mapping only `sales.outbox_messages`.
-Its [consumer guide](../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md) contains
+Its [consumer guide](../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md) contains
 exact configuration, lifecycle and limitations.
 
 The dispatch context deliberately has no business mappings, tenant accessor, query filter or
@@ -93,14 +93,14 @@ preset changed. CI already includes this workflow project; no new project or lan
 
 Review-worthy files:
 
-- [Executable role composition](../../samples/Wholesale/WorkflowDemo/Program.cs),
-  [outbox-only context](../../samples/Wholesale/WorkflowDemo/SalesOutboxDbContext.cs) and
-  [finite role/grant setup and checks](../../samples/Wholesale/WorkflowDemo/SalesDispatchDatabase.cs).
-- [Native dispatch proofs](../../samples/Wholesale/WorkflowDemo.Tests/SalesDispatchTests.cs),
-  [startup/privilege controls](../../samples/Wholesale/WorkflowDemo.Tests/SalesDispatchTests.Startup.cs)
-  and [fixture composition](../../samples/Wholesale/WorkflowDemo.Tests/SalesDispatchProof.cs).
-- [Consumer guide](../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md),
-  [workflow entry point](../../samples/Wholesale/WorkflowDemo/README.md), root design/development
+- [Executable role composition](../../samples/Wholesale/Worker/Broker/BrokerHost.cs),
+  [outbox-only context](../../samples/Wholesale/Worker/Broker/SalesOutboxDbContext.cs) and
+  [finite role/grant setup and checks](../../samples/Wholesale/Worker/Broker/SalesDispatchDatabase.cs).
+- [Native dispatch proofs](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesDispatchTests.cs),
+  [startup/privilege controls](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesDispatchTests.Startup.cs)
+  and [fixture composition](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesDispatchProof.cs).
+- [Consumer guide](../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md),
+  [workflow entry point](../../samples/Wholesale/Worker/Broker/README.md), root design/development
   and current extraction status. The workflow guide also corrects an existing count: setup now
   creates five queues, including the retained reservation journey's routes.
 

@@ -8,7 +8,7 @@ to owner review; no staging, checkpoint commit or publication is performed for t
 
 ## Outcome
 
-The [local workflow executable](../../samples/Wholesale/LocalWorkflowDemo/README.md) delivers the
+The [local workflow executable](../../samples/Wholesale/Worker/Local/README.md) delivers the
 existing Sales reservation workflow through public Inventory and Sales intake Contracts without
 a broker. Modules retain separate databases and independent native transactions. The existing
 RabbitMQ workflow, business rules, migration identities and Gloaming implementations remain intact.
@@ -40,13 +40,13 @@ specific reliable handoff rather than making any in-process method call durable.
   and Sales' [outcome intake](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOutcomeIntake.cs)
   resolve fresh contexts through native IServiceScopeFactory. Their singleton registration retains
   no context, actor or tenant accessor. A sender's initialized operation is not reused.
-- The [relay publishers](../../samples/Wholesale/LocalWorkflowDemo/Delivery/ReservationPublishers.cs)
+- The [relay publishers](../../samples/Wholesale/Worker/Local/Delivery/ReservationPublishers.cs)
   depend only on public Contracts and the existing publisher/envelope contract. They map explicit V1
   routes and payloads to the public methods. Producer identity is fixed by each receiving entry point;
   no caller-controlled producer fallback or private-context service crosses the Contract.
-- [Composition](../../samples/Wholesale/LocalWorkflowDemo/LocalWorkflowComposition.cs) registers four existing
+- [Composition](../../samples/Wholesale/Worker/Local/LocalWorkflowComposition.cs) registers four existing
   native inbox/outbox workers, module databases and module registration extensions. Finite
-  [setup](../../samples/Wholesale/LocalWorkflowDemo/LocalWorkflowSetup.cs) applies existing migrations;
+  [setup](../../samples/Wholesale/Worker/Local/LocalWorkflowSetup.cs) applies existing migrations;
   ordinary startup requires setup and never creates or seeds business storage.
 
 Trusted host wiring assigns access to these integration entry points. They are not an authentication
@@ -55,7 +55,7 @@ admission is reused. No new external endpoint or authorization policy is implied
 
 ## Fresh proofs
 
-[Delivery tests](../../samples/Wholesale/LocalWorkflowDemo.Tests/DeliveryTests.cs) use PostgreSQL only:
+[Delivery tests](../../samples/Wholesale/IntegrationTests/Reservations/Local/DeliveryTests.cs) use PostgreSQL only:
 
 - Both-line success and second-line refusal followed by acknowledged compensation retain existing
   results. Physical OnHand is unchanged; successful reservations reduce availability.
@@ -74,7 +74,7 @@ admission is reused. No new external endpoint or authorization policy is implied
 - An intentionally simulated admitted compensation refusal leaves NeedsAttention and retained
   reserved stock. It does not pretend successful intake or repeated retries guarantee release.
 
-[Process proofs](../../samples/Wholesale/LocalWorkflowDemo.Tests/ProcessRecoveryTests.cs) launch and
+[Process proofs](../../samples/Wholesale/IntegrationTests/Reservations/Local/ProcessRecoveryTests.cs) launch and
 kill the actual executable, with no RabbitMQ fixture or connection. Temporary triggers in disposable
 databases hold native operations at three cuts:
 

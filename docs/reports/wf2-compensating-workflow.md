@@ -78,12 +78,12 @@ dispatch and scope behavior. Scheduling and poison handling remain separate futu
 - Owned Inventory/Sales contexts, registrations, additive migrations and current model snapshots:
   no previous migration was rewritten. Reservation receipts are owned business data, not new
   required projection participants or an extracted rebuilding capability.
-- [Native executable](../../samples/Wholesale/WorkflowDemo/Program.cs), routing/composition/pollers and
-  [usage](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md): existing workers and
+- [Native executable](../../samples/Wholesale/Worker/Broker/BrokerHost.cs), routing/composition/pollers and
+  [usage](../../samples/Wholesale/Worker/Broker/compensating-reservations.md): existing workers and
   explicit command/reply transport with intake commit before acknowledgement.
-- [Behavior proofs](../../samples/Wholesale/WorkflowDemo.Tests/ReservationTests.cs),
-  [transaction faults](../../samples/Wholesale/WorkflowDemo.Tests/ReservationFailureTests.cs),
-  [races/process recovery](../../samples/Wholesale/WorkflowDemo.Tests/ReservationRecoveryTests.cs),
+- [Behavior proofs](../../samples/Wholesale/IntegrationTests/Reservations/Broker/ReservationTests.cs),
+  [transaction faults](../../samples/Wholesale/IntegrationTests/Reservations/Broker/ReservationFailureTests.cs),
+  [races/process recovery](../../samples/Wholesale/IntegrationTests/Reservations/Broker/ReservationRecoveryTests.cs),
   fixture and extended database barrier. No new durable script or test project was needed.
 
 The [scope map](../plans/wf2-compensating-workflow.md) names all changed behavior. Existing CI

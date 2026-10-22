@@ -93,7 +93,7 @@ controls and [primary-source evidence](../../../docs/reports/tenant-authorizatio
 - [Independent PostgreSQL consumer](../tests/TenancyPostgresTests/ContextTests.cs): a plain
   DbContext, alternate schema/discriminator/setting, actual restricted login and unusual opaque
   key; commit/rollback, physical pool reuse, cancellation, missing requirements and server failure.
-- [Sales executable](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md): adopts this
+- [Sales executable](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md): adopts this
   extension in its explicit opt-in RLS composition. Its existing role/permission/raw/bulk/
   savepoint/retry/reconnect/COPY proofs now cross the public utility.
 - [Extraction scope](../../../docs/plans/a2-3-postgres-tenant-context.md) and

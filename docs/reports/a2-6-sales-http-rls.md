@@ -2,7 +2,7 @@
 
 Implemented for owner review on 2026-10-16 after the owner approved continuation on
 `feat/sales-postgres-rls`, starting from `635cb5b`. The [scope](../plans/a2-6-sales-http-rls.md)
-and [executable consumer guide](../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+and [executable consumer guide](../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 describe the bounded optional composition. All new changes remain unstaged.
 
 ## Outcome
@@ -111,14 +111,14 @@ its pre-edit snapshot, and all 24 changed/new files remain unstaged.
 
 - [Sales registration](../../samples/Wholesale/modules/Sales/Sales/SalesDatabase.cs) and
   [finite model selection](../../samples/Wholesale/modules/Sales/Sales/SalesRowSecurityModelCustomizer.cs).
-- [HTTP selection](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-  [transaction bridge](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/SalesReadTransaction.cs),
-  [draft endpoints](../../samples/Wholesale/HttpIdentityDemo/Endpoints/DraftOrderEndpoints.cs) and
-  [profile endpoint](../../samples/Wholesale/HttpIdentityDemo/Endpoints/CustomerProfileEndpoints.cs).
-- [Finite installer/catalog checks](../../samples/Wholesale/HttpIdentityDemo/SalesHttpRowSecurity.cs)
-  and [program modes](../../samples/Wholesale/HttpIdentityDemo/Program.cs).
-- [HTTP proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/RowSecurityTests.cs),
-  [restricted-role fixture](../../samples/Wholesale/HttpIdentityDemo.Tests/RowSecurityTests.Support.cs),
+- [HTTP selection](../../samples/Wholesale/Api/DemoComposition.cs),
+  [transaction bridge](../../samples/Wholesale/Api/HttpIntegration/SalesReadTransaction.cs),
+  [draft endpoints](../../samples/Wholesale/Api/Endpoints/DraftOrderEndpoints.cs) and
+  [profile endpoint](../../samples/Wholesale/Api/Endpoints/CustomerProfileEndpoints.cs).
+- [Finite installer/catalog checks](../../samples/Wholesale/Api/SalesHttpRowSecurity.cs)
+  and [program modes](../../samples/Wholesale/Api/Program.cs).
+- [HTTP proofs](../../samples/Wholesale/IntegrationTests/Api/RowSecurityTests.cs),
+  [restricted-role fixture](../../samples/Wholesale/IntegrationTests/Api/RowSecurityTests.Support.cs),
   [mapping validation](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/TenantRowSecurityExtensions.cs)
   and [fixed-width rejection](../../src/Gloaming.Persistence/tests/PostgresTests/DeclarationTests.cs).
 

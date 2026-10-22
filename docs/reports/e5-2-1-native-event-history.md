@@ -62,7 +62,7 @@ Both snapshots match their runtime models.
 The executable registers contexts/providers and tenancy explicitly, migrates, stages finite
 histories and saves each module through native EF. It calls business Contracts for reconstruction.
 Six existing durable fixture literals are reused unchanged; timestamps and Beta's doubled
-quantities are authored demo policy. [The guide](../../samples/Wholesale/EventPersistenceDemo/README.md)
+quantities are authored demo policy. [The guide](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md)
 records commands, expected output and setup limitations.
 
 | Read | Inventory | Purchasing |
@@ -150,9 +150,9 @@ and [order result](../../samples/Wholesale/modules/Purchasing/Purchasing.Contrac
 Then review [Inventory reader](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs)
 and [Purchasing reader](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
 with their native mappings and consumer evolution. Review
-[the executable recipe](../../samples/Wholesale/EventPersistenceDemo/DemoJourneys.cs),
-[PostgreSQL proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs)
-and [native command observation](../../samples/Wholesale/EventPersistenceDemo.Tests/QueryObservation.cs).
+[the executable recipe](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/DemoJourneys.cs),
+[PostgreSQL proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs)
+and [native command observation](../../samples/Wholesale/IntegrationTests/EventPersistence/QueryObservation.cs).
 Native migrations/snapshots, explicit registrations and finite seed helpers accompany those files.
 
 Read consistency assumes atomically committed append-only histories; arbitrary privileged

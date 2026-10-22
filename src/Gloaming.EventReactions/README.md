@@ -17,9 +17,9 @@ A consumer can compose PendingEvents into an existing class hierarchy, select a 
 request, or raise plain facts through IEventSink<TModule>. The generic tag selects subscriptions and
 the operation sink; it need not represent a module or impose a repository structure.
 
-The [standalone consumer](src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md) demonstrates a consumer-owned
+The [standalone consumer](samples/EventReactionsDemo/README.md) demonstrates a consumer-owned
 base class, a package-free immutable model and scoped non-entity sources. The
-[Sales consumer](../../samples/Wholesale/DomainEventsDemo/README.md) supplies private domain facts
+[Sales consumer](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) supplies private domain facts
 without making them framework types.
 
 ```sh

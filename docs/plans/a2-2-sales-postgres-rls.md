@@ -67,4 +67,4 @@ No middleware reordering, library source/interface, Tenancy-to-Access/FGA depend
 package, generic transaction framework or template preset is selected. Record actual results,
 remaining adoption proofs and extraction findings in the
 [slice report](../reports/a2-2-sales-postgres-rls.md); keep consumer instructions beside
-[the executable](../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md).
+[the executable](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md).

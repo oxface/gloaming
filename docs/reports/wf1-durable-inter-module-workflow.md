@@ -56,14 +56,14 @@ shared workflow mechanics.
 - [Inventory admission](../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueMessageAdmission.cs):
   additionally accepts the host-bound Sales producer while retaining the earlier demo producer.
   Existing stock Contracts, decisions, persistence and reply mapping were not changed.
-- [Executable host](../../samples/Wholesale/WorkflowDemo/Program.cs),
-  [composition](../../samples/Wholesale/WorkflowDemo/WorkflowComposition.cs),
-  [native broker adapter](../../samples/Wholesale/WorkflowDemo/WorkflowBroker.cs) and
-  [pollers](../../samples/Wholesale/WorkflowDemo/WorkflowPollingWorkers.cs): existing library
+- [Executable host](../../samples/Wholesale/Worker/Broker/BrokerHost.cs),
+  [composition](../../samples/Wholesale/Worker/Broker/WorkflowComposition.cs),
+  [native broker adapter](../../samples/Wholesale/Worker/Broker/WorkflowBroker.cs) and
+  [pollers](../../samples/Wholesale/Worker/Broker/WorkflowPollingWorkers.cs): existing library
   workers plus explicit transport/deadline policy. Finite setup/seed are separate from startup;
   missing tables/queues fail startup without provisioning them.
-- [Behavior proofs](../../samples/Wholesale/WorkflowDemo.Tests/WorkflowTests.cs),
-  [concurrency/process recovery](../../samples/Wholesale/WorkflowDemo.Tests/WorkflowRecoveryTests.cs),
+- [Behavior proofs](../../samples/Wholesale/IntegrationTests/Reservations/Broker/WorkflowTests.cs),
+  [concurrency/process recovery](../../samples/Wholesale/IntegrationTests/Reservations/Broker/WorkflowRecoveryTests.cs),
   fixture and database barrier: independent expected outcomes, failure constraints, observed
   database waits and actual killed/restarted executables. Reuses the existing child-process
   helper through a compile link; no new repository script.

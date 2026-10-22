@@ -1,10 +1,10 @@
 # D2.1c: registered domain-event integration and consumer cleanup
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
-Historical record: the owner subsequently authorized [EF1.1](../reports/ef1-1-capability-composition.md)
+Historical record: the owner subsequently authorized [EF1.1](ef1-1-capability-composition.md)
 common capability composition and clear-before-handling dispatch. That implementation supersedes
 retained sessions, Stage, owned transactions and completion enforcement described below. Source
 links now lead to replacements; test counts below remain dated evidence.
@@ -122,7 +122,7 @@ and full solution build/style/analyzer checks passed.
   [direct consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
   [mapped consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs),
   [DI isolation proof](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/RegistrationTests.cs) and
-  [Sales cascade/tenant/concurrency proofs](../../samples/Wholesale/DomainEventsDemo.Tests/ReactionTests.Faults.cs).
+  [Sales cascade/tenant/concurrency proofs](../../samples/Wholesale/IntegrationTests/Reactions/ReactionTests.Faults.cs).
 
 The new reusable capability proven here is scoped registration and context-independent adapter
 resolution around the existing lifecycle, with actual Sales reuse. The bounded dispatch algorithm

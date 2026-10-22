@@ -84,7 +84,7 @@ schema compatibility and restricted Sales. Old revision-only binaries must stop 
 | [Finite maintenance](../../src/Gloaming.Messaging/samples/InboxDemo/RenderInboxRetention.cs) and [CLI](../../src/Gloaming.Messaging/samples/InboxDemo/Program.cs) | Checked separate credentials, explicit policy inputs and one-batch execution. |
 | [HTTP operator](../../src/Gloaming.Messaging/samples/InboxDemo/RenderInboxOperations.cs) | Requires and logs receipt generation alongside observed revision under existing authorization. |
 | [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionTests.cs), [contract cases](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionContractTests.cs), [races](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionConcurrencyTests.cs) and [authority](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionAuthorityTests.cs) | Real storage/effects, observable lock races, generation reuse and native privilege/RLS controls. |
-| [Receiver upgrade](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/RetentionMigrationTests.cs), [module upgrades](../../samples/Wholesale/WorkflowDemo.Tests/OutboxMigrationTests.cs) and [process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/InboxRetentionProcessTests.cs) | Historical row preservation, actual CLI operation and killed-cleaner rollback/restart. |
+| [Receiver upgrade](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/RetentionMigrationTests.cs), [module upgrades](../../samples/Wholesale/IntegrationTests/Reservations/Broker/OutboxMigrationTests.cs) and [process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/InboxRetentionProcessTests.cs) | Historical row preservation, actual CLI operation and killed-cleaner rollback/restart. |
 | [Family contract](../../src/Gloaming.Messaging/docs/inbox-retention.md), package/sample guides and [ADR 0020](../adr/0020-inbox-expiry-and-receipt-generations.md) | Consumer setup, expiry/authority semantics, migration/deployment ordering and the chosen generation trade-off. |
 
 All three forward migrations backfill nonnull UUID receipt_id using gen_random_uuid() and
@@ -174,7 +174,7 @@ dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore
 ```
 
 The other final suite commands use the same no-build/no-restore invocation on their named

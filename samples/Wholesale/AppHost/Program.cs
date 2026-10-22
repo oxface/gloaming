@@ -32,7 +32,7 @@ if (useRowSecurity)
 }
 
 var api = builder
-    .AddProject("api", "../HttpIdentityDemo/HttpIdentityDemo.csproj", launchProfileName: null)
+    .AddProject("api", "../Api/Wholesale.Api.csproj", launchProfileName: null)
     .WithReference(access, connectionName: "Access")
     .WithHttpEndpoint(name: "http")
     .WithHttpsEndpoint(name: "https")
@@ -41,11 +41,7 @@ var api = builder
 
 // Optional finite command, not a startup dependency or seed reconciliation worker.
 var setup = builder
-    .AddProject(
-        "demo-setup",
-        "../HttpIdentityDemo/HttpIdentityDemo.csproj",
-        launchProfileName: null
-    )
+    .AddProject("demo-setup", "../Api/Wholesale.Api.csproj", launchProfileName: null)
     .WithReference(access, connectionName: "Access")
     .WithArgs(useRowSecurity ? "--initialize-rls-demo" : "--initialize-demo")
     .WaitFor(database)

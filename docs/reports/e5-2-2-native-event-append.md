@@ -74,7 +74,7 @@ that set or automatic DbContext event discovery.
 
 ## Executable usage and independent proofs
 
-[AppendJourneys](../../samples/Wholesale/EventPersistenceDemo/AppendJourneys.cs) visibly opens/
+[AppendJourneys](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/AppendJourneys.cs) visibly opens/
 drafts, saves and commits in separate module operations, then appends two facts per stream.
 Fresh-context business reads report stock version 3/on-hand 13 and order version 3/total 62.50.
 These command streams are separate from the earlier authored compatibility histories. The
@@ -148,8 +148,8 @@ and [purchase decisions](../../samples/Wholesale/modules/Purchasing/Purchasing/P
 with their evolution helpers. Then compare [Inventory staging](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs)
 and [Purchasing staging](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
 their native AppendFailures helpers, registration and tracked-header checks.
-[Caller composition](../../samples/Wholesale/EventPersistenceDemo/AppendJourneys.cs) and
-[PostgreSQL proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.cs) accompany them.
+[Caller composition](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/AppendJourneys.cs) and
+[PostgreSQL proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs) accompany them.
 
 This completes the implemented initial E5 read/append scope, pending owner review.
 [E5.3 model registration](e5-3-event-storage-registration.md) now extracts shared technical

@@ -1,9 +1,33 @@
 # S1: sample, experiment and archive consolidation
 
-Status: owner-requested pre-v1 work, 2026-10-22. Assessment/planning now; implementation,
-relocations and deletions require a concrete owner-reviewed map. No files are moved/deleted by
-this plan. The [closure audit](../reports/v1-slice-closure-audit.md) records the source inventory
-and important operational obligations that must survive consolidation.
+Status: owner-authorized pre-v1 implementation, 2026-10-22. Independent examples were first
+relocated beside their families. The selected Wholesale consolidation map below is now implemented;
+the [fresh report](../reports/s1-wholesale-consolidation.md) records verification and remaining
+integrated follow-ups. Archive retirement still follows the separate gate below. The
+[closure audit](../reports/v1-slice-closure-audit.md) records the source inventory and important
+operational obligations that must survive consolidation.
+
+## Selected Wholesale map
+
+| Previous projects | Canonical owner | Runtime/proof disposition |
+| --- | --- | --- |
+| `HttpIdentityDemo` / tests | `Api/Wholesale.Api.csproj`; `IntegrationTests/Api` | Actual HTTP host/admission, fixtures and assertions retained. Native Sales create/batch-line/submission routes expose former finite journey behavior; optional restricted RLS mode retains its original smaller capability scope. |
+| `WorkflowDemo` / tests | `Worker/Broker`; `IntegrationTests/Reservations/Broker` | One Worker assembly, same broker roles, restricted credentials and real infrastructure/process proofs. |
+| `LocalWorkflowDemo` / tests | `Worker/Local`; `IntegrationTests/Reservations/Local` | Same Worker assembly with explicit local transport selection; Contracts-only relays and process handoff cuts retained. |
+| `DddDemo` / tests | `IntegrationTests/Scenarios/Ddd`; `IntegrationTests/Domain` | Historical finite setup/journey support and all domain assertions; live Purchasing commands now available through Worker module operations. |
+| `RichAggregateDemo` / tests | `IntegrationTests/Scenarios/RichAggregate`; `IntegrationTests/DraftOrders` | All domain/relational-child/concurrency assertions; live lifecycle routes on Api. |
+| `DomainEventsDemo` / tests | `IntegrationTests/Scenarios/DomainEvents`; `IntegrationTests/Reactions` | Required local-reaction proofs preserved; product submission executes the live module reaction and reports rollback. |
+| `CqrsDemo` / tests | `IntegrationTests/Scenarios/Cqrs`; `IntegrationTests/Queries` | Query/filter/complete-page/snapshot and independent restricted-role RLS proofs preserved; native product API query routes retained. |
+| `EventPersistenceDemo` / tests | `IntegrationTests/Scenarios/EventPersistence`; `IntegrationTests/EventPersistence`; `Worker/Maintenance` | Fixture/history/append/broker/upcast assertions retained, including test-owned child-process journeys. Actual regeneration and Inventory/Purchasing commands live in Worker. |
+| `RuntimeComposition.Tests`, AppHost, ServiceDefaults and all modules | Existing owners | Canonical API project references updated. Real runtime/browser tests, module Contracts, persistence and migrations preserved. |
+
+Eight former product test projects become one `Wholesale.IntegrationTests` project with capability
+folders, one linked copy of each neutral fixture/process helper and unchanged historical fixture
+bytes. Five finite slice executables become test-owned scenario support; no product references it.
+Stock regeneration moves to the real Worker, rather than disappearing into tests. No new Gloaming
+interface/framework is selected. B2's concurrent Directory host/test work is integrated into these
+canonical owners after its independent checkpoint; archive retirement and generated-template
+integration remain coordinated root work after functional proof transfer.
 
 ## Target and timing
 

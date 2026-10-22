@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <InternalsVisibleTo Include="DddDemo.Tests" />
+    <InternalsVisibleTo Include="Wholesale.IntegrationTests" />
   </ItemGroup>
   <PropertyGroup>
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Purchasing</RootNamespace>

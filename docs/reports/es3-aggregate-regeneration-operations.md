@@ -17,12 +17,12 @@ cleanup, bounded recognized-conflict retries and typed progress/results. No new 
 dependency was added. Direct rebuilder callers retain caller-owned save/commit; ordinary
 reads and commands remain independent and strict about required current state.
 
-The [stock-position command](../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+The [stock-position command](../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 adopts the executor through Inventory's technical `StockPositionMaintenance` entry:
 
 ```sh
 WHOLESALE_DEMO_CONNECTION_STRING='<existing migrated PostgreSQL database>' \
-  dotnet run --project samples/Wholesale/EventPersistenceDemo -- \
+  dotnet run --project samples/Wholesale/Worker -- \
   --regenerate-stock rebuild-demo e5020000-0000-0000-0000-000000000001
 ```
 
@@ -134,9 +134,9 @@ executions are historical evidence, not additional tests added to the final coun
 - [AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs) and
   [RequiredInlineStateExtensions](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs): verified stale-capture classification and reuse of the exact private maintenance association.
 - [StockPositionMaintenance](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionMaintenance.cs) and
-  [CLI host](../../samples/Wholesale/EventPersistenceDemo/StockRegeneration.cs): domain-independent execution delegated to Gloaming; admission, retry values and presentation remain visible.
+  [CLI host](../../samples/Wholesale/Worker/Maintenance/StockRegeneration.cs): domain-independent execution delegated to Gloaming; admission, retry values and presentation remain visible.
 - [Independent proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegenerationTests.cs) and
-  [Wholesale proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/StockRegenerationTests.cs): actual failures, writers, scopes and process recovery.
+  [Wholesale proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/StockRegenerationTests.cs): actual failures, writers, scopes and process recovery.
 - Package/family docs, guide, reviewed scope, roadmap/design and ADR: supported behavior versus deferred work.
 
 Assumptions remain explicit: retained history must be complete/decodable and historical evolution

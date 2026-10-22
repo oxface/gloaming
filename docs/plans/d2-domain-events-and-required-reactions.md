@@ -14,7 +14,7 @@ and workflow primitives without a new Gloaming delivery engine or shared cross-m
 Date: 2026-10-14. The owner agreed this follow-up scope and asked to reconsider dispatch
 within SaveChanges, given the existing owning DbContext validation/staging obligations.
 The local increment is now prepared for review: [D2.1 scope](d2-1-local-domain-reactions.md),
-[executable usage](../../samples/Wholesale/DomainEventsDemo/README.md) and
+[executable usage](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) and
 [fresh evidence](../reports/d2-1-local-domain-reactions.md). Its sample-owned SaveChanges handling
 does not establish a generic dispatcher or universal write guard. D2.2 remains unimplemented.
 

@@ -63,7 +63,7 @@ Events:
   - 'src/Gloaming.Events/samples/EventCodecDemo{,.Tests}/**'
   - '!**/*.md'
 
-# EventPersistenceDemo composes event sourcing, messaging and accepted-change audit.
+# Wholesale composes event sourcing, messaging and accepted-change audit.
 # Its owning lanes include those dependencies and the module implementation paths.
 EventSourcing:
   - 'src/Gloaming.EntityFrameworkCore/**'
@@ -75,7 +75,7 @@ EventSourcing:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'src/Gloaming.EventSourcing/samples/EventStorageDemo{,.Tests}/**'
-  - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
+  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
@@ -89,18 +89,17 @@ Messaging:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'src/Gloaming.Messaging/samples/**'
-  - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
-  - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'
+  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
-  - 'samples/Wholesale/CqrsDemo{,.Tests}/**'
-  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,DomainEventsDemo,DomainEventsDemo.Tests,modules,ServiceDefaults}/**'
+  - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
+  - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
+  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
   - 'tests/Support/PostgreSqlFixture.cs'
-  - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'
   - '!**/*.md'
 
 template:

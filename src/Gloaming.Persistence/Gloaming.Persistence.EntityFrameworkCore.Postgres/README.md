@@ -147,7 +147,7 @@ Use the container environment in the [development guide](../../../docs/developme
 The [transaction refinement report](../../../docs/reports/a2-5-transaction-rls-simplification.md)
 records fresh evidence. The [earlier session implementation](../../../docs/reports/a2-4-ownership-rls-capability.md)
 and [reference research](../../../docs/reports/a2-4-rls-capability-reference-research.md) retain history.
-The [optional Sales HTTP composition](../../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+The [optional Sales HTTP composition](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 adopts this capability for six finite tables under separate restricted credentials. Its
 [report](../../../docs/reports/a2-6-sales-http-rls.md) records native varchar adoption and proofs.
 Default Wholesale HTTP/AppHost/worker/template rollout remains separate; the earlier opt-in

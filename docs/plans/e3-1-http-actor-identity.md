@@ -162,7 +162,7 @@ authentication. Missing credentials continue through native authorization/challe
 
 ## Executable consumer and template material
 
-Add a small `samples/Wholesale/HttpIdentityDemo` host without tenancy, EF or messaging. It
+Add a small `samples/Wholesale/Api` host without tenancy, EF or messaging. It
 uses editable native cookie/OIDC registration and configuration, a configured directory of
 known validated issuer/subject pairs mapped to stable application-user keys, and the recipe
 above. That directory is a consumer-owned fixture, not the later durable Access model.

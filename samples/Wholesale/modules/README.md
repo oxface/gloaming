@@ -4,12 +4,12 @@ The HTTP sample composes three populated module implementations through separate
 projects. The native event-history executable also composes Purchasing. These are
 consumer-owned sample/template projects, not reusable technical libraries.
 
-The separate [compensating reservation workflow](../WorkflowDemo/compensating-reservations.md)
+The separate [compensating reservation workflow](../Worker/Broker/compensating-reservations.md)
 adds Inventory-owned reservation receipts and available-stock decisions, plus Sales-owned
 two-line process state and compensation attempts. Both contexts commit independently using
 their existing inbox/outbox; implementations still communicate only through Contracts.
 
-The [local workflow executable](../LocalWorkflowDemo/README.md) runs the same business process
+The [local workflow executable](../Worker/Local/README.md) runs the same business process
 without RabbitMQ. Inventory and Sales expose typed durable intake Contracts whose successful calls
 mean committed receipt. Each intake uses a fresh module-owned scope; relays never access receiver
 contexts. Sales.Contracts explicitly references Inventory.Contracts for Inventory-owned outcome types.
@@ -26,12 +26,12 @@ or the HTTP host. Contracts contain domain keys, query/command interfaces and im
 they expose no EF, HTTP or technical context types. Rows and query implementations are internal.
 Inventory stores the canonical Organization key without a cross-module database FK.
 
-The [host](../HttpIdentityDemo/DemoComposition.cs) registers each native DbContext/provider
+The [host](../Api/DemoComposition.cs) registers each native DbContext/provider
 explicitly, calls `AddAccessQueries()` / `AddInventoryQueries()` / `AddCustomerProfiles()` to bind internal
 implementations, and separately registers its HTTP resolvers. Business
-[endpoints](../HttpIdentityDemo/Endpoints/OrganizationEndpoints.cs) call only business
+[endpoints](../Api/Endpoints/OrganizationEndpoints.cs) call only business
 Contracts. Actor/provider mapping, Organization admission metadata and selection helpers
-live in the host's [HTTP integration](../HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs).
+live in the host's [HTTP integration](../Api/HttpIntegration/OrganizationTenantResolver.cs).
 
 [Access administration](Access/README.md) adds `AddMembershipAdministration()` and narrow
 consumer Contracts. The global registry remains independent of current tenancy for identity
@@ -51,7 +51,7 @@ The schema permits the same SKU in multiple Organizations through an Organizatio
 index. Availability is a small state-stored demonstration view; reservation commands and an
 authoritative event-sourced stock model are not established here.
 
-[Host setup and endpoints](../HttpIdentityDemo/README.md),
+[Host setup and endpoints](../Api/README.md),
 [the E3.4 plan](../../../docs/plans/e3-4-persisted-business-ingress.md) and
 [the report](../../../docs/reports/e3-4-persisted-business-ingress.md) record adoption, proofs
 and remaining limits. [E3.5](../../../docs/reports/e3-5-profile-mutation.md) adds the Sales mutation.
@@ -68,7 +68,7 @@ Materialized template/CLI output remains E10.
 
 ## DDD sample patterns
 
-[DddDemo](../DddDemo/README.md) compares Sales's immutable state-stored customer profile with
+[DddDemo](../IntegrationTests/Scenarios/Ddd/README.md) compares Sales's immutable state-stored customer profile with
 Purchasing's existing event-sourced purchase order. Sales owns a validated profile-details
 value and builds a complete replacement candidate before changing either native row. Finite
 setup constructs a valid version-1 profile before tracking; it is not a production creation API.
@@ -84,7 +84,7 @@ and the decision that no new reusable mechanism or template preset was establish
 
 ## Required local submission reactions
 
-[DomainEventsDemo](../DomainEventsDemo/README.md) adds draft submission and a separate Sales-owned
+[DomainEventsDemo](../IntegrationTests/Scenarios/DomainEvents/README.md) adds draft submission and a separate Sales-owned
 customer order allowance. An accepted submission carries a private domain fact; its required
 handler invokes the allowance's reserve decision. Owning-context SaveChanges stages that work
 before validation, and both aggregates persist in the caller's native transaction. Explicit
@@ -97,7 +97,7 @@ remain separate capabilities.
 
 ## Rich state-stored Sales draft
 
-[RichAggregateDemo](../RichAggregateDemo/README.md) adds a Sales-owned draft order with relational
+[RichAggregateDemo](../IntegrationTests/Scenarios/RichAggregate/README.md) adds a Sales-owned draft order with relational
 line children and an immutable total limit supplied by a trusted caller. The root controls child
 add/change/remove and validates the complete candidate. A customer identity references the separate
 Sales profile; a catalog SKU references Inventory through its Contracts, with no private peer query
@@ -126,7 +126,7 @@ Revisit transfer/replay only for a concrete consumer need.
 
 ## Durable stock-issue progress
 
-[WF1 executable usage](../WorkflowDemo/README.md) adds a Sales-owned request that sends the
+[WF1 executable usage](../Worker/Broker/README.md) adds a Sales-owned request that sends the
 existing Inventory `IssueStockV1` command and resolves its success/refusal reply. Sales owns
 request identity, deadline, outcome matching and semantic idempotency; Inventory owns the stock
 decision. Sales references Inventory.Contracts and never Inventory's implementation or private
@@ -173,7 +173,7 @@ there is no context discovery or automatic schema population. Existing snapshots
 were preserved by E5.3. E6.1 adds native forward migrations for the three required inline views;
 existing history and availability data remain intact.
 
-[The native executable](../EventPersistenceDemo/README.md) exercises both modules independently
+[The native executable](../IntegrationTests/Scenarios/EventPersistence/README.md) exercises both modules independently
 of HTTP and messaging. Its read consistency assumptions and error boundaries are documented
 there. The existing HTTP application continues to use Inventory's state-stored catalog and
 now applies the forward Inventory migration; it registers no history queries. Sales and Access
@@ -282,5 +282,5 @@ not Inventory authorization or stock eligibility.
 
 Operational selection can span this module's tenant queue, but business access occurs only
 after admission. No peer DbContext, shared cross-module transaction or automatic domain-event
-publisher is introduced. [Executable adoption](../EventPersistenceDemo/README.md#durable-stock-issue-command-intake)
+publisher is introduced. [Executable adoption](../IntegrationTests/Scenarios/EventPersistence/README.md#durable-stock-issue-command-intake)
 and [library setup](../../../src/Gloaming.Messaging/docs/inbox.md) describe the explicit lanes.

@@ -176,8 +176,8 @@ semantics remain visible in the sample. Additional helpers must earn their inter
 
 ## Separate worker composition
 
-[W1's native host](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) composes the existing library
-workers outside an [API-only producer](../src/Gloaming.Messaging/samples/MessagingProducerDemo/README.md).
+[W1's native host](../samples/MessagingWorkerDemo/README.md) composes the existing library
+workers outside an [API-only producer](../samples/MessagingProducerDemo/README.md).
 Explicit setup applies the existing module migrations and declares the durable queue; worker
 startup only checks its required tables/queue. Dispatch, broker intake and local processing
 are separate roles. Processing needs only its receiving module's connection. The host owns
@@ -228,12 +228,12 @@ replay follow from the existing envelope/outbox. Revisit implementation only for
 receiver need; B2 snapshot/bootstrap remains separate.
 
 Durable workflows begin with module-owned state and the existing messaging contracts. The
-[WF1 stock-issue consumer](../../../samples/Wholesale/WorkflowDemo/README.md) demonstrates
+[WF1 stock-issue consumer](../../../samples/Wholesale/Worker/Broker/README.md) demonstrates
 persisted request/reply progress, native EF request concurrency, semantic idempotency and
 overdue-state recovery. These are consumer policies composed with inbox/outbox, not a supplied
 saga engine or scheduler; see its separate dated report for the proven behavior.
 
-[WF2's reservation saga](../../../samples/Wholesale/WorkflowDemo/compensating-reservations.md)
+[WF2's reservation saga](../../../samples/Wholesale/Worker/Broker/compensating-reservations.md)
 adds sequential steps and an actual compensating release across separate module commits.
 The optional [durable continuation runner](workflows.md) now owns provided process storage,
 requested IDs, semantic reply matching, selected-method execution and atomic request enqueue.

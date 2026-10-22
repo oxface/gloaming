@@ -3,7 +3,7 @@
 Date: 2026-10-14. Scope authorized by the owner after the D1 recommendation.
 Implementation and evidence remain subject to owner review; no library promotion is selected.
 [Implementation and fresh verification](../reports/d1-ddd-sample-patterns.md) are now prepared
-for that review, with [executable consumer usage](../../samples/Wholesale/DddDemo/README.md).
+for that review, with [executable consumer usage](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/README.md).
 
 ## One bounded outcome
 

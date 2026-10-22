@@ -37,6 +37,6 @@ presets, grant administration, creation/submission adoption, automatic policy sc
 external poolers and provider failover remain separate. No new public Gloaming interface,
 Tenancy-to-Access/FGA dependency or transaction execution framework is selected.
 
-The [consumer guide](../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+The [consumer guide](../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 contains executable setup. The [report](../reports/a2-6-sales-http-rls.md) records current
 verification, review-worthy files and limitations.

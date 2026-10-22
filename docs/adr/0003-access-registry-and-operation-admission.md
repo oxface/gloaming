@@ -46,5 +46,5 @@ authorization need separate review. Assembly-level module isolation and persiste
 ingress remain E3.4 work. No reusable Access library is justified by this consumer alone.
 
 See [the approved plan](../plans/e3-3-persisted-access.md),
-[consumer setup](../../samples/Wholesale/HttpIdentityDemo/README.md) and
+[consumer setup](../../samples/Wholesale/Api/README.md) and
 [execution report](../reports/e3-3-persisted-access.md).

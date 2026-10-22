@@ -95,9 +95,9 @@ dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
-dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore -- --filter-class '*DispatchTests'
-dotnet test --project samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj --no-build --no-restore
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore -- --filter-class '*DispatchTests'
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore

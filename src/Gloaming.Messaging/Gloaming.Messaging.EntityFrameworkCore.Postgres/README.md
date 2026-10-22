@@ -71,7 +71,7 @@ renewal, automatic pruning or exactly-once promise. Consumer-selected stop polic
 AddPostgresOutboxDeadLetters provide bounded List/Get and identity-preserving Retry. See
 [outbox recovery, supervision and schema/grant obligations](../docs/outbox-recovery.md), the
 [supported and deferred contract](../docs/capabilities.md) and actual
-[Inventory RabbitMQ publisher](../../../samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs).
+[Inventory RabbitMQ publisher](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InventoryRabbitMqPublisher.cs).
 
 `await database.ReadPostgresOutboxBacklogAsync(routeKey, cancellationToken)` reads aggregate
 counts and oldest eligible age using one database statement time on a fresh independent context.
