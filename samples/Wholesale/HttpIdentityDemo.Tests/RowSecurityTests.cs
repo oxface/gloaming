@@ -143,6 +143,10 @@ public sealed partial class CompositionTests
             await proof.ScalarAsync<bool>(
                 """
                 SELECT (SELECT count(*) FROM sales.audit_entries) = 1
+                    AND (SELECT count(*) FROM sales.outbox_messages) = 1
+                    AND EXISTS (SELECT 1 FROM sales.outbox_messages
+                        WHERE owner_key = 'wholesale-alpha' AND message_name = 'sales.customer-delivery-state'
+                            AND (payload->>'revision')::bigint = 2)
                     AND EXISTS (SELECT 1 FROM sales.audit_entries WHERE tenant_key = 'wholesale-alpha'
                         AND actor_kind = 2 AND actor_key = 'application-alpha' AND action = 'customer-profile.changed'
                         AND (details->>'PreviousVersion')::bigint = 1 AND (details->>'Version')::bigint = 2)
