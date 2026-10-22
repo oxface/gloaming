@@ -48,6 +48,7 @@ internal sealed class CustomerDeliveryDirectory(
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(limit, 1);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(limit, 500);
+
         _ = database.RequiredOrganizationKey;
         var query =
             from customer in database.Customers.AsNoTracking()
@@ -75,6 +76,7 @@ internal sealed class CustomerDeliveryDirectory(
     {
         ArgumentNullException.ThrowIfNull(customer);
         RequireHuman();
+
         var profile = CustomerProfileAggregate
             .Create(
                 customer.CustomerId,
@@ -119,6 +121,7 @@ internal sealed class CustomerDeliveryDirectory(
         ArgumentOutOfRangeException.ThrowIfLessThan(expectedRevision, 1);
         ArgumentOutOfRangeException.ThrowIfEqual(expectedRevision, long.MaxValue);
         RequireHuman();
+
         await using var transaction = await database.Database.BeginTransactionAsync(token);
         var customer = await database.Customers.SingleOrDefaultAsync(
             row => row.Id == customerId,

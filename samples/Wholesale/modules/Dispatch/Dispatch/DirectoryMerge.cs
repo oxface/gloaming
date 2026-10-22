@@ -9,8 +9,7 @@ internal static class DirectoryMerge
     {
         ArgumentNullException.ThrowIfNull(state);
 
-        if (organization is not ("wholesale-alpha" or "wholesale-beta"))
-            throw new InvalidDataException("Dispatch has not admitted this Organization.");
+        DirectoryAdmission.Require(organization);
 
         if (
             state.CustomerId == Guid.Empty
@@ -47,6 +46,7 @@ internal static class DirectoryMerge
     )
     {
         Validate(organization, state);
+
         var row = await database.Customers.SingleOrDefaultAsync(
             row => row.Organization == organization && row.CustomerId == state.CustomerId,
             token

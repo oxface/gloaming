@@ -173,6 +173,7 @@ internal sealed class DirectoryProof : IAsyncDisposable
     internal async Task DrainAsync(CancellationToken token)
     {
         while (await DispatchAsync(token) != OutboxDispatchResult.NoWork) { }
+
         while (await ProcessAsync(token) != InboxProcessingResult.NoWork) { }
     }
 

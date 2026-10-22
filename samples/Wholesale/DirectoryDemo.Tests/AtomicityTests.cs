@@ -37,6 +37,7 @@ public sealed class AtomicityTests(PostgreSqlFixture postgres) : IClassFixture<P
             )
         )
             await command.ExecuteNonQueryAsync(Token);
+
         var apply = proof.ApplyAsync(progress, page, Token);
         var process = proof.ProcessAsync(Token);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
@@ -49,6 +50,7 @@ public sealed class AtomicityTests(PostgreSqlFixture postgres) : IClassFixture<P
             ) < 2
         )
             await Task.Delay(20, deadline.Token);
+
         await transaction.CommitAsync(Token);
         await apply;
         Assert.Equal(InboxProcessingResult.Processed, await process);

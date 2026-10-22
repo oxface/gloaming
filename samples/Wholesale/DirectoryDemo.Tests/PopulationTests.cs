@@ -159,6 +159,7 @@ public sealed class PopulationTests(PostgreSqlFixture postgres) : IClassFixture<
             )
         )
             await command.ExecuteNonQueryAsync(Token);
+
         var edit = proof.EditAsync(first, "Late commit", Token);
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
         deadline.CancelAfter(TimeSpan.FromSeconds(15));
@@ -170,6 +171,7 @@ public sealed class PopulationTests(PostgreSqlFixture postgres) : IClassFixture<
             ) == 0
         )
             await Task.Delay(20, deadline.Token);
+
         progress = await proof.ApplyAsync(
             progress,
             await proof.PageAsync(progress.After, 100, Token),

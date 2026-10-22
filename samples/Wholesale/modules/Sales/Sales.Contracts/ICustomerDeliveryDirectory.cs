@@ -1,11 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
 // Sales owns this whole-state contract. Revision is the profile's explicitly published
 // directory revision, including withdrawal/relisting. Keys are never physically removed/reused.
 public sealed record CustomerDeliveryState(
-    Guid CustomerId,
-    long Revision,
-    bool Listed,
+    [property: JsonRequired] Guid CustomerId,
+    [property: JsonRequired] long Revision,
+    [property: JsonRequired] bool Listed,
     string? Code,
     string? DisplayName,
     string? AddressLine

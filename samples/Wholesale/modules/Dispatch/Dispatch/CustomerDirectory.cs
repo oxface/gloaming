@@ -13,8 +13,7 @@ internal sealed class CustomerDirectory(DispatchDbContext database, ITenantConte
         get
         {
             string organization = tenancy.Current.RequireTenant().Value;
-            if (organization is not ("wholesale-alpha" or "wholesale-beta"))
-                throw new InvalidDataException("Dispatch has not admitted this Organization.");
+            DirectoryAdmission.Require(organization);
 
             return organization;
         }
@@ -47,6 +46,7 @@ internal sealed class CustomerDirectory(DispatchDbContext database, ITenantConte
     )
     {
         ArgumentNullException.ThrowIfNull(page);
+
         if (
             page.Organization != Organization
             || page.Entries.Count > 500
@@ -90,6 +90,7 @@ internal sealed class CustomerDirectory(DispatchDbContext database, ITenantConte
     )
     {
         ArgumentNullException.ThrowIfNull(text);
+
         string organization = Organization;
         if (!(await ProgressAsync(token)).Ready)
             throw new InvalidOperationException("The Dispatch directory is still populating.");

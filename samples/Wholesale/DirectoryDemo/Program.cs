@@ -41,6 +41,7 @@ string organization = builder.Configuration["Organization"] ?? "wholesale-alpha"
 if (role == "populate")
 {
     while (!await DirectoryComposition.CopyNextAsync(host.Services, organization, token)) { }
+
     return;
 }
 

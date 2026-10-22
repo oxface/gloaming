@@ -21,6 +21,11 @@ same transaction. Rejected saves cannot commit the business state without public
 This is not a generic aggregate revision convention. No timestamps or allocated message
 sequences establish ordering or completeness.
 
+Customer identity, revision and `Listed` are required JSON members. The relay and retained
+inbox handler reject an omitted discriminator before it can become a withdrawal or advance
+the permanent revision fence. Listed state requires all public text; withdrawn state omits it.
+The hard-to-reverse protocol choices are recorded in [ADR 0022](../../../../docs/adr/0022-dispatch-directory-complete-state-population.md).
+
 Names and addresses are deliberately disclosed to the admitted Dispatch module. The migration
 lists existing profiles by default; withdrawing removes their public fields and search result,
 while Sales keeps its private profile and permanent public revision fence. Relisting advances

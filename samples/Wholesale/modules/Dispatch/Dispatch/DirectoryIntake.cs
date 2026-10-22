@@ -11,7 +11,6 @@ namespace ModulithFoundry.Samples.Wholesale.Dispatch;
 internal sealed class DirectoryIntake(IServiceScopeFactory scopes) : ICustomerDirectoryIntake
 {
     internal static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-    internal const string Subscription = "dispatch.customer-directory";
 
     public async Task ReceiveAsync(
         Guid messageId,
@@ -21,6 +20,7 @@ internal sealed class DirectoryIntake(IServiceScopeFactory scopes) : ICustomerDi
     )
     {
         DirectoryMerge.Validate(organization, state);
+
         await using var scope = scopes.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<DispatchDbContext>();
         await using var transaction = await database.Database.BeginTransactionAsync(token);
@@ -29,7 +29,7 @@ internal sealed class DirectoryIntake(IServiceScopeFactory scopes) : ICustomerDi
         await scope
             .ServiceProvider.GetRequiredService<IInbox<DispatchDbContext>>()
             .ReceiveAsync(
-                Subscription,
+                DispatchRegistration.DirectorySubscription,
                 new IncomingMessage(
                     messageId,
                     "sales",

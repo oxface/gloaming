@@ -86,7 +86,7 @@ processor, copy and search. No mocked source/receiver DbContexts establish these
 | Atomic handler effects/receipt | `InboxCompletionFailureRollsBackAppliedStateAndRetainedDeliveryRetries`: trigger rejects receipt completion after handler save; state/receipt roll back; scheduled retry succeeds. |
 | Atomic source mutation/publication | `RejectedSourceSaveCannotCommitProfileWithoutItsPublicUpdate`: outbox insert failure rolls back earlier customer/address/audit saves. |
 
-Final new B2 run: **12 passed, 0 failed, 0 skipped** (10.6 seconds), SDK 10.0.401,
+Initial implementation B2 run: **12 passed, 0 failed, 0 skipped** (10.6 seconds), SDK 10.0.401,
 .NET 10.0.12, PostgreSQL 18.6, local Podman socket. Slice build passed with zero warnings/errors.
 The first fault-retry test assumed immediate eligibility; it was corrected to observe existing
 Gloaming backoff before retry. A stronger page-order guard also required correcting a stale
@@ -102,6 +102,69 @@ including restricted-role profile/outbox commit and historical migration preserv
 CSharpier checked all 32 slice C#/project files including generated artifacts. Local
 documentation links and whitespace checks passed; the initial empty index was
 preserved until the explicitly preapproved coherent commit staging.
+
+## Review corrections and fresh verification
+
+### Standards findings
+
+The reported statement-spacing omissions were valid. Guards in Sales's directory methods,
+Dispatch search/merge/intake, and independent statements after the demo/proof loops and native
+test control-flow blocks now have the required blank lines. CSharpier preserves those manual
+separators. No repository-wide formatting or root solution/CI changes were made.
+
+The duplicated Organization allowlist and subscription constant were also valid maintenance
+findings. Both operation admission and incoming state validation now call Dispatch's private
+`DirectoryAdmission.Require`; intake uses the existing public
+`DispatchRegistration.DirectorySubscription`. These changes keep policy in the consumer.
+
+The durable protocol choices were documented in the plan/guide but lacked the required focused
+architecture record. [ADR 0022](../adr/0022-dispatch-directory-complete-state-population.md)
+now records complete-state profile revisions, permanent source/receiver tombstones, no physical
+deletion or ID reuse, capture before export, and eventual baseline readiness. It explicitly
+distinguishes the selected B2 protocol from the rejected B1 writer gate/feed.
+
+### Spec findings
+
+The missing `Listed` discriminator was a correctness defect. System.Text.Json could decode
+`{"customerId":"80000000-0000-0000-0000-000000000001","revision":999}` as a valid
+withdrawal with default `Listed=false` and null text. Processing could remove an existing
+listed customer and permanently advance its fence. `CustomerDeliveryState` now marks identity,
+revision and `Listed` as required JSON members; the existing value validation still enforces
+the conditional listed/withdrawn text shape. Both relay and handler use that same wire Contract.
+
+Two new PostgreSQL proofs retain literal malformed JSON and start with an already ready,
+listed revision-1 customer and completed valid delivery:
+
+- `RelayRejectsOmittedListedWithoutAcceptingOrCompletingDelivery`: actual retained source
+  outbox dispatch throws `JsonException`, remains pending and creates no receiver receipt.
+- `DurableIntakeWithOmittedListedCannotAdvanceStateOrCompleteItsReceipt`: independently
+  retained wire intake reaches the real processor, fails decoding and remains unprocessed.
+
+Both assert that the existing identity, code/name/address, listed revision, durable population
+progress and prior completion count stay unchanged. This verifies rejection before the
+permanent fence can advance, rather than checking deserialization alone.
+
+Fresh corrected suite: **14 passed, 0 failed, 0 skipped** (13.6 seconds), SDK 10.0.401,
+.NET 10.0.12 and PostgreSQL 18.6 with separate source/receiver databases on local Podman.
+The first new relay proof needed an explicit native transaction around its setup enqueue;
+the corrected proof uses the actual outbox contract. An initial sandbox run could not bind
+the test runner's IPC socket; the successful run had local socket access. These are fresh
+post-review proofs, distinct from the earlier 12-test and 13-test HTTP results above.
+
+Commands from the repository root:
+
+```sh
+dotnet build samples/Wholesale/DirectoryDemo.Tests/DirectoryDemo.Tests.csproj --no-restore --disable-build-servers -m:1 -v minimal
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock TESTCONTAINERS_RYUK_DISABLED=true dotnet test --project samples/Wholesale/DirectoryDemo.Tests/DirectoryDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+dotnet csharpier check samples/Wholesale/DirectoryDemo.Tests samples/Wholesale/DirectoryDemo/Program.cs samples/Wholesale/modules/Dispatch/Dispatch samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerDeliveryDirectory.cs samples/Wholesale/modules/Sales/Sales/CustomerDeliveryDirectory.cs
+git diff --check
+```
+
+Build passed with zero warnings/errors; CSharpier checked all 17 files selected by the command.
+The empty staged snapshot remains unchanged; all review corrections are unstaged.
+Review-worthy additions are the wire Contract, `WireContractTests`, `DirectoryAdmission` and
+ADR 0022. No new reusable mechanism was proven; the existing library, template and remaining
+product findings below still apply.
 
 ## Extraction and product findings
 
@@ -123,7 +186,7 @@ module-owned projects, suitable for that consolidation. No library references sa
 Review-worthy files are Sales.Contracts/ICustomerDeliveryDirectory.cs; Sales's public-state
 publication and existing profile transaction; Sales listing migration/model; Dispatch.Contracts;
 Dispatch merge/population/intake; native Dispatch migration; DirectoryDemo relay/composition;
-12 PostgreSQL tests; and the finite HTTP source RLS/migration compatibility changes.
+14 PostgreSQL tests; and the finite HTTP source RLS/migration compatibility changes.
 
 Remaining gaps: source-head/catch-up barriers and monitoring, externally authenticated
 transport, subscriber fanout, receipt/outbox/tombstone cleanup and capacity policy, source
