@@ -66,7 +66,7 @@ existing receiver dependency; install that shared framework even though it expos
   serialization/deadlock failures stop at three recorded failures; conflicts/unclassified
   failures are dead-lettered immediately. Counts and dead-letter state survive process restarts. A killed attempt
   may leave no count. The optional [InboxDemo operator host](../InboxDemo/README.md#failed-work-and-authorized-operator-retry)
-  can use the same receiving database for authenticated, revision-conditional retry. The worker
+  can use the same receiving database for authenticated, receipt-generation/revision-conditional retry. The worker
   itself exposes no operator endpoint. Apply the forward migration with old processors stopped;
   see [the complete recovery contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md).
 - Rendering registration explicitly selects native StopHost supervision. An
@@ -175,3 +175,14 @@ kills dispatch/processing at native barriers, and recovers through replacement r
 lease expiry. Keep compatible readers deployed when rolling a producer back to v1. Reader
 downgrade, retention and deployment coordination remain consumer obligations; see the
 [schema compatibility contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md).
+
+## Inbox receipt maintenance
+
+Processing hosts retain receipts until separately authorized maintenance removes eligible
+processed work. [InboxDemo --cleanup](../InboxDemo/README.md#processed-inbox-cleanup) is one finite
+consumer command with separate metadata-only DELETE credentials, explicit cutoff and batch.
+Consumer infrastructure owns its schedule; do not add DELETE to processing/intake/operator
+credentials or silently prune during processing. Pending/processing/dead-lettered work remains.
+After receipt deletion an old broker delivery can execute again; retain semantic business
+idempotency where required. ReceiptId/revision pairs prevent saved operator requests from
+retrying a later receipt generation. Upgrade all intake/operator binaries before enabling cleanup.

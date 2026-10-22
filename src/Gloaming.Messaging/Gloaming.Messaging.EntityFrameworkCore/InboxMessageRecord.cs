@@ -16,6 +16,9 @@ public sealed class InboxMessageRecord
     /// <summary>Stable delivery identity, part of the delivery key.</summary>
     public Guid MessageId { get; private set; }
 
+    /// <summary>Immutable receipt generation; a new intake after deletion gets a new value.</summary>
+    public Guid ReceiptId { get; private set; }
+
     /// <summary>Wire payload contract alias.</summary>
     public string MessageName { get; private set; } = null!;
 
@@ -52,7 +55,7 @@ public sealed class InboxMessageRecord
     /// <summary>Monotonic revision of committed failure, completion and operator retry transitions.</summary>
     public long Revision { get; private set; }
 
-    /// <summary>Lifetime committed observations of failed local work; excludes cancellation and unrecorded crashes.</summary>
+    /// <summary>Committed failure observations in this receipt generation; excludes cancellation and unrecorded crashes.</summary>
     public long FailureCount { get; private set; }
 
     /// <summary>Confirmed failures since the latest applied operator retry.</summary>

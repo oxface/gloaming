@@ -51,13 +51,21 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
     private static async Task<InboxRetryResult> RetryAsync(
         ServiceProvider provider,
         IncomingMessage message,
+        Guid receiptId,
         long revision
     )
     {
         await using var scope = provider.CreateAsyncScope();
         return await scope
             .ServiceProvider.GetRequiredService<IInboxDeadLetters<InboxConsumer>>()
-            .RetryAsync("render", message.ProducerKey, message.MessageId, revision, Token);
+            .RetryAsync(
+                "render",
+                message.ProducerKey,
+                message.MessageId,
+                receiptId,
+                revision,
+                Token
+            );
     }
 
     private static async Task<InboxMessageRecord> ReadAsync(string connection, Guid messageId)
@@ -139,11 +147,11 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         );
         Assert.Equal(
             InboxRetryResult.Retried,
-            await RetryAsync(restarted, message, stopped.Revision)
+            await RetryAsync(restarted, message, stopped.ReceiptId, stopped.Revision)
         );
         Assert.Equal(
             InboxRetryResult.NotApplied,
-            await RetryAsync(restarted, message, stopped.Revision)
+            await RetryAsync(restarted, message, stopped.ReceiptId, stopped.Revision)
         );
         var retried = await ReadAsync(connection, message.MessageId);
         Assert.Null(retried.DeadLetteredAt);
@@ -164,9 +172,12 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(1, again.FailuresSinceRedrive);
         Assert.Equal(
             InboxRetryResult.NotApplied,
-            await RetryAsync(changed, message, stopped.Revision)
+            await RetryAsync(changed, message, stopped.ReceiptId, stopped.Revision)
         );
-        Assert.Equal(InboxRetryResult.Retried, await RetryAsync(changed, message, again.Revision));
+        Assert.Equal(
+            InboxRetryResult.Retried,
+            await RetryAsync(changed, message, again.ReceiptId, again.Revision)
+        );
         handler.OnHandle = null;
         Assert.Equal(InboxProcessingResult.Processed, await ProcessAsync(changed));
         var completed = await ReadAsync(connection, message.MessageId);
@@ -188,7 +199,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(InboxReceiveResult.AlreadyReceived, await ReceiveAsync(changed, message));
         Assert.Equal(
             InboxRetryResult.NotApplied,
-            await RetryAsync(changed, message, completed.Revision)
+            await RetryAsync(changed, message, completed.ReceiptId, completed.Revision)
         );
         await using var read = Context(connection);
         Assert.Single(await read.Set<HandledItem>().ToArrayAsync(Token));
@@ -268,7 +279,15 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Assert.Equal(PostgresErrorCodes.LockNotAvailable, blocked.SqlState);
             Assert.Equal(InboxProcessingResult.NoWork, await ProcessAsync(provider));
             // A currently nonquarantined row is inapplicable; no authority to interrupt its processor.
-            Assert.Equal(InboxRetryResult.NotApplied, await RetryAsync(provider, message, 0));
+            Assert.Equal(
+                InboxRetryResult.NotApplied,
+                await RetryAsync(
+                    provider,
+                    message,
+                    (await ReadAsync(connection, message.MessageId)).ReceiptId,
+                    0
+                )
+            );
             handler.OnHandle = null;
             var unrelated = Message();
             await ReceiveAsync(provider, unrelated);
@@ -305,8 +324,8 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await using var owner = Context(connection);
         await using var transaction = await owner.Database.BeginTransactionAsync(Token);
         await owner.Database.ExecuteSqlRawAsync("SELECT 1 FROM receiver.inbox FOR UPDATE", Token);
-        var first = RetryAsync(provider, message, stopped.Revision);
-        var second = RetryAsync(provider, message, stopped.Revision);
+        var first = RetryAsync(provider, message, stopped.ReceiptId, stopped.Revision);
+        var second = RetryAsync(provider, message, stopped.ReceiptId, stopped.Revision);
         await WaitAsync(async () =>
         {
             await using var observer = Context(connection);
@@ -441,24 +460,27 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         var recovery = scope.ServiceProvider.GetRequiredService<IInboxDeadLetters<InboxConsumer>>();
         database.Add(new HandledItem { Id = Guid.NewGuid() });
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            recovery.RetryAsync("render", "exports", Guid.NewGuid(), 0, Token)
+            recovery.RetryAsync("render", "exports", Guid.NewGuid(), Guid.NewGuid(), 0, Token)
         );
         database.ChangeTracker.Clear();
         await using (var transaction = await database.Database.BeginTransactionAsync(Token))
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                recovery.RetryAsync("render", "exports", Guid.NewGuid(), 0, Token)
+                recovery.RetryAsync("render", "exports", Guid.NewGuid(), Guid.NewGuid(), 0, Token)
             );
 
         using (var ambient = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                recovery.RetryAsync("render", "exports", Guid.NewGuid(), 0, Token)
+                recovery.RetryAsync("render", "exports", Guid.NewGuid(), Guid.NewGuid(), 0, Token)
             );
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
-            recovery.RetryAsync("render", "exports", Guid.Empty, 0, Token)
+            recovery.RetryAsync("render", "exports", Guid.Empty, Guid.NewGuid(), 0, Token)
         );
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
-            recovery.RetryAsync("render", "exports", Guid.NewGuid(), -1, Token)
+            recovery.RetryAsync("render", "exports", Guid.NewGuid(), Guid.NewGuid(), -1, Token)
+        );
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            recovery.RetryAsync("render", "exports", Guid.NewGuid(), Guid.Empty, 0, Token)
         );
     }
 
@@ -551,11 +573,11 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
                 interceptor: new LostCommitResponse()
             );
             await Assert.ThrowsAsync<IOException>(() =>
-                RetryAsync(uncertain, message, stopped.Revision)
+                RetryAsync(uncertain, message, stopped.ReceiptId, stopped.Revision)
             );
             Assert.Equal(
                 InboxRetryResult.NotApplied,
-                await RetryAsync(provider, message, stopped.Revision)
+                await RetryAsync(provider, message, stopped.ReceiptId, stopped.Revision)
             );
         }
         else
@@ -565,7 +587,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
                 "ALTER TABLE receiver.inbox ADD CONSTRAINT reject_redrive CHECK (redrive_count = 0)"
             );
             await Assert.ThrowsAsync<PostgresException>(() =>
-                RetryAsync(provider, message, stopped.Revision)
+                RetryAsync(provider, message, stopped.ReceiptId, stopped.Revision)
             );
             var unchanged = await ReadAsync(connection, message.MessageId);
             Assert.Equal(stopped.Revision, unchanged.Revision);
@@ -575,7 +597,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             await SqlAsync(connection, "ALTER TABLE receiver.inbox DROP CONSTRAINT reject_redrive");
             Assert.Equal(
                 InboxRetryResult.Retried,
-                await RetryAsync(provider, message, stopped.Revision)
+                await RetryAsync(provider, message, stopped.ReceiptId, stopped.Revision)
             );
         }
 

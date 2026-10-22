@@ -34,6 +34,13 @@ The [reference review](../reports/remaining-capability-reference-review.md) sepa
 primary-source findings from recommendations. Marten and Wolverine are behavioral
 references, not selected runtime dependencies or a feature-parity target.
 
+The owner clarified on 2026-10-22 that **M2 remains open** until its inbox-retention and
+deduplication-expiry gap is resolved before v1, with explicit disposition of other M2 gaps.
+Completed sub-slices below do not close the entire block. The
+[reviewed scope](m2-inbox-retention.md) received implementation approval; the
+[slice report](../reports/m2-inbox-retention.md) records current evidence. Explicit owner
+dispositions for remaining v1 gaps and exact change-set review are still required.
+
 ## Work queue
 
 | Candidate | Bounded first outcome | Boundary and required evidence |
@@ -64,6 +71,7 @@ references, not selected runtime dependencies or a feature-parity target.
 | Outbox operational visibility | Owner-selected [scope](outbox-operational-visibility.md) after approved checkpoint `020a292`; [family contract](../../src/Gloaming.Messaging/docs/outbox-observability.md) and [fresh evidence](../reports/outbox-operational-visibility.md) prepared for review. | One-clock route snapshots, metadata-only RLS credentials, native consumer gauges/readiness and restricted executable inspection. Observations reserve no work; readiness topology, exporters and alert policy stay consumer-owned. No schema/grant changes, recovery framework or template preset. |
 | Completed-outbox retention | Owner-selected [scope](outbox-completed-retention.md) after approved checkpoint `2125860`; [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md) and [new proof report](../reports/outbox-completed-retention.md) prepared for review. | Finite route/cutoff/batch deletion with separate maintenance authority and consumer index/migration. Pending, leased and dead-letter work is preserved. Sender identity history is removed; inbox lifetime, scheduling and reconciliation remain consumer-owned. Dispatch permissions stay unchanged. |
 | Queued-message schema compatibility | Owner-approved continuation after PR #41; [reviewed scope](queued-message-schema-compatibility.md), [family contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md) and [fresh consumer report](../reports/queued-message-schema-compatibility.md) prepared for review. | Explicit v2 writes alongside retained v1, original-envelope deduplication, existing optional codec, conditional operator retry after reader replacement and native HTTP/RabbitMQ/process proofs. Deployment coordination and rollback remain consumer policy; no new library mechanism, schema migration or template preset. |
+| M2 remaining: inbox retention / deduplication expiry | Owner requires closure before v1; [reviewed scope](m2-inbox-retention.md), [current contract](../../src/Gloaming.Messaging/docs/inbox-retention.md) and [implementation/proof report](../reports/m2-inbox-retention.md). | Processed-only finite cleanup, intake/delete race correction and receipt-generation-aware existing operator retry. Old delivery can execute again after deletion. Preserve pending/processing/dead-lettered work; consumer duration/scheduling stay explicit. Implementation/proofs are prepared for review; exact change-set review and explicit owner post-v1 dispositions remain outstanding. |
 | P2: late isolation and cross-family review | Revisit module persistence and composition after workers/workflows/feeds expose actual pressures; compare the useful Marten/Wolverine capability inventory. | Check typed contexts, scopes, migration/schema ownership, native SQL/filter bypass, tenant establishment, transactions and failures across families. Extract a repeated obligation only if a small mechanism removes meaningful complexity. |
 | T2 / readiness: template and release follow-ups | Bring proven DDD/CQRS/worker setup into configurable templates one capability at a time; later review packaging, docs and v1 gaps. | Preserve T1's independent event-free composition. No default messaging/event runtime, giant preset expansion or automatic repository updater follows from this roadmap. |
 

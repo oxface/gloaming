@@ -90,9 +90,9 @@ envelope equality, under the existing [observability contract](observability.md)
    There is no downcast, durable rewrite or general safe-downgrade promise.
 
 If retained work was dead-lettered by an old handler, deploy the compatible decoder and inspect
-current metadata. An authorized revision-conditional Retry can then make that original work
+current metadata. An authorized receipt-generation/revision-conditional Retry can then make that original work
 eligible. It preserves identity/schema/payload, counters and the consumer's authority boundary.
-Competing or repeated requests cannot apply the same revision twice. A still-unsupported schema
+Competing or repeated requests cannot apply the same receipt-generation/revision pair twice. A still-unsupported schema
 fails again; retry cannot grant compatibility or bypass handler admission.
 
 HTTP rejects unsupported/invalid input before durable intake or 202. RabbitMQ parsing/admission
@@ -112,5 +112,8 @@ reuse; it supplies no completed-message replay or maintenance worker.
 This is one consumer contract's compatibility proof using existing libraries. Other payload
 meaning changes, CLR/native-JSON policies, transports, mixed deployment topologies and rollout
 automation require their own proofs. No new reusable mechanism, database migration, queue
-framework or template setup pattern was established. Inbox retention/deduplication expiry,
-payload editing and completed-message replay remain separate.
+framework or template setup pattern was established by that slice. The later
+[processed-inbox retention contract](inbox-retention.md) makes receipt expiry explicit:
+original-envelope duplicate/content checks last only while the receipt remains; old delivery
+can execute again after deletion. Cleanup does not establish a safe historical-schema removal
+window. Payload editing and completed-message replay remain unsupported.

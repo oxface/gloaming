@@ -41,9 +41,27 @@ public sealed partial class SalesReplyTests
         Assert.Equal(alphaReply.MessageId, Assert.Single(page.Items).MessageId);
         Assert.Null(page.NextCursor);
         Assert.Null(await letters.GetAsync(subscription, "inventory", betaReply.MessageId, token));
+        await using var betaServices = proof.Services(
+            WorkflowProof.Beta,
+            services => services.AddPostgresInboxDeadLetters<SalesDbContext>()
+        );
+        await using var betaScope = betaServices.CreateAsyncScope();
+        var betaLetters = betaScope.ServiceProvider.GetRequiredService<
+            IInboxDeadLetters<SalesDbContext>
+        >();
+        var betaObserved = (
+            await betaLetters.GetAsync(subscription, "inventory", betaReply.MessageId, token)
+        )!;
         Assert.Equal(
             InboxRetryResult.NotApplied,
-            await letters.RetryAsync(subscription, "inventory", betaReply.MessageId, 1, token)
+            await letters.RetryAsync(
+                subscription,
+                "inventory",
+                betaReply.MessageId,
+                betaObserved.ReceiptId,
+                betaObserved.Revision,
+                token
+            )
         );
         var observed = (
             await letters.GetAsync(subscription, "inventory", alphaReply.MessageId, token)
@@ -54,6 +72,7 @@ public sealed partial class SalesReplyTests
                 subscription,
                 "inventory",
                 alphaReply.MessageId,
+                observed.ReceiptId,
                 observed.Revision,
                 token
             )
@@ -73,11 +92,6 @@ public sealed partial class SalesReplyTests
                 token
             )
         );
-        await using var betaServices = proof.Services(
-            WorkflowProof.Beta,
-            services => services.AddPostgresInboxDeadLetters<SalesDbContext>()
-        );
-        await using var betaScope = betaServices.CreateAsyncScope();
         Assert.Equal(
             betaReply.MessageId,
             Assert
@@ -116,9 +130,18 @@ public sealed partial class SalesReplyTests
         var letters = scope.ServiceProvider.GetRequiredService<IInboxDeadLetters<SalesDbContext>>();
         const string subscription = StockReservationReplyAdmission.Subscription;
         Assert.Single((await letters.ListAsync(subscription, "inventory", new(), token)).Items);
-        Assert.NotNull(await letters.GetAsync(subscription, "inventory", reply.MessageId, token));
+        var observed = Assert.IsType<InboxDeadLetter>(
+            await letters.GetAsync(subscription, "inventory", reply.MessageId, token)
+        );
         var failure = await Assert.ThrowsAsync<PostgresException>(() =>
-            letters.RetryAsync(subscription, "inventory", reply.MessageId, 1, token)
+            letters.RetryAsync(
+                subscription,
+                "inventory",
+                reply.MessageId,
+                observed.ReceiptId,
+                observed.Revision,
+                token
+            )
         );
         Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, failure.SqlState);
         Assert.Equal(

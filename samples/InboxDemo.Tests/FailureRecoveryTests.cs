@@ -109,7 +109,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(first, inspected);
         Assert.Equal(
             HttpStatusCode.NoContent,
-            await RetryAsync(client, first.MessageId, inspected.Revision)
+            await RetryAsync(client, first.MessageId, inspected.ReceiptId, inspected.Revision)
         );
         using (var gone = await client.GetAsync($"{route}/{first.MessageId}", Token))
             Assert.Equal(HttpStatusCode.NotFound, gone.StatusCode);
@@ -117,7 +117,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         await Assert.ThrowsAsync<DbUpdateException>(() => AdoptionTests.ProcessAsync(app.Services));
         Assert.Equal(
             HttpStatusCode.Conflict,
-            await RetryAsync(client, first.MessageId, inspected.Revision)
+            await RetryAsync(client, first.MessageId, inspected.ReceiptId, inspected.Revision)
         );
         Assert.Equal(
             2,
@@ -219,7 +219,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         using (
             var wrong = await client.PostAsJsonAsync(
                 $"/operations/inbox/dead-letters/{message}/retry",
-                new { expectedRevision = stopped.Revision },
+                new { expectedReceiptId = stopped.ReceiptId, expectedRevision = stopped.Revision },
                 Token
             )
         )
@@ -244,13 +244,19 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Assert.DoesNotContain(OperatorToken, body, StringComparison.Ordinal);
         }
 
-        Assert.Equal(HttpStatusCode.NoContent, await RetryAsync(client, message, stopped.Revision));
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await RetryAsync(client, message, stopped.ReceiptId, stopped.Revision)
+        );
         await Assert.ThrowsAsync<DbUpdateException>(() => AdoptionTests.ProcessAsync(app.Services));
         var again = await ReadAsync(connection, message);
         Assert.Equal(2, again.FailureCount);
         Assert.Equal(1, again.FailuresSinceRedrive);
         Assert.NotNull(again.DeadLetteredAt);
-        Assert.Equal(HttpStatusCode.Conflict, await RetryAsync(client, message, stopped.Revision));
+        Assert.Equal(
+            HttpStatusCode.Conflict,
+            await RetryAsync(client, message, stopped.ReceiptId, stopped.Revision)
+        );
         Assert.Equal(again.Revision, (await ReadAsync(connection, message)).Revision);
 
         await AdoptionTests.SqlAsync(
@@ -267,7 +273,10 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             await AdoptionTests.ProcessAsync(app.Services)
         );
         Assert.NotNull((await ReadAsync(connection, another)).ProcessedAt);
-        Assert.Equal(HttpStatusCode.NoContent, await RetryAsync(client, message, again.Revision));
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await RetryAsync(client, message, again.ReceiptId, again.Revision)
+        );
         Assert.Equal(
             InboxProcessingResult.Processed,
             await AdoptionTests.ProcessAsync(app.Services)
@@ -284,7 +293,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         Assert.Equal(stopped.CausationId, completed.CausationId);
         Assert.Equal(
             HttpStatusCode.Conflict,
-            await RetryAsync(client, message, completed.Revision)
+            await RetryAsync(client, message, completed.ReceiptId, completed.Revision)
         );
         Assert.Equal(HttpStatusCode.Accepted, await SubmitAsync(client, message, export, 3));
         Assert.Equal(InboxProcessingResult.NoWork, await AdoptionTests.ProcessAsync(app.Services));
@@ -333,7 +342,7 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
         );
         Assert.Equal(
             HttpStatusCode.NoContent,
-            await RetryAsync(client, message.MessageId, stopped.Revision)
+            await RetryAsync(client, message.MessageId, stopped.ReceiptId, stopped.Revision)
         );
         await Assert.ThrowsAsync<InvalidDataException>(() =>
             AdoptionTests.ProcessAsync(app.Services)
@@ -387,8 +396,70 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
             Token
         );
         Assert.Equal(HttpStatusCode.Unauthorized, deniedList.StatusCode);
-        Assert.Equal(HttpStatusCode.Unauthorized, await RetryAsync(denied, Guid.NewGuid(), 0));
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            await RetryAsync(denied, Guid.NewGuid(), Guid.NewGuid(), 0)
+        );
         await enabled.StopAsync(Token);
+    }
+
+    [Fact]
+    public async Task RetryRequiresTheObservedReceiptGenerationAndRejectsLegacyOrEmptyTokens()
+    {
+        string connection = await DatabaseAsync();
+        await AdoptionTests.SqlAsync(
+            connection,
+            "ALTER TABLE rendering.jobs ADD CONSTRAINT needs_repair CHECK (false) NOT VALID"
+        );
+        await using var app = InboxDemoHost.Build(
+            connection,
+            "http://127.0.0.1:0",
+            operatorToken: OperatorToken
+        );
+        await app.StartAsync(Token);
+        using var client = Client(app.Services);
+        Guid message = Guid.NewGuid();
+        Assert.Equal(
+            HttpStatusCode.Accepted,
+            await SubmitAsync(client, message, Guid.NewGuid(), 2)
+        );
+        await Assert.ThrowsAsync<DbUpdateException>(() => AdoptionTests.ProcessAsync(app.Services));
+        var stopped = await ReadAsync(connection, message);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            OperatorToken
+        );
+        object[] invalid =
+        [
+            new { expectedRevision = stopped.Revision },
+            new { expectedReceiptId = Guid.Empty, expectedRevision = stopped.Revision },
+            new { expectedReceiptId = stopped.ReceiptId, expectedRevision = -1 },
+        ];
+        foreach (object body in invalid)
+        {
+            using var response = await client.PostAsJsonAsync(
+                $"/operations/inbox/dead-letters/{message}/retry",
+                body,
+                Token
+            );
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        Assert.Equal(
+            HttpStatusCode.Conflict,
+            await RetryAsync(client, message, Guid.NewGuid(), stopped.Revision)
+        );
+        Assert.Equal(stopped.Revision, (await ReadAsync(connection, message)).Revision);
+        Assert.Equal(stopped.ReceiptId, (await ReadAsync(connection, message)).ReceiptId);
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            await RetryAsync(client, message, stopped.ReceiptId, stopped.Revision)
+        );
+        Assert.Equal(
+            HttpStatusCode.Conflict,
+            await RetryAsync(client, message, stopped.ReceiptId, stopped.Revision)
+        );
+        await app.StopAsync(Token);
     }
 
     private async Task<string> DatabaseAsync()
@@ -417,12 +488,13 @@ public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
     private static async Task<HttpStatusCode> RetryAsync(
         HttpClient client,
         Guid message,
+        Guid receiptId,
         long revision
     )
     {
         using var response = await client.PostAsJsonAsync(
             $"/operations/inbox/dead-letters/{message}/retry",
-            new { expectedRevision = revision },
+            new { expectedReceiptId = receiptId, expectedRevision = revision },
             Token
         );
         return response.StatusCode;

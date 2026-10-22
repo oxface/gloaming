@@ -23,6 +23,11 @@ policy and alert thresholds with the consumer; no new recovery or health framewo
 Separately authorized [completed-outbox retention](outbox-retention.md) now provides one
 bounded PostgreSQL deletion batch. Evidence windows and unique identities after deletion
 remain consumer obligations; inbox retention is independent.
+M2's [processed-inbox retention](inbox-retention.md) supplies exact-lane bounded cleanup and
+receipt-generation-aware operator retry. Deletion ends duplicate/content evidence and permits
+old delivery to execute again. Unprocessed/dead-lettered work remains. Consumer windows and
+scheduling are explicit; [M2 closure dispositions](../../../docs/reports/m2-inbox-retention.md)
+remain subject to owner review.
 
 [Queued-message schema compatibility](schema-compatibility.md) demonstrates retained v1 work
 and explicitly selected v2 writes through independent consumer contexts and HTTP/RabbitMQ.
@@ -224,7 +229,7 @@ The schema compatibility guide proves one consumer evolution. Different contract
 deployment/rollback topologies require their own evidence; no rollout orchestrator is supplied.
 
 Receipt-only mode if an adopter needs it;
-inbox retention/deduplication windows;
+permanent inbox duplicate registries, dead-letter discard/purge and supplied cleanup scheduling;
 caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
 per-stream ordering; other DBMS providers; additional transports and local module handoff;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module

@@ -102,7 +102,12 @@ public sealed class SchemaCompatibilityTests(PostgreSqlFixture postgres)
             if (cycle == 0)
                 Assert.Equal(
                     InboxRetryResult.Retried,
-                    await RetryAsync(reader, incoming.MessageId, stopped.Revision)
+                    await RetryAsync(
+                        reader,
+                        incoming.MessageId,
+                        stopped.ReceiptId,
+                        stopped.Revision
+                    )
                 );
         }
 
@@ -176,14 +181,14 @@ public sealed class SchemaCompatibilityTests(PostgreSqlFixture postgres)
             Assert.Equal(1, stopped.FailureCount);
             Assert.Equal("render-command-conflict", stopped.LastFailureCode);
             var competing = await Task.WhenAll(
-                RetryAsync(upgraded, incoming.MessageId, stopped.Revision),
-                RetryAsync(upgraded, incoming.MessageId, stopped.Revision)
+                RetryAsync(upgraded, incoming.MessageId, stopped.ReceiptId, stopped.Revision),
+                RetryAsync(upgraded, incoming.MessageId, stopped.ReceiptId, stopped.Revision)
             );
             Assert.Single(competing, result => result == InboxRetryResult.Retried);
             Assert.Single(competing, result => result == InboxRetryResult.NotApplied);
             Assert.Equal(
                 InboxRetryResult.NotApplied,
-                await RetryAsync(upgraded, incoming.MessageId, stopped.Revision)
+                await RetryAsync(upgraded, incoming.MessageId, stopped.ReceiptId, stopped.Revision)
             );
         }
 
@@ -343,13 +348,21 @@ public sealed class SchemaCompatibilityTests(PostgreSqlFixture postgres)
     private static async Task<InboxRetryResult> RetryAsync(
         IServiceProvider services,
         Guid message,
+        Guid receiptId,
         long revision
     )
     {
         await using var scope = services.CreateAsyncScope();
         return await scope
             .ServiceProvider.GetRequiredService<IInboxDeadLetters<RenderDbContext>>()
-            .RetryAsync(RenderExportHandler.Subscription, "exports", message, revision, Token);
+            .RetryAsync(
+                RenderExportHandler.Subscription,
+                "exports",
+                message,
+                receiptId,
+                revision,
+                Token
+            );
     }
 
     // Frozen behavior of the v1-only consumer at 86331de; this is not a production reader mode.

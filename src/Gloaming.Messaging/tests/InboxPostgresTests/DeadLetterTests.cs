@@ -200,7 +200,14 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres)
         Assert.DoesNotContain("Exception", json, StringComparison.Ordinal);
         Assert.Equal(
             InboxRetryResult.Retried,
-            await letters.RetryAsync("render", "exports", original.MessageId, item.Revision, Token)
+            await letters.RetryAsync(
+                "render",
+                "exports",
+                original.MessageId,
+                item.ReceiptId,
+                item.Revision,
+                Token
+            )
         );
         Assert.Null(await letters.GetAsync("render", "exports", original.MessageId, Token));
         Assert.Empty((await letters.ListAsync("render", "exports", new(), Token)).Items);
@@ -339,12 +346,26 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres)
         Assert.True(again.DeadLetteredAt >= before.DeadLetteredAt);
         Assert.Equal(
             InboxRetryResult.NotApplied,
-            await letters.RetryAsync("render", "exports", message.MessageId, before.Revision, Token)
+            await letters.RetryAsync(
+                "render",
+                "exports",
+                message.MessageId,
+                before.ReceiptId,
+                before.Revision,
+                Token
+            )
         );
         Assert.Equal(again, await letters.GetAsync("render", "exports", message.MessageId, Token));
         Assert.Equal(
             InboxRetryResult.Retried,
-            await letters.RetryAsync("render", "exports", message.MessageId, again.Revision, Token)
+            await letters.RetryAsync(
+                "render",
+                "exports",
+                message.MessageId,
+                again.ReceiptId,
+                again.Revision,
+                Token
+            )
         );
     }
 
@@ -363,7 +384,14 @@ public sealed class DeadLetterTests(PostgreSqlFixture postgres)
         foreach (var item in (await letters.ListAsync("render", "exports", new(), Token)).Items)
             Assert.Equal(
                 InboxRetryResult.Retried,
-                await letters.RetryAsync("render", "exports", item.MessageId, item.Revision, Token)
+                await letters.RetryAsync(
+                    "render",
+                    "exports",
+                    item.MessageId,
+                    item.ReceiptId,
+                    item.Revision,
+                    Token
+                )
             );
 
         await using var restarted = DeadLetterProvider(connection);

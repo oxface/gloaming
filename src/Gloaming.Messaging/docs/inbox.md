@@ -71,8 +71,16 @@ delivery. InboxMessageConflictException carries the conflicting key without payl
 details in its error text. Transport code must not treat that conflict as accepted duplication.
 
 The insert handles a competing unique key, then a separate ReadCommitted statement observes
-the committed winner. A rolled-back winner permits the contender to insert. There is no
-application-level JSON hash/canonicalization engine.
+the committed winner. A rolled-back winner permits the contender to insert. If retention
+removes the winner before comparison, intake attempts insertion again. Three insert/compare
+observations without a visible winner throw DbUpdateConcurrencyException without acceptance;
+review native SELECT/RLS visibility or retry the caller-owned transaction after contention.
+There is no application-level JSON hash/canonicalization engine.
+
+Deduplication lasts while the receipt remains. Explicit [processed-receipt cleanup](inbox-retention.md)
+ends that evidence: an old delivery can queue and execute again. ReceiptId identifies one
+retained receipt generation, separately from the wire delivery key. Conditional operator retry
+requires both observed ReceiptId and revision so an old request cannot target a later generation.
 
 ## Separate local processing
 
@@ -140,10 +148,11 @@ migrations, bind tenants or subscribe/acknowledge transport. Cooperative cancell
 the handler; non-cooperative work can still delay shutdown and retain a database lock. Keep
 handlers bounded, local and cancellable.
 
-Completed and dead-lettered rows remain retained indefinitely. Consumer-selected dead-letter state and
+Rows remain retained unless separately authorized [processed cleanup](inbox-retention.md) removes them.
+Unprocessed and dead-lettered rows are preserved. Consumer-selected dead-letter state and
 identity-preserving operator retry are supported; classification, admission, thresholds and
 operator authority remain consumer-owned. Counters record confirmed failures rather than every
-execution/crash. No pruning/dedup window, second dead-letter queue, batch/parallel worker, global
+execution/crash. No automatic pruning, permanent duplicate registry, second dead-letter queue, batch/parallel worker, global
 ordering, automatic upcasting or other-provider guarantee is supplied.
 
 Executable references: [HTTP inbox-only receiver](../../../samples/InboxDemo/README.md),

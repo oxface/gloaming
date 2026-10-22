@@ -115,3 +115,19 @@ This is an optional WF2 adoption. Other module/workflow/table coverage, tenant s
 role lifecycle, restricted broker intake, external poolers/failover, default rollout and templates
 remain separately selectable. **No new reusable library mechanism was introduced.** Existing
 transaction interception, persistence/messaging capabilities and native DI/EF/PostgreSQL suffice.
+
+## Receipt generation and optional retention
+
+Apply the forward AddInboxReceiptGeneration migration with deployment authority before the
+updated binary. Existing full inbox SELECT covers receipt_id; a column-restricted inspection
+or operator role must add that column explicitly. Retry requires the observed ReceiptId and
+revision. The processor role still has no redrive or DELETE authority, and restricted outbox
+dispatch grants are unchanged.
+
+No automatic Sales cleanup is enabled. A consumer choosing to adopt
+[processed-inbox cleanup](../../../src/Gloaming.Messaging/docs/inbox-retention.md) separately
+admits the exact subscription/producer, evidence cutoff and native maintenance credentials/
+RLS policy. That policy must deliberately cover SELECT and DELETE of admitted processed work;
+existing processor policies do not imply DELETE. Unprocessed/dead-lettered replies remain.
+Deletion permits old replies to be received again; workflow/business operation identities
+must supply any longer-lived idempotency required by the consumer.

@@ -55,7 +55,7 @@ The schema has a stable GUID primary key, JSONB payload, optional tenant key, da
 queued/available timestamps, dispatched timestamp, lease token/expiry and long attempts.
 Consumer migrations create/update it, including recovery counts, revision, safe failure metadata
 and dead-letter/redrive times. Attempts counts committed claims. The candidate index excludes dispatched/dead-lettered records;
-retention still belongs to a later capability. Retain the fixed column/key/JSONB/default mapping;
+finite completed retention is separately callable below. Retain the fixed column/key/JSONB/default mapping;
 schema/table names and ownership/filter configuration are customizable.
 JSONB preserves JSON meaning, not original text formatting, property order or numeric spelling.
 JsonElement is used for an owned opaque payload; no JSON query abstraction is provided.
@@ -67,7 +67,7 @@ scope. This dispatcher does not impersonate each owner or infer trust from the p
 
 At-least-once delivery requires continued dispatch, accepting transport and retained records.
 Duplicate effects remain receiver-owned. There is no FIFO, global concurrency cap, lease
-renewal, pruning or exactly-once promise. Consumer-selected stop policy and separately registered
+renewal, automatic pruning or exactly-once promise. Consumer-selected stop policy and separately registered
 AddPostgresOutboxDeadLetters provide bounded List/Get and identity-preserving Retry. See
 [outbox recovery, supervision and schema/grant obligations](../docs/outbox-recovery.md), the
 [supported and deferred contract](../docs/capabilities.md) and actual
@@ -92,6 +92,8 @@ Inbox-only consumers configure/register the inbox independently and need no outb
 publisher. Intake requires caller-owned native ReadCommitted isolation. A retained key combines
 subscription, producer and message ID; incompatible envelope redelivery throws rather than
 silently deduplicates. A separate comparison statement observes a concurrent winning insert.
+If retention removed the winner, intake tries insertion again. Three unobservable conflicting-key
+observations throw DbUpdateConcurrencyException; native SELECT/RLS visibility remains required.
 Payload equality uses PostgreSQL JSONB values, including numeric equality, not a lexical hash.
 
 Processing holds FOR UPDATE SKIP LOCKED through bounded local handler work, SaveChanges,
@@ -101,7 +103,8 @@ delivery lock. Native SQL commits only failure accounting and consumer-selected 
 No later transaction writes obsolete retry metadata after releasing the lock. Without a keyed
 policy, positive RetryDelay remains the default. Separately registered AddPostgresInboxDeadLetters
 provides typed metadata list/detail and re-enables a
-dead-lettered row at an observed revision. Consumer authority, forward migrations and restricted
+dead-lettered row at the observed ReceiptId and revision. ReceiptId distinguishes receipt
+generations after deletion; the delivery key and wire MessageId remain unchanged. Consumer authority, forward migrations and restricted
 grants remain explicit; see [recovery setup](../docs/inbox-recovery.md). Cancellation/connection
 loss may leave no recorded failure; a commit response may be ambiguous.
 DeadLetteredAt retains the physical `quarantined_at` mapping. The dead-letter lookup index
@@ -115,6 +118,15 @@ native host supervision and consumer repair/restart policy govern what follows.
 This protocol does not make another module/context or external side effect atomic. Native
 business concurrency predicates remain necessary for different deliveries touching shared state.
 See [full inbox setup/errors/limits](../docs/inbox.md).
+
+`await database.DeleteProcessedPostgresInboxBatchAsync(subscriptionKey, producerKey, processedBefore, batchSize, token)`
+owns one separately authorized, bounded ReadCommitted cleanup transaction on a fresh context.
+Only processed, non-dead-lettered receipts strictly before a nonfuture cutoff qualify; batch
+size is 1–1000. DELETE plus six-column metadata SELECT suffices; no UPDATE or payload read is
+required. Native grants/RLS apply. Missing commit responses remain ambiguous. Old delivery can
+queue and execute again after evidence deletion. Apply the receipt-generation migrations and
+upgrade all intake/operator callers before enabling cleanup. See [inbox retention, authority,
+deduplication expiry and executable adoption](../docs/inbox-retention.md).
 
 See [durable message observability](../docs/observability.md) for optional W3C context, schema upgrades, native
 activity/meter names, failure logs and host-owned exporter configuration.

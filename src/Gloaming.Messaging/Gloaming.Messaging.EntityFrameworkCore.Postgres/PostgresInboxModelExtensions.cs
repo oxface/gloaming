@@ -17,6 +17,7 @@ public static class PostgresInboxModelExtensions
         row.HasAnnotation("Gloaming:InboxProvider", "Postgres");
         row.Property(item => item.Payload).HasColumnType("jsonb");
         row.Property(item => item.ReceivedAt).HasDefaultValueSql("clock_timestamp()");
+        row.Property(item => item.ReceiptId).HasDefaultValueSql("gen_random_uuid()");
         row.Property(item => item.AvailableAt).HasDefaultValueSql("clock_timestamp()");
         row.HasIndex(item => new
             {
@@ -39,6 +40,10 @@ public static class PostgresInboxModelExtensions
             mapping =>
             {
                 mapping.HasCheckConstraint("ck_inbox_schema", "schema_version > 0");
+                mapping.HasCheckConstraint(
+                    "ck_inbox_receipt",
+                    "receipt_id <> '00000000-0000-0000-0000-000000000000'::uuid"
+                );
                 mapping.HasCheckConstraint(
                     "ck_inbox_recovery_counts",
                     "revision >= 0 AND failure_count >= 0 AND failures_since_redrive >= 0 AND failures_since_redrive <= failure_count AND redrive_count >= 0"

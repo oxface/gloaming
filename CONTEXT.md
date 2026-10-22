@@ -47,6 +47,16 @@ again, preserving identity and payload. Outbox dead-letter state cannot retract 
 acceptance or cancel an obsolete publisher already in flight. The earlier inbox implementation
 called this state quarantine.
 
+**Inbox receipt**:
+The receiver's retained evidence for one delivery in a subscription and producer namespace.
+Deleting a processed receipt ends its delivery-deduplication evidence; an old delivery may
+then be received and processed again.
+
+**Receipt generation**:
+One lifetime of an inbox receipt, identified by ReceiptId. A duplicate or operator retry
+keeps that generation; receiving the delivery after receipt deletion creates another.
+_Avoid_: Message identity, operator authority
+
 **Application user**:
 A person represented by a stable product identity, independently of their login provider
 or tenant memberships.

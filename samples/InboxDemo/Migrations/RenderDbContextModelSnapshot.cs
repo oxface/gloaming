@@ -94,6 +94,12 @@ namespace InboxDemo.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("processed_at");
 
+                    b.Property<Guid>("ReceiptId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("receipt_id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
                     b.Property<DateTimeOffset>("ReceivedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -136,6 +142,9 @@ namespace InboxDemo.Migrations
                     b.HasIndex("SubscriptionKey", "ProducerKey", "DeadLetteredAt", "MessageId")
                         .HasFilter("processed_at IS NULL AND quarantined_at IS NOT NULL");
 
+                    b.HasIndex("SubscriptionKey", "ProducerKey", "ProcessedAt", "MessageId")
+                        .HasFilter("processed_at IS NOT NULL AND quarantined_at IS NULL");
+
                     b.ToTable(
                         "incoming_work",
                         "rendering",
@@ -144,6 +153,11 @@ namespace InboxDemo.Migrations
                             t.HasCheckConstraint(
                                 "ck_inbox_failure_metadata",
                                 "(failure_count = 0 AND last_failed_at IS NULL AND last_failure_code IS NULL AND quarantined_at IS NULL) OR (failure_count > 0 AND last_failed_at IS NOT NULL AND last_failure_code IS NOT NULL AND length(btrim(last_failure_code)) > 0)"
+                            );
+
+                            t.HasCheckConstraint(
+                                "ck_inbox_receipt",
+                                "receipt_id <> '00000000-0000-0000-0000-000000000000'::uuid"
                             );
 
                             t.HasCheckConstraint(

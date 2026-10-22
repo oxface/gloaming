@@ -210,6 +210,7 @@ internal sealed class WorkerTopology(
                     stopped.SubscriptionKey,
                     stopped.ProducerKey,
                     stopped.MessageId,
+                    stopped.ReceiptId,
                     stopped.Revision,
                     cancellation
                 )

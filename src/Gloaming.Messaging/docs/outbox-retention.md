@@ -78,6 +78,6 @@ vacuum behavior; this slice supplies no capacity benchmark or automatic maintena
 See [the scope](../../../docs/plans/outbox-completed-retention.md) and
 [new proof report](../../../docs/reports/outbox-completed-retention.md) for actual PostgreSQL,
 credential, migration and child-process evidence. [Dead-letter retry](outbox-recovery.md) and
-[backlog/worker health](outbox-observability.md) retain their separate contracts. Inbox retention,
+[backlog/worker health](outbox-observability.md) retain their separate contracts. Inbox [processed-receipt expiry](inbox-retention.md),
 payload editing, completed-message replay, lease renewal, global execution caps and durable
 cleanup scheduling/accounting remain separate capabilities.

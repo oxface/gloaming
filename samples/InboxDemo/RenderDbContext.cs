@@ -22,7 +22,16 @@ public sealed class RenderDbContext(DbContextOptions<RenderDbContext> options) :
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ConfigurePostgresInbox("rendering", "incoming_work");
+        modelBuilder
+            .ConfigurePostgresInbox("rendering", "incoming_work")
+            .HasIndex(row => new
+            {
+                row.SubscriptionKey,
+                row.ProducerKey,
+                row.ProcessedAt,
+                row.MessageId,
+            })
+            .HasFilter("processed_at IS NOT NULL AND quarantined_at IS NULL");
         var job = modelBuilder.Entity<RenderJob>();
         job.ToTable(
             "jobs",
