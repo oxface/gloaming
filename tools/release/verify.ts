@@ -57,6 +57,7 @@ function run(
   args: string[],
   cwd = root,
   env = process.env,
+  succeeds = true,
 ): string {
   console.log(`> ${command} ${args.join(" ")}`);
   const result = spawnSync(command, args, {
@@ -76,8 +77,8 @@ function run(
   writeFileSync(log, safe);
   assert(!result.error, `${command}: ${result.error?.message}; log: ${log}`);
   assert.equal(
-    result.status,
-    0,
+    result.status === 0,
+    succeeds,
     `${command} failed (${result.status}); log: ${log}\n${safe}`,
   );
   return safe;
@@ -173,12 +174,24 @@ function renderReadme(file: string): string {
         path && !isAbsolute(path),
         `Unsupported README link: ${file}: ${target}`,
       );
-      const destination = resolve(dirname(file), decodeURI(path));
+      const destination = resolve(
+        dirname(file),
+        decodeURIComponent(path).replaceAll("\\", sep),
+      );
       assert(
         existsSync(destination),
         `Broken README link: ${relative(root, file)} -> ${target}`,
       );
-      const repoPath = relative(root, destination).split(sep).join("/");
+      const repoPath = relative(root, destination)
+        .split(sep)
+        .map((segment) =>
+          encodeURIComponent(segment).replace(
+            /[!'()*]/g,
+            (character) =>
+              `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+          ),
+        )
+        .join("/");
       assert(
         !repoPath.startsWith("../"),
         `README link escapes repository: ${target}`,
@@ -193,6 +206,49 @@ mkdirSync(feed);
 console.log(`Local package proof ${version}; artifacts and logs: ${scratch}`);
 
 try {
+  // Exercise the native SDK task against independent literal expectations, including
+  // encoded path segments and both separator spellings, before packing real libraries.
+  const rendererRoot = join(scratch, "readme-renderer");
+  mkdirSync(join(rendererRoot, "docs"), { recursive: true });
+  writeFileSync(
+    join(rendererRoot, "docs", "owner's résumé (v1).md"),
+    "# Fixture\n",
+  );
+  writeFileSync(join(scratch, "outside.md"), "# Outside\n");
+  const rendererSource = join(rendererRoot, "README.md");
+  const rendererOutput = join(scratch, "rendered-README.md");
+  const rendererProject = join(scratch, "readme-renderer.proj");
+  writeFileSync(
+    rendererProject,
+    `<Project><PropertyGroup><IsGloamingPackage>true</IsGloamingPackage></PropertyGroup><Import Project="${xml(join(root, "src", "Directory.Build.targets"))}"/><Target Name="RenderProof"><RenderGloamingPackageReadme SourceFile="${xml(rendererSource)}" RepositoryRoot="${xml(rendererRoot)}" RepositoryUrl="https://github.com/example/proof" DestinationFile="${xml(rendererOutput)}"/></Target></Project>`,
+  );
+  const encodedPath = "owner%27s%20r%C3%A9sum%C3%A9%20%28v1%29.md";
+  writeFileSync(
+    rendererSource,
+    `[posix](docs/${encodedPath}#scope)\n[windows](docs\\${encodedPath})\n[external](https://example.test/help#x)\n[anchor](#local)\n[directory](docs/)\n`,
+  );
+  const expectedRenderer = `[posix](https://github.com/example/proof/blob/main/docs/${encodedPath}#scope)\n[windows](https://github.com/example/proof/blob/main/docs/${encodedPath})\n[external](https://example.test/help#x)\n[anchor](#local)\n[directory](https://github.com/example/proof/blob/main/docs)\n`;
+  run(dotnet, ["msbuild", rendererProject, "-t:RenderProof", "-nologo"]);
+  assert.equal(readFileSync(rendererOutput, "utf8"), expectedRenderer);
+  for (const [input, message] of [
+    ["[missing](docs/absent.md)", "Broken README link"],
+    ["[escape](../outside.md)", "README link escapes repository"],
+  ]) {
+    writeFileSync(rendererSource, input!);
+    const failure = run(
+      dotnet,
+      ["msbuild", rendererProject, "-t:RenderProof", "-nologo"],
+      root,
+      process.env,
+      false,
+    );
+    assert(failure.includes(message!));
+    assert.equal(readFileSync(rendererOutput, "utf8"), expectedRenderer);
+  }
+  console.log(
+    "PASS native README rendering: encoded paths, both separators, external/anchor links, missing targets and repository escape rejection",
+  );
+
   for (const item of packages) {
     const rendered = join(scratch, `${item.id}.README.md`);
     writeFileSync(rendered, renderReadme(readmeFor(item.project)));
@@ -205,7 +261,6 @@ try {
       feed,
       `-p:PackageVersion=${version}`,
       `-p:Version=${version}`,
-      `-p:PackageReadmeSource=${rendered}`,
       "--nologo",
     ]);
   }
@@ -229,6 +284,11 @@ try {
       `-p:Destination=${extracted}`,
       "-nologo",
     ]);
+    for (const directory of ["build", "buildTransitive", "tools"])
+      assert(
+        !existsSync(join(extracted, directory)),
+        `Repository pack preparation leaked into ${item.id}: ${directory}`,
+      );
     const metadata = (readXml(join(extracted, `${item.id}.nuspec`)) as Nuspec)
       .package.metadata;
     assert.equal(metadata.id, item.id);

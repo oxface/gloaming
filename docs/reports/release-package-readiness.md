@@ -10,14 +10,40 @@ NuGet archives and clean consumers outside the repository. No new reusable libra
 mechanism was proven or extracted; package metadata and adoption wiring are the
 deliverables. Existing capability evidence is not reclassified as package evidence.
 
+## Regular SDK packaging correction
+
+Independent standards review identified that the first successful harness run
+supplied its own rendered README through `PackageReadmeSource`, while ordinary
+`dotnet pack` shipped raw relative links. That run established the custom-input
+artifact, leaving ordinary package browsing unproven. This discrepancy is fixed
+in [`src/Directory.Build.targets`](../../src/Directory.Build.targets): a native SDK
+Roslyn task renders the owning README before NuGet's `_GetPackageFiles` target
+collects `Pack=true` items. It writes under `obj`, verifies local targets and
+repository containment, and URL-encodes path segments. It runs for regular packing
+and packing without a build, requires no Node/npm, preserves already-absolute
+external-source links and is not included in distributed packages.
+
+The harness now removes its README input override and compares the regular SDK
+artifact with independently rendered TypeScript expectations. Native task probes
+also verify encoded Unicode/space/apostrophe/parenthesis paths, both separator
+spellings, directory/anchor/external links and rejection of missing or escaping
+targets. A failed render must leave the previous output unchanged. The complete
+ordinary-pack proof passed after this correction, covering all 23 archives and
+all four clean-consumer profiles below. Additional targeted packs without a build
+passed for the normal owning README and an external already-rendered source;
+the extracted README bytes matched independent expectations in both cases.
+
 ## New verification
 
-The full harness passed on .NET SDK 10.0.401, Node 24.21.0 and a disposable native
+The corrected full harness passed on .NET SDK 10.0.401, Node 24.21.0 and a disposable native
 PostgreSQL 18.6 server. All 23 actual `.nupkg` archives passed DLL/XML/README,
 license expression, author, repository, identity/version and internal dependency
-graph validation. The packaged README bytes matched rendered files; missing local
-link targets were rejected and nine existing targets were corrected in the owning
-documentation integration.
+graph validation. Ordinary `dotnet pack` received no README override. Packaged
+README bytes matched independent TypeScript expectations. Missing and escaping
+link targets were rejected by the native task, and no repository task assets were
+included under package `build`, `buildTransitive` or `tools` directories. Nine
+existing targets were corrected in the owning documentation integration before
+the first proof.
 
 | Clean package consumer | Resolved Gloaming packages | New execution |
 | --- | ---: | --- |
@@ -33,11 +59,11 @@ unchanged across the command. The temporary PostgreSQL database and server were
 removed. Missing PostgreSQL configuration was separately executed and rejected
 before packing, confirming that the full command cannot silently skip it.
 
-The successful local version was `1.0.0-local.1792693005870.22417faa`. The evidence
-directory is `/home/oxface/.cache/tmp/gloaming-package-proof-fe8hAz`; its
+The successful ordinary-pack local version was `1.0.0-local.1792693817990.14b7219b`. The evidence
+directory is `/home/oxface/.cache/tmp/gloaming-package-proof-GQAzZf`; its
 `manifest.json` records individual archive hashes and dependency metadata. The
 manifest SHA-256 is
-`60276d7eccbfa11b7fc95ce193a06490d665944fe9bb7fc38d59608aff6a8c17`.
+`8a7a0887609b5967efbdf1f23a9a3d20524353c143f01c228ce8c7196b78707b`.
 This directory is local review evidence, not a published artifact.
 
 The initial consumer attempt was rejected because installing the shared EF save
@@ -47,8 +73,9 @@ resolved the consumer wiring; no library change or speculative compatibility shi
 was needed. The successful rerun exercised those real registrations.
 
 The TypeScript typecheck and TypeScript/JSON/README formatting checks passed.
-Consumer C# was formatted with CSharpier. These are new results, independent of
-archived project-reference proofs.
+Consumer C# and the new SDK props/targets were formatted with CSharpier; the
+props/targets format check passed. These are new results, independent of archived
+project-reference proofs and the earlier custom-README-input run.
 
 ## Review-worthy files
 
@@ -62,8 +89,9 @@ archived project-reference proofs.
   database creation/cleanup, mappings, model-selected capability registration and
   transaction/fault recovery.
 - [`src/Directory.Build.props`](../../src/Directory.Build.props): the associated
-  library package metadata and XML documentation settings, owned by the integration
-  change rather than this harness.
+  library package metadata, XML documentation settings and owning README selection.
+- [`src/Directory.Build.targets`](../../src/Directory.Build.targets): repository-only
+  native README preparation for ordinary SDK packing, including no-build packing.
 
 ## Findings and remaining gates
 

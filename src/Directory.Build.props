@@ -25,7 +25,4 @@
     <PackageReadmeSource Condition="'$(PackageReadmeSource)' == ''"
       >$(MSBuildProjectDirectory)/../README.md</PackageReadmeSource>
   </PropertyGroup>
-  <ItemGroup Condition="'$(IsGloamingPackage)' == 'true'">
-    <None Include="$(PackageReadmeSource)" Pack="true" PackagePath="README.md" />
-  </ItemGroup>
 </Project>

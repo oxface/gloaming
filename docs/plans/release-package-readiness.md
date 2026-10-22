@@ -12,8 +12,12 @@ that package contents, metadata and dependency closure survive distribution.
 The executable [release harness](../../tools/release/README.md) packs all 23 current
 `Gloaming.*` libraries under one unique local prerelease version. Verify assembly,
 XML API documentation, packaged README, Apache-2.0 license expression, repository
-metadata, package identity and internal dependencies. Render README links for
-package browsing and reject missing repository targets.
+metadata, package identity and internal dependencies. Ordinary SDK packing must
+render README links for package browsing and reject missing repository targets or
+repository escapes, without requiring Node/npm or a harness-only input override.
+Verify shipped README bytes independently and exercise the native renderer's
+encoded path segments, directory separators and failure cases. Keep repository
+pack preparation out of distributed package build/runtime assets.
 
 Create new .NET consumers outside the worktree. Restore exact versions from the
 local feed, with Gloaming source mapping and an isolated consumer package cache.

@@ -62,7 +62,7 @@ public sealed class EventReactionRegistration<TContext, TModule>
         return this;
     }
 
-    /// <summary>Selects a PendingEvents buffer on tracked entities of the exact configured source type.</summary>
+    /// <summary>Selects a PendingEvents buffer on tracked entities assignable to <typeparamref name="TEntity"/>.</summary>
     public EventReactionRegistration<TContext, TModule> CollectFrom<TEntity>(
         Func<TEntity, PendingEvents> selectEvents
     )

@@ -17,11 +17,21 @@ before packing; PostgreSQL is never silently skipped. `DOTNET_HOST_PATH` can sel
 a particular `dotnet` executable; otherwise it must be on `PATH`.
 
 The harness packs the 23 `Gloaming.*` library projects using one unique local
-prerelease version. It renders each owning README's relative inline links into
-GitHub links, rejects missing targets, and passes the rendered temporary file
-through `PackageReadmeSource`. It extracts archives with the SDK's native MSBuild
+prerelease version. Ordinary `dotnet pack` uses the repository's native SDK
+[`Directory.Build.targets`](../../src/Directory.Build.targets) to render each
+owning README's relative inline links into GitHub links and reject missing targets
+or links escaping the repository. This runs before NuGet collects package files,
+including when packing without a build, and requires no Node/npm installation.
+The generated README stays under `obj`; the task is not shipped in the packages.
+`PackageReadmeSource` can still select an already-rendered external source file.
+
+The harness uses regular packing without that override. It independently predicts
+README bytes in TypeScript, extracts archives with the SDK's native MSBuild
 `Unzip` task and validates package identity/version, license expression, author,
 repository, README bytes, assembly, XML documentation and internal dependency graph.
+Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesis
+path segments, both directory separators, directory/anchor/external links and
+rejection of missing targets and repository escapes.
 
 Four clean executable consumers are created outside the repository:
 

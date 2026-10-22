@@ -80,9 +80,39 @@ inspected implementation fulfills its baseline-complete/eventual
 overlap contract; it does not promise a coherent cross-key snapshot. Canonical host integration
 remains a separate integration obligation. Corrections are recorded in the B2 report.
 
+## Package readiness
+
+Reviewed the package/metadata/documentation/tooling paths in
+`git diff c346a51...1d5a7f9`; both references resolve and the scoped diff is nonempty.
+
+### Standards
+
+Two P2 findings: `CollectFrom<TEntity>` incorrectly describes assignable tracked entities
+as an exact CLR type selection; correct the XML summary. Ordinary SDK packing also needs
+the same usable README links as the proof artifacts: the first harness rendered links
+through an override while default packing retained source-relative links. Fix the ordinary
+packing path and verify its artifacts directly. No additional reusable runtime mechanism
+is justified by small assertion helpers or explicit consumer composition.
+
+### Spec
+
+No findings against the bounded local-artifact/clean-adoption scope. The reviewer independently
+inspected all 23 archive hashes, the manifest hash, package-only dependency assets and retained
+execution logs for all four profiles; no tests were rerun. Native PostgreSQL assertions cover
+the selected transaction, fault and fresh-context outcomes. Broader functional guarantees and
+final integration review remain separate.
+
+The public summary correction is applied. Native default packing now renders and validates
+README links before NuGet collects files, without Node/npm. Fresh ordinary SDK packing passed
+all 23 archives and four clean consumers, including PostgreSQL; native renderer encoding,
+separator and failure probes, no-build packing and external README override also passed.
+The package report records the new evidence separately from the superseded custom-input run.
+Follow-up inspection of this correction remains required.
+
 ## Remaining review gates
 
-S1 consolidation/archive retirement and package readiness need their own two-axis review.
+S1 consolidation/archive retirement needs its own two-axis review; package corrections need
+verification and follow-up inspection.
 The final complete diff then needs an independent Standards/Spec review and the requested
 architecture/isolation review. This record does not close those gates or substitute historical
 test counts for current execution.
