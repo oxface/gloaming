@@ -155,8 +155,8 @@ operator authority remain consumer-owned. Counters record confirmed failures rat
 execution/crash. No automatic pruning, permanent duplicate registry, second dead-letter queue, batch/parallel worker, global
 ordering, automatic upcasting or other-provider guarantee is supplied.
 
-Executable references: [HTTP inbox-only receiver](../src/Gloaming.Messaging/samples/InboxDemo/README.md),
-[separate-context RabbitMQ round trip](../src/Gloaming.Messaging/samples/MessagingDemo/README.md),
+Executable references: [HTTP inbox-only receiver](../samples/InboxDemo/README.md),
+[separate-context RabbitMQ round trip](../samples/MessagingDemo/README.md),
 [Inventory integration handler](../../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs).
 [New proof report](../../../docs/reports/inbox1-durable-intake-processing.md) distinguishes
 fresh results from O1 and archived receipt-only evidence.

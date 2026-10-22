@@ -107,12 +107,15 @@ README links before NuGet collects files, without Node/npm. Fresh ordinary SDK p
 all 23 archives and four clean consumers, including PostgreSQL; native renderer encoding,
 separator and failure probes, no-build packing and external README override also passed.
 The package report records the new evidence separately from the superseded custom-input run.
-Follow-up inspection of this correction remains required.
+Follow-up Standards and Spec inspections of `04ef50b...4eda8d0` both report zero findings.
+Standards confirmed both P2 corrections; Spec independently checked the ordinary-pack manifest,
+all archive hashes, package-only dependency assets and retained consumer/renderer logs. Neither
+reviewer reran tests. The two findings are resolved.
 
 ## Remaining review gates
 
-S1 consolidation/archive retirement needs its own two-axis review; package corrections need
-verification and follow-up inspection.
+S1 consolidation/archive retirement and the demonstrated route-claim extension need their
+two-axis review.
 The final complete diff then needs an independent Standards/Spec review and the requested
 architecture/isolation review. This record does not close those gates or substitute historical
 test counts for current execution.

@@ -93,9 +93,9 @@ PostgreSQL 18.6 Testcontainers, consumer Contracts for reads/writes and native i
 barriers for faults. Linux child-process cases exercise SIGINT, hard kill and explicit restart.
 The commit-acknowledgment case injects an exception after a real commit; it is not a network
 partition test. Existing ES2 evidence is distinct from these new ES3 executions.
-The independent [ledger executor proofs](../../../../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegenerationTests.cs)
+The independent [ledger executor proofs](../../../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegenerationTests.cs)
 exercise initialization order, narrow classification, native completion and cleanup without
-Inventory, tenancy or codec assumptions. See the [package contract](../../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations).
+Inventory, tenancy or codec assumptions. See the [package contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations).
 
 ```sh
 dotnet build samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj
@@ -107,6 +107,6 @@ DOTNET_PROCESSOR_COUNT=4 \
 ```
 
 Use your reachable Docker-compatible socket on other hosts. See the
-[scope](../../../../../docs/plans/es3-aggregate-regeneration-operations.md),
-[slice report](../../../../../docs/reports/es3-aggregate-regeneration-operations.md) and
-[current rebuilder contract](../../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
+[scope](../../../../docs/plans/es3-aggregate-regeneration-operations.md),
+[slice report](../../../../docs/reports/es3-aggregate-regeneration-operations.md) and
+[current rebuilder contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).

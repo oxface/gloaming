@@ -126,7 +126,7 @@ policy. Consumer-native migrations remain explicit; no worker migrates on startu
 
 ## Executable adoption
 
-[InboxDemo](../src/Gloaming.Messaging/samples/InboxDemo/README.md#processed-inbox-cleanup) supplies a separate
+[InboxDemo](../samples/InboxDemo/README.md#processed-inbox-cleanup) supplies a separate
 finite `--cleanup` mode, explicit UTC cutoff/batch and checked maintenance connection. It emits
 one JSON result and exits without starting API/intake/processing/migration or telemetry loops.
 Its role check rejects owner/superuser/BYPASSRLS and expanded effective privileges as bounded

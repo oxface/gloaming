@@ -4,7 +4,7 @@ Gloaming owns retained work, row locks, committed claims and fenced lifecycle wr
 consumer owns its publisher/receiver, recovery choice, cancellation and process supervisor.
 Retrying an operation in a fresh database scope cannot repair a permanently closed channel.
 
-The [standalone worker](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) selects fail-stop
+The [standalone worker](../samples/MessagingWorkerDemo/README.md) selects fail-stop
 using RabbitMQ.Client 7.2.2 and native Generic Host APIs. Optional
 [Gloaming.Messaging.RabbitMQ](../Gloaming.Messaging.RabbitMQ/README.md) now supplies shared native
 session/channel ownership, phase-timeout setup, terminal observation and cleanup. Queue/role,
