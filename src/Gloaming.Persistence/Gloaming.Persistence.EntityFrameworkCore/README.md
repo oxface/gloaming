@@ -107,7 +107,7 @@ and storage strategies need their own proofs of consistent identity semantics. T
 neither opens transactions, saves, commits, retries nor registers services. Native saves/transactions remain
 visible; no ambient scope, base DbContext or automatic stamping is introduced.
 
-See [the executable Inventory/Sales consumer](../../../samples/Wholesale/PersistenceDemo/README.md),
+See [the executable Inventory/Sales consumer](../samples/PersistenceDemo/README.md),
 [the first-slice plan](../../../docs/plans/e2-1-tenant-ownership.md) and
 [the first proof report](../../../docs/reports/e2-1-tenant-ownership.md) and
 [the relationship proof report](../../../docs/reports/e2-3-tenant-relationships.md).

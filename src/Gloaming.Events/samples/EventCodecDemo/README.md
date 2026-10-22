@@ -1,13 +1,13 @@
 # Standalone two-family event serialization and history consumer
 
-A finite .NET 10 consumer of [Events.Serialization](../../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md).
+A finite .NET 10 consumer of [Events.Serialization](../../Gloaming.Events.Serialization/README.md).
 Its two project references are the independently adoptable serialization and history
 libraries; it has no package, database, HTTP, bus, DI or context-library dependency. It
 demonstrates explicit event registration, native JSON contracts and bounded history
 reconstruction without adopting the full modular-monolith application.
 
 ```bash
-dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj
+dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj
 ```
 
 Expected output, independent of current numeric culture:
@@ -85,7 +85,7 @@ technical library.
 ```bash
 dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj
 dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj
-dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj
+dotnet test --project src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj
 ```
 
 The [consumer proofs](../EventCodecDemo.Tests/CompatibilityTests.cs) read actual local literals
@@ -97,19 +97,19 @@ unknown/unsupported identities, payload failures and configuration snapshots. Th
 repeat every native JSON option or test event-store behavior before it exists.
 
 The suites and console run in container-free CI; focused suites also run in commit hooks.
-See [the E4 report](../../../docs/reports/e4-event-serialization.md) for fresh verification and
+See [the E4 report](../../../../docs/reports/e4-event-serialization.md) for fresh verification and
 remaining limits. No active build/runtime reference points to the archive.
 
 The [history proofs](../EventCodecDemo.Tests/HistoryCompatibilityTests.cs) add independent
 current/historical state expectations, repeat reconstruction, codec failure propagation and
-preservation of consumer domain exceptions. [The E5.1 report](../../../docs/reports/e5-1-event-history.md)
+preservation of consumer domain exceptions. [The E5.1 report](../../../../docs/reports/e5-1-event-history.md)
 records fresh history evidence separately from E4. All three focused suites and the console
 run without containers.
 
 ## Explicit schema-evolution journey
 
 ```sh
-dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj -- --schema-evolution
+dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj -- --schema-evolution
 ```
 
 Output:
@@ -125,5 +125,5 @@ original sample's domain fold rather than changing line meaning. Independently a
 literals and [tests](../EventCodecDemo.Tests/UpcastingCompatibilityTests.cs) assert fields,
 strict nested decoding and preserved totals. Currency output is formatted explicitly; numeric
 value is preserved, not incidental JSON decimal scale. Original exact-v1 recipes/default output
-remain intact. The [codec README](../../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md)
+remain intact. The [codec README](../../Gloaming.Events.Serialization/README.md)
 also documents the provided PassThrough step for optional-field additions.

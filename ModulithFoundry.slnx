@@ -104,17 +104,17 @@
     <Project Path="samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
     <Project Path="samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />
-    <Project Path="samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj" />
+    <Project Path="src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
+    <Project Path="src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj" />
     <Project Path="samples/Wholesale/AppHost/Wholesale.AppHost.csproj" />
     <Project Path="samples/Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
     <Project Path="samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj" />
     <Project Path="samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/ContextDemo/ContextDemo.csproj" />
-    <Project Path="samples/Wholesale/ContextDemo.Tests/ContextDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj" />
-    <Project Path="samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
+    <Project Path="src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj" />
+    <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
+    <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Sample modules/">
     <Project Path="samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />

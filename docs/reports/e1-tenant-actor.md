@@ -14,7 +14,7 @@ and actor identities, explicit anonymous/tenantless context, optional initiator 
 read/initialization interfaces, a disposable single-assignment holder, and typed requirement
 checks. It has no package or project dependencies.
 
-[The console sample](../../samples/Wholesale/ContextDemo/README.md) consumes the library with
+[The console sample](../../src/Gloaming.Tenancy/samples/ContextDemo/README.md) consumes the library with
 explicit standard DI registration. Inventory returns independently seeded tenant quantities;
 Sales calls its Contracts interface to assess a draft quantity. It also demonstrates system
 versus human attribution and tenantless anonymous/identified execution. No production login

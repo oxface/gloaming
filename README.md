@@ -55,10 +55,10 @@ The original wholesale sample and its documentation are preserved under
 [`archive/proof-sample`](archive/proof-sample). They supply behavioral evidence and known
 limits for deliberate reimplementation, rather than prescribing the new library design.
 The first active segments are independent [actor identity](src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
-and [tenancy](src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), exercised by [the finite wholesale context sample](samples/Wholesale/ContextDemo/README.md).
+and [tenancy](src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), exercised by [the finite wholesale context sample](src/Gloaming.Tenancy/samples/ContextDemo/README.md).
 The first [EF ownership utility](src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md)
 was checkpointed with an executable Inventory consumer. The
-[two-module persistence sample](samples/Wholesale/PersistenceDemo/README.md) now owns native
+[two-module persistence sample](src/Gloaming.Persistence/samples/PersistenceDemo/README.md) now owns native
 Inventory/Sales migrations and separate histories checkpointed as `f2dcf2b`.
 Same-tenant customer/address relationships were checkpointed as `d67c7fc`.
 Versioned profile changes with caller-owned transactions were checkpointed as `6069c05`,
@@ -82,7 +82,7 @@ optional local Keycloak, explicit application account mappings and real browser 
 checkpointed as `dc3ac3b` with [implementation findings](docs/reports/e3-7-oidc-browser-journey.md).
 [E4](docs/plans/e4-event-serialization.md) implements the independent
 [Events.Serialization library](src/Gloaming.Events/Gloaming.Events.Serialization/README.md), immediately
-used by a [two-family consumer](samples/Wholesale/EventCodecDemo/README.md), with
+used by a [two-family consumer](src/Gloaming.Events/samples/EventCodecDemo/README.md), with
 [fresh proofs](docs/reports/e4-event-serialization.md) checkpointed as `2a49ef3b`.
 [E5.1](docs/plans/e5-1-event-history.md) adds independently adoptable
 [ordered-range validation](src/Gloaming.Events/Gloaming.Events.History/README.md) with explicit two-family
@@ -154,7 +154,7 @@ npm exec --prefix tools/repository -- lefthook install
 Run the active sample with:
 
 ```bash
-dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj
+dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj
 ```
 
 Every push to main and PR selects relevant checks from changed paths and their native

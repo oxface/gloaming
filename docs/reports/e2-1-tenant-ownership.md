@@ -30,7 +30,7 @@ can roll back a successfully saved change.
 | --- | --- | --- |
 | Container-free EF model and validation | 25 passed | [Model/write tests](../../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/OwnershipTests.cs), [unsupported mappings](../../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/UnsupportedMappingTests.cs). |
 | Independent GUID consumer, PostgreSQL 18.6 | 6 passed | [GUID proofs](../../src/Gloaming.Persistence/tests/PersistenceTests/GuidOwnershipTests.cs), with no context-library dependency. |
-| Inventory composition, PostgreSQL 18.6 | 30 passed | [Sample proofs](../../samples/Wholesale/PersistenceDemo.Tests/OwnershipTests.cs), including first/repeat finite console runs. |
+| Inventory composition, PostgreSQL 18.6 | 30 passed | [Sample proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs), including first/repeat finite console runs. |
 | Active solution | Build succeeded, zero warnings/errors | All 11 active projects, audited restore, EF 10.0.12 and Npgsql 10.0.3. |
 | Formatting and semantics | Passed | CSharpier, active native style and analyzer checks. |
 | Dependency boundaries | Passed | Both restored-graph dependency verifiers. |
@@ -102,9 +102,9 @@ scaffolding, with generated migrations remaining reviewed consumer code.
   [failure enum](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/TenantOwnershipFailure.cs),
   [exception](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/TenantOwnershipException.cs)
   and [documented contract](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md).
-- [Inventory DbContext](../../samples/Wholesale/PersistenceDemo/Inventory/InventoryDbContext.cs),
-  [composition](../../samples/Wholesale/PersistenceDemo/DemoComposition.cs),
-  [finite console](../../samples/Wholesale/PersistenceDemo/Program.cs) and
+- [Inventory DbContext](../../src/Gloaming.Persistence/samples/PersistenceDemo/Inventory/InventoryDbContext.cs),
+  [composition](../../src/Gloaming.Persistence/samples/PersistenceDemo/DemoComposition.cs),
+  [finite console](../../src/Gloaming.Persistence/samples/PersistenceDemo/Program.cs) and
   [independent GUID context](../../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/GuidConsumerContext.cs).
 - [Current dependency architecture tests](../../tests/ArchitectureTests/AdoptionDependencyTests.cs),
   [CI lanes](../../.github/workflows/ci.yml) and [development commands](../development.md).

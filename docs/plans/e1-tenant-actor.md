@@ -17,8 +17,8 @@ initiator together; tenant choice belongs to its own context.
 - `src/Gloaming.Tenancy/Gloaming.Tenancy/`: tenant choice, lifecycle and tenant guard.
 - `src/Gloaming.ActorIdentity/tests/ActorIdentityTests/` and `src/Gloaming.Tenancy/tests/TenantTests/`: separate executable test consumers,
   each referencing only its selected foundation library and the test framework.
-- `samples/Wholesale/ContextDemo/`: actor-only, tenancy-only and combined standard-DI usage.
-- `samples/Wholesale/ContextDemo.Tests/`: consumer composition and capability proofs.
+- `src/Gloaming.Tenancy/samples/ContextDemo/`: actor-only, tenancy-only and combined standard-DI usage.
+- `src/Gloaming.Tenancy/samples/ContextDemo.Tests/`: consumer composition and capability proofs.
 
 Both libraries have no package, project or extra framework dependencies. Their small holder
 implementations are local to each library; there is no common runtime base package or generic

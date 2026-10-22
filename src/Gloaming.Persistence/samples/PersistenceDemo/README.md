@@ -1,7 +1,7 @@
 # Wholesale persistence demonstration
 
-A finite consumer of [EF ownership utilities](../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md)
-and [Tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), without actor identity or Access.
+A finite consumer of [EF ownership utilities](../../Gloaming.Persistence.EntityFrameworkCore/README.md)
+and [Tenancy](../../../Gloaming.Tenancy/Gloaming.Tenancy/README.md), without actor identity or Access.
 It uses native Npgsql/EF registration, model configuration and save overrides. No HTTP
 endpoints or authentication substitute are introduced. Inventory and Sales own their native
 DbContexts, schemas, migration artifacts and history tables in the same database.
@@ -12,7 +12,7 @@ Supply `WHOLESALE_DEMO_CONNECTION_STRING` through your shell/environment for an 
 disposable PostgreSQL database, then run from the repository root:
 
 ```bash
-dotnet run --project samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj
+dotnet run --project src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj
 ```
 
 The consumer explicitly calls Inventory's native `MigrateAsync`, then Sales's, before
@@ -67,7 +67,7 @@ exception translation or tenant transfer; these references remain persistence fi
 - **Reference category**: global fixture classification, independent of an Organization.
 - **Customer reference**: Sales-owned customer code/display name in an Organization.
 - **Customer address reference**: Sales-owned address line belonging to a customer in the same Organization.
-- **Organization** and **Tenant** follow [the project glossary](../../../CONTEXT.md).
+- **Organization** and **Tenant** follow [the project glossary](../../../../CONTEXT.md).
 
 ## Versioned profile changes
 
@@ -115,16 +115,16 @@ Restore the pinned local `dotnet-ef` tool from the repository root:
 
 ```bash
 dotnet tool restore
-dotnet ef migrations list --project samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj --context InventoryDbContext --no-connect
-dotnet ef migrations list --project samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj --context SalesDbContext --no-connect
+dotnet ef migrations list --project src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj --context InventoryDbContext --no-connect
+dotnet ef migrations list --project src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj --context SalesDbContext --no-connect
 ```
 
 For a later model change, choose a descriptive new migration name and scaffold only its
 owning context. For example:
 
 ```bash
-dotnet ef migrations add InventoryChange --project samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj --context InventoryDbContext --output-dir Inventory/Migrations
-dotnet ef migrations add SalesChange --project samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj --context SalesDbContext --output-dir Sales/Migrations
+dotnet ef migrations add InventoryChange --project src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj --context InventoryDbContext --output-dir Inventory/Migrations
+dotnet ef migrations add SalesChange --project src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj --context SalesDbContext --output-dir Sales/Migrations
 ```
 
 Factories build a model with uninitialized tenancy, without executing the console or opening
@@ -157,7 +157,7 @@ model classification and first/repeat console invocation. The separate GUID-key 
 [Module migration proofs](../PersistenceDemo.Tests/ModuleMigrationTests.cs) initialize either
 module first, verify its tables/history alone, preserve its rows when the other module is
 initialized, verify independent histories and exercise Sales tenant filtering/save guards.
-[Container-free model/artifact policies](../../../tests/ArchitectureTests/ModulePersistenceTests.cs)
+[Container-free model/artifact policies](../../../../tests/ArchitectureTests/ModulePersistenceTests.cs)
 check both schemas, explicit entity classification, tenant-bearing relationship and snapshot/model consistency.
 
 [Relationship proofs](../PersistenceDemo.Tests/CustomerRelationshipTests.cs) cover valid
@@ -171,6 +171,6 @@ constraint fault, cancellation after the first SQL write, explicit rollback/fres
 and an E2.3 database upgraded to execute the new operation.
 
 Shared cross-module transactions require a separate named workflow and proof, as recorded in
-[the E2 plan](../../../docs/plans/e2-persistence.md). E2.2 through E2.4 establish consumer-owned
+[the E2 plan](../../../../docs/plans/e2-persistence.md). E2.2 through E2.4 establish consumer-owned
 migration, relationship and transaction/version recipes. No new reusable library mechanism
 was proven by those slices. PostgreSQL is the only exercised database provider.

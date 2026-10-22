@@ -8,7 +8,7 @@
     <PackageReference Include="xunit.v3.mtp-v2" />
     <PackageReference Include="Testcontainers.PostgreSql" />
     <ProjectReference Include="../PersistenceDemo/PersistenceDemo.csproj" />
-    <Compile Include="../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

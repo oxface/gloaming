@@ -28,9 +28,9 @@ IStockPositionEvent decoded = codec.Deserialize(
     stored.EventName, stored.SchemaVersion, stored.Payload);
 ```
 
-See the actual [Inventory](../../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionExample.cs)
-and [Purchasing](../../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
-registration and [standalone consumer](../../../samples/Wholesale/EventCodecDemo/README.md).
+See the actual [Inventory](../samples/EventCodecDemo/Inventory/StockPositionExample.cs)
+and [Purchasing](../samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
+registration and [standalone consumer](../samples/EventCodecDemo/README.md).
 
 ## Guarantees and errors
 
@@ -104,7 +104,7 @@ Derive from `JsonEventUpcaster`, passing the durable name and source/target sche
 to its protected constructor, and override `JsonElement Upcast(JsonElement payload)`.
 The Inventory [receipt transformation](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs)
 renames `quantity` to `receivedQuantity` without changing domain facts. The standalone
-[Purchasing example](../../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
+[Purchasing example](../samples/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
 chains a flat v1 through renamed v2 fields into a nested v3 shape. These transformations belong
 to their consumers; the codec owns route selection, ordered execution and terminal CLR dispatch.
 

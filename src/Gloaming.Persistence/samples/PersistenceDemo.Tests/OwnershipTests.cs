@@ -260,20 +260,12 @@ public sealed class OwnershipTests(PostgreSqlFixture postgres) : IClassFixture<P
         {
             var start = new ProcessStartInfo("dotnet")
             {
-                WorkingDirectory = Path.GetFullPath(
-                    Path.Combine(AppContext.BaseDirectory, "../../../../../../")
-                ),
+                WorkingDirectory = AppContext.BaseDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
             };
-            start.ArgumentList.Add("run");
-            start.ArgumentList.Add("--project");
-            start.ArgumentList.Add("samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj");
-            start.ArgumentList.Add("--configuration");
-            start.ArgumentList.Add(new DirectoryInfo(AppContext.BaseDirectory).Parent!.Name);
-            start.ArgumentList.Add("--no-build");
-            start.ArgumentList.Add("--no-restore");
+            start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
             start.Environment["WHOLESALE_DEMO_CONNECTION_STRING"] = connection;
             using var process =
                 Process.Start(start)

@@ -1,13 +1,13 @@
 # Wholesale context demonstration
 
-A finite console consumer of independent [actor identity](../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
-and [tenancy](../../../src/Gloaming.Tenancy/Gloaming.Tenancy/README.md) libraries.
+A finite console consumer of independent [actor identity](../../../Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
+and [tenancy](../../Gloaming.Tenancy/README.md) libraries.
 It uses project references and standard Microsoft DI, with no EF, ASP.NET Core, Rebus,
 Aspire or Access.Contracts. It supplies demonstration identities explicitly and opens no
 HTTP endpoints. Authentication and durable business behavior enter later slices.
 
 ```bash
-dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj
+dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj
 ```
 
 Run that command from the repository root. Expected output:
@@ -41,7 +41,7 @@ do not reserve stock or persist orders.
 
 - **Availability**: the sample fixture quantity for a SKU within one tenant.
 - **Draft preview**: a read-only assessment of whether a requested quantity fits availability.
-- **Executing actor** and **initiator** follow [the project glossary](../../../CONTEXT.md).
+- **Executing actor** and **initiator** follow [the project glossary](../../../../CONTEXT.md).
 
 ## Exercised template recipe
 

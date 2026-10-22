@@ -60,7 +60,7 @@ Persistence:
 
 Events:
   - 'src/Gloaming.Events/**'
-  - 'samples/Wholesale/EventCodecDemo{,.Tests}/**'
+  - 'src/Gloaming.Events/samples/EventCodecDemo{,.Tests}/**'
   - '!**/*.md'
 
 # EventPersistenceDemo composes event sourcing, messaging and accepted-change audit.

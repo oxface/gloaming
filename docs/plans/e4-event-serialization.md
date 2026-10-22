@@ -59,7 +59,7 @@ IStockPositionEvent decoded = codec.Deserialize(
 
 This excerpt follows the implemented consumer registration; the concrete Inventory recipe
 uses property attributes and Purchasing enables constructor requirements. The actual compiled
-usage is in [the consumer](../../samples/Wholesale/EventCodecDemo/README.md). The public surface,
+usage is in [the consumer](../../src/Gloaming.Events/samples/EventCodecDemo/README.md). The public surface,
 still subject to implementation review, is:
 
 - `JsonEventCodec<TEvent>`: construct once with native options and explicit registrations;
@@ -128,7 +128,7 @@ document. Storage rows, stream IDs/versions, timestamps and attribution stay out
 
 ## Immediate consumer and placement
 
-Add a finite `samples/Wholesale/EventCodecDemo` with only a project reference to the new
+Add a finite `src/Gloaming.Events/samples/EventCodecDemo` with only a project reference to the new
 library. It contains two small internal example families in separate Inventory/Purchasing
 folders and explicitly constructs a codec for each. This standalone adoption proof introduces
 no HTTP authentication substitute, EF context, bus, empty module Contracts or DI framework.

@@ -225,14 +225,14 @@ dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorI
 dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/ContextDemo.Tests/ContextDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-build --no-restore
-dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj --no-build --no-restore
-dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-build --no-restore
+dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj --no-build --no-restore
+dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
 ```
 
 These checks require no containers, identity provider or personal credentials. The active
@@ -285,14 +285,14 @@ antiforgery, tenant-owned Sales profile changes and explicit versioned transacti
 ## Standalone event serialization and history
 
 The sixth technical library, `Gloaming.Events.Serialization`, is independently
-adoptable. Its finite [two-family consumer](../samples/Wholesale/EventCodecDemo/README.md)
+adoptable. Its finite [two-family consumer](../src/Gloaming.Events/samples/EventCodecDemo/README.md)
 now composes it with the seventh library, `Gloaming.Events.History`, through two project
 references. Each library remains package-free and independent of the other. Build and run
 the consumer directly:
 
 ```bash
-dotnet build samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj
-dotnet run --project samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
+dotnet build src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj
+dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
 ```
 
 Inventory and Purchasing explicitly register their durable aliases and choose their own
@@ -333,7 +333,7 @@ reaper enabled; no application process or personal database credentials are requ
 
 ```bash
 dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-build --no-restore
@@ -366,7 +366,7 @@ implementations; both independently adoptable HTTP library suites remain contain
 [the E2.2 report](reports/e2-2-module-migrations.md),
 [the E2.3 relationship report](reports/e2-3-tenant-relationships.md),
 [the E2.4 profile-change report](reports/e2-4-versioned-profile-changes.md) and
-[sample run instructions](../samples/Wholesale/PersistenceDemo/README.md), plus
+[sample run instructions](../src/Gloaming.Persistence/samples/PersistenceDemo/README.md), plus
 [the E3.3 Access report](reports/e3-3-persisted-access.md) and
 [HTTP/database setup](../samples/Wholesale/HttpIdentityDemo/README.md), and
 [the native event-history consumer](../samples/Wholesale/EventPersistenceDemo/README.md).

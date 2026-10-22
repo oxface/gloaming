@@ -91,8 +91,8 @@ CI has not been observed.
 
 Review the simplified [declaration tests](../../tests/ArchitectureTests/AdoptionDependencyTests.cs),
 their copied-project setup in [the test project](../../tests/ArchitectureTests/ArchitectureTests.csproj),
-the reduced [context composition](../../samples/Wholesale/ContextDemo.Tests/CompositionTests.cs)
-and [Inventory proofs](../../samples/Wholesale/PersistenceDemo.Tests/OwnershipTests.cs).
+the reduced [context composition](../../src/Gloaming.Tenancy/samples/ContextDemo.Tests/CompositionTests.cs)
+and [Inventory proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs).
 Removed private annotations are visible in the unsupported-mapping test diff. No staging
 or commit was performed this turn; previous owner-staged work was preserved.
 

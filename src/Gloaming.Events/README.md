@@ -12,7 +12,7 @@ public contract and dependencies; the family is not an umbrella runtime package.
 
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.
-The [executable consumer](../../samples/Wholesale/EventCodecDemo/README.md) demonstrates adoption.
+The [executable consumer](samples/EventCodecDemo/README.md) demonstrates adoption.
 
 Library tests:
 

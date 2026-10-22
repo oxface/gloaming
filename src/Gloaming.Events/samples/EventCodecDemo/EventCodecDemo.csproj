@@ -4,8 +4,8 @@
     <RootNamespace>ModulithFoundry.Samples.Wholesale.EventCodecDemo</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
-    <ProjectReference Include="../../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
+    <ProjectReference Include="../../Gloaming.Events.History/Gloaming.Events.History.csproj" />
+    <ProjectReference Include="../../Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
     <InternalsVisibleTo Include="EventCodecDemo.Tests" />
     <None Update="Fixtures/**/*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

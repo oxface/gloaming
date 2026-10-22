@@ -22,7 +22,7 @@ The caller registers contexts/providers and tenancy explicitly, migrates each mo
 one immutable tenant scope per Organization, stages finite authored histories and saves through
 native EF. A stock position and purchase order share the same stream GUID across two tenants;
 Beta's authored quantities are twice Alpha's. The six durable JSON literals come from
-[EventCodecDemo](../EventCodecDemo/Fixtures/README.md), unchanged. Recorded timestamps and the
+[EventCodecDemo](../../../src/Gloaming.Events/samples/EventCodecDemo/Fixtures/README.md), unchanged. Recorded timestamps and the
 quantity multiplier are demo metadata/policy, not library behavior.
 
 The second journey opens/drafts different streams through business command Contracts, then

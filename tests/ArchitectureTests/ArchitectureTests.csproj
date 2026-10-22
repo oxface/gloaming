@@ -39,7 +39,7 @@
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/EventCodecDemo/EventCodecDemo.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
     <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
@@ -49,9 +49,9 @@
     <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/ContextDemo/ContextDemo.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/PersistenceDemo/PersistenceDemo.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../../samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
