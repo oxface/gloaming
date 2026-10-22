@@ -20,6 +20,9 @@ For ownership-declared automatic PostgreSQL transaction setup, select the separa
 [Persistence/PostgreSQL adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md).
 The transaction-local utility above remains independently usable without ownership mapping.
 
+See the [native operation recipe](docs/composition.md) and its
+[cross-family composition proofs](../../tests/ContextCompositionTests/CompositionTests.cs).
+
 Library tests:
 
 - [TenantTests](tests/TenantTests/TenantTests.csproj)

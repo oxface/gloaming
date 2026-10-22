@@ -77,8 +77,7 @@ jobs:
         dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj --no-build --no-restore
+        dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   persistence:

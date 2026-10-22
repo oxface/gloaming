@@ -31,7 +31,7 @@ integrity. Changes inside mapped roots follow their explicit filters.
 Markdown is documentation, including family-local docs and sample READMEs. Repository integrity
 always runs commitlint. Its .NET checks run for relevant code/build
 changes. Update the path map when project dependencies, linked fixtures, new consumers or
-template source snapshots change; dependency discovery is deliberately manual. Wholesale
+adoption proofs change; dependency discovery is deliberately manual. Wholesale
 runtime retains sample/shared-input
 and manual execution rather than running for every library-only change.
 

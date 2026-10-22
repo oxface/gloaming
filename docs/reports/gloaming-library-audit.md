@@ -3,8 +3,9 @@
 Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Status: active audit and implementation record. The local package command and two thin
 adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
-Continuation package consolidation is committed as `56a8b12`. Messaging example/fixture
-consolidation is the current uncommitted batch; other cleanup remains open.
+Continuation package consolidation is committed as `56a8b12`; Messaging example/fixture
+consolidation as `5d86b20`. Application scaffolding retirement is the current uncommitted
+batch; other family examples and Wholesale cleanup remain open.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -63,7 +64,7 @@ remaining cleanup is tracked as [larger code-led batches](#remaining-cleanup-sli
 
 ## Messaging example and fixture consolidation
 
-Current batch, uncommitted. One [delivery example](../../src/Gloaming.Messaging/samples/Delivery/README.md)
+Committed as `5d86b20`. One [delivery example](../../src/Gloaming.Messaging/samples/Delivery/README.md)
 replaces the separately advertised outbox, inbox, broker-journey and producer/worker examples.
 Exports and Rendering are ordinary class libraries with separate contexts/migrations and no
 peer-module, host, RabbitMQ or worker-hosting dependency. Producer uses only Exports and
@@ -114,8 +115,66 @@ Consumer test-host policy includes failure classification, fixed-route operator 
 metadata-only grants and retention cutoffs. None becomes a Gloaming API, template requirement
 or new extraction candidate. **No new reusable mechanism was proven; this batch reorganizes
 existing consumers and proofs.**
-Remaining gaps are the other families, Wholesale/template and integrated cleanup below;
-Umbrine durable human workflows remain separate. Changes remain unstaged for owner review.
+Remaining gaps at that checkpoint were other families, Wholesale/template and integrated
+cleanup. The owner approved this complete batch; commit `5d86b20` passed all hooks. Umbrine
+durable human workflows remain separate.
+
+## Application scaffolding retirement
+
+Current batch, uncommitted. Retire **58 tracked files**: the native template skeleton,
+TypeScript creator/proof/presets and their lockfile, generated-only CI workflow, and the
+ContextDemo application/test graph. Generator-specific `jsonc-parser`/`koffi` dependencies
+and Dependabot roots disappear with that workspace. Removed projects no longer enter the
+solution, architecture loader, hooks or native CI commands; the reusable CI scope output
+no longer advertises a template lane. Retired local build/dependency output and empty folders
+are removed as well. No replacement generator, framework host or skill router is introduced.
+
+The [application patterns](../application-patterns.md) describe existing consumer setup.
+The [native operation recipe](../../src/Gloaming.Tenancy/docs/composition.md) is exercised by
+[ContextCompositionTests](../../tests/ContextCompositionTests/CompositionTests.cs), which reference
+only ActorIdentity core, Tenancy core, native DI and xUnit. Root/family entry points use these
+current owners. The glossary reflects Umbrine's library/pattern adoption. Historical links
+resolve against the last retained source, `5d86b20`; the generator's creation guarantees remain
+historical evidence rather than supported current behavior.
+
+| Removed behavior or proof | Current disposition |
+| --- | --- |
+| ContextDemo alias ownership, independent registration, attribution, required contexts and concurrent scopes | Twelve direct native-DI cases retain these obligations, adding explicit child-scope, cancellation/failure cleanup and partial-establishment assertions. No business model or joint context runtime is required. |
+| SKU availability, draft fulfilment and fixed console output | Retired invented consumer policy; no library quantity/preview contract remains. The test count deliberately changes rather than retaining business assertions to preserve a number. |
+| Catalog ownership, caller transaction/save/commit, stale version and rollback | Current Persistence adoption tests retain actual database cases, including stored-owner forgery, stale server reload, failed-save rollback and independent module migrations. These are existing proofs, rerun here; Catalog-specific DTO/rule/response details are retired. |
+| Generated Catalog price/immutability rules and optional report worker | Retired consumer examples, including worker mandate, reporting/output and process CLI behavior. They were not Gloaming APIs. Fresh-scope composition is demonstrated directly; no replacement worker engine is claimed. |
+| Generator naming/source copies, destination atomicity and selected worker materialization | Retired tooling guarantees. Six fresh-cache package-only consumers prove ordinary retained adoption without ProjectReferences; no source-copy or existing-destination behavior is promised. |
+| Catalog template migration chain | Retired with its only consumer; there are no external databases to upgrade. All 157 fixtures/migration files outside the retired applications remain byte-identical, including current Persistence module migrations and historical payloads. |
+
+Five obsolete architecture theory cases referring to ContextDemo are removed along with its
+loader entry; one dependency assertion checks the new composition consumer. Library-to-library
+isolation constraints remain. The CI map adds the cross-family consumer to Tenancy's lane,
+which already tracks ActorIdentity core, and maps the consumer root explicitly. Local native-glob
+comparison across 1,299 active paths and 14 retained filters changes selection only for the new
+consumer. Five changed YAML files parse; this is local mapping evidence, not GitHub scheduling.
+
+Fresh verification: 12 composition, 19 actor, 17 tenancy, 109 architecture and 36 Persistence
+adoption cases passed (**193 total**). All 21 local package archives and six isolated consumers
+passed. The full solution builds with zero warnings/errors; all 919 CSharpier inputs, native
+style and analyzer checks pass. A local scan checks 2,926 Markdown targets and 279 project/source
+references with no missing targets; historical links were validated with native Git object
+lookup before replacement. Other library implementations and public contracts
+are unchanged; their unrelated runtime suites were not rerun for this retirement. The retired
+generator/ContextDemo executions were not rerun or recertified; their earlier results remain
+dated historical evidence.
+
+Package evidence: `/home/oxface/.cache/tmp/gloaming-package-proof-kJvaXl/manifest.json`,
+version `1.0.0-local.1792710381178.g2f905b8e`, SHA-256
+`ee402029c99d6182a58107655667c0460c078bd22ed591d2f83203544773547d`.
+Logs: `/tmp/gloaming-scaffolding-{composition,actor,tenant,architecture,persistence,packages}.log`.
+The package-proof PostgreSQL container was stopped and auto-removed. The original empty index
+is preserved; all batch edits remain unstaged.
+
+**No new reusable mechanism was proven.** Native registration and scope ownership are editable
+consumer setup; admission, Catalog/SKU rules and worker mandates remain consumer policy.
+No extraction candidate earns a new API in this batch. Remaining work is the persistence/event
+example reduction, Wholesale reduction and integrated publication cleanup below. Umbrine human
+workflows and implementation remain outside this cleanup.
 
 ## Confirmed direction and review criteria
 
@@ -337,7 +396,7 @@ fixture or literal payload need not remain a separately advertised application.
 
 | Example | Current disposition | Evidence condition |
 | --- | --- | --- |
-| ContextDemo | Retire the SKU fixture application; show a short context-establishment recipe. | Reconcile accessor, requirement and independent actor/tenant coverage with family and package-consumer tests before deleting its tests. |
+| ContextDemo | Retired in the current batch; direct native-DI composition tests and the operation recipe replace the fixture application. | Independent cores and 12 composition cases retain lifecycle/requirement/isolation obligations; SKU/preview policy is explicitly retired. |
 | PersistenceDemo | Replace with a small ownership example, using the existing independent RLS consumer for optional provider setup. | Retain stored-owner forgery, GUID/string ownership, same-tenant relationships and independent migration ownership where still promised. |
 | EventCodecDemo | Keep a small literal-payload codec/upcasting example. | Literal historic schemas and independent expected outcomes stay useful even without external legacy consumers. Remove incidental wholesale vocabulary when it obscures setup. |
 | EventStorageDemo | Keep one concise raw counter/ledger adoption path; trim older mapping demonstrations. | Preserve event-sourcing adoption without Tenancy, Messaging or the optional codec; maintain append/rebuild/concurrency proof coverage. |
@@ -347,7 +406,7 @@ fixture or literal payload need not remain a separately advertised application.
 | Wholesale | Reduce to Access, Sales and Inventory with one order/reservation journey. | Retain the chosen HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition. Keep focused failure scenarios with their library owners. |
 | Wholesale Purchasing | Retire from the primary sample. | Transfer any unique event-store assertions first; independent raw/ledger consumers can retain variation without another business module. |
 | Wholesale Dispatch | Retire from the primary sample. | Route-selection guarantees already have provider tests. Snapshot/population, disclosure and directory merge/readiness are consumer-owned policy; retaining that experiment is not required by Messaging's route selector. |
-| templates/state-stored and tools/template | Retire the generator and its template-specific proof lane in a later coherent change. | Keep selected ownership/independent-adoption assertions under their library owners. Derive the pattern guide and future skills from real application setup; do not replace the generator with another CLI now. |
+| templates/state-stored and tools/template | Retired in the current batch with generated-only CI and dependencies. | Fresh ownership/transaction proofs and package-only adoption remain; creation/naming/worker-specific promises are retired. Concise existing application patterns remain. |
 
 Unimplemented dispositions remain proposals; existing tests are not assumed to be duplicates.
 Before each deletion, map its assertions to a retained test or explicitly retire the
@@ -389,11 +448,12 @@ different purposes; neither requires retaining every experimental migration chai
 The owner requested larger, closely related code-led batches, with relevant documentation,
 tests, CI and pruning completed alongside the implementation. Separate documentation-only
 increments are no longer part of this queue. Messaging examples and deployment fixtures are
-one current batch; estimate **3–5 further batches** after it:
+committed as `5d86b20`. Scaffolding retirement is the current batch; estimate
+**3–4 further batches** after it:
 
 | Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Other family examples and template retirement | 1–2 | Simplify context/persistence/event-sourcing/reaction examples, transfer unique proofs, retire generator/presets and generator-only tooling; retain concise exercised patterns. |
+| Remaining family examples | 1 | Simplify persistence/event-sourcing/reaction examples and codec vocabulary; transfer unique proofs before retiring incidental applications or scenarios. Context/template retirement is already in the current batch. |
 | Wholesale reduction | 1–2 | Three or four modules and one coherent journey; preserve useful persistence/authorization/audit/continuation evidence, rehoming unique proofs before removing experiments. |
 | Integrated publication cleanup and review | 1 | Remaining document/test relevance, CI/hooks/tooling and empty directories; integrated package/adoption/sample checks, independent code/architecture review and explicit gaps. |
 

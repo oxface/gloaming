@@ -140,7 +140,7 @@ Local logs use /tmp/ef1-1-*.log.
 - [Sales database composition](../../samples/Wholesale/modules/Sales/Sales/SalesDatabase.cs),
   [standalone module](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
   [real composition proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs)
-  and [template relocation](../../tools/template/create.ts).
+  and [template relocation](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/create.ts).
 
 Any failure requires rollback/disposal and a fresh operation with reloaded state and a new decision.
 Clear-before-handling is not durability. Native write/commit failures have no universal same-object

@@ -4,6 +4,33 @@ namespace ModulithFoundry.ArchitectureTests;
 
 public sealed class AdoptionDependencyTests
 {
+    [Fact]
+    public void ContextCompositionUsesOnlyTheTwoIndependentCoresAndNativeDi()
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(
+                AppContext.BaseDirectory,
+                "ProjectDeclarations",
+                "ContextCompositionTests.csproj"
+            )
+        );
+        Assert.Equal(
+            ["Gloaming.ActorIdentity", "Gloaming.Tenancy"],
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Equal(
+            ["Microsoft.Extensions.DependencyInjection", "xunit.v3.mtp-v2"],
+            declaration
+                .Descendants("PackageReference")
+                .Select(reference => (string)reference.Attribute("Include")!)
+        );
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
     [Theory]
     [InlineData("Gloaming.Messaging.RabbitMQ")]
     [InlineData("RabbitMqTests")]

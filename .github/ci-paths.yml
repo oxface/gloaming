@@ -1,5 +1,5 @@
 # Explicit lane inputs, including dependent consumers. Update this map when project
-# references, linked fixtures or template source snapshots change.
+# references, linked fixtures or adoption proofs change.
 # some-with-excludes makes !**/*.md an exclusion across every positive pattern.
 
 shared:
@@ -10,7 +10,6 @@ shared:
   - 'global.json'
   - 'NuGet.Config'
   - '!**/*.md'
-  - '!templates/**'
 
 # New inputs outside the mapped roots conservatively request full coverage.
 unmapped:
@@ -20,9 +19,8 @@ unmapped:
   - '!samples/Wholesale/**'
   - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
+  - '!tests/ContextCompositionTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
-  - '!templates/**'
-  - '!tools/template/**'
   - '!tools/release/**'
 
 Auditing:
@@ -47,6 +45,7 @@ EventReactions:
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'tests/ContextCompositionTests/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
@@ -103,14 +102,6 @@ wholesale:
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
-template:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'tools/template/**'
-  - 'templates/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - '!**/*.md'
 
 runtime:
   - 'samples/Wholesale/**'
@@ -120,7 +111,6 @@ repository_dotnet:
   - 'src/**'
   - 'samples/**'
   - 'tests/**'
-  - 'templates/**'
   - '!**/*.md'
 
 # Package README links are artifact content, so this lane includes their changes.

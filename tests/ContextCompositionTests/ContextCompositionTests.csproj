@@ -5,8 +5,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="xunit.v3.mtp-v2" />
-    <ProjectReference Include="../ContextDemo/ContextDemo.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

@@ -21,8 +21,6 @@ on:
         value: ${{ jobs.changes.outputs.Messaging }}
       wholesale:
         value: ${{ jobs.changes.outputs.wholesale }}
-      template:
-        value: ${{ jobs.changes.outputs.template }}
       runtime:
         value: ${{ jobs.changes.outputs.runtime }}
       repository_dotnet:
@@ -49,7 +47,6 @@ jobs:
       EventSourcing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EventSourcing == 'true') && 'true' || 'false' }}
       Messaging: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Messaging == 'true') && 'true' || 'false' }}
       wholesale: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.wholesale == 'true') && 'true' || 'false' }}
-      template: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.template == 'true') && 'true' || 'false' }}
       runtime: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.runtime == 'true') && 'true' || 'false' }}
       repository_dotnet: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.repository_dotnet == 'true') && 'true' || 'false' }}
       packages: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.packages == 'true') && 'true' || 'false' }}

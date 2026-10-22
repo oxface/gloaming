@@ -10,7 +10,7 @@ use current owned sources.
 
 ## Local .NET SDK
 
-Use the SDK selected by root `global.json`; the template has a matching SDK manifest.
+Use the SDK selected by root `global.json`.
 Ubuntu's apt feed can provide a different feature band: the repository currently
 requires 10.0.401, while the inspected Ubuntu 26.04 feed offers 10.0.112. The
 `latestPatch` policy stays within the selected feature band, so 10.0.112 cannot
@@ -38,7 +38,7 @@ the manifest. See [Microsoft's installer reference](https://learn.microsoft.com/
 ## Tooling and infrastructure
 
 Follow the [.NET conventions](conventions/dotnet.md), repository workflow and root `global.json`.
-Use Node 24 for repository/template tools. Restore pinned tools and packages before validation:
+Use Node 24 for repository and release tools. Restore pinned tools and packages before validation:
 
 ```bash
 dotnet tool restore
@@ -114,24 +114,23 @@ The existing [package-adoption workflow](../.github/workflows/packages.yml) runs
 [full proof](../tools/release/README.md#full-package-adoption-proof) through this same
 command, then checks archives and clean external consumers, including PostgreSQL.
 
-## Library and generated-template proofs
+## Library and consumer proofs
 
 Each family's README/docs give current guarantees, optional composition and commands for its
-unit/provider and independent adoption suites. In particular, Events owns the historical literal
-JSON linked into Wholesale and Messaging owns the neutral child-process helper used there.
-These examples have no dependency on Wholesale. A family change may require both its own tests
-and the product integration suite, according to the CI input map.
+unit/provider and independent adoption suites. Events owns historical literal JSON linked
+into Wholesale; neutral process support lives in `tests/Support`. A family change may also
+require product integration according to the CI input map.
 
-[Template tooling](../tools/template/README.md) owns the generated repository rehearsal:
+The [actor/tenant recipe](../src/Gloaming.Tenancy/docs/composition.md) has a direct native-DI
+consumer, without a sample application or generated repository:
 
 ```bash
-npm ci --prefix tools/template
-npm run check --prefix tools/template
-npm run verify --prefix tools/template
+dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj
 ```
 
-The generator checks independent output and source snapshots; it does not copy test-owned
-Wholesale scenarios. Template choices evolve separately from S1's product consolidation.
+Use [application patterns](application-patterns.md) and local packages when starting an
+application. The generator and its generated-only CI lane are retired; package-only adopters
+continue proving consumption without source references or a special project layout.
 
 ## Formatting, isolation and CI selection
 
@@ -143,8 +142,8 @@ dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
 
 Historical archive source and its manifest remain available through the provenance record above.
 The [main workflow](../.github/workflows/ci.yml) runs family contract/adoption jobs separately,
-then Wholesale integration once in its owning lane. Runtime/browser and template rehearsals
-remain separate deployment/adoption obligations. Repository integrity validates the complete
+then Wholesale integration once in its owning lane. Runtime/browser proofs
+remain separate deployment obligations. Repository integrity validates the complete
 solution and architecture. Hooks retain their existing scope; a focused local checkpoint does
 not replace final integrated verification.
 
@@ -153,7 +152,7 @@ The SHA-pinned [filter workflow](../.github/workflows/changes.yml) uses
 SDK/tooling and workflow changes select all checks; unknown inputs conservatively select full
 coverage. Library implementation changes select dependent Wholesale coverage. Its linked event
 fixtures and process helper select the product lane too. Wholesale source selects runtime.
-Markdown-only changes omit expensive provider/browser/template checks. Configuration/detection
+Markdown-only changes omit expensive provider/browser checks. Configuration/detection
 failure fails Repository integrity instead of silently skipping tests.
 
 The [S1 report](reports/s1-wholesale-consolidation.md) records the exact move/merge/remove map,

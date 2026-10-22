@@ -85,8 +85,6 @@
     <Project Path="samples/Wholesale/AppHost/Wholesale.AppHost.csproj" />
     <Project Path="samples/Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
     <Project Path="samples/Wholesale/Api/Wholesale.Api.csproj" />
-    <Project Path="src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
-    <Project Path="src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
     <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj" />
   </Folder>
@@ -103,6 +101,7 @@
     <Project Path="samples/Wholesale/modules/Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="tests/ContextCompositionTests/ContextCompositionTests.csproj" />
     <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
   </Folder>
   <Folder Name="/Samples/EventReactionsDemo/">

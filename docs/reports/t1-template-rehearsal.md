@@ -12,9 +12,9 @@ original execution scope. The next proposed capability is
 
 ## Outcome and supported configuration
 
-The [creator](../../tools/template/create.ts) reads explicit JSON containing exactly
+The [creator](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/create.ts) reads explicit JSON containing exactly
 `applicationName` and `rootNamespace`, then creates a new consumer-owned repository.
-The [creation guide](../../tools/template/README.md) defines validation, invocation,
+The [creation guide](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/README.md) defines validation, invocation,
 atomicity and proof prerequisites. Creation currently supports Linux with glibc and
 Node.js 24.21+ (24.x), using npm with
 the repository's .NET 10 SDK; the generated application uses ordinary .NET projects.
@@ -125,8 +125,8 @@ transaction guarantee. DbContext concurrency is not implied by concurrent contex
 
 ## Fresh verification
 
-The [creation proof](../../tools/template/verify.ts) is wired into an independent
-[CI workflow](../../.github/workflows/template.yml) with PostgreSQL 18.6. It runs from the
+The [creation proof](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/verify.ts) is wired into an independent
+[CI workflow](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/.github/workflows/template.yml) with PostgreSQL 18.6. It runs from the
 checkout but restores, builds, formats and tests consumers with their working directories
 under `/tmp`, outside Foundry. CI installs Node 24.21.0, runs `npm ci --ignore-scripts`,
 checks TypeScript/Prettier, then runs the npm creation proof. CI hosting itself has not
@@ -164,19 +164,19 @@ authentication, provider compatibility or package-release claim.
 
 ## Review map and findings
 
-Review [template configuration](../../templates/state-stored/.template.config/template.json),
-[creator](../../tools/template/create.ts), [creation proof](../../tools/template/verify.ts),
-[npm manifest](../../tools/template/package.json), lockfile and TypeScript configuration
-and [CI](../../.github/workflows/template.yml) for the initial-creation contract. Review
-[Catalog Contracts](../../templates/state-stored/modules/Catalog/FoundryApplication.Catalog.Contracts/ICatalogQueries.cs),
-[DbContext](../../templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogDbContext.cs),
-[query](../../templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogQueries.cs),
-[registration](../../templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogRegistration.cs)
+Review [template configuration](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/.template.config/template.json),
+[creator](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/create.ts), [creation proof](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/verify.ts),
+[npm manifest](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/package.json), lockfile and TypeScript configuration
+and [CI](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/.github/workflows/template.yml) for the initial-creation contract. Review
+[Catalog Contracts](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/modules/Catalog/FoundryApplication.Catalog.Contracts/ICatalogQueries.cs),
+[DbContext](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogDbContext.cs),
+[query](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogQueries.cs),
+[registration](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/modules/Catalog/FoundryApplication.Catalog/CatalogRegistration.cs)
 and the three migration files for ownership/native persistence. Review
-[composition](../../templates/state-stored/src/FoundryApplication.Host/Composition.cs),
-[host](../../templates/state-stored/src/FoundryApplication.Host/Program.cs),
-[adoption tests](../../templates/state-stored/tests/FoundryApplication.Adoption.Tests/CatalogJourneyTests.cs)
-and [generated README](../../templates/state-stored/README.md) for lifetime, trust and
+[composition](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/src/FoundryApplication.Host/Composition.cs),
+[host](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/src/FoundryApplication.Host/Program.cs),
+[adoption tests](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/tests/FoundryApplication.Adoption.Tests/CatalogJourneyTests.cs)
+and [generated README](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/templates/state-stored/README.md) for lifetime, trust and
 consumer obligations. No library interface or implementation changed.
 
 - **Library:** existing ActorIdentity, Tenancy and EF ownership contracts suffice for this

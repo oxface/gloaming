@@ -1,10 +1,10 @@
-# Library and template design decisions
+# Library and application design decisions
 
 Direction update, 2026-10-22: Gloaming is the primary product; application patterns and
 exercised skills replace further template expansion as the intended direction. Explicitly
 selected bounded library execution is permitted. The [architecture audit](reports/gloaming-library-audit.md)
-records confirmed ownership choices, implemented thin-adapter removals and proposed further
-package/sample changes. Detailed historical decisions below retain their dated context;
+records confirmed ownership choices and implemented package/sample cleanup. The generator
+and ContextDemo are retired in the current batch; use [application patterns](application-patterns.md). Detailed historical decisions below retain their dated context;
 current consumer contracts remain beside their libraries.
 
 Status: direction approved by the owner on 2026-10-03. Public interfaces, package divisions,
@@ -14,17 +14,17 @@ review proposals.
 ## Purpose and ownership
 
 The reusable libraries are named Gloaming. Their namespaces, project/assembly names and
-default package IDs use `Gloaming.*`; the repository, sample and template identities remain
+default package IDs use `Gloaming.*`; the repository and reference-sample identities remain
 Modulith Foundry. [The rename report](reports/gloaming-library-renaming.md) records the
 mechanical scope and preserved persistence identities. Umbrine is the future ERP product
-built on the application template and Gloaming libraries. Its name derives from Umbral
+built using Gloaming libraries and consumer-owned application patterns. Its name derives from Umbral
 and shares Gloaming's darkness theme.
 
-Build useful .NET libraries, a consumer-owned repository template, and a working sample.
+Build useful .NET libraries, consumer-owned application patterns, and focused working samples.
 Use the archived wholesale sample to identify guarantees and failure cases; reimplement
 mechanisms when that gives a clearer design. Domain completeness is not the goal.
 
-The template demonstrates one application composing business modules with explicit
+The reference sample demonstrates one application composing business modules with explicit
 Contracts, internal implementations, and separately owned persistence. Architecture checks
 and policy middleware are reusable, opt-in tools with consumer-selected policies; the
 library does not prescribe every consumer's project graph or module structure.
@@ -37,15 +37,14 @@ to the consumer.
 ## Current adoption strategy
 
 For now, a library segment must also be usable in an ordinary .NET API or worker without
-adopting the template's module layout or Access model. The template supplies a coherent
+adopting the reference sample's module layout or Access model. Application patterns describe
 composition; standalone consumers receive the segment's documented guarantees through their
 own explicit wiring. This is a current delivery choice, open to revision when implementation
 evidence demonstrates value in more involved libraries.
 
-Access starts as consumer-owned sample/template code, including the product's user,
+Access stays consumer-owned sample code, including the product's user,
 Organization, membership, invitation and role behavior. Consumers can copy and customize it.
-Shipping it in the template preserves a practical path to later extraction; it does not make
-the Access model a dependency of the tenant/actor seam or other technical libraries.
+Its concrete policy is not a dependency of the tenant/actor seam or other technical libraries.
 
 Revisit either choice through [the plan's extraction and strategy gate](plans/library-extraction.md#extraction-and-strategy-gate).
 The trigger is demonstrated reuse or complexity removed, followed by review of added policy,
@@ -613,28 +612,18 @@ Keep the email replacement seam narrow; SMTP/MailKit does not become a mandatory
 dependency. Authentication, general notifications, and a transport/provider matrix are not
 automatically promoted into libraries.
 
-## Template bootstrap direction
+## Application setup after template retirement
 
-The owner-approved [T1 rehearsal](plans/t1-template-rehearsal.md), checkpointed as `8ccf4c8`,
-now materializes one ordinary consumer-owned Catalog/console repository using native
-`dotnet new` with a TypeScript/npm creator. Application name and root namespace are configured
-explicitly; three existing libraries are materialized as local source snapshots. The fixed
-composition uses PostgreSQL state storage and omits events and messaging. See
-[creation requirements and invocation](../tools/template/README.md) and
-[execution evidence](reports/t1-template-rehearsal.md).
+The generator, source skeleton, presets and generated-only proofs are retired in the current
+library audit. The [application patterns](application-patterns.md) describe current module,
+operation, persistence and delivery composition. Ordinary [local packages](development.md#local-package-development)
+replace copied library snapshots for active consumption. Future task skills should follow
+repeated real consumer work; no replacement generator or topology/options matrix is selected.
 
-This bounded source-distribution choice does not settle package releases or upgrades. Initial
-creation refuses existing destinations; updates, additional platforms and richer compositions
-remain separate capabilities. Further template work can select reviewed alternatives and
-optional capabilities. Intended choices include transport, event sourcing,
-Aspire resources and authentication/admission setup such as Keycloak with directory-gated
-or open registration. These are configuration goals, not currently supported alternatives.
-
-Introduce an option after its implementation and composition have been exercised. Provider
-selection does not require a common provider abstraction. Authentication/admission choices
-configure consumer-owned Access policy. T1 supports the documented initial-creation behavior
-only; broader combinations and repository-update semantics remain later E10 decisions.
-The population tool introduces no dependency into the generated application runtime.
+The [T1 rehearsal](reports/t1-template-rehearsal.md) and [T2 pattern proof](reports/t2-template-patterns.md)
+retain dated history. Naming, destination creation, Catalog policy and the report worker were
+consumer/tooling experiments. Retained context, ownership, transaction and package guarantees
+remain with their active tests, as mapped in the [audit](reports/gloaming-library-audit.md).
 
 ## Telemetry and tooling
 

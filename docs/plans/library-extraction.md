@@ -1,7 +1,9 @@
 # Library and sample extraction plan
 
 Direction update, 2026-10-22: use the [library architecture audit](../reports/gloaming-library-audit.md)
-for the current assessment and proposed next increments. The template/extraction sequence
+for the current implementation record and next increments. The generator and ContextDemo
+are retired in the current audit batch; [application patterns](../application-patterns.md) replace
+active creation instructions. The template/extraction sequence
 and dated authorizations below retain historical context; they do not select further template
 work or authorize the audit's proposed interface/removal changes. Current package contracts
 remain with their library families until concrete changes are reviewed.
@@ -340,7 +342,7 @@ transaction framework is proposed.
 
 T1 implements one fixed event-free Catalog/console composition with configurable application
 name/root namespace, local library source snapshots and TypeScript/npm creation tooling around
-native `dotnet new`. See [the creator](../../tools/template/README.md) and
+native `dotnet new`. See [the creator](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/README.md) and
 [checkpoint findings](../reports/t1-template-rehearsal.md) for supported platforms and limits.
 It does not implement optional event presets, production ingress or repository updates.
 

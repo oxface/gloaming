@@ -14,7 +14,7 @@ and actor identities, explicit anonymous/tenantless context, optional initiator 
 read/initialization interfaces, a disposable single-assignment holder, and typed requirement
 checks. It has no package or project dependencies.
 
-[The console sample](../../src/Gloaming.Tenancy/samples/ContextDemo/README.md) consumes the library with
+[The console sample](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo/README.md) consumes the library with
 explicit standard DI registration. Inventory returns independently seeded tenant quantities;
 Sales calls its Contracts interface to assess a draft quantity. It also demonstrates system
 versus human attribution and tenantless anonymous/identified execution. No production login

@@ -14,6 +14,9 @@ public contract and dependencies; the family is not an umbrella runtime package.
 explain composition. Follow the selected package's README for explicit setup and errors.
 The [executable consumer](../../samples/Wholesale/Api/README.md) demonstrates adoption.
 
+See the [native operation recipe](../Gloaming.Tenancy/docs/composition.md) and its
+[cross-family composition proofs](../../tests/ContextCompositionTests/CompositionTests.cs).
+
 Library tests:
 
 - [ActorIdentityTests](tests/ActorIdentityTests/ActorIdentityTests.csproj)

@@ -27,7 +27,6 @@ public sealed class AssemblyDependencyTests
     private const string TenancyHttp = "Gloaming.Tenancy.AspNetCore";
     private const string TenancyPostgres = "Gloaming.Tenancy.EntityFrameworkCore.Postgres";
     private const string Persistence = "Gloaming.Persistence.EntityFrameworkCore";
-    private const string ContextSample = "ContextDemo";
     private const string PersistenceSample = "PersistenceDemo";
     private const string HttpSample = "Wholesale.Api";
     private const string EventSerialization = "Gloaming.Events.Serialization";
@@ -68,7 +67,6 @@ public sealed class AssemblyDependencyTests
             typeof(Samples.EventStorageDemo.DemoJourneys).Assembly,
             typeof(Samples.Wholesale.EventCodecDemo.DemoJourneys).Assembly,
             typeof(Samples.Wholesale.Worker.Maintenance.StockRegeneration).Assembly,
-            typeof(Samples.Wholesale.ContextDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.PersistenceDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.Api.DemoComposition).Assembly
         )
@@ -146,7 +144,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 Audit,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 "Gloaming.EntityFrameworkCore",
@@ -216,15 +213,11 @@ public sealed class AssemblyDependencyTests
     [InlineData(Tenancy, Actor)]
     [InlineData(Persistence, Actor)]
     [InlineData(Persistence, Tenancy)]
-    [InlineData(Actor, ContextSample)]
     [InlineData(Actor, PersistenceSample)]
-    [InlineData(Tenancy, ContextSample)]
     [InlineData(Tenancy, PersistenceSample)]
-    [InlineData(Persistence, ContextSample)]
     [InlineData(Persistence, PersistenceSample)]
     [InlineData(ActorHttp, Tenancy)]
     [InlineData(ActorHttp, Persistence)]
-    [InlineData(ActorHttp, ContextSample)]
     [InlineData(ActorHttp, PersistenceSample)]
     [InlineData(ActorHttp, HttpSample)]
     [InlineData(Actor, HttpSample)]
@@ -233,7 +226,6 @@ public sealed class AssemblyDependencyTests
     [InlineData(TenancyHttp, Actor)]
     [InlineData(TenancyHttp, ActorHttp)]
     [InlineData(TenancyHttp, Persistence)]
-    [InlineData(TenancyHttp, ContextSample)]
     [InlineData(TenancyHttp, PersistenceSample)]
     [InlineData(TenancyHttp, HttpSample)]
     [InlineData(ActorHttp, TenancyHttp)]
@@ -259,7 +251,6 @@ public sealed class AssemblyDependencyTests
                 History,
                 AggregateCore,
                 Storage,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -299,7 +290,6 @@ public sealed class AssemblyDependencyTests
                 Tenancy,
                 TenancyHttp,
                 Persistence,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -337,7 +327,6 @@ public sealed class AssemblyDependencyTests
                     History,
                     AggregateCore,
                     Storage,
-                    ContextSample,
                     PersistenceSample,
                     HttpSample,
                     EventPersistenceSample,
@@ -490,7 +479,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -517,7 +505,6 @@ public sealed class AssemblyDependencyTests
                 EventSerialization,
                 History,
                 Storage,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -546,7 +533,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -569,7 +555,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,

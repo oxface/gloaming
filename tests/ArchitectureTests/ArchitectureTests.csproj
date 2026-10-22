@@ -50,7 +50,6 @@
     <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Api/Wholesale.Api.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
@@ -198,6 +197,13 @@
     <None
       Include="../../src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj"
       Link="ProjectDeclarations/RabbitMqTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <None
+      Include="../ContextCompositionTests/ContextCompositionTests.csproj"
+      Link="ProjectDeclarations/ContextCompositionTests.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
   </ItemGroup>

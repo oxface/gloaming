@@ -2,7 +2,7 @@
 
 Status: completed, owner-approved and checkpointed as `8ccf4c8` on 2026-10-06, including
 the three review corrections. [The report](../reports/t1-template-rehearsal.md) records
-the implemented composition and execution evidence; [the creator guide](../../tools/template/README.md)
+the implemented composition and execution evidence; [the creator guide](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/tools/template/README.md)
 is the current invocation reference. This brings a small portion of E10 forward, not the
 whole CLI or an option matrix. The original implementation brief is retained below.
 The next proposed task is [ES1 bounded event append](es1-bounded-event-append.md).

@@ -22,7 +22,7 @@ exceptions; the shared discriminator and combined library guard are removed. Thi
 breaking revision of the inline E1 interface, with the active consumers migrated together;
 there is no compatibility facade retaining the previous coupling.
 
-[The console sample](../../src/Gloaming.Tenancy/samples/ContextDemo/README.md) exercises actor-only
+[The console sample](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo/README.md) exercises actor-only
 host-information/maintenance composition, tenancy-only Inventory availability and combined
 Sales preview. Sales visibly requires both contexts and calls Inventory through Contracts.
 The same application actor can operate in separate scopes for different tenants.
@@ -93,13 +93,13 @@ strategies remain E3 proposals, alongside a separate Access membership/admission
 2. [TenantContext](../../src/Gloaming.Tenancy/Gloaming.Tenancy/TenantContext.cs),
    [tenant holder](../../src/Gloaming.Tenancy/Gloaming.Tenancy/TenantContextAccessor.cs), reader/
    initializer, guard and typed failure in that directory.
-3. [Consumer registration](../../src/Gloaming.Tenancy/samples/ContextDemo/DemoComposition.cs),
-   [operation establishment](../../src/Gloaming.Tenancy/samples/ContextDemo/Program.cs),
-   [Sales requirements](../../src/Gloaming.Tenancy/samples/ContextDemo/Sales/DraftOrderPreview.cs)
+3. [Consumer registration](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo/DemoComposition.cs),
+   [operation establishment](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo/Program.cs),
+   [Sales requirements](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo/Sales/DraftOrderPreview.cs)
    and tenancy-only Inventory consumption.
 4. [Actor lifecycle proofs](../../src/Gloaming.ActorIdentity/tests/ActorIdentityTests/AccessorTests.cs),
    [tenant lifecycle proofs](../../src/Gloaming.Tenancy/tests/TenantTests/AccessorTests.cs),
-   [composition proofs](../../src/Gloaming.Tenancy/samples/ContextDemo.Tests/CompositionTests.cs),
+   [composition proofs](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo.Tests/CompositionTests.cs),
    [current dependency architecture tests](../../tests/ArchitectureTests/AdoptionDependencyTests.cs),
    solution, CI/hooks and revised documents.
 

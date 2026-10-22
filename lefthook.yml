@@ -26,7 +26,7 @@ pre-commit:
       run: dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-restore
     - name: context-composition-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj --no-restore
+      run: dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj --no-restore
     - name: ef-model-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-restore

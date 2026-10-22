@@ -42,7 +42,7 @@ and access after disposal fail. Concurrent reads of the established value are su
 disposal is idempotent. No ambient state, rebinding, permission check or automatic selection
 is introduced. Separate operations use separate scopes.
 
-See [tenancy-only Inventory and combined Sales usage](../samples/ContextDemo/README.md)
+See [tenancy-only and combined native operation composition](../docs/composition.md)
 and [the split report](../../../docs/reports/e1-identity-split.md). Optional [HTTP selection/admission utilities](../Gloaming.Tenancy.AspNetCore/README.md)
 and [EF ownership validation](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md) are
 implemented as separate opt-in packages. No stable wire or persistence format is
