@@ -1,5 +1,11 @@
 # Library and sample extraction plan
 
+The owner has authorized the remaining v1 work through local commits and integration, stopping
+before push. The [execution ledger](v1-integration-completion.md) records current status,
+required evidence and the [sample/experiment consolidation](s1-sample-experiment-consolidation.md).
+The [closure audit](../reports/v1-slice-closure-audit.md) is historical source assessment; inbox
+retention and broker/shutdown closure are now merged.
+
 ## Current delivery status and next slice — 2026-10-17
 
 The three outputs remain reusable libraries, configurable repository population, and samples.

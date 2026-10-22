@@ -42,6 +42,23 @@ Completed sub-slices below do not close the entire block. The
 checkpoint 6510f9e and its five explicit post-v1 supplied-feature deferrals; retention merged
 as 2e1ffac. The selected operating obligations below have their own closure/change-set review.
 
+## V1 integration and gap disposition
+
+The owner has authorized completion of the remaining work and all local implementation,
+interface and commit decisions through one integration branch, stopping before push. The
+fixed starting base is `790a8b7`. See the [execution ledger](v1-integration-completion.md).
+Existing staged/unrelated work remains preserved; original historical approval rules apply
+outside this explicitly authorized goal.
+
+Inbox retention is merged at `2e1ffac`. W1/M2 broker recovery, W1/OBS1 shutdown and the optional
+native RabbitMQ session lifecycle are merged at `790a8b7`. The [earlier source audit](../reports/v1-slice-closure-audit.md)
+records how those gaps were found, not new outstanding work after these checkpoints.
+WF2 deployment continuity, B2 population, P1 projection decision, [S1 consolidation](s1-sample-experiment-consolidation.md),
+T2 generation, archive retirement, independent code/P2 architecture review and release
+verification remain selected. Keep important gaps in their owning block until resolved;
+post-v1 deferral needs explicit owner disposition. Completion is established by executable
+proofs and the final review/requirement audit, not old report status or test counts.
+
 ## Work queue
 
 On 2026-10-22 the owner selected [W1/M2 broker recovery and W1/OBS1 shutdown closure](w1-broker-recovery-shutdown.md)
@@ -92,6 +109,7 @@ review. The earlier consumer-only result remains separate historical proof.
 | Queued-message schema compatibility | Owner-approved continuation after PR #41; [reviewed scope](queued-message-schema-compatibility.md), [family contract](../../src/Gloaming.Messaging/docs/schema-compatibility.md) and [fresh consumer report](../reports/queued-message-schema-compatibility.md) prepared for review. | Explicit v2 writes alongside retained v1, original-envelope deduplication, existing optional codec, conditional operator retry after reader replacement and native HTTP/RabbitMQ/process proofs. Deployment coordination and rollback remain consumer policy; no new library mechanism, schema migration or template preset. |
 | M2 inbox retention / deduplication expiry | Owner approved checkpoint 6510f9e and five explicit post-v1 supplied-feature deferrals; merged as 2e1ffac. [Reviewed scope](m2-inbox-retention.md), [current contract](../../src/Gloaming.Messaging/docs/inbox-retention.md) and [implementation/proof report](../reports/m2-inbox-retention.md). | Processed-only finite cleanup, intake/delete race correction and receipt-generation-aware existing operator retry. Old delivery can execute again after deletion. Preserve pending/processing/dead-lettered work; consumer duration/scheduling stay explicit. Native operating closure has its own row below. |
 | W1/M2 broker recovery and W1/OBS1 shutdown | Owner-approved [consumer scope](w1-broker-recovery-shutdown.md), [family contract](../../src/Gloaming.Messaging/docs/worker-recovery.md) and [closure report](../reports/w1-broker-recovery-shutdown.md), implemented for change-set review. | Terminal session fail-stop and supervised fresh-session restart, live native broker outage/retained progress, resource-alarm confirmation retry and SIGTERM, reconciled existing unavailable-collector stops. Preserve identity/fencing/acceptance uncertainty. No library-interface/schema change or arbitrary publisher/exporter deadline. |
+| S1: sample/experiment consolidation | [Owner-requested scope](s1-sample-experiment-consolidation.md): family-local independent examples, one coherent Wholesale product and a small template rehearsal set. | Preserve unique proof obligations and update source paths, CI, docs and generation; remove archive after evidence transfer and selected functional/template completion. Final code/architecture reviews inspect the cleaned tree. |
 | P2: late isolation and cross-family review | Revisit module persistence and composition after workers/workflows/feeds expose actual pressures; compare the useful Marten/Wolverine capability inventory. | Check typed contexts, scopes, migration/schema ownership, native SQL/filter bypass, tenant establishment, transactions and failures across families. Extract a repeated obligation only if a small mechanism removes meaningful complexity. |
 | T2 / readiness: template and release follow-ups | Bring proven DDD/CQRS/worker setup into configurable templates one capability at a time; later review packaging, docs and v1 gaps. | Preserve T1's independent event-free composition. No default messaging/event runtime, giant preset expansion or automatic repository updater follows from this roadmap. |
 
