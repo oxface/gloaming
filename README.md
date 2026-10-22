@@ -41,7 +41,7 @@ Catalog/console repository with configurable naming and existing library source
 snapshots, now including shared EF infrastructure required by Persistence, without domain-event or messaging dependencies. [The report](docs/reports/t1-template-rehearsal.md)
 records the supported creation behavior and limits.
 
-[The separate worker host](src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) demonstrates API-independent
+[The separate worker host](src/Gloaming.Messaging/samples/Delivery/README.md) demonstrates API-independent
 dispatch, broker intake and local processing using existing Messaging APIs. Explicit finite
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.

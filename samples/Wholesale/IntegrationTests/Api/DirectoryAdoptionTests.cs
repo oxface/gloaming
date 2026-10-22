@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.IntegrationTests.Directory;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Worker.Directory;
+using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;

@@ -7,7 +7,7 @@ supported capabilities. The original E0–E10 extraction sequence is historical 
 not the current work queue.
 
 W1 is owner-approved at checkpoint `7b43201`, merged into `origin/main` as `94ca57a`:
-[native host and setup](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md),
+[native host and setup](../../src/Gloaming.Messaging/samples/Delivery/README.md),
 [bounded scope](w1-separate-worker-hosts.md) and
 [fresh process evidence](../reports/w1-separate-worker-hosts.md). No library interface changes
 were needed. OBS1 is owner-approved at checkpoint `b44b5d5`, merged into `origin/main`

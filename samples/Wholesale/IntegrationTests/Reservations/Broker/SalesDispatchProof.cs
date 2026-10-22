@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Worker.Broker;
 using ModulithFoundry.Tests.Infrastructure;
 

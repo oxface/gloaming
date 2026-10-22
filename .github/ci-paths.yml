@@ -20,7 +20,7 @@ unmapped:
   - '!samples/Wholesale/**'
   - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
-  - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
+  - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
   - '!templates/**'
   - '!tools/template/**'
   - '!tools/release/**'
@@ -77,6 +77,7 @@ EventSourcing:
   - 'src/Gloaming.EventSourcing/samples/EventStorageDemo{,.Tests}/**'
   - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 Messaging:
@@ -90,7 +91,7 @@ Messaging:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'src/Gloaming.Messaging/samples/**'
   - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
-  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'tests/Support/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
@@ -98,7 +99,7 @@ wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
   - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
   - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
-  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'tests/Support/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 

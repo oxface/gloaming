@@ -289,21 +289,13 @@ public sealed class AdoptionDependencyTests
             ["Microsoft.Extensions.Logging.Abstractions", "Npgsql.EntityFrameworkCore.PostgreSQL"]
         );
         Check(
-            "OutboxDemo",
-            [
-                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
-                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-            ],
-            ["Microsoft.EntityFrameworkCore.Design"],
-            ["Microsoft.AspNetCore.App"]
+            "Messaging.Exports",
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+            ["Microsoft.EntityFrameworkCore.Design"]
         );
         Check(
-            "InboxDemo",
-            [
-                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
-                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                "Gloaming.Events.Serialization",
-            ],
+            "Messaging.Rendering",
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres", "Gloaming.Events.Serialization"],
             ["Microsoft.EntityFrameworkCore.Design"]
         );
 

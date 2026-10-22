@@ -1,6 +1,6 @@
 using System.Text.Json;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using ModulithFoundry.Tests.Infrastructure;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 

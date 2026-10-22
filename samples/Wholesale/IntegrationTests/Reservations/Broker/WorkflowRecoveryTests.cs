@@ -1,6 +1,5 @@
 using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;

@@ -34,6 +34,6 @@ documentation-only change does not satisfy the scope. Candidate mechanisms must 
 consumer complexity at a net benefit. Repeated finite host setup, transaction ownership and
 business/deployment policy alone do not justify new Gloaming abstractions.
 
-See the [consumer](../../src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/README.md),
+See the [consumer](../../src/Gloaming.Messaging/tests/Fixtures/WorkflowDeployment/README.md),
 [family guidance](../../src/Gloaming.Messaging/docs/workflow-deployments.md) and
 [slice report](../reports/wf2-deployment-continuity.md).

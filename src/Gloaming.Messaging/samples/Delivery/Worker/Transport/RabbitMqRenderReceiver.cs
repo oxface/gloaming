@@ -1,0 +1,92 @@
+using System.Text;
+using System.Text.Json;
+using Gloaming.Messaging;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ModulithFoundry.Samples.Messaging.Rendering;
+using RabbitMQ.Client;
+
+namespace ModulithFoundry.Samples.Messaging.Worker.Transport;
+
+public sealed class RabbitMqRenderReceiver(IChannel channel, IServiceScopeFactory scopes)
+{
+    public static IncomingMessage Parse(BasicGetResult delivery)
+    {
+        var properties = delivery.BasicProperties;
+        if (
+            !Guid.TryParse(properties.MessageId, out Guid id)
+            || Header(properties, "producer-module") != "exports"
+            || properties.Headers is null
+            || !properties.Headers.TryGetValue("schema-version", out var schema)
+            || schema is not int version
+        )
+            throw new InvalidDataException("Export transport metadata is invalid.");
+
+        using var document = JsonDocument.Parse(delivery.Body);
+        var message = new IncomingMessage(
+            id,
+            "exports",
+            properties.Type!,
+            version,
+            document.RootElement,
+            Header(properties, "tenant-key"),
+            properties.CorrelationId,
+            Header(properties, "causation-id"),
+            DiagnosticHeader(properties, "traceparent"),
+            DiagnosticHeader(properties, "tracestate")
+        );
+        RenderExportHandler.Validate(message);
+        return message;
+    }
+
+    public async Task<InboxReceiveResult> ReceiveAsync(
+        BasicGetResult delivery,
+        CancellationToken cancellationToken
+    )
+    {
+        var message = Parse(delivery);
+        await using var scope = scopes.CreateAsyncScope();
+        var database = scope.ServiceProvider.GetRequiredService<RenderDbContext>();
+        await using var transaction = await database.Database.BeginTransactionAsync(
+            cancellationToken
+        );
+        var result = await scope
+            .ServiceProvider.GetRequiredService<IInbox<RenderDbContext>>()
+            .ReceiveAsync(RenderExportHandler.Subscription, message, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        await channel.BasicAckAsync(
+            delivery.DeliveryTag,
+            multiple: false,
+            cancellationToken: cancellationToken
+        );
+        return result;
+    }
+
+    // Diagnostic metadata must not reject an otherwise valid business delivery.
+    private static string? DiagnosticHeader(IReadOnlyBasicProperties properties, string key)
+    {
+        if (properties.Headers is null || !properties.Headers.TryGetValue(key, out var value))
+            return null;
+
+        return value switch
+        {
+            byte[] bytes => Encoding.UTF8.GetString(bytes),
+            string text => text,
+            _ => null,
+        };
+    }
+
+    private static string? Header(IReadOnlyBasicProperties properties, string key)
+    {
+        if (properties.Headers is null || !properties.Headers.TryGetValue(key, out var value))
+            return null;
+
+        return value switch
+        {
+            byte[] bytes => Encoding.UTF8.GetString(bytes),
+            string text => text,
+            _ => throw new InvalidDataException("A textual export header was expected."),
+        };
+    }
+}

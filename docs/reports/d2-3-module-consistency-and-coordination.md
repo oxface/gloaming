@@ -310,7 +310,7 @@ Existing executable evidence remains historical, not fresh D2.3 test results:
   compensation acknowledgment/refusal, retry identity, stale replies and the inability to resurrect
   released stock through a repeated reserve. [Failure tests](../../samples/Wholesale/IntegrationTests/Reservations/Broker/ReservationFailureTests.cs)
   cover atomic participant work and fresh processing after a failure in either module.
-- [Worker process tests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) cover processor
+- [Worker process tests](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) cover processor
   death/rollback and publisher death after transport confirmation, followed by recovery. These use
   the existing RabbitMQ-backed journey; they are not process-death proof of a local Contract adapter.
 

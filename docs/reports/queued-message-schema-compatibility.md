@@ -47,7 +47,7 @@ module databases, run:
 dotnet run --project src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
 ```
 
-The [finite journey](../../src/Gloaming.Messaging/samples/MessagingDemo/SchemaCompatibilityJourney.cs) commits v1
+The [finite journey](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingDemo/SchemaCompatibilityJourney.cs) commits v1
 submission/intake, closes those scopes, explicitly selects v2, then processes both using fresh
 scopes, independent PostgreSQL databases and real RabbitMQ. It checks retained schemas/payloads
 and prints message identities plus two local jobs. Reusing the storage rejects before another
@@ -56,16 +56,16 @@ continue unchanged. No new hosted worker or version-selection environment settin
 
 Review these files first:
 
-- [Writer surface](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportRequestCommands.cs) and the native
-  [HTTP](../../src/Gloaming.Messaging/samples/OutboxDemo/HttpCommandPublisher.cs)/[RabbitMQ](../../src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs)
+- [Writer surface](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/ExportRequestCommands.cs) and the native
+  [HTTP](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/HttpCommandPublisher.cs)/[RabbitMQ](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs)
   contract gates.
-- [Receiver decoder](../../src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs),
-  [pure receiver-owned transformation](../../src/Gloaming.Messaging/samples/InboxDemo/RenderV1ToV2.cs) and
-  [receiver-only project dependency](../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj).
-- [Literal/retained-message/HTTP/operator proofs](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/SchemaCompatibilityTests.cs),
-  [broker proofs](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs),
-  [producer proofs](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/SchemaCompatibilityTests.cs) and
-  [built-process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/SchemaCompatibilityProcessTests.cs).
+- [Receiver decoder](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs),
+  [pure receiver-owned transformation](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/RenderV1ToV2.cs) and
+  [receiver-only project dependency](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj).
+- [Literal/retained-message/HTTP/operator proofs](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo.Tests/SchemaCompatibilityTests.cs),
+  [broker proofs](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs),
+  [producer proofs](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo.Tests/SchemaCompatibilityTests.cs) and
+  [built-process proofs](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/SchemaCompatibilityProcessTests.cs).
 - [Exact project dependencies](../../tests/ArchitectureTests/AdoptionDependencyTests.cs) and
   [assembly independence](../../tests/ArchitectureTests/AssemblyDependencyTests.cs): only InboxDemo
   opts into Serialization; all Messaging layers and OutboxDemo retain their codec prohibition,

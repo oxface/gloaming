@@ -52,7 +52,7 @@ no schema migration, additional index, permission reconciliation or grant expans
 
 ## Native sample health and metrics
 
-[OutboxDemo](../samples/OutboxDemo/README.md#backlog-and-health) supplies editable consumer
+[OutboxDemo](../tests/Fixtures/OutboxHost/README.md#backlog-and-health) supplies editable consumer
 wiring. Its authenticated `/operations/outbox/status` fixes exports.render and returns a live
 snapshot with no-store caching. Database errors, including EF-wrapped native connection faults,
 return 503 with no error details. Without its configured operator credential the route is absent.

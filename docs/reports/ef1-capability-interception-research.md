@@ -91,8 +91,8 @@ and [validation](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.Entit
 
 Sales currently appends its validators after event dispatch through OnConfiguring. Inventory calls
 tenant/audit/event-stream/outbox/inbox validation in both save overrides; Purchasing calls tenant
-and event-stream validation. Independent [ExportDbContext](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportDbContext.cs)
-and [RenderDbContext](../../src/Gloaming.Messaging/samples/InboxDemo/RenderDbContext.cs) call their owning capability guards.
+and event-stream validation. Independent [ExportDbContext](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/ExportDbContext.cs)
+and [RenderDbContext](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/RenderDbContext.cs) call their owning capability guards.
 Those small consumers are necessary adoption targets for any common integration, not just Wholesale.
 Existing utility methods remain useful as the lower-level implementation and explicit adoption seam.
 

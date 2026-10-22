@@ -20,13 +20,13 @@ The processing role needs only Rendering's connection, with no broker or sender 
 
 ## File and behavior map
 
-- `src/Gloaming.Messaging/samples/MessagingProducerDemo/`: native HTTP draft/submission and liveness endpoints,
+- `src/Gloaming.Messaging/samples/Delivery/Producer/`: native HTTP draft/submission and liveness endpoints,
   Exports-only context/service composition, explicit native save/commit, no hosted dispatch.
-- `src/Gloaming.Messaging/samples/MessagingWorkerDemo/`: explicit setup/dispatch/receive/process roles, host-owned
+- `src/Gloaming.Messaging/samples/Delivery/Worker/`: explicit setup/dispatch/receive/process roles, host-owned
   native RabbitMQ connection/channel lifetime, existing adapter reuse and worker registration.
-- `src/Gloaming.Messaging/samples/OutboxDemo/ExportDbContext.cs`: share its existing native EF configuration with
+- `src/Gloaming.Messaging/samples/Delivery/Exports/ExportDbContext.cs`: share its existing native EF configuration with
   both producer and dispatcher composition; preserve mapping/migrations and existing callers.
-- `src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/`: real process, PostgreSQL and RabbitMQ proofs using
+- `src/Gloaming.Messaging/tests/DeliveryTests/Processes/`: real process, PostgreSQL and RabbitMQ proofs using
   the existing fixtures. Database barriers establish in-flight work before process death.
 - Solution, architecture checks, CI family command/path map: include the new consumer/proofs
   without creating another deployment test lane or reviving archive execution.

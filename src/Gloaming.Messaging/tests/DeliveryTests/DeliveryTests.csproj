@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../samples/Delivery/Producer/Messaging.Producer.csproj" />
+    <ProjectReference Include="../../samples/Delivery/Worker/Messaging.Worker.csproj" />
+    <ProjectReference Include="../Fixtures/OutboxHost/Messaging.OutboxHost.csproj" />
+    <ProjectReference Include="../Fixtures/InboxHost/Messaging.InboxHost.csproj" />
+    <ProjectReference Include="../Fixtures/BrokerJourney/Messaging.BrokerJourney.csproj" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Testcontainers.RabbitMq" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile
+      Include="../../../../tests/Support/PostgreSqlFixture.cs"
+      Link="Support/PostgreSqlFixture.cs"
+    />
+    <Compile
+      Include="../../../../tests/Support/RabbitMqFixture.cs"
+      Link="Support/RabbitMqFixture.cs"
+    />
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="Support/ChildHost.cs" />
+    <Using Include="Xunit" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Exports" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Rendering" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Worker" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox" />
+    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Broker" />
+    <Using Include="ModulithFoundry.Tests.Infrastructure" />
+  </ItemGroup>
+</Project>

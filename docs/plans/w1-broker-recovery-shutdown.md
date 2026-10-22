@@ -61,9 +61,9 @@ BrokerSession and Program wiring; add no Gloaming interface, transport manager o
 Existing executable usage stays:
 
 ```sh
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role dispatch
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role receive
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role process
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role dispatch
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role receive
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role process
 ```
 
 Deploy these as separately supervised processes with the already documented role settings.
@@ -148,9 +148,9 @@ network blackhole, cluster failover, exporter or consumer publisher.
 
 | Area | Intended change |
 | --- | --- |
-| src/Gloaming.Messaging/samples/MessagingWorkerDemo/BrokerSession.cs | Internal native terminal-session observation, intentional-stop suppression, finite native connection teardown and diagnostic hooks. |
-| src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs | Attach policy to built host before execution; keep existing role/DI/channel ownership and native host supervision explicit. |
-| src/Gloaming.Messaging/samples/MessagingWorkerDemo/WorkerPublisher.cs | Publication-start diagnostic if required for observable stall phase; native publish/identity behavior stays. |
+| src/Gloaming.Messaging/samples/Delivery/Worker/BrokerSession.cs | Internal native terminal-session observation, intentional-stop suppression, finite native connection teardown and diagnostic hooks. |
+| src/Gloaming.Messaging/samples/Delivery/Worker/Program.cs | Attach policy to built host before execution; keep existing role/DI/channel ownership and native host supervision explicit. |
+| src/Gloaming.Messaging/samples/Delivery/Worker/WorkerPublisher.cs | Publication-start diagnostic if required for observable stall phase; native publish/identity behavior stays. |
 | RabbitMqIntakeWorker.cs | Preserve commit-before-ack and current failure behavior; edit only if integration reveals a stop/cancellation race within this policy. |
 | MessagingWorkerDemo.Tests | New broker-recovery/shutdown process cases and test-owned broker control fixture; minimal native intake-barrier/child-process helpers where required. No production fault injection or generic transport harness. |
 | ObservabilityTests.cs | Tighten the existing unavailable-collector shutdown observation; retain the original business/OTLP-independence oracle. |

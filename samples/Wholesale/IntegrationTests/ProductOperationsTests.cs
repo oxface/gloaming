@@ -1,5 +1,4 @@
 using System.Text.Json;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Api;
 using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
 using ModulithFoundry.Tests.Infrastructure;

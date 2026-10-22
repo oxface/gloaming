@@ -83,7 +83,7 @@ rerun here; their earlier results remain historical evidence.
 ## Review and remaining work
 
 Review the deleted adapters, the owning [audit context](../../src/Gloaming.Auditing/tests/AuditPostgresTests/AuditConsumer.cs),
-[messaging host subscriptions](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs),
+[messaging host subscriptions](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs),
 [architecture dependency checks](../../tests/ArchitectureTests/AdoptionDependencyTests.cs)
 and [package consumer](../../tools/release/consumers/Postgres.cs) together. These are
 breaking package/API removals; existing consumers must replace their references and calls.

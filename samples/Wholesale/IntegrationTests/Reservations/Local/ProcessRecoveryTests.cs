@@ -1,4 +1,3 @@
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Samples.Wholesale.Worker.Local;
 using ModulithFoundry.Tests.Infrastructure;

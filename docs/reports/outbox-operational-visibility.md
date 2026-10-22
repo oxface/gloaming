@@ -30,7 +30,7 @@ Existing accounting/completion uncertainty, Attempts and operator retry semantic
 
 ## Executable adoption
 
-[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#backlog-and-health) adds the existing operator
+[OutboxDemo](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/README.md#backlog-and-health) adds the existing operator
 credential's `/operations/outbox/status`, fixing exports.render. It returns a fresh snapshot
 with no-store caching; storage faults return 503 without details. Public native health endpoints
 separate liveness from fresh-storage/expected-worker readiness. Faulted/stopped workers are
@@ -123,10 +123,10 @@ git diff --check
 
 Review the [DTO](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxBacklogSnapshot.cs)
 and [provider read](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDiagnosticsExtensions.cs),
-then [native health](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxHealthCheck.cs),
-[sampling/gauges](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxMetrics.cs), status authorization and the
+then [native health](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxHealthCheck.cs),
+[sampling/gauges](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxMetrics.cs), status authorization and the
 Sales command. Follow with the [PostgreSQL](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/BacklogTests.cs),
-[HTTP/metrics](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/OperationalVisibilityTests.cs) and
+[HTTP/metrics](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo.Tests/OperationalVisibilityTests.cs) and
 [restricted process](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesDispatchTests.Visibility.cs) proofs.
 The [family contract](../../src/Gloaming.Messaging/docs/outbox-observability.md) makes integration
 obligations discoverable beside the implementation.

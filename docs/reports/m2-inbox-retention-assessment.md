@@ -41,9 +41,9 @@ Proposal edits remain unstaged. Commit approval is separate from interface revie
   Its lease predicates and sender-history guarantee do not establish inbox expiry semantics.
   Do not broaden outbox retry merely to force matching public shapes: producers already must
   retain unique message IDs, whereas old native inbox delivery can reappear without a new producer action.
-- [Rendering](../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemoHost.cs) currently exposes optional authenticated
+- [Rendering](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/InboxDemoHost.cs) currently exposes optional authenticated
   list/detail/retry endpoints. Its request carries only ExpectedRevision. Its
-  [business handler](../../src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs) uses a unique RenderJob
+  [business handler](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs) uses a unique RenderJob
   identity, so that sample alone cannot prove absence of repeated handler execution after expiry.
   An independent local-effect proof is needed alongside the consumer business-idempotency proof.
 - [Restricted Sales](../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) already separates

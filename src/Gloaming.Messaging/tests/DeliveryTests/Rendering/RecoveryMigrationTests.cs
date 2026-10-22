@@ -1,0 +1,177 @@
+using System.Text.Json;
+using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.DependencyInjection;
+using ModulithFoundry.Tests.Infrastructure;
+
+namespace ModulithFoundry.Samples.Messaging.Tests.Rendering;
+
+[Collection("Rendering PostgreSQL")]
+public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
+{
+    [Fact]
+    public async Task DeadLetterLookupUpgradePreservesCheckpointStateAndRetry()
+    {
+        var token = TestContext.Current.CancellationToken;
+        string connection = await postgres.CreateDatabaseAsync(token);
+        await using (var checkpoint = RenderDbContext.Create(connection))
+            await checkpoint
+                .GetService<IMigrator>()
+                .MigrateAsync("20261018183419_AddInboxFailureRecovery", token);
+
+        await AdoptionTests.SqlAsync(
+            connection,
+            "ALTER TABLE rendering.jobs ADD CONSTRAINT renderer_unavailable CHECK (false) NOT VALID"
+        );
+        var services = new ServiceCollection();
+        InboxTestHost.Register(services, connection);
+        services.AddPostgresInboxDeadLetters<RenderDbContext>();
+        await using var provider = services.BuildServiceProvider();
+        Guid id = Guid.NewGuid();
+        // Independent pre-generation fixture; current binaries require the new receipt schema.
+        await using (var checkpoint = RenderDbContext.Create(connection))
+            await checkpoint.Database.ExecuteSqlInterpolatedAsync(
+                $"""
+                INSERT INTO rendering.incoming_work
+                    (subscription_key, producer_key, message_id, message_name, schema_version, payload,
+                     correlation_id, causation_id, revision, failure_count, failures_since_redrive,
+                     last_failed_at, last_failure_code, quarantined_at)
+                VALUES ('rendering.jobs', 'exports', {id}, 'exports.render', 1,
+                    jsonb_build_object('ExportRequestId', gen_random_uuid(), 'Pages', 2),
+                    'preserved-correlation', 'preserved-cause', 1, 1, 1,
+                    clock_timestamp(), 'render-command-conflict', clock_timestamp())
+                """,
+                token
+            );
+        JsonElement original;
+        await using (var before = RenderDbContext.Create(connection))
+            original = JsonSerializer.Deserialize<JsonElement>(
+                await before
+                    .Database.SqlQueryRaw<string>(
+                        "SELECT to_jsonb(r)::text AS \"Value\" FROM rendering.incoming_work r"
+                    )
+                    .SingleAsync(token)
+            );
+
+        await using (var upgraded = RenderDbContext.Create(connection))
+        {
+            await upgraded.Database.MigrateAsync(token);
+            Assert.False(upgraded.Database.HasPendingModelChanges());
+            Assert.True(
+                JsonElement.DeepEquals(
+                    original,
+                    JsonSerializer.Deserialize<JsonElement>(
+                        await upgraded
+                            .Database.SqlQueryRaw<string>(
+                                "SELECT (to_jsonb(r) - 'receipt_id')::text AS \"Value\" FROM rendering.incoming_work r"
+                            )
+                            .SingleAsync(token)
+                    )
+                )
+            );
+            var indexes = await upgraded
+                .Database.SqlQueryRaw<string>(
+                    "SELECT indexdef AS \"Value\" FROM pg_indexes WHERE schemaname = 'rendering' AND tablename = 'incoming_work'"
+                )
+                .ToArrayAsync(token);
+            Assert.Contains(
+                indexes,
+                definition =>
+                    definition.Contains("quarantined_at IS NOT NULL", StringComparison.Ordinal)
+            );
+        }
+
+        await using var recovery = provider.CreateAsyncScope();
+        var letters = recovery.ServiceProvider.GetRequiredService<
+            IInboxDeadLetters<RenderDbContext>
+        >();
+        var retained = (
+            await letters.GetAsync(RenderExportHandler.Subscription, "exports", id, token)
+        )!;
+        Assert.Equal(1, retained.FailureCount);
+        Assert.Equal(
+            InboxRetryResult.Retried,
+            await letters.RetryAsync(
+                RenderExportHandler.Subscription,
+                "exports",
+                id,
+                retained.ReceiptId,
+                retained.Revision,
+                token
+            )
+        );
+        await AdoptionTests.SqlAsync(
+            connection,
+            "ALTER TABLE rendering.jobs DROP CONSTRAINT renderer_unavailable"
+        );
+        Assert.Equal(InboxProcessingResult.Processed, await AdoptionTests.ProcessAsync(provider));
+        await using var completed = RenderDbContext.Create(connection);
+        var row = await completed.Set<InboxMessageRecord>().SingleAsync(token);
+        Assert.NotNull(row.ProcessedAt);
+        Assert.Equal(1, row.FailureCount);
+        Assert.Equal(1, row.RedriveCount);
+        Assert.True(JsonElement.DeepEquals(original.GetProperty("payload"), row.Payload));
+        Assert.Equal(original.GetProperty("received_at").GetDateTimeOffset(), row.ReceivedAt);
+    }
+
+    [Fact]
+    public async Task UpgradePreservesPendingAndCompletedRowsWithoutInventingPastFailures()
+    {
+        var token = TestContext.Current.CancellationToken;
+        string connection = await postgres.CreateDatabaseAsync(token);
+        Guid pending = Guid.NewGuid(),
+            completed = Guid.NewGuid();
+        string payload = JsonSerializer.Serialize(
+            new { ExportRequestId = Guid.NewGuid(), Pages = 2 }
+        );
+        await using var database = RenderDbContext.Create(connection);
+        await database
+            .GetService<IMigrator>()
+            .MigrateAsync("20261010135437_AddMessageTraceContext", token);
+        await database.Database.ExecuteSqlInterpolatedAsync(
+            $"""
+            INSERT INTO rendering.incoming_work
+                (subscription_key, producer_key, message_id, message_name, schema_version, payload, processed_at)
+            VALUES ('rendering.jobs', 'exports', {pending}, 'exports.render', 1, CAST({payload} AS jsonb), NULL),
+                   ('rendering.jobs', 'exports', {completed}, 'exports.render', 1, CAST({payload} AS jsonb), '2026-10-10T12:00:00Z')
+            """,
+            token
+        );
+        await database.Database.MigrateAsync(token);
+        Assert.False(database.Database.HasPendingModelChanges());
+        var rows = await database.Set<InboxMessageRecord>().ToArrayAsync(token);
+        Assert.Equal(2, rows.Length);
+        Assert.All(
+            rows,
+            row =>
+            {
+                Assert.Equal(0, row.Revision);
+                Assert.Equal(0, row.FailureCount);
+                Assert.Equal(0, row.FailuresSinceRedrive);
+                Assert.Equal(0, row.RedriveCount);
+                Assert.Null(row.DeadLetteredAt);
+                Assert.Null(row.LastFailedAt);
+                Assert.Null(row.LastFailureCode);
+                Assert.Null(row.LastRedrivenAt);
+                Assert.Equal("exports.render", row.MessageName);
+                Assert.True(
+                    JsonElement.DeepEquals(
+                        JsonSerializer.Deserialize<JsonElement>(payload),
+                        row.Payload
+                    )
+                );
+            }
+        );
+        Assert.Null(rows.Single(row => row.MessageId == pending).ProcessedAt);
+        Assert.Equal(
+            DateTimeOffset.Parse(
+                "2026-10-10T12:00:00Z",
+                System.Globalization.CultureInfo.InvariantCulture
+            ),
+            rows.Single(row => row.MessageId == completed).ProcessedAt
+        );
+    }
+}

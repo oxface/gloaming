@@ -9,7 +9,7 @@ Gloaming owns retained work, row locks, committed claims and fenced lifecycle wr
 consumer owns its publisher/receiver, recovery choice, cancellation and process supervisor.
 Retrying an operation in a fresh database scope cannot repair a permanently closed channel.
 
-The [standalone worker](../samples/MessagingWorkerDemo/README.md) selects fail-stop
+The [standalone worker](../samples/Delivery/README.md) selects fail-stop
 using RabbitMQ.Client 7.2.2 and native Generic Host APIs. Optional
 [Gloaming.Messaging.RabbitMQ](../Gloaming.Messaging.RabbitMQ/README.md) now supplies shared native
 session/channel ownership, phase-timeout setup, terminal observation and cleanup. Queue/role,
@@ -48,9 +48,9 @@ its separately documented native host behavior. Ignore does not restart a faulte
 After recovery, launch the same executable/role/settings to obtain a fresh session:
 
 ```sh
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role dispatch
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role receive
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role process
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role dispatch
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role receive
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role process
 ```
 
 See the sample for connection settings. Do not hide setup/migration inside recovery, rewrite

@@ -3,8 +3,8 @@
 Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Status: active audit and implementation record. The local package command and two thin
 adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
-Continuation package consolidation is implemented in the working tree; further sample,
-documentation, test and CI cleanup remains open.
+Continuation package consolidation is committed as `56a8b12`. Messaging example/fixture
+consolidation is the current uncommitted batch; other cleanup remains open.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -56,10 +56,66 @@ review snapshot remains empty.
 
 The [continuation consolidation](continuation-package-consolidation.md) now brings the
 inventory to 21 by retaining definitions and execution in the existing EF package. This
-new slice remains unstaged and uncommitted. All 176 selected test cases, 21 archives and
+slice is committed as `56a8b12`. Its 176 selected test cases, 21 archives and
 six package-only consumers pass, including real continuation execution from the combined
 archive. Its evidence and EF-dependency trade-off are recorded separately. The estimated
-remaining cleanup is [8–10 further slices](#remaining-cleanup-slices), excluding Umbrine.
+remaining cleanup is tracked as [larger code-led batches](#remaining-cleanup-slices), excluding Umbrine.
+
+## Messaging example and fixture consolidation
+
+Current batch, uncommitted. One [delivery example](../../src/Gloaming.Messaging/samples/Delivery/README.md)
+replaces the separately advertised outbox, inbox, broker-journey and producer/worker examples.
+Exports and Rendering are ordinary class libraries with separate contexts/migrations and no
+peer-module, host, RabbitMQ or worker-hosting dependency. Producer uses only Exports and
+native telemetry setup. Worker owns explicit polling, StopHost, broker routing and intake.
+The existing Rendering registrations now live in `RenderServices`; host supervision stays
+in the two actual hosts that choose it.
+
+[Test-owned fixtures](../../src/Gloaming.Messaging/tests/Fixtures/README.md) retain the older
+HTTP/operator/retention hosts, finite broker journeys and separately compiled workflow
+Earlier/Current applications. Delivery adoption, migration, operational and process tests
+are one suite; shared child-process support moves to `tests/Support`. CI runs the consolidated
+suite once and tracks shared support in its dependent lanes. The public sample has five
+projects (two modules, two hosts, native telemetry defaults), rather than six experiment
+projects. This is a clearer ownership graph, not a large reduction of retained proof code.
+
+No behavioral test case is intentionally removed. Existing schemas, migration IDs, stored
+status numbers, wire aliases and literal JSON remain. Sample CLR namespaces/assemblies are
+renamed; this is permitted by the no-external-consumer decision. The producer architecture
+proof now checks its complete runtime graph for accidental worker/broker dependencies,
+addressing the former indirect dependency through the outbox executable.
+
+Fresh verification from this checkout:
+
+| Check | Result |
+| --- | --- |
+| Consolidated delivery suite | 96 passed, including migration, broker, process recovery, retention and real OTLP export. |
+| Separately compiled workflow deployments | 7 passed. |
+| Architecture | 113 passed, including full producer runtime dependency omission. |
+| Wholesale WorkflowRecoveryTests | 7 passed using the relocated shared process harness. |
+| Test-source/fixture comparison | All 69 original Fact/Theory definitions remain; all four literal JSON files are byte-identical. |
+| Full solution | Builds with zero warnings/errors; formatting, style and analyzers checked. |
+| Local packages | All 21 archives and six isolated package-only consumers passed; packaged README targets resolve. |
+| References and review state | All checked local Markdown links and active project/source references resolve; generator-substituted template paths are intentionally excluded. Existing index remains unchanged. |
+
+Package evidence: `/home/oxface/.cache/tmp/gloaming-package-proof-moDWY3/manifest.json`,
+version `1.0.0-local.1792709311578.gaed653bc`, SHA-256
+`de47ed63563ff37ec039cf37bd03f836c96e3ce9c8e9c98af75ffc9804e80e6e`.
+Logs: `/tmp/gloaming-delivery-{tests,workflow-tests,architecture-tests,wholesale-tests,packages}.log`.
+The disposable package-proof PostgreSQL server was stopped and auto-removed. Earlier reports
+retain their historical counts; the family-only runtime suites were not rerun for this
+sample relocation because their implementation and contracts are unchanged.
+
+Review the [module registration](../../src/Gloaming.Messaging/samples/Delivery/Rendering/RenderServices.cs),
+[worker composition](../../src/Gloaming.Messaging/samples/Delivery/Worker/Program.cs),
+[fixture ownership](../../src/Gloaming.Messaging/tests/Fixtures/README.md),
+[dependency proof](../../tests/ArchitectureTests/AssemblyDependencyTests.cs) and CI/solution paths.
+Consumer test-host policy includes failure classification, fixed-route operator authentication,
+metadata-only grants and retention cutoffs. None becomes a Gloaming API, template requirement
+or new extraction candidate. **No new reusable mechanism was proven; this batch reorganizes
+existing consumers and proofs.**
+Remaining gaps are the other families, Wholesale/template and integrated cleanup below;
+Umbrine durable human workflows remain separate. Changes remain unstaged for owner review.
 
 ## Confirmed direction and review criteria
 
@@ -120,7 +176,7 @@ division unless the row states otherwise; it does not certify every implementati
 | Gloaming.Messaging.OpenTelemetry | Retired in d63f567 | Its two helpers only subscribed native builders to the documented activity-source and meter names. Emitted diagnostics and their tests are retained. |
 | Gloaming.Messaging.RabbitMQ | Keep | Native connection/channel lifetime, partial-acquisition cleanup and terminal observation have independent value. Continue exposing native channels and consumer-selected recovery/topology. |
 | Gloaming.Messaging.Workflows | Consolidated into the EF package in the working tree | Definition types keep their namespaces; the friend-only assembly split is removed. Definition-only consumers now take EF dependencies. |
-| Gloaming.Messaging.Workflows.EntityFrameworkCore | Combined optional package in the working tree | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
+| Gloaming.Messaging.Workflows.EntityFrameworkCore | Combined optional package, committed as `56a8b12` | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
 
 The combined continuation package retains the EF package/assembly identity and both existing
 Workflows namespaces. Optional `Gloaming.Messaging.EntityFrameworkCore.Hosting` depends on
@@ -279,21 +335,21 @@ Use three primary example goals: focused adoption of a selected library, one sma
 cross-family composition, and executable fault/compatibility proof fixtures. A process
 fixture or literal payload need not remain a separately advertised application.
 
-| Current example | Proposed disposition | Evidence condition |
+| Example | Current disposition | Evidence condition |
 | --- | --- | --- |
 | ContextDemo | Retire the SKU fixture application; show a short context-establishment recipe. | Reconcile accessor, requirement and independent actor/tenant coverage with family and package-consumer tests before deleting its tests. |
 | PersistenceDemo | Replace with a small ownership example, using the existing independent RLS consumer for optional provider setup. | Retain stored-owner forgery, GUID/string ownership, same-tenant relationships and independent migration ownership where still promised. |
 | EventCodecDemo | Keep a small literal-payload codec/upcasting example. | Literal historic schemas and independent expected outcomes stay useful even without external legacy consumers. Remove incidental wholesale vocabulary when it obscures setup. |
 | EventStorageDemo | Keep one concise raw counter/ledger adoption path; trim older mapping demonstrations. | Preserve event-sourcing adoption without Tenancy, Messaging or the optional codec; maintain append/rebuild/concurrency proof coverage. |
 | EventReactionsDemo | Keep consumer-owned inheritance and the package-free model examples; simplify unrelated hosting. | Source selection, ordering, bounded waves, failed-save recovery and absence of required domain markers remain distinct obligations. |
-| OutboxDemo, InboxDemo, MessagingDemo, MessagingProducerDemo, MessagingWorkerDemo and their ServiceDefaults | Consolidate into one focused messaging example with explicit producer/worker entry points. Move one-sided adoption and fault plumbing into small test-owned consumers. | Preserve inbox-only/outbox-only dependency omission, commit-before-ack, broker delivery, supervision, retention and real process-death recovery. Current executable references are relocation dependencies, not independent applications that must all survive. |
-| WorkflowDeploymentDemo Earlier/Current | Move to test-owned fixtures for the retained continuation package. | Separately compiled old/new consumers and literal state/message fixtures test something an in-process current-version test cannot replace. |
+| Messaging Delivery (formerly six separate demo/defaults projects) | Implemented in the current batch: two plain module libraries, producer/worker entry points and test-owned policy/fault fixtures. | All retained adoption, migration, broker, operational and process cases run in DeliveryTests; architecture checks include the complete producer runtime graph. |
+| WorkflowDeployment Earlier/Current | Moved to test-owned fixtures in the current batch. | Seven separately compiled deployment tests and four byte-identical literal JSON files remain. |
 | Wholesale | Reduce to Access, Sales and Inventory with one order/reservation journey. | Retain the chosen HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition. Keep focused failure scenarios with their library owners. |
 | Wholesale Purchasing | Retire from the primary sample. | Transfer any unique event-store assertions first; independent raw/ledger consumers can retain variation without another business module. |
 | Wholesale Dispatch | Retire from the primary sample. | Route-selection guarantees already have provider tests. Snapshot/population, disclosure and directory merge/readiness are consumer-owned policy; retaining that experiment is not required by Messaging's route selector. |
 | templates/state-stored and tools/template | Retire the generator and its template-specific proof lane in a later coherent change. | Keep selected ownership/independent-adoption assertions under their library owners. Derive the pattern guide and future skills from real application setup; do not replace the generator with another CLI now. |
 
-This is a removal proposal, not a claim that the existing tests are already duplicates.
+Unimplemented dispositions remain proposals; existing tests are not assumed to be duplicates.
 Before each deletion, map its assertions to a retained test or explicitly retire the
 behavior. An application can be removed while its useful independent consumer fixture stays.
 Conversely, do not preserve business-scenario tests solely to preserve historical counts.
@@ -330,23 +386,21 @@ different purposes; neither requires retaining every experimental migration chai
 
 ## Remaining cleanup slices
 
-After the current continuation-package slice, estimate **8–10 more cleanup increments**:
+The owner requested larger, closely related code-led batches, with relevant documentation,
+tests, CI and pruning completed alongside the implementation. Separate documentation-only
+increments are no longer part of this queue. Messaging examples and deployment fixtures are
+one current batch; estimate **3–5 further batches** after it:
 
-| Work | Estimated slices | Completion evidence |
+| Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Messaging demos and deployment fixtures | 1–2 | One focused producer/worker example; separately compiled compatibility fixtures owned by tests; unique delivery/recovery/export assertions retained. |
-| Other family examples | 1–2 | Remove ContextDemo and reduce persistence, event-sourcing and reaction examples; transfer unique mechanism proofs to family tests before removing their hosts. |
-| Wholesale reduction | 2 | Three retained modules and one order/reservation journey; preserved persistence/authorization/audit/workflow proofs, with Purchasing and Dispatch experiments retired or rehomed. |
-| Template retirement and pattern guidance | 1 | Generator/presets and generator-only dependencies/CI removed; concise exercised setup guidance remains. Skills follow real consumer usage rather than a speculative option matrix. |
-| Documentation relevance and pruning | 1 | Current consumer contracts, conventions and decisions are clear; redundant historical plans/reports are distilled or retired through Git. Keep one active cleanup queue. |
-| Test/CI/tooling cleanup and empty directories | 1 | Tests target retained libraries/examples; checks and hooks follow the reduced graph; stale paths, unused tooling and truly empty directories are removed. |
-| Final publication review | 1 | Integrated package/adoption and retained-sample checks, independent architecture/code review, and an explicit remaining-gap assessment. |
+| Other family examples and template retirement | 1–2 | Simplify context/persistence/event-sourcing/reaction examples, transfer unique proofs, retire generator/presets and generator-only tooling; retain concise exercised patterns. |
+| Wholesale reduction | 1–2 | Three or four modules and one coherent journey; preserve useful persistence/authorization/audit/continuation evidence, rehoming unique proofs before removing experiments. |
+| Integrated publication cleanup and review | 1 | Remaining document/test relevance, CI/hooks/tooling and empty directories; integrated package/adoption/sample checks, independent code/architecture review and explicit gaps. |
 
-This is a planning estimate, not a fixed batch size or release sign-off. Assertion-transfer
-discoveries or library defects may split a slice; small related removals may combine. CI,
-references and consumer docs must stay valid within each earlier increment as well.
-The count excludes Umbrine implementation, new capabilities and remote package publication.
-Umbrine can start using the reviewed libraries before this cleanup queue is exhausted.
+Every batch updates its owning consumer docs and removes obsolete references/CI inputs.
+This estimate can change when proof ownership or library defects require more work. It is
+not release sign-off and excludes Umbrine, new capabilities and remote publication. Umbrine
+can use the reviewed local packages before cleanup is exhausted.
 
 ## Original implementation sequence and completion checks
 

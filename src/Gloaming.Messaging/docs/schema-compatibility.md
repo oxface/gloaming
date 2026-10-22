@@ -7,7 +7,7 @@ queued-payload upgrade or required serializer dependency.
 
 ## Executable adoption
 
-The [Exports/Rendering composition](../samples/MessagingDemo/README.md#schema-compatibility-journey)
+The [Exports/Rendering composition](../tests/Fixtures/BrokerJourney/README.md#schema-compatibility-journey)
 demonstrates one shape-only evolution, using two independent PostgreSQL databases and RabbitMQ:
 
 | Contract | Original JSON fields | Local business requirement |
@@ -30,7 +30,7 @@ await transaction.CommitAsync(cancellation);
 
 This is sample application policy. The constructor accepts exactly 1 or 2 before touching storage;
 IOutbox, dispatch/processing options and the lifecycle protocol gain no version-selection API.
-OutboxDemo uses ordinary native JSON and has no codec/event-store dependency.
+Exports uses ordinary native JSON and has no codec/event-store dependency.
 
 Rendering independently opts into existing Gloaming.Events.Serialization:
 
@@ -52,8 +52,8 @@ into its consumer-owned InvalidDataException boundary, preserving the inner diag
 Unsupported versions and malformed fields therefore follow the existing admission/failure policy.
 The codec supplies no transport acknowledgement, transaction, failure policy or operator authority.
 
-The [actual decoder](../samples/InboxDemo/RenderExportHandler.cs) is used both before
-intake and during retained processing. The optional codec belongs only to InboxDemo's dependency
+The [actual decoder](../samples/Delivery/Rendering/RenderExportHandler.cs) is used both before
+intake and during retained processing. The optional codec belongs only to Rendering's dependency
 graph; Messaging libraries remain codec-free, and inbox-only use still needs no event store.
 
 ## Original envelopes are the deduplication evidence

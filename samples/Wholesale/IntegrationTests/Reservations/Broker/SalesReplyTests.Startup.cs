@@ -1,5 +1,5 @@
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;

@@ -34,7 +34,7 @@ receiver deduplication and semantic idempotency remain necessary.
 
 ## Consumer, authority and schema scope
 
-[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#completed-outbox-cleanup) has a separate finite
+[OutboxDemo](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/README.md#completed-outbox-cleanup) has a separate finite
 `--cleanup` role. Required maintenance connection, UTC-Z cutoff and batch-size settings run one
 fixed exports.render batch and print only route/cutoff/batch/count after observed commit.
 It requests a thirty-second cancellation deadline and starts no producer, receiver, worker,
@@ -50,7 +50,7 @@ admitted completed rows. Existing Sales dispatcher grants are unchanged and cann
 
 Exports explicitly adds partial `(destination, dispatched_at, message_id)` index
 `ix_exports_outbox_completed_retention`. Its forward
-[migration](../../src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261021125631_AddCompletedOutboxRetentionIndex.cs)
+[migration](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261021125631_AddCompletedOutboxRetentionIndex.cs)
 and four-line snapshot addition preserve rows and existing constraints. Historical migrations
 and archived source are unchanged. The library imposes no index or migration on other contexts;
 consumers choose their own rollout. The ordinary index build is not a concurrent/online rollout
@@ -125,9 +125,9 @@ git diff --check
 ## Review files and remaining limits
 
 Review [the callable SQL](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxRetentionExtensions.cs),
-[consumer authority](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxRetention.cs), Program role selection,
+[consumer authority](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxRetention.cs), Program role selection,
 the index/migration, [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/RetentionTests.cs),
-[process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRetentionProcessTests.cs) and
+[process proofs](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRetentionProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md) first.
 
 Native RLS/grants and trusted consumer maintenance admission remain essential. No retention
@@ -139,7 +139,7 @@ unstaged/uncommitted and the originally empty index is preserved. No push or pul
 ## PR #41 CI follow-up
 
 The supplied PR CI log exposed an outdated native-exception assertion in
-[InboxDemo BrokerTests](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs). That suite was absent
+[InboxDemo BrokerTests](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs). That suite was absent
 from the original retention verification above. Its forced completion rejection correctly
 produces the previously documented OutboxCompletionException. The existing RabbitMQ proof
 now checks that signal, its original PostgreSQL CheckViolation and proof_completion constraint,

@@ -1,10 +1,4 @@
 <Solution>
-  <Folder Name="/Family samples/">
-    <Project Path="src/Gloaming.Messaging/samples/ServiceDefaults/Messaging.ServiceDefaults.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Current/WorkflowDeploymentDemo.Current.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo.Tests/WorkflowDeploymentDemo.Tests.csproj" />
-  </Folder>
   <Folder Name="/Libraries/EntityFrameworkCore/">
     <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
   </Folder>
@@ -83,14 +77,6 @@
   <Folder Name="/Samples/">
     <Project Path="samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <Project Path="samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/MessagingProducerDemo/MessagingProducerDemo.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/OutboxDemo/OutboxDemo.csproj" />
-    <Project Path="src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />
     <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
@@ -123,5 +109,21 @@
     <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj" />
     <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/EventReactionsDemo.csproj" />
     <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Samples/Messaging/">
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Producer/Messaging.Producer.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/ServiceDefaults/Messaging.ServiceDefaults.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Messaging/Tests/Consumers/">
+    <Project Path="src/Gloaming.Messaging/tests/DeliveryTests/DeliveryTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/BrokerJourney/Messaging.BrokerJourney.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/InboxHost/Messaging.InboxHost.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/OutboxHost/Messaging.OutboxHost.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/WorkflowDeployment/Current/WorkflowDeploymentDemo.Current.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/WorkflowDeployment/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowDeploymentTests/WorkflowDeploymentTests.csproj" />
   </Folder>
 </Solution>

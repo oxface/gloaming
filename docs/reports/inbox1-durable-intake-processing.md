@@ -37,11 +37,11 @@ mapping, both save guards, typed/keyed registration and transaction ownership.
   work commits facts, inline aggregate, reply and completion together. Not-found/conflict/shortage
   complete with a consumer-owned decline reply; technical/admission failures remain pending.
   [The --inbox journey](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InboxJourney.cs) uses native RabbitMQ.
-- [InboxDemo](../../src/Gloaming.Messaging/samples/InboxDemo/README.md) is an ordinary EF/HTTP receiver with no outbox,
+- [InboxDemo](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo/README.md) is an ordinary EF/HTTP receiver with no outbox,
   publisher, Events, EventSourcing, context-family or peer implementation dependency. It records
   a RenderJob, not an external rendering effect. Its business job identity handles semantic
   duplication under different delivery IDs; this policy is not inbox deduplication.
-- [MessagingDemo](../../src/Gloaming.Messaging/samples/MessagingDemo/README.md) alone composes both implementations.
+- [MessagingDemo](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingDemo/README.md) alone composes both implementations.
   Separate owning databases/contexts communicate through consumer-native RabbitMQ adapters.
   The receiver knows a wire alias/schema, not the sender's implementation DTO. Queue setup,
   publication confirms, channel lifetime and acknowledgement are explicit sample source.

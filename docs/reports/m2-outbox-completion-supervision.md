@@ -28,7 +28,7 @@ whose accounting succeeds still use FailureDelay and fresh scopes.
 
 ## Executable adoption and proof boundaries
 
-[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#dead-letters-and-operator-retry) already composes
+[OutboxDemo](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo/README.md#dead-letters-and-operator-retry) already composes
 the optional worker with explicit native StopHost. Its existing `--setup` and `--serve --worker`
 commands adopt the behavior without configuration changes. Documented inspection uses fresh
 metadata: pending work waits for lease expiry, completed work requires no action, and a dead
@@ -126,7 +126,7 @@ excluded.
 Review the exception, [callable boundary](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs),
 [worker](https://github.com/oxface/modulith-foundry/blob/d63f5678501fc9c33d42ad8104c1a06faf8fa8fd/src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
 [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/CompletionSupervisionTests.cs),
-[child-process proof](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
+[child-process proof](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md) first. The
 [scope](../plans/m2-outbox-completion-supervision.md) records concrete usage and file/schema
 boundaries. This follow-up remains unstaged and uncommitted; its originally empty index is

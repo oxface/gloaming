@@ -3,7 +3,7 @@
 Date: 2026-10-22. Base: `790a8b7`. Scope:
 [bounded deployment continuity](../plans/wf2-deployment-continuity.md).
 
-The [standalone consumer](../../src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/README.md)
+The [standalone consumer](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/README.md)
 now executes a real earlier/current process journey on PostgreSQL. Its Earlier and Current
 projects compile separate assemblies; they share finite host wiring, while a compile-time
 branch preserves the earlier DTO/continuation behavior and Current adds an optional state field.
@@ -13,7 +13,7 @@ recreated during replacement. No library runtime, public interface or schema cha
 
 ## Fresh outcomes
 
-The new [process suite](../../src/Gloaming.Messaging/samples/WorkflowDeploymentDemo.Tests/DeploymentTests.cs)
+The new [process suite](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/WorkflowDeploymentDemo.Tests/DeploymentTests.cs)
 passed **7/7** against real PostgreSQL 18.6 through local Podman. Tests use a new disposable
 database per case. Build: .NET SDK 10.0.401, zero warnings/errors. CSharpier checked all five
 new C#/project files successfully. `git diff --check` passed.
@@ -87,7 +87,7 @@ operator pauses, and a failed candidate can recover valid original replies by re
 
 ## Review-worthy files and remaining gaps
 
-Review the [shared executable host](../../src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Application.cs),
+Review the [shared executable host](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Application.cs),
 the two project definitions/compile-time state difference, literal fixtures and process assertions
 together. Review the [family deployment guide](../../src/Gloaming.Messaging/docs/workflow-deployments.md)
 for the chosen compatible rollout/recovery procedure and comparison with draining.

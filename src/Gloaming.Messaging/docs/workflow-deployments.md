@@ -6,7 +6,7 @@ keep version 1 while changing logging, optional state or implementation details 
 the meaning of retained progress. A version change rejects old instances; it does not migrate,
 route between definitions or replay Start.
 
-The [independent executable consumer](../samples/WorkflowDeploymentDemo/README.md) proves an
+The [independent executable consumer](../tests/Fixtures/WorkflowDeployment/README.md) proves an
 earlier binary's waiting instance and admitted delayed reply continuing under a separately
 compiled Current binary. It also proves an earlier `AwaitingInput` instance resuming its stored
 signal. Both builds use ordinary native transactions and existing inbox/outbox composition.

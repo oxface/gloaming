@@ -64,7 +64,7 @@ package reference and namespace import. Native logger categories follow the move
 namespace; adjust category-specific host filters if needed. Polling and supervision behavior
 is retained. Database mappings, fixtures, schemas and migrations are unchanged.
 
-Executable hosts include [the independent worker example](../samples/MessagingWorkerDemo/README.md)
+Executable hosts include [the independent worker example](../samples/Delivery/README.md)
 and [Wholesale](../../../samples/Wholesale/Worker/README.md). Existing provider and process
 tests exercise startup validation, fresh scopes, cancellation and fatal supervision. The
 package-only [hosting consumer](../../../tools/release/consumers/Hosting.cs) adopts both

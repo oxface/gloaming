@@ -52,23 +52,23 @@ business workflow or telemetry framework was extracted.
 - [Native intake](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs),
   shared storage, row mappings and guards: retain diagnostics without adding them to business
   duplicate comparison. First committed intake wins, including competing writers.
-- [Producer setup](../../src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) and
-  [worker setup](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs): reuse existing editable
+- [Producer setup](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) and
+  [worker setup](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs): reuse existing editable
   [ServiceDefaults](../../samples/Wholesale/ServiceDefaults/README.md), adding native role
   resources and source/meter subscriptions. No shared Gloaming host package or duplicate
   AddTelemetry helper. CI Messaging includes ServiceDefaults as a dependent source input.
 - [Optional trace/meter subscription adapter](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/README.md):
   two XML-documented extensions and one API-only dependency. The technical messaging packages
   retain their existing dependencies and need not adopt the adapter.
-- [Real process/export proof](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs)
-  and [Collector harness](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OtlpCollector.cs): actual
+- [Real process/export proof](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs)
+  and [Collector harness](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OtlpCollector.cs): actual
   OTLP ingestion/export, native transport spans, failures/restart and duplicate publication.
 - Additive migration/designer/snapshot changes for Exports, Rendering and Inventory;
-  [standalone sender upgrade](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/TraceMigrationTests.cs),
-  [receiver upgrade](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/TraceMigrationTests.cs) and
+  [standalone sender upgrade](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/OutboxDemo.Tests/TraceMigrationTests.cs),
+  [receiver upgrade](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/InboxDemo.Tests/TraceMigrationTests.cs) and
   [Inventory upgrade/adoption](../../samples/Wholesale/IntegrationTests/EventPersistence/InboxDispatchTests.cs).
 - [Self-sufficient library contract](../../src/Gloaming.Messaging/docs/observability.md),
-  [executable setup](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md),
+  [executable setup](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md),
   [approved scope/file map](../plans/durable-message-observability.md) and
   [ADR 0012](../adr/0012-durable-diagnostic-context-and-native-telemetry.md).
 

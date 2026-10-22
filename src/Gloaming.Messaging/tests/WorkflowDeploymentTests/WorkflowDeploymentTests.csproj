@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <ProjectReference Include="../Fixtures/WorkflowDeployment/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
+    <ProjectReference Include="../Fixtures/WorkflowDeployment/Current/WorkflowDeploymentDemo.Current.csproj" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="ChildHost.cs" />
+    <None
+      Include="../Fixtures/WorkflowDeployment/fixtures/*.json"
+      Link="fixtures/%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

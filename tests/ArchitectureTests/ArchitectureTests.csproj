@@ -33,11 +33,10 @@
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/OutboxDemo/OutboxDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingProducerDemo/MessagingProducerDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Producer/Messaging.Producer.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
@@ -107,8 +106,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj"
-      Link="ProjectDeclarations/InboxDemo.csproj"
+      Include="../../src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj"
+      Link="ProjectDeclarations/Messaging.Rendering.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
@@ -127,8 +126,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Messaging/samples/OutboxDemo/OutboxDemo.csproj"
-      Link="ProjectDeclarations/OutboxDemo.csproj"
+      Include="../../src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj"
+      Link="ProjectDeclarations/Messaging.Exports.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None

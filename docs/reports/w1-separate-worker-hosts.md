@@ -11,8 +11,8 @@ The executions and results below remain historical W1 evidence.
 ## Outcome and scope
 
 The existing Messaging APIs run outside an API without a new worker library or coordination
-protocol. [The producer](../../src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) registers Exports-only
-enqueue and native command transactions. [The worker entry point](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs)
+protocol. [The producer](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) registers Exports-only
+enqueue and native command transactions. [The worker entry point](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs)
 selects finite setup, outbox dispatch, RabbitMQ intake or inbox processing. The three worker
 roles run in separate processes and receive only their respective module/transport settings.
 Processing does not need broker or producer configuration. The existing finite demos remain.
@@ -44,7 +44,7 @@ library leases, row locks, fresh scopes and operation contracts removed the need
 
 ## New process evidence
 
-[WorkerProcessTests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) starts the
+[WorkerProcessTests](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) starts the
 built producer/worker executables as actual child processes against PostgreSQL **18.6** and
 RabbitMQ **4.3.6** via the existing Testcontainers fixtures. Each test gets fresh module
 databases and a private queue. No external/personal runtime is required.
@@ -58,7 +58,7 @@ databases and a private queue. No external/personal runtime is required.
 | Graceful in-flight stopping | Hold that same uncommitted insert, send SIGTERM and keep the barrier closed. Native cancellation exits successfully and rolls back. A fresh process handles the delivery after release. |
 | Confirmed publication death | Block database completion after broker confirmation, then terminate the dispatcher. Retained intake/local processing succeeds; outbox completion rolls back, leaving its committed claim. Observe actual database-clock lease expiry and start a replacement. It republishes the same MessageId; intake returns AlreadyReceived, with one retained delivery and one job, and the second claim completes. |
 
-[DatabaseBarrier](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/DatabaseBarrier.cs) uses test-only
+[DatabaseBarrier](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/DatabaseBarrier.cs) uses test-only
 triggers in disposable databases: AFTER INSERT for uncommitted jobs and BEFORE UPDATE for
 outbox completion. `pg_locks`/`pg_stat_activity` establish in-flight work. These are not
 consumer migrations, product fault switches or arbitrarily timed kill/sleep tests. Fresh

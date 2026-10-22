@@ -17,14 +17,11 @@ not supply a global bus, shared DbContext or cross-module transaction. Core publ
 does not need EF; EF code does not reference Npgsql; PostgreSQL implements its native protocol.
 Only PostgreSQL dispatch/intake/processing is supported. No generic provider dialect is introduced.
 
-Start with [setup, guarantees and deferred capabilities](docs/capabilities.md). Executable
-adopters are [Inventory/RabbitMQ](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md)
-and the [independent state-stored HTTP sender](samples/OutboxDemo/README.md),
-[inbox-only receiver](samples/InboxDemo/README.md) and
-[two-module RabbitMQ journey](samples/MessagingDemo/README.md), followed by
-[separate API/worker hosts](samples/MessagingWorkerDemo/README.md) and
-[Sales → Inventory request/reply progress](../../samples/Wholesale/Worker/Broker/README.md) and
-[two-line reservations with compensation](../../samples/Wholesale/Worker/Broker/compensating-reservations.md).
+Start with [setup, guarantees and deferred capabilities](docs/capabilities.md) and the
+[durable delivery example](samples/Delivery/README.md). It keeps module persistence separate,
+with an API-only producer and explicitly selected worker roles. Additional executable
+[consumer policy and deployment fixtures](tests/Fixtures/README.md) belong to the tests.
+Wholesale provides the larger [request/reply composition](../../samples/Wholesale/Worker/Broker/README.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
 See [worker recovery and shutdown](docs/worker-recovery.md) for shared RabbitMQ lifecycle
 mechanics, consumer-selected fail-stop/native recovery, restart and cancellation obligations.
@@ -52,9 +49,8 @@ dotnet test --project src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.c
 dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj
 dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj
-dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj
-dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj
-dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj
+dotnet test --project src/Gloaming.Messaging/tests/DeliveryTests/DeliveryTests.csproj
+dotnet test --project src/Gloaming.Messaging/tests/WorkflowDeploymentTests/WorkflowDeploymentTests.csproj
 dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj
 ```
 

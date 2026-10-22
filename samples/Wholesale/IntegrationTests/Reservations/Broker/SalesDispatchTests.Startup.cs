@@ -1,5 +1,5 @@
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;

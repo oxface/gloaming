@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent.Syntax.Elements.Types;
 using ArchUnitNET.Loader;
@@ -47,11 +48,10 @@ public sealed class AssemblyDependencyTests
             typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Hosting.OutboxWorkerOptions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
-            typeof(Samples.OutboxDemo.DemoJourneys).Assembly,
-            typeof(Samples.InboxDemo.InboxDemoHost).Assembly,
-            typeof(Samples.MessagingDemo.MessagingJourney).Assembly,
-            typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly,
-            typeof(Samples.MessagingWorkerDemo.WorkerAssemblyMarker).Assembly,
+            typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+            typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+            typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly,
+            typeof(Samples.Messaging.Worker.WorkerAssemblyMarker).Assembly,
             typeof(ActorContextMiddleware).Assembly,
             typeof(TenantId).Assembly,
             typeof(TenantContextMiddleware).Assembly,
@@ -98,8 +98,8 @@ public sealed class AssemblyDependencyTests
                 "Gloaming.Messaging.RabbitMQ",
                 "Sales",
                 "Access",
-                "OutboxDemo",
-                "InboxDemo",
+                "Messaging.Exports",
+                "Messaging.Rendering",
             }
         )
             NoDependency(hosting, forbidden).Check(Architecture);
@@ -268,9 +268,8 @@ public sealed class AssemblyDependencyTests
                 "Gloaming.Messaging",
                 "Gloaming.Messaging.EntityFrameworkCore",
                 "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                "OutboxDemo",
-                "InboxDemo",
-                "MessagingDemo",
+                "Messaging.Exports",
+                "Messaging.Rendering",
             }
         )
         {
@@ -342,11 +341,10 @@ public sealed class AssemblyDependencyTests
                     PersistenceSample,
                     HttpSample,
                     EventPersistenceSample,
-                    "OutboxDemo",
-                    "InboxDemo",
-                    "MessagingDemo",
-                    "MessagingProducerDemo",
-                    "MessagingWorkerDemo",
+                    "Messaging.Exports",
+                    "Messaging.Rendering",
+                    "Messaging.Producer",
+                    "Messaging.Worker",
                 }
             )
                 NoDependency(layer, forbidden).Check(Architecture);
@@ -372,17 +370,17 @@ public sealed class AssemblyDependencyTests
             }
         )
         {
-            NoDependency("OutboxDemo", forbidden).Check(Architecture);
-            NoDependency("InboxDemo", forbidden).Check(Architecture);
+            NoDependency("Messaging.Exports", forbidden).Check(Architecture);
+            NoDependency("Messaging.Rendering", forbidden).Check(Architecture);
         }
 
         // Only the receiving sample opts into historical payload decoding; Messaging stays codec-free.
-        NoDependency("OutboxDemo", EventSerialization).Check(Architecture);
+        NoDependency("Messaging.Exports", EventSerialization).Check(Architecture);
         Assert.Contains(
-            typeof(Samples.InboxDemo.InboxDemoHost).Assembly.GetReferencedAssemblies(),
+            typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly.GetReferencedAssemblies(),
             reference => reference.Name == EventSerialization
         );
-        NoDependency("InboxDemo", "OutboxDemo").Check(Architecture);
+        NoDependency("Messaging.Rendering", "Messaging.Exports").Check(Architecture);
     }
 
     [Fact]
@@ -403,9 +401,9 @@ public sealed class AssemblyDependencyTests
         foreach (
             var module in new[]
             {
-                typeof(Samples.OutboxDemo.ExportDbContext).Assembly,
-                typeof(Samples.InboxDemo.RenderDbContext).Assembly,
-                typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly,
+                typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+                typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+                typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly,
                 typeof(Samples.Wholesale.Sales.SalesDbContext).Assembly,
                 typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
                 typeof(Samples.Wholesale.Dispatch.DispatchDbContext).Assembly,
@@ -423,22 +421,61 @@ public sealed class AssemblyDependencyTests
         foreach (
             string forbidden in new[]
             {
-                "InboxDemo",
-                "MessagingDemo",
-                "MessagingWorkerDemo",
+                "Messaging.Rendering",
+                "Messaging.Worker",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
                 "RabbitMQ.Client",
             }
         )
             Assert.DoesNotContain(
-                typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly.GetReferencedAssemblies(),
+                typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly.GetReferencedAssemblies(),
                 reference => reference.Name == forbidden
             );
 
-        foreach (string module in new[] { "OutboxDemo", "InboxDemo", "MessagingDemo" })
+        foreach (string module in new[] { "Messaging.Exports", "Messaging.Rendering" })
         {
-            NoDependency(module, "MessagingProducerDemo").Check(Architecture);
-            NoDependency(module, "MessagingWorkerDemo").Check(Architecture);
+            NoDependency(module, "Messaging.Producer").Check(Architecture);
+            NoDependency(module, "Messaging.Worker").Check(Architecture);
         }
+
+        foreach (
+            var module in new[]
+            {
+                typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+                typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+            }
+        )
+            Assert.DoesNotContain(
+                module.GetReferencedAssemblies(),
+                reference =>
+                    reference.Name == "Gloaming.Messaging.EntityFrameworkCore.Hosting"
+                    || reference.Name!.StartsWith(
+                        "Microsoft.Extensions.Hosting",
+                        StringComparison.Ordinal
+                    )
+                    || reference.Name.StartsWith("Microsoft.AspNetCore", StringComparison.Ordinal)
+            );
+
+        // Check the producer's complete runtime graph: an indirect module dependency
+        // previously pulled the optional worker package into this API-only host.
+        using var dependencies = JsonDocument.Parse(
+            File.ReadAllText(
+                Path.ChangeExtension(
+                    typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly.Location,
+                    ".deps.json"
+                )
+            )
+        );
+        Assert.DoesNotContain(
+            dependencies.RootElement.GetProperty("libraries").EnumerateObject(),
+            library =>
+                library.Name.StartsWith(
+                    "Gloaming.Messaging.EntityFrameworkCore.Hosting/",
+                    StringComparison.Ordinal
+                )
+                || library.Name.StartsWith("Gloaming.Messaging.RabbitMQ/", StringComparison.Ordinal)
+                || library.Name.StartsWith("RabbitMQ.Client/", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
