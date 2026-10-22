@@ -26,6 +26,7 @@ public static class DraftOrderEndpoints
                 .RequireAuthorization()
                 .AddEndpointFilter<ValidateAntiforgeryFilter>();
         }
+
         endpoints
             .MapPut(pattern + "/{draftId:guid}/lines", ChangeLinesAsync)
             .RequireAuthorization()

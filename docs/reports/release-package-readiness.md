@@ -33,7 +33,59 @@ all four clean-consumer profiles below. Additional targeted packs without a buil
 passed for the normal owning README and an external already-rendered source;
 the extracted README bytes matched independent expectations in both cases.
 
-## New verification
+## Final integrated-tree verification
+
+The unchanged harness passed again against integrated source checkpoint
+`10d938f986a7172a1f8061a2bb84839c561455aa`, after canonical Directory/`RouteKeys`
+integration and archive retirement with immutable historical source links. The
+library implementation and harness were unchanged during this run; concurrent
+work changed only CI selection/wiring and two sample whitespace separators.
+
+On .NET SDK 10.0.401, Node 24.21.0 and an owned disposable PostgreSQL 18.6 server,
+the final run passed native README positive/negative probes, all 23 regular SDK
+package builds and archive integrity checks, and all four clean package consumers:
+core (2 Gloaming packages), events (2), PostgreSQL ownership/outbox/audit (8), and
+all packages (23). The package command supplied no README override. Every consumer
+restored exact local versions into an isolated cache, with zero project references
+and exactly the expected Gloaming dependency closure. The staged snapshot stayed
+empty and unchanged. The temporary database and owned server were removed.
+
+Commands were:
+
+```sh
+export DOTNET_PROCESSOR_COUNT=2
+export MSBUILDDISABLENODEREUSE=1
+export DOTNET_CLI_DO_NOT_USE_MSBUILD_SERVER=1
+npm --prefix tools/release run check
+npm --prefix tools/release run verify
+```
+
+The pinned SDK and Node executables were selected through `PATH`.
+`GLOAMING_PACKAGE_TEST_CONNECTION_STRING` was supplied through the environment
+from the disposable server; no credential was placed in command arguments or
+the report. TypeScript typechecking and formatting passed before verification.
+
+The final local version is `1.0.0-local.1792696385423.9da5076a`. Evidence is retained
+at `/home/oxface/.cache/tmp/gloaming-package-proof-oKIDjX/manifest.json`, with SHA-256
+`0c33ef04852773860e031af1b7a288d531d0b67992c55e21cdf59bb33d54170c`.
+This is a new complete execution against the integrated tree, distinct from the
+earlier `GQAzZf` run below. Its per-package hashes and dependency metadata identify
+the actual final local archives; nothing was published.
+
+An initial final-tree attempt in
+`/home/oxface/.cache/tmp/gloaming-package-proof-nSBE6G` completed all 23 package
+builds but stopped during native SDK extraction with `Out of memory.` while the
+native test matrix was also running. It did not reach the consumers and is not
+counted as a successful proof. The complete fresh run above bounded its own .NET
+concurrency and disabled retained MSBuild nodes; no harness guard, library source
+or proof obligation was changed to obtain success.
+
+The earlier no-build and external-README-override checks remain earlier evidence;
+they were not repeated in this final ordinary-pack run. Routing-specific journeys
+and the full capability matrix retain their own evidence. This execution adds
+final package/adoption evidence and proves no new reusable mechanism.
+
+## Earlier ordinary-pack verification
 
 The corrected full harness passed on .NET SDK 10.0.401, Node 24.21.0 and a disposable native
 PostgreSQL 18.6 server. All 23 actual `.nupkg` archives passed DLL/XML/README,

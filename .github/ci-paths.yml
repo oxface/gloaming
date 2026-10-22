@@ -47,6 +47,7 @@ EventReactions:
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
@@ -98,7 +99,7 @@ wholesale:
   - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
   - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
   - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
-  - 'tests/Support/PostgreSqlFixture.cs'
+  - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
 template:
