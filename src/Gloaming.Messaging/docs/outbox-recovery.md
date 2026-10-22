@@ -72,6 +72,12 @@ still accept externally after successor dead-lettering/operator retry, but its d
 completion/accounting cannot change the successor's state. Receiver deduplication remains
 necessary. No external exactly-once, global execution cap, FIFO or bounded shutdown guarantee.
 
+Fresh database scopes do not repair a permanently closed native broker channel. The
+[standalone worker's consumer policy](worker-recovery.md) observes terminal session loss,
+stops and requires supervised fresh-process restart. Temporary native resource alarms retain
+ordinary publication retry. Cancellation/teardown leaves acceptance ambiguous and does not
+release a claim early or change this accounting/completion protocol.
+
 ## Accounting and completion faults, supervision
 
 Lock/read, policy/validation, metadata SQL or accounting-commit failure throws

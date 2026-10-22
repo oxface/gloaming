@@ -44,6 +44,7 @@ public sealed class AssemblyDependencyTests
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
             typeof(Gloaming.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
             typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
+            typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly,
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
             typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
@@ -296,6 +297,7 @@ public sealed class AssemblyDependencyTests
         ];
         foreach (string layer in layers)
         {
+            NoDependency(layer, "Gloaming.Messaging.RabbitMQ").Check(Architecture);
             foreach (
                 string forbidden in new[]
                 {
@@ -353,6 +355,37 @@ public sealed class AssemblyDependencyTests
             reference => reference.Name == EventSerialization
         );
         NoDependency("InboxDemo", "OutboxDemo").Check(Architecture);
+    }
+
+    [Fact]
+    public void OptionalRabbitMqLifecycleReferencesOnlyNativeCodeAndDoesNotLeakIntoModules()
+    {
+        var integration = typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly;
+        Assert.All(
+            integration.GetReferencedAssemblies(),
+            reference =>
+                Assert.True(
+                    reference.Name!.StartsWith("System.", StringComparison.Ordinal)
+                        || reference.Name
+                            is "RabbitMQ.Client"
+                                or "Microsoft.Extensions.Logging.Abstractions",
+                    reference.FullName
+                )
+        );
+        foreach (
+            var module in new[]
+            {
+                typeof(Samples.OutboxDemo.ExportDbContext).Assembly,
+                typeof(Samples.InboxDemo.RenderDbContext).Assembly,
+                typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly,
+                typeof(Samples.Wholesale.Sales.SalesDbContext).Assembly,
+                typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
+            }
+        )
+            Assert.DoesNotContain(
+                module.GetReferencedAssemblies(),
+                reference => reference.Name == integration.GetName().Name
+            );
     }
 
     [Fact]

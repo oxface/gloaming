@@ -4,6 +4,7 @@ using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
@@ -23,21 +24,21 @@ public sealed class WorkflowBroker : IAsyncDisposable
         "inventory.release-reservation",
         "inventory.reservation-outcomes",
     ];
-    private readonly IConnection connection;
+    private readonly RabbitMqSession session;
     private readonly IChannel commands;
     private readonly IChannel replies;
     private readonly IChannel intake;
     private readonly string prefix;
 
     private WorkflowBroker(
-        IConnection connection,
+        RabbitMqSession session,
         IChannel commands,
         IChannel replies,
         IChannel intake,
         string prefix
     ) =>
-        (this.connection, this.commands, this.replies, this.intake, this.prefix) = (
-            connection,
+        (this.session, this.commands, this.replies, this.intake, this.prefix) = (
+            session,
             commands,
             replies,
             intake,
@@ -51,24 +52,25 @@ public sealed class WorkflowBroker : IAsyncDisposable
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(queuePrefix);
-        var connection = await new ConnectionFactory
-        {
-            Uri = new Uri(connectionString),
-        }.CreateConnectionAsync(token);
+        var session = await RabbitMqSession.OpenAsync(
+            factory => factory.Uri = new Uri(connectionString),
+            new(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5)),
+            token
+        );
         try
         {
             var publisherOptions = new CreateChannelOptions(
                 publisherConfirmationsEnabled: true,
                 publisherConfirmationTrackingEnabled: true
             );
-            var commands = await connection.CreateChannelAsync(publisherOptions, token);
-            var replies = await connection.CreateChannelAsync(publisherOptions, token);
-            var intake = await connection.CreateChannelAsync(cancellationToken: token);
-            return new(connection, commands, replies, intake, queuePrefix);
+            var commands = await session.CreateChannelAsync(publisherOptions, token);
+            var replies = await session.CreateChannelAsync(publisherOptions, token);
+            var intake = await session.CreateChannelAsync(cancellationToken: token);
+            return new(session, commands, replies, intake, queuePrefix);
         }
         catch
         {
-            await connection.DisposeAsync();
+            await session.DisposeAsync();
             throw;
         }
     }
@@ -331,13 +333,7 @@ public sealed class WorkflowBroker : IAsyncDisposable
             await intake.QueueDeleteAsync(Queue(route), cancellationToken: token);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await intake.DisposeAsync();
-        await replies.DisposeAsync();
-        await commands.DisposeAsync();
-        await connection.DisposeAsync();
-    }
+    public ValueTask DisposeAsync() => session.DisposeAsync();
 }
 
 public sealed class SalesCommandPublisher(WorkflowBroker broker) : IMessagePublisher

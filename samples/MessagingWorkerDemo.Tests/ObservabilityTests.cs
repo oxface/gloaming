@@ -282,9 +282,13 @@ public sealed class ObservabilityTests(PostgreSqlFixture postgres, RabbitMqFixtu
         var intake = await topology.StartWorkerAsync("receive", "no-collector-intake", token);
         var process = await topology.StartWorkerAsync("process", "no-collector-process", token);
         await topology.WaitForJobsAsync(1, token);
-        await dispatch.StopAsync(token);
-        await intake.StopAsync(token);
-        await process.StopAsync(token);
+        // A separate stop budget reconciles the existing unavailable-collector case;
+        // its overall scenario deadline alone was not an observed shutdown bound.
+        using var stop = CancellationTokenSource.CreateLinkedTokenSource(token);
+        stop.CancelAfter(TimeSpan.FromSeconds(15));
+        await dispatch.StopAsync(stop.Token);
+        await intake.StopAsync(stop.Token);
+        await process.StopAsync(stop.Token);
         await topology.AssertJobAsync(export, 2, token);
         await topology.AssertCountsAsync(1, 1, 1, token);
     }

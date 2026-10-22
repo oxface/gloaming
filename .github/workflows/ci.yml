@@ -129,6 +129,7 @@ jobs:
     env:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.Messaging/tests/MessagingTests/MessagingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed

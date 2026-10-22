@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
     <ProjectReference Include="../MessagingDemo/MessagingDemo.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
     <ProjectReference Include="../Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />

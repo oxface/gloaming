@@ -2,16 +2,39 @@ using Npgsql;
 
 namespace ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
 
-// Hold an uncommitted job INSERT, or a completion UPDATE after confirmed publication.
+// Hold an uncommitted intake/job INSERT, or completion after confirmed publication.
 // These disposable-database triggers replace timing guesses and production fault switches.
 internal sealed class DatabaseBarrier(NpgsqlConnection owner, string database) : IAsyncDisposable
 {
     private const int LockKey = 100919;
     private bool released;
 
-    internal static async Task<DatabaseBarrier> HoldAsync(
+    internal static Task<DatabaseBarrier> HoldAsync(
         string database,
         bool publicationCompletion,
+        CancellationToken cancellation
+    ) =>
+        HoldWithTriggerAsync(
+            database,
+            publicationCompletion
+                ? "CREATE TRIGGER worker_proof_barrier BEFORE UPDATE ON exports.outgoing_work FOR EACH ROW WHEN (NEW.dispatched_at IS NOT NULL) EXECUTE FUNCTION public.worker_proof_barrier();"
+                : "CREATE TRIGGER worker_proof_barrier AFTER INSERT ON rendering.jobs FOR EACH ROW EXECUTE FUNCTION public.worker_proof_barrier();",
+            cancellation
+        );
+
+    internal static Task<DatabaseBarrier> HoldIntakeAsync(
+        string database,
+        CancellationToken cancellation
+    ) =>
+        HoldWithTriggerAsync(
+            database,
+            "CREATE TRIGGER worker_proof_barrier AFTER INSERT ON rendering.incoming_work FOR EACH ROW EXECUTE FUNCTION public.worker_proof_barrier();",
+            cancellation
+        );
+
+    private static async Task<DatabaseBarrier> HoldWithTriggerAsync(
+        string database,
+        string trigger,
         CancellationToken cancellation
     )
     {
@@ -28,12 +51,7 @@ internal sealed class DatabaseBarrier(NpgsqlConnection owner, string database) :
                     RETURN NEW;
                 END;
                 $$;
-                """
-                    + (
-                        publicationCompletion
-                            ? "CREATE TRIGGER worker_proof_barrier BEFORE UPDATE ON exports.outgoing_work FOR EACH ROW WHEN (NEW.dispatched_at IS NOT NULL) EXECUTE FUNCTION public.worker_proof_barrier();"
-                            : "CREATE TRIGGER worker_proof_barrier AFTER INSERT ON rendering.jobs FOR EACH ROW EXECUTE FUNCTION public.worker_proof_barrier();"
-                    ),
+                """ + trigger,
                 owner
             );
             await command.ExecuteNonQueryAsync(cancellation);

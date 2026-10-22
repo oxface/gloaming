@@ -25,17 +25,25 @@ internal sealed class WorkerTopology(
 
     internal string Exports => exports;
     internal string Rendering => rendering;
+    internal string Queue => queue;
 
     internal static async Task<WorkerTopology> CreateAsync(
         PostgreSqlFixture postgres,
         RabbitMqFixture rabbit,
         CancellationToken cancellation,
         Dictionary<string, string>? telemetry = null
+    ) => await CreateAsync(postgres, rabbit.ConnectionString, cancellation, telemetry);
+
+    internal static async Task<WorkerTopology> CreateAsync(
+        PostgreSqlFixture postgres,
+        string broker,
+        CancellationToken cancellation,
+        Dictionary<string, string>? telemetry = null
     ) =>
         new(
             await postgres.CreateDatabaseAsync(cancellation),
             await postgres.CreateDatabaseAsync(cancellation),
-            rabbit.ConnectionString,
+            broker,
             telemetry
         );
 

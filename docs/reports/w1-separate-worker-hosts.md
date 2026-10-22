@@ -4,6 +4,10 @@ Date: 2026-10-09. Implementation ready for owner review on `feat/separate-worker
 Base `29a899d` from merged `origin/main`; the remote has no `master` branch. All changes remain
 unstaged and uncommitted. This report authorizes neither checkpoint nor publication.
 
+Follow-up, 2026-10-22: the [broker recovery/shutdown closure](w1-broker-recovery-shutdown.md)
+adds live broker outage, fresh-session progress and blocked-publication shutdown evidence.
+The executions and results below remain historical W1 evidence.
+
 ## Outcome and scope
 
 The existing Messaging APIs run outside an API without a new worker library or coordination

@@ -3,6 +3,14 @@
 The same host also runs [WF2's two-line reservation saga with compensation](compensating-reservations.md).
 Its separate commands and business state preserve the WF1 journey below.
 
+WorkflowBroker shares connection/channel ownership and cleanup through optional
+[Gloaming.Messaging.RabbitMQ](../../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/README.md).
+It retains native automatic recovery, separate confirm-enabled command/reply channels and
+an intake channel. It does not register the fail-stop observer. The host selects five-second
+native protocol/close values; routing, publication timers, retrying intake and process policy
+remain here. Native lifecycle compatibility and consumer adoption have
+[separate evidence](../../../docs/reports/rabbitmq-session-lifecycle.md).
+
 For an independent Sales dispatcher with a database login limited to the existing outbox,
 use the optional [restricted dispatch role](sales-outbox-dispatch.md). Inbox processing and
 the ordinary combined `run` role retain their existing composition.

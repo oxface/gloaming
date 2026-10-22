@@ -6,6 +6,12 @@ They can use one database with separate schemas or entirely separate PostgreSQL 
 no shared connection/transaction or peer persistence access is used. The host alone references
 both implementations; the receiver knows the wire alias/schema, not the sender's CLR DTO.
 
+The default finite journey uses optional
+[Gloaming.Messaging.RabbitMQ](../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/README.md)
+for native session/channel ownership and cleanup, selecting five-second protocol/close values
+and disabling automatic recovery. It uses no terminal host observer. Queue setup/deletion,
+confirmations, publisher attempt cancellation and wire/business mapping remain explicit here.
+
 The journey explicitly migrates disposable schemas, submits an eligible export and enqueues
 its command in the sender transaction. A consumer-owned native RabbitMQ publisher uses durable
 queue/persistent mandatory publication with confirmation tracking. The receiver parses and admits

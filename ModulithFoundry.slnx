@@ -17,6 +17,7 @@
     <Project Path="src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/">
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
@@ -25,6 +26,7 @@
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/Tests/">
+    <Project Path="src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj" />

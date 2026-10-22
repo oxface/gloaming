@@ -98,4 +98,8 @@ switch (role)
 }
 
 using var host = builder.Build();
+using var brokerObservation = broker?.Supervise(
+    host.Services.GetRequiredService<IHostApplicationLifetime>(),
+    host.Services.GetRequiredService<ILogger<BrokerSession>>()
+);
 await host.RunAsync();

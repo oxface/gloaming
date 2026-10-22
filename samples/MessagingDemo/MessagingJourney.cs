@@ -1,5 +1,6 @@
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Messaging.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.InboxDemo;
@@ -43,9 +44,16 @@ public static class MessagingJourney
         InboxDemoHost.Register(services, receiverConnection);
         await using var provider = services.BuildServiceProvider();
 
-        var factory = new ConnectionFactory { Uri = broker, AutomaticRecoveryEnabled = false };
-        await using var connection = await factory.CreateConnectionAsync(cancellationToken);
-        await using var channel = await connection.CreateChannelAsync(
+        await using var session = await RabbitMqSession.OpenAsync(
+            factory =>
+            {
+                factory.Uri = broker;
+                factory.AutomaticRecoveryEnabled = false;
+            },
+            new(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5)),
+            cancellationToken
+        );
+        var channel = await session.CreateChannelAsync(
             new CreateChannelOptions(
                 publisherConfirmationsEnabled: true,
                 publisherConfirmationTrackingEnabled: true
