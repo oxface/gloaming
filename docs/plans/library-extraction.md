@@ -247,8 +247,41 @@ The owner subsequently approved implementation.
 The [slice report](../reports/m2-inbox-retention.md) records processed-only cleanup, preserved
 unprocessed/dead-lettered work, intake safety across deletion/RLS visibility and receipt-generation
 conditions on the existing retry interface. An expired receipt permits old delivery to execute
-again. Consumer duration/scheduling remain explicit. M2 stays open pending change-set review
-and explicit owner dispositions for the listed post-v1 gaps.
+again. Consumer duration/scheduling remain explicit. The owner approved checkpoint 6510f9e
+and the five explicit post-v1 supplied-feature deferrals; retention merged as 2e1ffac.
+The selected broker recovery/shutdown obligations below still require their own closure review.
+
+## W1/M2 broker recovery and W1/OBS1 shutdown closure
+
+After inbox-retention merge 2e1ffac, the owner selected the orchestration closure-audit's
+live broker-recovery and stalled-publication shutdown obligations inside the existing worker/
+messaging block. The [current-code assessment](../reports/w1-broker-recovery-shutdown-assessment.md)
+and [concrete consumer scope](w1-broker-recovery-shutdown.md) received owner implementation
+approval. The [closure report](../reports/w1-broker-recovery-shutdown.md) records the current
+implementation and fresh evidence for change-set review. Terminal native session loss stops
+dispatch/intake with explicit failure status; external supervision starts fresh sessions.
+Ordinary publisher errors against an open session retain existing retry/accounting. Native
+continuation and teardown settings close the selected resource-alarm stop wait. Real broker
+application outage/recovery, retained progress and blocked-publication SIGTERM are exercised;
+the existing unavailable-collector case gains a separate stop budget. No library-interface,
+schema, transport-manager or arbitrary-publisher deadline change.
+
+## RabbitMQ session lifecycle extraction (interface review)
+
+After the consumer-only recovery/shutdown proof, the owner requested assessing how Gloaming
+can supply reusable mechanics while consumers retain policy. The
+[actual-adopter comparison](../reports/rabbitmq-session-lifecycle-assessment.md) identifies
+shared native resource ownership/cleanup and optional terminal observation, with different
+finite, fail-stop and native automatic-recovery lifetimes. The
+[complete public interface](rabbitmq-session-lifecycle.md) received owner implementation
+approval: optional Gloaming.Messaging.RabbitMQ, explicit native phase timeout options,
+owned native channels and an intentional-stop token/callback observer, without Generic Host
+or core/EF dependencies. Native publish/intake, topology, process authority and recovery choice
+stay with the consumer. The [extraction report](../reports/rabbitmq-session-lifecycle.md) records
+new public-session proofs and actual adoption in the worker, finite MessagingJourney and
+three-channel WorkflowBroker. The latter retains native automatic recovery without terminal
+observation. These new executions establish reusable lifecycle mechanics; the earlier
+consumer-only test results remain separately dated evidence. No core/EF schema or protocol change.
 
 ## Queued-message schema compatibility
 
@@ -1401,8 +1434,10 @@ Sales owns durable process transitions and compensation. Reconstruct before/afte
 pre-ACK, duplicate, reordered, poison and competing-replica scenarios from archived evidence.
 
 Review delivery atomicity and ambiguous external outcomes with real PostgreSQL/RabbitMQ.
-Keep process-local retry limits explicit. Publication cancellation/stalled-confirmation and
-shutdown under unavailable telemetry must be proven before making bounded-shutdown claims.
+Keep process-local retry limits explicit. The selected native publication cancellation/
+stalled-confirmation and unavailable-collector shutdown now have
+[process evidence](../reports/w1-broker-recovery-shutdown.md). This does not establish a
+universal publisher/exporter shutdown bound or every deployment's readiness.
 Do not hide unsupported transport cancellation behind a token parameter. A generic saga
 library remains a later candidate, not the outcome of a working Sales process manager.
 
@@ -1459,7 +1494,7 @@ Extraction does not inherit the old Azure pilot as a library requirement or cert
 | Stream, views, audit and workflow receipt/outbox share a native transaction | Repeat failure of each required participant through the new consumer wiring. No staging method independently commits or publishes. |
 | Delivery can repeat and external outcomes can be ambiguous | Preserve semantic identities and idempotent effects; timeout or absent response does not establish business failure. |
 | Technical retries are process-local | Do not advertise a global attempt cap. A different policy requires competing-replica and restart evidence. |
-| Stalled publish and exporter shutdown remain unproven | Resolve with actual fault tests before promising a latency/shutdown bound or deployment readiness. |
+| Stalled publish and exporter shutdown need actual fault evidence | The [selected native process continuation](../reports/w1-broker-recovery-shutdown.md) exercises RabbitMQ resource-alarm/SIGTERM and separately budgets the existing unavailable-collector stops. Native settings and fifteen-second verification budgets are composition-specific; arbitrary publisher/exporter deadlines and general deployment readiness remain unsupported. |
 | Shared cross-module transactions were deferred | Add a named workflow and real shared-connection/enlistment/failure proof as a separate increment if required. |
 | Snapshot-plus-tail has one concrete late consumer | Keep bootstrap ordering/checkpoint policy in the sample until another real consumer earns a library. |
 

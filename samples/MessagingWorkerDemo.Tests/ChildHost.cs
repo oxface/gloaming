@@ -97,7 +97,15 @@ internal sealed class ChildHost : IAsyncDisposable
 
     internal async Task<int> WaitForExitAsync(CancellationToken cancellation)
     {
-        await process.WaitForExitAsync(cancellation);
+        try
+        {
+            await process.WaitForExitAsync(cancellation);
+        }
+        catch (OperationCanceledException failure) when (cancellation.IsCancellationRequested)
+        {
+            throw new TimeoutException($"Host did not exit.{Environment.NewLine}{Output}", failure);
+        }
+
         await Task.WhenAll(drains);
         return process.ExitCode;
     }

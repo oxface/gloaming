@@ -5,6 +5,38 @@ namespace ModulithFoundry.ArchitectureTests;
 public sealed class AdoptionDependencyTests
 {
     [Theory]
+    [InlineData("Gloaming.Messaging.RabbitMQ")]
+    [InlineData("RabbitMqTests")]
+    public void RabbitMqLifecycleAndIndependentConsumerNeedNoMessagingCoreEfOrHost(string project)
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", project + ".csproj")
+        );
+        string[] expectedProjects =
+            project == "RabbitMqTests" ? ["Gloaming.Messaging.RabbitMQ"] : [];
+        string[] expectedPackages =
+            project == "RabbitMqTests"
+                ? ["Testcontainers.RabbitMq", "xunit.v3.mtp-v2"]
+                : ["Microsoft.Extensions.Logging.Abstractions", "RabbitMQ.Client"];
+        Assert.Equal(
+            expectedProjects,
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Equal(
+            expectedPackages.Order(StringComparer.Ordinal),
+            declaration
+                .Descendants("PackageReference")
+                .Select(reference => (string)reference.Attribute("Include")!)
+                .Order(StringComparer.Ordinal)
+        );
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
+    [Theory]
     [InlineData("Gloaming.Persistence.EntityFrameworkCore.Postgres")]
     [InlineData("PostgresTests")]
     public void OptionalRlsAdapterAndConsumerDeclareTheirSelectedDependencies(string project)

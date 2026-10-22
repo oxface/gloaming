@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Testcontainers.RabbitMq" />
+    <Compile Include="../../../../tests/Support/RabbitMqFixture.cs" Link="RabbitMqFixture.cs" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

@@ -59,6 +59,11 @@ existing receiver dependency; install that shared framework even though it expos
 
 ## Recovery and operational limits
 
+The optional [RabbitMQ lifecycle integration](../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/README.md)
+owns shared session/channel acquisition, shutdown observation and cleanup. BrokerSession now
+holds only sample queue/native-channel setup and the host's explicit exit/stop callback.
+Consumers choose time values and recovery policy without copying those lifecycle mechanics.
+
 - Processing holds `FOR UPDATE SKIP LOCKED` through local handling and commit. Competing
   processes take different available deliveries. Abrupt death disconnects and rolls back
   that transaction; another process can retry its retained delivery.
@@ -86,17 +91,27 @@ existing receiver dependency; install that shared framework even though it expos
   completion may already have committed. A pending claim waits for expiry and can repeat
   the same delivery; completion faults never consume publisher-failure counts or automatically
   dead-letter work. Other dispatchers and external restarts remain consumer supervision policy.
-- Graceful stopping cancels native operations and disposes this process's long-lived connection
-  and channel. Unacknowledged deliveries are recoverable on channel closure. Queues remain durable.
+- Graceful stopping cancels native operations and aborts the connection with a native five-second
+  close window before channel/resource disposal. Native protocol RPC continuations also have
+  a five-second timeout, including channel-zero close during connection disposal and startup
+  declarations. These are separate from the publisher's existing five-second attempt timer.
+  Unacknowledged deliveries are recoverable on closure. Queues remain durable.
 - Broker connections are established once and automatic recovery is disabled. Initial connection
-  failure fails startup. Intake failure leaves work unacknowledged, logs the failure and exits
-  nonzero; a supervisor/operator must restart it. The existing dispatcher retries publication
-  failures in fresh database scopes; a permanently closed channel needs an operator/supervisor
-  restart. This sample supplies no transport health monitor or deployment supervisor.
+  failure fails startup. Unexpected terminal connection/channel shutdown logs `Broker session lost`,
+  sets exit code 1 and stops either transport role, including idle dispatch and intake blocked
+  in PostgreSQL. A supervisor/operator restarts the same role/settings after recovery to create
+  a fresh session. Intentional stop suppresses teardown notifications; an earlier failure stays
+  nonzero. Resource alarms log blocked/unblocked state without stopping the host; ordinary
+  publication failures still retry in fresh scopes against the open session.
+- Configure supervisor backoff/restart and external grace/force-termination policy. Restart
+  unexpected exits including status 0: existing native StopHost paths do not universally set
+  failure exit status. Noncooperative code/exporters can delay shutdown. This sample supplies
+  no in-process reconnect or deployment supervisor; see the
+  [exact recovery/cancellation contract](../../src/Gloaming.Messaging/docs/worker-recovery.md).
 
 Each role performs one operation at a time. Replica counts allow independent scaling, but
 these proofs establish correctness under competition rather than a throughput target. Native
-subscriptions/prefetch/backpressure, reconnect, poison handling/dead-letter/redrive, lease
+subscriptions/prefetch/backpressure, in-process reconnect, transport poison handling/redrive, lease
 renewal, leader election, batching, deployment manifests and resource limits are not supplied.
 Permissions/TLS and trusted producer mapping remain deployment/consumer obligations. A
 malformed head delivery can require operator intervention; this sample does not silently discard it.
@@ -120,6 +135,15 @@ on arbitrary sleeps or sample-only fault settings. Proof deadlines and child-pro
 are bounded. The API can exit before any worker starts, and the processor is run without
 sender/broker configuration. See [the W1 report](../../docs/reports/w1-separate-worker-hosts.md)
 for dated results and the exact supported boundary.
+
+The [broker recovery/shutdown continuation](../../docs/reports/w1-broker-recovery-shutdown.md)
+uses its own RabbitMQ fixture for live `stop_app`/`start_app` and native memory alarms.
+It stops idle dispatch and PostgreSQL-blocked intake, commits new producer work during outage
+and recovers both broker-retained and PostgreSQL-retained work under original identities.
+SIGTERM during blocked publication must exit within a separate fifteen-second verification
+budget while the alarm remains raised; replacement waits for actual lease expiry. A distinct
+case allows a confirmation timeout to be accounted, then proves the same open session
+progresses after alarm removal. Missing confirms never establish rejection.
 
 ## Native telemetry export
 
@@ -152,6 +176,9 @@ exported spans, logs and metrics. It forces post-publication completion and tran
 handler failures, restarts in fresh processes, and verifies duplicate intake preserves its
 first context. An unreachable-collector case verifies business progress independently.
 This is OTLP export evidence, not an Aspire dashboard inspection or throughput benchmark.
+The existing unreachable-collector case retains its one-second exporter timeout and now
+uses a separate fifteen-second budget for stopping all three worker roles after business
+completion. This does not establish a deadline for arbitrary exporters or guaranteed flush.
 
 The process suite also launches the built optional OutboxDemo HTTP/worker host. Its
 [outbox recovery proofs](../MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) cover

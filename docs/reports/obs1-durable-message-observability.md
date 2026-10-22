@@ -1,5 +1,9 @@
 # OBS1: durable message observability
 
+Follow-up, 2026-10-22: the [worker recovery/shutdown closure](w1-broker-recovery-shutdown.md)
+reuses the unavailable-collector scenario with a separate worker-stop budget and adds native
+stalled-publication evidence. The counts and executions below remain historical OBS1 results.
+
 Date: 2026-10-10. Interface/scope and implementation owner-approved;
 checkpoint `b44b5d5` on `feat/durable-message-observability`, based on merged W1 `94ca57a`.
 The owner subsequently pushed and merged the branch into `origin/main` at `4c0e0c5`.

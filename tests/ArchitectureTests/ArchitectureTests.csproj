@@ -204,4 +204,17 @@
       CopyToOutputDirectory="PreserveNewest"
     />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
+    <None
+      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj"
+      Link="ProjectDeclarations/Gloaming.Messaging.RabbitMQ.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj"
+      Link="ProjectDeclarations/RabbitMqTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
 </Project>

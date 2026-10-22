@@ -26,8 +26,10 @@ remain consumer obligations; inbox retention is independent.
 M2's [processed-inbox retention](inbox-retention.md) supplies exact-lane bounded cleanup and
 receipt-generation-aware operator retry. Deletion ends duplicate/content evidence and permits
 old delivery to execute again. Unprocessed/dead-lettered work remains. Consumer windows and
-scheduling are explicit; [M2 closure dispositions](../../../docs/reports/m2-inbox-retention.md)
-remain subject to owner review.
+scheduling are explicit. The owner approved retention's documented post-v1 supplied-feature
+deferrals with checkpoint 6510f9e, merged as 2e1ffac. The selected
+[broker recovery/shutdown continuation](../../../docs/reports/w1-broker-recovery-shutdown.md)
+has its own implementation evidence and change-set review.
 
 [Queued-message schema compatibility](schema-compatibility.md) demonstrates retained v1 work
 and explicitly selected v2 writes through independent consumer contexts and HTTP/RabbitMQ.
@@ -185,10 +187,27 @@ Real child-process proofs cover API exit before delivery, acknowledged retained 
 independent processing, competing processor transactions, graceful SIGTERM/restart, processing
 death/rollback and publication death/lease expiry/redelivery/deduplication. This establishes
 the selected composition, not external exactly-once effects, a throughput benchmark or a
-deployment supervisor. Native intake remains sample code. No new reusable mechanism or
-library interface is introduced; existing typed composition, leases and row locks suffice.
+deployment supervisor. Native intake remains sample code. Original W1 introduced no new
+library interface; existing typed composition, leases and row locks sufficed for that slice.
 [The W1 report](../../../docs/reports/w1-separate-worker-hosts.md) distinguishes these executions
 from historical O1/I1 results.
+
+The [worker recovery/shutdown contract](worker-recovery.md) adds consumer-owned native
+terminal-session observation and supervised fresh-process restart. Automatic RabbitMQ recovery
+stays disabled; ordinary publisher exceptions against an open session still use existing retry.
+Live broker outage/recovery, retained-message progress, actual blocked publication/SIGTERM and
+the existing unavailable-collector stop scenario have their own
+[closure evidence](../../../docs/reports/w1-broker-recovery-shutdown.md). Native attempt/RPC/close
+timeouts and selected process verification budgets are distinct; no arbitrary publisher or
+exporter deadline or persistence protocol is added.
+
+Optional [Gloaming.Messaging.RabbitMQ](../Gloaming.Messaging.RabbitMQ/README.md) subsequently
+extracts native session/channel ownership, acquired-resource cleanup, phase-timeout setup and
+one-time terminal observation. It returns native IChannel and uses an intentional-stop token/
+callback; no Generic Host/core/EF dependency or parallel publisher/recovery interface. The worker
+chooses fail-stop; finite and three-channel workflow adopters share cleanup while retaining their
+own lifetimes/native recovery. [Fresh extraction evidence](../../../docs/reports/rabbitmq-session-lifecycle.md)
+is separate from the original consumer-only proof.
 
 ## Current observability and workflow boundaries
 

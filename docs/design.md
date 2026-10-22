@@ -794,6 +794,19 @@ retained-work and process-recovery evidence plus reader-before-writer/rollback o
 No new public library interface, persistence schema, deployment coordinator or template preset
 was established.
 
+The owner-approved [W1/M2 and W1/OBS1 operating continuation](plans/w1-broker-recovery-shutdown.md)
+keeps recovery/process policy in the consumer's native host. Terminal session loss stops
+dispatch/intake with explicit failure status; external supervision starts a fresh role.
+The subsequently owner-approved [RabbitMQ lifecycle extraction](plans/rabbitmq-session-lifecycle.md)
+supplies shared native resource ownership, phase-timeout setup, optional one-time observation
+and cleanup in an independent optional package. Native channels remain the publishing/intake
+seam. Finite and multi-channel workflow adopters share cleanup while retaining different
+native recovery choices. [ADR 0021](adr/0021-optional-rabbitmq-session-lifecycle.md),
+[family guidance](../src/Gloaming.Messaging/docs/worker-recovery.md) and
+[fresh extraction evidence](reports/rabbitmq-session-lifecycle.md) distinguish mechanism
+from policy. Publication remains outside transactions with unknown acceptance and unchanged
+identity/leases/fencing. No schema, transport manager or arbitrary-publisher deadline is added.
+
 ## Explicit accepted-change audit
 
 The owner approved [E9's public interface and bounded consumer scope](plans/e9-explicit-transactional-audit.md)

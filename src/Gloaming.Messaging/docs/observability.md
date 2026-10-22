@@ -184,6 +184,15 @@ including process exit, completion/handler failure, new send spans, duplicate in
 unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)
 separates fresh results from earlier worker/recovery evidence.
 
+The [worker recovery/shutdown continuation](worker-recovery.md) adds consumer publication-start
+diagnostics and optional RabbitMQ integration diagnostics for native blocked/unblocked state
+and terminal session loss. These
+do not infer transport rejection or introduce metrics/accounting for every disconnect.
+The existing unreachable-collector process scenario now separately budgets all three worker
+stops at fifteen seconds with its existing one-second exporter timeout. That selected result
+is distinct from a promise to flush arbitrary exporters or bound arbitrary publisher code;
+see the [closure report](../../../docs/reports/w1-broker-recovery-shutdown.md).
+
 Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
 Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic
 tenant/actor propagation and deployment supervision/scaling remain deferred. Typed accounting/

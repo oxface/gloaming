@@ -9,6 +9,7 @@ selected sequential workers. Transport configuration and business contracts belo
 | [Gloaming.Messaging.EntityFrameworkCore](Gloaming.Messaging.EntityFrameworkCore/README.md) | Provided records, mapping/save guards, typed roles, keyed handlers and opt-in workers. |
 | [Gloaming.Messaging.EntityFrameworkCore.Postgres](Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md) | JSONB/database-time mapping, outbox leases, inbox deduplication and locked transactional processing. |
 | [Gloaming.Messaging.OpenTelemetry](Gloaming.Messaging.OpenTelemetry/README.md) | Optional AddGloamingMessaging extensions on native trace/metric builders; API-only dependency. |
+| [Gloaming.Messaging.RabbitMQ](Gloaming.Messaging.RabbitMQ/README.md) | Optional native connection/channel ownership, phase timeouts, terminal observation and cleanup; independent of core/EF/Generic Host. |
 | [Gloaming.Messaging.Workflows](Gloaming.Messaging.Workflows/README.md) | Optional typed continuation bindings, return instructions and detached snapshots. |
 | [Gloaming.Messaging.Workflows.EntityFrameworkCore](Gloaming.Messaging.Workflows.EntityFrameworkCore/README.md) | Optional provided process table, typed runner, atomic request enqueue and native concurrency. |
 
@@ -26,6 +27,8 @@ and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.m
 [Sales → Inventory request/reply progress](../../samples/Wholesale/WorkflowDemo/README.md) and
 [two-line reservations with compensation](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
+See [worker recovery and shutdown](docs/worker-recovery.md) for shared RabbitMQ lifecycle
+mechanics, consumer-selected fail-stop/native recovery, restart and cancellation obligations.
 See [failed inbox work and authorized retry](docs/inbox-recovery.md) for durable failure
 accounting, consumer-selected dead-letter state, receipt-generation/revision-conditional retry
 and upgrade obligations.
