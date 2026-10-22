@@ -42,7 +42,11 @@ export const librarySources: Record<(typeof libraries)[number], string> = {
   ),
 };
 
-export type Configuration = { applicationName: string; rootNamespace: string };
+export type Configuration = {
+  applicationName: string;
+  rootNamespace: string;
+  catalogWorker?: boolean;
+};
 
 export function snapshotBytes(
   name: (typeof libraries)[number],
@@ -135,15 +139,22 @@ function configuration(path: string): Configuration {
     typeof value !== "object" ||
     value === null ||
     Array.isArray(value) ||
-    Object.keys(value).length !== 2 ||
+    Object.keys(value).some(
+      (key) =>
+        !["applicationName", "rootNamespace", "catalogWorker"].includes(key),
+    ) ||
     !("applicationName" in value) ||
     !("rootNamespace" in value)
   ) {
     throw new Error(
-      "Configuration requires exactly applicationName and rootNamespace.",
+      "Configuration requires applicationName and rootNamespace; only optional catalogWorker is supported.",
     );
   }
   const { applicationName: name, rootNamespace: namespace } = value;
+  if ("catalogWorker" in value && typeof value.catalogWorker !== "boolean")
+    throw new Error(
+      "catalogWorker must be a boolean; transport/provider presets are not supported.",
+    );
   if (typeof name !== "string" || !identifier(name)) {
     throw new Error(
       "applicationName must be a non-keyword ASCII C# identifier (1–64 characters).",
@@ -168,7 +179,13 @@ function configuration(path: string): Configuration {
   ) {
     throw new Error("Configuration cannot contain template source tokens.");
   }
-  return { applicationName: name, rootNamespace: namespace };
+  return {
+    applicationName: name,
+    rootNamespace: namespace,
+    ...("catalogWorker" in value
+      ? { catalogWorker: value.catalogWorker as boolean }
+      : {}),
+  };
 }
 
 function run(args: string[], cwd: string): void {
@@ -253,6 +270,8 @@ export function create(configPath: string, destination: string): void {
         config.applicationName,
         "--RootNamespace",
         config.rootNamespace,
+        "--CatalogWorker",
+        String(config.catalogWorker ?? false),
         "--output",
         generated,
         "--debug:custom-hive",

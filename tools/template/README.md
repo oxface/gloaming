@@ -1,4 +1,4 @@
-# T1 creation
+# Template creation
 
 From the Foundry checkout, on Linux with glibc, Node.js 24.21+ (24.x), npm and the
 pinned .NET 10 SDK:
@@ -10,16 +10,19 @@ npm --prefix tools/template run create -- --config example.json --output /tmp/Ce
 ```
 
 The npm command runs in `tools/template`, so configuration paths are relative to that
-directory; absolute paths also work. The configuration is a JSON object containing exactly
-`applicationName` and `rootNamespace`.
+directory; absolute paths also work. The configuration is a JSON object requiring
+`applicationName` and `rootNamespace`, plus optional boolean `catalogWorker`.
 Application names are ASCII C# identifiers of 1–64 characters. Root namespaces are dotted
 ASCII C# identifiers, at most 200 characters. Reserved C# keywords (including compiler
 tokens `__arglist`, `__makeref`, `__reftype` and `__refvalue`), device application
 names, duplicate/unknown keys and template source tokens are rejected. Both values are
-required strings. There are no capability/provider/authentication options: the sole
-composition is a .NET 10 console host, Catalog Contracts/module, PostgreSQL state storage,
-native migration and adoption tests. See the generated README for its runnable journey
-and consumer obligations.
+required strings. The default composition is a .NET 10 console host, Catalog Contracts/module,
+PostgreSQL state storage, native migrations and adoption tests. Catalog contains editable
+immutable decisions, explicit versioned commands and module-local Queries/Filters. Set
+`"catalogWorker": true` to add a separate native report-worker executable and its process
+proofs; omission or false leaves no worker project, Hosting package or hosted registration.
+Both choices remain event-free and message-free. No transport/provider/authentication
+options are accepted. See the generated README for its runnable journey and obligations.
 
 Output must not exist, including an empty directory, file or symlink; its parent must
 already exist. Repeat creation is refused. There is no force/update mode. The creator
@@ -34,7 +37,7 @@ The native `dotnet new` engine owns substitution and project/file naming through
 custom hive so creation does not modify the user's installed template list. Both native
 commands run from staging with its own copy of the template's `global.json`, so a
 conflicting SDK pin in the output parent cannot select a different SDK. The internal
-custom-hive switch is exercised against SDK 10.0.112; compatibility with later SDKs needs
+custom-hive switch is exercised against pinned SDK 10.0.401; compatibility with later SDKs needs
 the same proof. No post-actions or restore run during creation.
 
 The wrapper supplies only strict input validation, snapshots of the four selected existing
@@ -74,12 +77,15 @@ then run:
 npm --prefix tools/template run verify
 ```
 
-The proof creates consumers outside the checkout, compares identical-input trees before
+The proof creates three consumers outside the checkout (default, namespace `Task`, and
+selected worker), compares identical-input trees before
 tooling output exists, including a root namespace of `Task`, beneath a conflicting SDK 9
 parent pin. It inspects naming/dependencies/references/source hashes, checks failure
 atomicity (including partial engine failure and a destination created after preflight),
-then restores/builds and runs both generated adoption suites. Each suite owns
-its own fresh database. CI supplies PostgreSQL as a service and runs this command.
+then restores/builds and runs all generated adoption suites. Each database test owns
+its own fresh database. The selected worker proof starts real independent processes,
+reads two tenants, repeats fresh scopes, exercises native SIGTERM and rejects missing
+mandate/database failure. CI supplies PostgreSQL as a service and runs this command.
 The proof needs NuGet network access and local process/IPC/database access. It never changes
 Foundry source, stages files, commits or publishes packages.
 

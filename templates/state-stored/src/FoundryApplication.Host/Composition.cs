@@ -10,6 +10,12 @@ public static class Composition
     public static ServiceCollection CreateServices(string connectionString)
     {
         var services = new ServiceCollection();
+        AddServices(services, connectionString);
+        return services;
+    }
+
+    public static void AddServices(IServiceCollection services, string connectionString)
+    {
         services.AddScoped<ActorContextAccessor>();
         services.AddScoped<IActorContextAccessor>(provider =>
             provider.GetRequiredService<ActorContextAccessor>()
@@ -25,6 +31,5 @@ public static class Composition
             provider.GetRequiredService<TenantContextAccessor>()
         );
         services.AddCatalog(connectionString);
-        return services;
     }
 }

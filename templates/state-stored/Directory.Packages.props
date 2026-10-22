@@ -13,5 +13,8 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.1" />
+    <!--#if (CatalogWorker)-->
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
+    <!--#endif-->
   </ItemGroup>
 </Project>

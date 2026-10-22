@@ -9,6 +9,12 @@
   "preferNameDirectory": true,
   "tags": {"language": "C#", "type": "solution"},
   "symbols": {
+    "CatalogWorker": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include the separately hosted Catalog report worker"
+    },
     "RootNamespace": {
       "type": "parameter",
       "datatype": "text",
@@ -17,5 +23,8 @@
       "description": "Consumer-owned C# root namespace"
     }
   },
-  "sources": [{"modifiers": [{"copyOnly": ["libraries/**", "library-sources.json"]}]}]
+  "sources": [{"modifiers": [
+    {"copyOnly": ["libraries/**", "library-sources.json"]},
+    {"condition": "(!CatalogWorker)", "exclude": ["src/FoundryApplication.CatalogWorker/**", "tests/FoundryApplication.Adoption.Tests/WorkerJourneyTests.cs"]}
+  ]}]
 }
