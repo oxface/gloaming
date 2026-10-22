@@ -538,6 +538,12 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         .HasColumnType("character varying(128)")
                         .HasColumnName("code");
 
+                    b.Property<bool>("DeliveryListed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasColumnName("delivery_listed")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
                         .HasMaxLength(256)

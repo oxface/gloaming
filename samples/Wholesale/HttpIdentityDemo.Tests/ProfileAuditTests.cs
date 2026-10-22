@@ -26,8 +26,16 @@ public sealed partial class CompositionTests
         SalesDatabase.Configure(options, connection);
         await using var database = new SalesDbContext(options.Options, tenant);
         await database.GetService<IMigrator>().MigrateAsync("20261005223044_InitialSales", Token);
-        SalesDemoSeed.Stage(database);
-        await database.SaveChangesAsync(Token);
+        // Seed the historical schema, not today's model (which now includes delivery listing).
+        await database.Database.ExecuteSqlRawAsync(
+            """
+            INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)
+            VALUES ('10000000-0000-0000-0000-000000000001', 'wholesale-alpha', 'DEMO-CUSTOMER', 'Alpha Customer', 1);
+            INSERT INTO sales.customer_addresses (id, customer_id, organization_key, address_line)
+            VALUES ('20000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'wholesale-alpha', 'Alpha Street');
+            """,
+            Token
+        );
         await database.Database.MigrateAsync(Token);
         Assert.Equal(
             database.Database.GetMigrations(),

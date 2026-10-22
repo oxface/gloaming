@@ -72,6 +72,10 @@ public sealed class SalesDbContext(
             .HasColumnName("version")
             .IsConcurrencyToken()
             .ValueGeneratedNever();
+        customer
+            .Property(row => row.DeliveryListed)
+            .HasColumnName("delivery_listed")
+            .HasDefaultValue(true);
         customer.HasIndex(row => new { row.OrganizationKey, row.Code }).IsUnique();
         customer.HasTenantOwnership(
             row => row.OrganizationKey,

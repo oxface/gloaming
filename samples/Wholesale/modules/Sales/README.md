@@ -4,6 +4,20 @@ Sales owns customer profiles, drafts, customer allowances and its durable stock 
 Business Contracts contain ordinary intent/result/query types. Native module persistence,
 grants, business rules and transactions remain consumer-owned.
 
+## Public delivery directory
+
+`AddCustomerProfiles` also registers `ICustomerDeliveryDirectory` and durable source publication.
+Actual profile edits now atomically enqueue `sales.customer-delivery-state` on the fixed
+`dispatch.customer-directory` route. Compose that route in any Sales outbox publisher alongside
+other selected workflows. `RegisterAsync` creates a real profile/address; `SetListedAsync`
+withdraws or relists its public state. Both require a trusted human and selected Organization.
+
+The profile version explicitly orders this complete public directory state. Historical profiles
+are listed by the migration; source tombstones and immutable keys are retained permanently.
+The [Dispatch guide](../Dispatch/README.md) defines disclosure, population, eventual readiness,
+writer participation and unsupported deletion/ID-reuse policies. The
+[composition](../../DirectoryDemo/README.md) demonstrates separate source/receiver databases.
+
 ## Private draft access
 
 Register `AddSalesDatabase`, `AddDraftOrderQueries` and/or `AddDraftOrderCommands` with trusted
