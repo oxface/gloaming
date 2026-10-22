@@ -114,7 +114,7 @@ worker already resolves each dispatch attempt in a fresh scope, validates depend
 outside the operational retry catch, and propagates cooperative cancellation. Its inbox
 retains intake independently of processing. These are current contracts to preserve; they
 do not require adopting MassTransit's receive pipeline or EF execution-strategy retry loop.
-([Current worker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
+([Current worker](https://github.com/oxface/modulith-foundry/blob/d63f5678501fc9c33d42ad8104c1a06faf8fa8fd/src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
 [current inbox contract](../../src/Gloaming.Messaging/docs/inbox.md).)
 
 ## Defer or reject within this slice

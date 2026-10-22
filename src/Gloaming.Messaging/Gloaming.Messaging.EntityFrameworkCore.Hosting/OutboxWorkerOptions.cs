@@ -1,4 +1,4 @@
-namespace Gloaming.Messaging.EntityFrameworkCore;
+namespace Gloaming.Messaging.EntityFrameworkCore.Hosting;
 
 /// <summary>Polling delays for the optional sequential dispatch worker.</summary>
 /// <param name="IdleDelay">Positive delay after no claimable work is found.</param>

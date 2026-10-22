@@ -272,6 +272,14 @@ public sealed class AdoptionDependencyTests
             [
                 "Microsoft.EntityFrameworkCore.Relational",
                 "Microsoft.Extensions.DependencyInjection.Abstractions",
+            ]
+        );
+        Check(
+            "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+            ["Gloaming.Messaging.EntityFrameworkCore"],
+            [
+                "Microsoft.EntityFrameworkCore",
+                "Microsoft.Extensions.DependencyInjection.Abstractions",
                 "Microsoft.Extensions.Hosting.Abstractions",
                 "Microsoft.Extensions.Logging.Abstractions",
             ]
@@ -283,13 +291,20 @@ public sealed class AdoptionDependencyTests
         );
         Check(
             "OutboxDemo",
-            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+            [
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+            ],
             ["Microsoft.EntityFrameworkCore.Design"],
             ["Microsoft.AspNetCore.App"]
         );
         Check(
             "InboxDemo",
-            ["Gloaming.Messaging.EntityFrameworkCore.Postgres", "Gloaming.Events.Serialization"],
+            [
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Events.Serialization",
+            ],
             ["Microsoft.EntityFrameworkCore.Design"]
         );
 

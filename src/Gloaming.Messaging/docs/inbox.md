@@ -1,5 +1,10 @@
 # Durable inbox setup and contract
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 Retain incoming delivery before acknowledging its transport, then process it separately.
 Inbox-only use needs neither an outbox table/publisher nor event sourcing or context libraries.
 PostgreSQL through Npgsql EF is the supported runtime.

@@ -1,5 +1,10 @@
 # Ordinary EF durable incoming render jobs
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 An independent inbox-only receiver using Gloaming.Messaging's PostgreSQL runtime, native EF
 and Kestrel. No outbox table/publisher, EventSourcing, Tenancy, ActorIdentity, Persistence or peer
 implementation dependency. Rendering opts into Gloaming.Events.Serialization for receiver-local

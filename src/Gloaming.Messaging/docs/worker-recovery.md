@@ -1,5 +1,10 @@
 # Consumer worker recovery and shutdown
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 Gloaming owns retained work, row locks, committed claims and fenced lifecycle writes. The
 consumer owns its publisher/receiver, recovery choice, cancellation and process supervisor.
 Retrying an operation in a fresh database scope cannot repair a permanently closed channel.

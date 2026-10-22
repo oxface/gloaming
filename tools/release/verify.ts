@@ -135,7 +135,7 @@ interface Assets {
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  21,
+  22,
   "Review the package inventory when adding/removing libraries.",
 );
 
@@ -367,6 +367,12 @@ try {
       external: true,
     },
     {
+      name: "hosting",
+      source: "Hosting.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Hosting"],
+      external: true,
+    },
+    {
       name: "all-packages",
       source: undefined,
       ids: packages.map((item) => item.id),
@@ -383,7 +389,7 @@ try {
             join(import.meta.dirname, "consumers", profile.source),
             "utf8",
           )
-        : 'Console.WriteLine("PASS all 21 package references compile together");',
+        : 'Console.WriteLine("PASS all 22 package references compile together");',
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),
@@ -440,6 +446,13 @@ try {
       gloaming.map(([name]) => name.split("/")[0]!).sort(),
       [...expected].sort(),
       `Unrelated Gloaming family introduced into ${profile.name}`,
+    );
+    assert.equal(
+      Object.keys(assets.libraries).some((name) =>
+        name.startsWith("Microsoft.Extensions.Hosting.Abstractions/"),
+      ),
+      expected.has("Gloaming.Messaging.EntityFrameworkCore.Hosting"),
+      `Hosting dependency must follow explicit worker selection in ${profile.name}`,
     );
     for (const [name, library] of gloaming) {
       assert.equal(name.split("/")[1], version);

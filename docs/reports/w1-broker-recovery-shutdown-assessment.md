@@ -36,7 +36,7 @@ source rather than adopted solely from the audit or chat history.
   checks the queue; only the separate setup role declares it.
 - [WorkerPublisher](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/WorkerPublisher.cs) constructs the
   existing native adapter over the same channel for every operation. A new database scope
-  does not recover that channel. The [generic worker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs)
+  does not recover that channel. The [generic worker](https://github.com/oxface/modulith-foundry/blob/d63f5678501fc9c33d42ad8104c1a06faf8fa8fd/src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs)
   catches ordinary publication exceptions, waits and retries; unconfirmed accounting/completion
   exceptions follow its distinct fail-stop path. Idle NoWork polls do not access the broker.
 - [RabbitMqIntakeWorker](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/RabbitMqIntakeWorker.cs) already

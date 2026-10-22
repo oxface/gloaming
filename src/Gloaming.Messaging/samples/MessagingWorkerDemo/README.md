@@ -1,5 +1,10 @@
 # Separately hosted messaging workers
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 A native .NET Generic Host composing the existing Exports outbox and Rendering inbox.
 Each invocation selects one explicit role. The producer API, dispatcher, broker intake and
 inbox processor can have separate deployment lifetimes and replica counts. These are editable

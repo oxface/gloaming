@@ -46,6 +46,7 @@ public sealed class AssemblyDependencyTests
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
             typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
+            typeof(Gloaming.Messaging.EntityFrameworkCore.Hosting.OutboxWorkerOptions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
             typeof(Samples.OutboxDemo.DemoJourneys).Assembly,
             typeof(Samples.InboxDemo.InboxDemoHost).Assembly,
@@ -73,6 +74,39 @@ public sealed class AssemblyDependencyTests
             typeof(Samples.Wholesale.Api.DemoComposition).Assembly
         )
         .Build();
+
+    [Fact]
+    public void WorkerHostingRemainsIndependentOfProviderAndOptionalForCallableLibraries()
+    {
+        const string hosting = "Gloaming.Messaging.EntityFrameworkCore.Hosting";
+        foreach (
+            string callable in new[]
+            {
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.Workflows",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.EntityFrameworkCore",
+            }
+        )
+            NoDependency(callable, hosting).Check(Architecture);
+
+        foreach (
+            string forbidden in new[]
+            {
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.Workflows",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.Messaging.RabbitMQ",
+                "Sales",
+                "Access",
+                "OutboxDemo",
+                "InboxDemo",
+            }
+        )
+            NoDependency(hosting, forbidden).Check(Architecture);
+    }
 
     [Fact]
     public void PostgresOwnershipIntegrationIsOptionalWithoutApplicationAuthorizationDependencies()

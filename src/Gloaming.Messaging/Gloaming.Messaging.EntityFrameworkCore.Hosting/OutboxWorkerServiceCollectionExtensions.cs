@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Gloaming.Messaging.EntityFrameworkCore;
+namespace Gloaming.Messaging.EntityFrameworkCore.Hosting;
 
 /// <summary>Opt-in hosting for an already registered module-specific dispatcher.</summary>
 public static class OutboxWorkerServiceCollectionExtensions
@@ -26,11 +26,13 @@ public static class OutboxWorkerServiceCollectionExtensions
             || options.FailureDelay.TotalMilliseconds > int.MaxValue
         )
             throw new ArgumentOutOfRangeException(nameof(options));
+
         services.AddSingleton<IHostedService>(provider => new OutboxWorker<TDbContext>(
             provider.GetRequiredService<IServiceScopeFactory>(),
             provider.GetRequiredService<ILogger<OutboxWorker<TDbContext>>>(),
             options
         ));
+
         return services;
     }
 }

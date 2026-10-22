@@ -124,7 +124,7 @@ parallelism remain separate capabilities. Payload editing and completed-message 
 excluded.
 
 Review the exception, [callable boundary](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs),
-[worker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
+[worker](https://github.com/oxface/modulith-foundry/blob/d63f5678501fc9c33d42ad8104c1a06faf8fa8fd/src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
 [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/CompletionSupervisionTests.cs),
 [child-process proof](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md) first. The

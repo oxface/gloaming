@@ -5,6 +5,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <ProjectReference Include="../InboxDemo/InboxDemo.csproj" />
     <ProjectReference Include="../MessagingDemo/MessagingDemo.csproj" />
     <PackageReference Include="xunit.v3.mtp-v2" />

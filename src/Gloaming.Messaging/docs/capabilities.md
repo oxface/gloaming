@@ -1,5 +1,10 @@
 # Messaging capabilities and remaining work
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 O1 supplies one bounded transactional-outbox capability. [Family setup](../README.md)
 and package READMEs define the public surface; [the O1 proposal](../../../docs/plans/outbox1-transactional-dispatch.md)
 records owner review and [the report](../../../docs/reports/outbox1-transactional-dispatch.md)

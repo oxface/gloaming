@@ -6,6 +6,7 @@
     <StartupObject>ModulithFoundry.Samples.Wholesale.IntegrationTests.TestEntryPoint</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="xunit.v3.mtp-v2" />

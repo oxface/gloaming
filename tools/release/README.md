@@ -104,7 +104,7 @@ npm --prefix tools/release run verify
 before packing; PostgreSQL is never silently skipped. `DOTNET_HOST_PATH` can select
 a particular `dotnet` executable; otherwise it must be on `PATH`.
 
-The harness invokes the same pack-only command for the 21 `Gloaming.*` library
+The harness invokes the same pack-only command for the 22 `Gloaming.*` library
 projects, using a unique local prerelease version and a temporary feed. Ordinary
 `dotnet pack` uses the repository's native SDK
 [`Directory.Build.targets`](../../src/Directory.Build.targets) to render each
@@ -122,7 +122,7 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Four clean executable consumers are created outside the repository:
+Five clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -131,8 +131,10 @@ Four clean executable consumers are created outside the repository:
 - PostgreSQL ownership, outbox and audit: consumer-owned mapping and wiring,
   unsaved/uncommitted invisibility, native commit and rollback, failed later save
   after earlier business SQL, fresh-context recovery, tenant filters and foreign
-  tracked-write rejection.
-- All packages: restore, compile and execute with all 21 packages selected.
+  tracked-write rejection. Its resolved persistence/producer graph excludes Hosting abstractions.
+- Optional hosting: independently select the worker package, supply callable roles and run
+  inbox/outbox workers in fresh scopes without a database provider.
+- All packages: restore, compile and execute with all 22 packages selected.
 
 Each generated project references exact package versions, restores Gloaming only
 from the temporary local feed and uses a fresh package cache. Assets must contain

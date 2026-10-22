@@ -1,5 +1,10 @@
 # Wholesale worker and operations
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 This is the product's single worker/maintenance executable. It selects an explicit delivery
 mode or finite business operation; module Contracts, contexts and native transactions remain
 distinct. It does not reference the integration-test scenarios.

@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <ProjectReference Include="../../Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
     <ProjectReference Include="../MessagingDemo/MessagingDemo.csproj" />

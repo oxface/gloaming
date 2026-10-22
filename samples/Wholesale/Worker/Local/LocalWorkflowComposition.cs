@@ -1,4 +1,5 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;

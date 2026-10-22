@@ -1,5 +1,10 @@
 # Ordinary EF state and transactional outgoing commands
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 An independent, tenantless consumer of Gloaming.Messaging's EF/PostgreSQL outbox. No Events,
 EventSourcing, ActorIdentity, Tenancy, Persistence or module-layout dependency.
 

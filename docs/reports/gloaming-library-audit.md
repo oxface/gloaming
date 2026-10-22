@@ -2,8 +2,8 @@
 
 Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Status: active audit and implementation record. The local package command and two thin
-adapter removals are implemented in the working tree; other package, interface, sample and
-test changes below remain proposals.
+adapter removals are committed as `d63f567`. Optional worker hosting is implemented in the
+working tree; other package, interface, sample and test changes remain proposals.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -26,7 +26,7 @@ there is no need to switch to them to review or use the combined result.
   source-mapping guidance and full package-adoption verifier are present here.
 - [Thin adapter retirement](thin-adapter-retirement.md): PostgreSQL audit JSONB mapping and
   messaging source/meter subscriptions now use native consumer configuration. The current
-  inventory is 21 libraries; the package table below records the original 23-package audit.
+  checkpoint inventory was 21 libraries; the package table records the original 23-package audit.
 - The shared verifier combines both increments: it invokes the real pack command, expects
   21 packages and adopts the retained audit EF package directly.
 
@@ -43,8 +43,15 @@ Combined proof version: `1.0.0-local.1792705144078.gdce65da5`. Local evidence:
 `34701eb77bfe1ab6ee7f10e671cb7799e411a4f86b53decae4e2e93a3b986ee2`.
 Logs: `/tmp/gloaming-audit-consolidation-{architecture,packages}.log`. The disposable
 PostgreSQL server was stopped and auto-removed. No new reusable runtime mechanism is
-introduced by combining these changes. All changes remain unstaged; no commit or push is
-included. The staged review snapshot and original worktree checkpoints are unchanged.
+introduced by combining these changes. The owner subsequently approved that snapshot,
+committed as `d63f567` after all commit hooks passed; it has not been pushed.
+
+The next [worker-hosting slice](messaging-worker-hosting.md) adds the explicitly selected
+hosting package, bringing the inventory to 22. This slice remains unstaged and uncommitted;
+333 fresh test cases and all 22 packages/five independent package consumers pass. Persistence
+consumers omit Hosting abstractions; selecting the hosting package runs the existing workers.
+Its detailed results and remaining demo dependency cleanup are recorded separately. The staged
+review snapshot remains empty.
 
 ## Confirmed direction and review criteria
 
@@ -98,11 +105,11 @@ division unless the row states otherwise; it does not certify every implementati
 | Gloaming.EventSourcing | Keep | Optional aggregate bookkeeping and a replaceable aggregate interface. Immutable evolution, domain decisions and event meaning remain consumer code. |
 | Gloaming.EventSourcing.EntityFrameworkCore | Keep and simplify setup | Retain append/version coordination, required state, history and independent rebuilding. Keep complete regeneration optional; improve contextual setup only from concrete adopter feedback. |
 | Gloaming.Auditing.EntityFrameworkCore | Keep | Explicit envelopes, mapping and same-transaction staging/validation. The ActorIdentity dependency supplies actual attribution types. Required-audit selection, visibility and retention stay outside. |
-| Gloaming.Auditing.EntityFrameworkCore.Postgres | Retired in the working tree | Its sole mapping helper called ConfigureAudit and selected JSONB. The audit protocol remains in the EF package. |
+| Gloaming.Auditing.EntityFrameworkCore.Postgres | Retired in d63f567 | Its sole mapping helper called ConfigureAudit and selected JSONB. The audit protocol remains in the EF package. |
 | Gloaming.Messaging | Keep | Owned wire envelopes, publication acceptance seam and native diagnostics. JSON payloads and GUID delivery IDs are supported protocol choices; routing and receiver trust remain consumer decisions. |
-| Gloaming.Messaging.EntityFrameworkCore | Simplify | Keep storage records, save guards and callable roles. Move the hosted loops, their options and registration into optional hosting integration. |
+| Gloaming.Messaging.EntityFrameworkCore | Simplified in the working tree | Storage records, save guards and callable roles remain. Hosted loops, options and registration now belong to the optional Hosting package. |
 | Gloaming.Messaging.EntityFrameworkCore.Postgres | Keep | PostgreSQL leases, deduplicating intake, locked processing, recovery and maintenance concentrate substantial correctness work. The fixed technical mappings are part of its contract. |
-| Gloaming.Messaging.OpenTelemetry | Retired in the working tree | Its two helpers only subscribed native builders to the documented activity-source and meter names. Emitted diagnostics and their tests are retained. |
+| Gloaming.Messaging.OpenTelemetry | Retired in d63f567 | Its two helpers only subscribed native builders to the documented activity-source and meter names. Emitted diagnostics and their tests are retained. |
 | Gloaming.Messaging.RabbitMQ | Keep | Native connection/channel lifetime, partial-acquisition cleanup and terminal observation have independent value. Continue exposing native channels and consumer-selected recovery/topology. |
 | Gloaming.Messaging.Workflows | Combine with the EF workflow package | Definitions and return instructions are only executable by the friend EF assembly through internal members. No public executable seam currently justifies this package split. |
 | Gloaming.Messaging.Workflows.EntityFrameworkCore | Keep the mechanism in one combined optional package | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
@@ -154,13 +161,15 @@ own module state and rules; adopt this runner only for interactions that fit its
 ### Separate worker hosting from persistence
 
 [The EF messaging project](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj)
-references Hosting abstractions even for an enqueue-only consumer.
-[OutboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs)
-and [InboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxWorker.cs)
+originally referenced Hosting abstractions even for an enqueue-only consumer. The
+[hosting slice](messaging-worker-hosting.md) removes that dependency and moves the workers to
+[their optional package](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md).
+[OutboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/OutboxWorker.cs)
+and [InboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/InboxWorker.cs)
 own sequential polling, fresh DI scopes, delays, startup resolution and fault supervision.
 Those are useful optional execution policies, distinct from record mapping and callable work.
 
-Move the two loops, options and worker registration helpers together. Keep callable
+The two loops, options and worker registration helpers move together. Keep callable
 dispatch/processing and their failure distinctions in the owning persistence packages.
 An enqueue-only consumer should restore no Gloaming worker integration and no Hosting
 abstractions through Messaging. Selecting hosting should retain current fresh-scope,

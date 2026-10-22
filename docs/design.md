@@ -438,7 +438,11 @@ are stated in their slice.
 Start with explicit EF Core/PostgreSQL persistence and optional Rebus/RabbitMQ integration.
 The owner-authorized [Messaging outbox](plans/outbox1-transactional-dispatch.md) keeps transport
 implementations in consumer source. Used core/EF/provider layers concentrate enqueue/save
-guards, PostgreSQL claims and optional sequential worker hosting. Each module owns its typed
+guards and PostgreSQL claims. Optional sequential worker hosting is isolated in
+`Gloaming.Messaging.EntityFrameworkCore.Hosting`; callable/producer graphs need no Hosting
+dependency. [The hosting contract](../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md)
+records polling, scope and supervision obligations; [the slice report](reports/messaging-worker-hosting.md)
+records verification. Each module owns its typed
 context/table and final producer commit; dispatch commits its claim before publication and
 fences completion with an unexpired token. No shared Gloaming transaction runtime is introduced.
 [ADR 0009](adr/0009-module-owned-transactional-outbox.md) records this direction. Outbox O1

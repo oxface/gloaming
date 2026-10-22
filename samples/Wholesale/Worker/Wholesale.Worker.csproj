@@ -3,6 +3,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
     <ProjectReference Include="../modules/Dispatch/Dispatch/Dispatch.csproj" />
     <ProjectReference Include="../modules/Purchasing/Purchasing/Purchasing.csproj" />

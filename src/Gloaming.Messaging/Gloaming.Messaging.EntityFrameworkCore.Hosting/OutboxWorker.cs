@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Gloaming.Messaging.EntityFrameworkCore;
+namespace Gloaming.Messaging.EntityFrameworkCore.Hosting;
 
 internal sealed partial class OutboxWorker<TDbContext>(
     IServiceScopeFactory scopes,
@@ -17,6 +17,7 @@ internal sealed partial class OutboxWorker<TDbContext>(
         // Resolve once before the loop: unsupported model/provider and missing bindings fail startup.
         await using (var scope = scopes.CreateAsyncScope())
             _ = scope.ServiceProvider.GetRequiredService<IOutboxDispatcher<TDbContext>>();
+
         await base.StartAsync(cancellationToken);
     }
 
@@ -63,6 +64,7 @@ internal sealed partial class OutboxWorker<TDbContext>(
                     delay = options.FailureDelay;
                 }
             }
+
             if (delay > TimeSpan.Zero)
                 await Task.Delay(delay, stoppingToken);
         }
