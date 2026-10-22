@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/Family samples/">
     <Project Path="src/Gloaming.Messaging/samples/ServiceDefaults/Messaging.ServiceDefaults.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/Current/WorkflowDeploymentDemo.Current.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/WorkflowDeploymentDemo.Tests/WorkflowDeploymentDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/EntityFrameworkCore/">
     <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />

@@ -10,10 +10,7 @@
     <ProjectReference Include="../WorkflowDeploymentDemo/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
     <ProjectReference Include="../WorkflowDeploymentDemo/Current/WorkflowDeploymentDemo.Current.csproj" />
     <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
-    <Compile
-      Include="../../../../samples/MessagingWorkerDemo.Tests/ChildHost.cs"
-      Link="ChildHost.cs"
-    />
+    <Compile Include="../MessagingWorkerDemo.Tests/ChildHost.cs" Link="ChildHost.cs" />
     <None
       Include="../WorkflowDeploymentDemo/fixtures/*.json"
       Link="fixtures/%(Filename)%(Extension)"

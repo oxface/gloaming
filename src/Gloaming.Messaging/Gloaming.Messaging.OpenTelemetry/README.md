@@ -31,6 +31,6 @@ implementation. Without this adapter, native AddSource/AddMeter with the same na
 equivalent supported setup.
 
 See [the observability contract](../docs/observability.md) for span/metric meanings, retained
-links and limitations. [Producer](../src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) and
-[worker](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs) hosts exercise both extensions;
+links and limitations. [Producer](../samples/MessagingProducerDemo/Program.cs) and
+[worker](../samples/MessagingWorkerDemo/Program.cs) hosts exercise both extensions;
 their process suite verifies actual OTLP export with real PostgreSQL/RabbitMQ and a Collector.

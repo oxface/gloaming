@@ -137,6 +137,7 @@ public static class Application
                             .ServiceProvider.GetRequiredService<IInbox<DeploymentDatabase>>()
                             .ReceiveAsync(Subscription, reply, token);
                     }
+
                     break;
                 case "signal":
                     Print(await workflow.SignalAsync(key, new ApproveExport(), token));
