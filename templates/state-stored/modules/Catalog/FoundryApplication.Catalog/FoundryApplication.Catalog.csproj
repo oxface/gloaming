@@ -3,6 +3,7 @@
     <RootNamespace>ConsumerRoot.Catalog</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" VersionOverride="10.0.13" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <ProjectReference Include="../FoundryApplication.Catalog.Contracts/FoundryApplication.Catalog.Contracts.csproj" />
     <ProjectReference Include="../../../libraries/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
