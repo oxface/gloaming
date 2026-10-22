@@ -118,10 +118,10 @@ and full solution build/style/analyzer checks passed.
   [immutable submission](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderAggregate.cs),
   [command mapping](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderCommands.cs) and
   [required handler](../../samples/Wholesale/modules/Sales/Sales/OrderAllowances/ReserveCustomerAllowance.cs).
-- [Standalone composition](../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-  [direct consumer](../../samples/EventReactionsDemo/Consumer/DirectOrders.cs),
-  [mapped consumer](../../samples/EventReactionsDemo/Consumer/MappedQuotes.cs),
-  [DI isolation proof](../../samples/EventReactionsDemo/Consumer.Tests/RegistrationTests.cs) and
+- [Standalone composition](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+  [direct consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
+  [mapped consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs),
+  [DI isolation proof](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/RegistrationTests.cs) and
   [Sales cascade/tenant/concurrency proofs](../../samples/Wholesale/DomainEventsDemo.Tests/ReactionTests.Faults.cs).
 
 The new reusable capability proven here is scoped registration and context-independent adapter

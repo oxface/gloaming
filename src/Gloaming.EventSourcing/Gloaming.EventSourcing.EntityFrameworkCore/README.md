@@ -293,7 +293,7 @@ SQL, rollback and fresh recovery.
 
 See [current capabilities and deferred directions](docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
-[standalone raw adoption](../../../samples/EventStorageDemo/README.md),
+[standalone raw adoption](../src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md),
 [tenant-owned adoption](../../../samples/Wholesale/EventPersistenceDemo/README.md),
 [reviewed replacement](../../../docs/plans/es2-native-ef-simplification.md) and
 [dated ES2 evidence](../../../docs/reports/es2-rebuild-design.md).

@@ -37,11 +37,11 @@ mapping, both save guards, typed/keyed registration and transaction ownership.
   work commits facts, inline aggregate, reply and completion together. Not-found/conflict/shortage
   complete with a consumer-owned decline reply; technical/admission failures remain pending.
   [The --inbox journey](../../samples/Wholesale/EventPersistenceDemo/InboxJourney.cs) uses native RabbitMQ.
-- [InboxDemo](../../samples/InboxDemo/README.md) is an ordinary EF/HTTP receiver with no outbox,
+- [InboxDemo](../../src/Gloaming.Messaging/samples/InboxDemo/README.md) is an ordinary EF/HTTP receiver with no outbox,
   publisher, Events, EventSourcing, context-family or peer implementation dependency. It records
   a RenderJob, not an external rendering effect. Its business job identity handles semantic
   duplication under different delivery IDs; this policy is not inbox deduplication.
-- [MessagingDemo](../../samples/MessagingDemo/README.md) alone composes both implementations.
+- [MessagingDemo](../../src/Gloaming.Messaging/samples/MessagingDemo/README.md) alone composes both implementations.
   Separate owning databases/contexts communicate through consumer-native RabbitMQ adapters.
   The receiver knows a wire alias/schema, not the sender's implementation DTO. Queue setup,
   publication confirms, channel lifetime and acknowledgement are explicit sample source.
@@ -164,30 +164,30 @@ docs/design.md
 docs/plans/inbox1-durable-intake-processing.md
 docs/plans/library-extraction.md
 docs/reports/inbox1-durable-intake-processing.md
-samples/InboxDemo.Tests/AdoptionTests.cs
-samples/InboxDemo.Tests/BrokerTests.cs
-samples/InboxDemo.Tests/InboxDemo.Tests.csproj
-samples/InboxDemo/InboxDemo.csproj
-samples/InboxDemo/InboxDemoHost.cs
-samples/InboxDemo/Migrations/20261008213953_InitialRendering.Designer.cs
-samples/InboxDemo/Migrations/20261008213953_InitialRendering.cs
-samples/InboxDemo/Migrations/RenderDbContextModelSnapshot.cs
-samples/InboxDemo/Program.cs
-samples/InboxDemo/README.md
-samples/InboxDemo/RenderDbContext.cs
-samples/InboxDemo/RenderExportHandler.cs
-samples/InboxDemo/RenderJob.cs
-samples/MessagingDemo/MessagingDemo.csproj
-samples/MessagingDemo/MessagingJourney.cs
-samples/MessagingDemo/Program.cs
-samples/MessagingDemo/README.md
-samples/MessagingDemo/RabbitMqExportPublisher.cs
-samples/MessagingDemo/RabbitMqRenderReceiver.cs
-samples/OutboxDemo/HttpCommandPublisher.cs
-samples/OutboxDemo/Migrations/20261008213949_AddMessageMetadata.Designer.cs
-samples/OutboxDemo/Migrations/20261008213949_AddMessageMetadata.cs
-samples/OutboxDemo/Migrations/ExportDbContextModelSnapshot.cs
-samples/OutboxDemo/README.md
+src/Gloaming.Messaging/samples/InboxDemo.Tests/AdoptionTests.cs
+src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs
+src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj
+src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj
+src/Gloaming.Messaging/samples/InboxDemo/InboxDemoHost.cs
+src/Gloaming.Messaging/samples/InboxDemo/Migrations/20261008213953_InitialRendering.Designer.cs
+src/Gloaming.Messaging/samples/InboxDemo/Migrations/20261008213953_InitialRendering.cs
+src/Gloaming.Messaging/samples/InboxDemo/Migrations/RenderDbContextModelSnapshot.cs
+src/Gloaming.Messaging/samples/InboxDemo/Program.cs
+src/Gloaming.Messaging/samples/InboxDemo/README.md
+src/Gloaming.Messaging/samples/InboxDemo/RenderDbContext.cs
+src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs
+src/Gloaming.Messaging/samples/InboxDemo/RenderJob.cs
+src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj
+src/Gloaming.Messaging/samples/MessagingDemo/MessagingJourney.cs
+src/Gloaming.Messaging/samples/MessagingDemo/Program.cs
+src/Gloaming.Messaging/samples/MessagingDemo/README.md
+src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs
+src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqRenderReceiver.cs
+src/Gloaming.Messaging/samples/OutboxDemo/HttpCommandPublisher.cs
+src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261008213949_AddMessageMetadata.Designer.cs
+src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261008213949_AddMessageMetadata.cs
+src/Gloaming.Messaging/samples/OutboxDemo/Migrations/ExportDbContextModelSnapshot.cs
+src/Gloaming.Messaging/samples/OutboxDemo/README.md
 samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs
 samples/Wholesale/EventPersistenceDemo/InboxJourney.cs
 samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs

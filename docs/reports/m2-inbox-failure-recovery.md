@@ -151,7 +151,7 @@ Paths below are repository-relative; review public interfaces and implementation
    PostgresInboxProcessor savepoint placement and commit-error paths, PostgresInboxStorage
    accounting SQL/model guards, PostgresInboxRecovery revision predicate, mapping constraints
    and separate recovery registration.
-3. `samples/InboxDemo/`: RenderInboxFailurePolicy, RenderOperatorAuthenticationHandler,
+3. `src/Gloaming.Messaging/samples/InboxDemo/`: RenderInboxFailurePolicy, RenderOperatorAuthenticationHandler,
    RenderInboxOperations and explicit host/Program wiring. Review auth-before-invocation,
    fixed lane, safe DTO and consumer classification.
 4. Forward `AddInboxFailureRecovery` migrations/designers and current snapshots in Rendering

@@ -28,7 +28,7 @@ whose accounting succeeds still use FailureDelay and fresh scopes.
 
 ## Executable adoption and proof boundaries
 
-[OutboxDemo](../../samples/OutboxDemo/README.md#dead-letters-and-operator-retry) already composes
+[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#dead-letters-and-operator-retry) already composes
 the optional worker with explicit native StopHost. Its existing `--setup` and `--serve --worker`
 commands adopt the behavior without configuration changes. Documented inspection uses fresh
 metadata: pending work waits for lease expiry, completed work requires no action, and a dead
@@ -93,8 +93,8 @@ Reproduce from the repository root with the configured Docker-compatible runtime
 ```bash
 dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-build --no-restore
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
 dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore -- --filter-class '*DispatchTests'
 dotnet test --project samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj --no-build --no-restore
@@ -126,7 +126,7 @@ excluded.
 Review the exception, [callable boundary](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs),
 [worker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs),
 [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/CompletionSupervisionTests.cs),
-[child-process proof](../../samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
+[child-process proof](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md) first. The
 [scope](../plans/m2-outbox-completion-supervision.md) records concrete usage and file/schema
 boundaries. This follow-up remains unstaged and uncommitted; its originally empty index is

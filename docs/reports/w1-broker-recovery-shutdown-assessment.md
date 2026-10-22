@@ -30,29 +30,29 @@ source rather than adopted solely from the audit or chat history.
 
 ## Current code and existing evidence
 
-- [BrokerSession](../../samples/MessagingWorkerDemo/BrokerSession.cs) explicitly sets
+- [BrokerSession](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/BrokerSession.cs) explicitly sets
   AutomaticRecoveryEnabled=false and opens one persistent confirm-tracked channel. Program
   shares that session across sequential scoped dispatch/intake operations. Startup passively
   checks the queue; only the separate setup role declares it.
-- [WorkerPublisher](../../samples/MessagingWorkerDemo/WorkerPublisher.cs) constructs the
+- [WorkerPublisher](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/WorkerPublisher.cs) constructs the
   existing native adapter over the same channel for every operation. A new database scope
   does not recover that channel. The [generic worker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs)
   catches ordinary publication exceptions, waits and retries; unconfirmed accounting/completion
   exceptions follow its distinct fail-stop path. Idle NoWork polls do not access the broker.
-- [RabbitMqIntakeWorker](../../samples/MessagingWorkerDemo/RabbitMqIntakeWorker.cs) already
+- [RabbitMqIntakeWorker](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/RabbitMqIntakeWorker.cs) already
   logs failures, sets exit code 1 and requests host stop. Requested cancellation ends normally.
   A receive awaiting PostgreSQL does not poll a broken broker session at that instant.
-- [Native publication](../../samples/MessagingDemo/RabbitMqExportPublisher.cs) sets persistent
+- [Native publication](../../src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs) sets persistent
   delivery and stable MessageId/schema/business headers, publishes mandatory with confirmations,
   and uses a linked five-second cancellation timer. No arbitrary-publisher deadline follows.
 - [Dispatcher](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
   commits the lease before publication, preserves a claim on requested publication cancellation,
   accounts publication exceptions under fencing and distinguishes unconfirmed completion.
   It must not be changed to equate broker disconnect with rejection or to force early replay.
-- [Process tests](../../samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) prove native
+- [Process tests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) prove native
   competition, SIGTERM during a blocked job write, killed processors and dispatcher death after
   confirmation with actual lease-expiry recovery. Those are not a live broker restart proof.
-- [ObservabilityTests](../../samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs) already
+- [ObservabilityTests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs) already
   launches independent producer/dispatch/intake/process roles with unreachable OTLP endpoint,
   a one-second exporter timeout and real PostgreSQL/RabbitMQ progress, then stops them. Its
   existing ninety-second whole-scenario deadline is not a separately demonstrated stop budget.

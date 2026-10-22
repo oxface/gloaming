@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OutboxDemo/OutboxDemo.csproj" />
+    <ProjectReference Include="../InboxDemo/InboxDemo.csproj" />
+    <ProjectReference Include="../../Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
+    <PackageReference Include="RabbitMQ.Client" />
+  </ItemGroup>
+</Project>

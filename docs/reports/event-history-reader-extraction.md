@@ -98,7 +98,7 @@ runtime results above. Untouched HTTP/state-persistence suites were not repeated
   injects the reader without changing state replacement or transaction/concurrency semantics.
 - [Inventory reader](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs)
   and [Purchasing reader](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
-  retain temporal selection and reducers. [Counter decoder](../../samples/EventStorageDemo/CounterHistoryReader.cs)
+  retain temporal selection and reducers. [Counter decoder](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterHistoryReader.cs)
   demonstrates materially different adoption with direct JSON and ordinary keys.
 - [Reader PostgreSQL proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventHistoryReaderTests.cs)
   cover the new mechanism; existing family/consumer tests exercise composition.

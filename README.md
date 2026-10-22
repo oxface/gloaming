@@ -30,7 +30,7 @@ Catalog/console repository with configurable naming and existing library source
 snapshots, now including shared EF infrastructure required by Persistence, without domain-event or messaging dependencies. [The report](docs/reports/t1-template-rehearsal.md)
 records the supported creation behavior and limits.
 
-[The separate worker host](samples/MessagingWorkerDemo/README.md) demonstrates API-independent
+[The separate worker host](src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) demonstrates API-independent
 dispatch, broker intake and local processing using existing Messaging APIs. Explicit finite
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.
@@ -97,7 +97,7 @@ and caller-owned transactions before views and messaging. [Its report](docs/repo
 records real PostgreSQL conflict/rollback proofs; no new library mechanism was needed.
 [E5.3 storage registration](docs/plans/e5-3-event-storage-registration.md) adds
 [EventSourcing.EntityFrameworkCore](src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md),
-adopted by both modules and an [independent shared-table consumer](samples/EventStorageDemo/README.md).
+adopted by both modules and an [independent shared-table consumer](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md).
 E5.2.2 and E5.3 were checkpointed together as `abcd370`;
 [the storage report](docs/reports/e5-3-event-storage-registration.md) records
 fresh tenant-free/customized/mixed-stream proofs and preserved module schemas.

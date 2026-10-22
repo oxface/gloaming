@@ -84,7 +84,7 @@ assemblies registered by all modules. It does not discover or register handlers.
   domain objects are not EF entities, rather than requiring every aggregate to inherit
   a persistence-visible base.
 
-The former standalone ConsumerScope (current replacement: [module registration](../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs))
+The former standalone ConsumerScope (current replacement: [module registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs))
 creates a service provider and operation scope for each finite consumer run. That lifetime
 management is legitimate demo/test setup. Its calls into `DirectOrdersContext.RegisterEvents`
 and `MappedQuotesContext.RegisterEvents`, and its explicit constructor wiring of both the

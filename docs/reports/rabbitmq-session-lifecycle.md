@@ -25,8 +25,8 @@ rather than copying event races, multiple-resource cleanup and disposal admissio
 
 | Adopter | Shared mechanics / retained consumer behavior |
 | --- | --- |
-| [Worker BrokerSession](../../samples/MessagingWorkerDemo/BrokerSession.cs) | Delegates connection/channel ownership, diagnostics and observation to the optional package. Retains queue setup/passive check, automatic recovery false and the callback setting status 1/StopApplication. WorkerPublisher/receiver continue using native IChannel and unchanged wire protocols. |
-| [Finite MessagingJourney](../../samples/MessagingDemo/MessagingJourney.cs) | Uses shared ownership/cleanup with automatic recovery false and no observer/host dependency. Keeps explicit migration, private queue creation/deletion, confirmations, admission and independent commit/ack/processing. |
+| [Worker BrokerSession](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/BrokerSession.cs) | Delegates connection/channel ownership, diagnostics and observation to the optional package. Retains queue setup/passive check, automatic recovery false and the callback setting status 1/StopApplication. WorkerPublisher/receiver continue using native IChannel and unchanged wire protocols. |
+| [Finite MessagingJourney](../../src/Gloaming.Messaging/samples/MessagingDemo/MessagingJourney.cs) | Uses shared ownership/cleanup with automatic recovery false and no observer/host dependency. Keeps explicit migration, private queue creation/deletion, confirmations, admission and independent commit/ack/processing. |
 | [WorkflowBroker](../../samples/Wholesale/WorkflowDemo/WorkflowBroker.cs) | Uses shared ownership for command/reply confirm channels and an intake channel. Keeps native default automatic recovery enabled and installs no terminal observer. Routing, publication attempt timer, retrying intake and business workflows remain consumer code. |
 
 All three choose five-second native protocol/connection-close values. The protocol value
@@ -106,8 +106,8 @@ Reproduce with a configured Docker/Podman runtime on Linux:
 ```sh
 dotnet build ModulithFoundry.slnx -m:1
 dotnet test --project src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj --no-build --no-restore
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore
 ```
 

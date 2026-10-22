@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ModulithFoundry.Samples.EventStorageDemo</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
+    <ProjectReference Include="../../Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

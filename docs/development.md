@@ -126,7 +126,7 @@ fresh executions and remaining hosted/performance limits.
 
 ## Separate worker proofs
 
-The Messaging family includes [W1's native separate-host proofs](../samples/MessagingWorkerDemo/README.md).
+The Messaging family includes [W1's native separate-host proofs](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md).
 They launch actual producer and worker executables against isolated PostgreSQL/RabbitMQ, with
 API-independent delivery, competing workers, process termination and recovery. They use native
 Testcontainers fixtures and do not add another Aspire deployment lane. Update the family path
@@ -319,7 +319,7 @@ currently certifies only the returned range, not excluded history.
 ES1's reviewed [append interface](plans/es1-bounded-event-append.md) is exercised by both event
 test projects below. The [Wholesale executable](../samples/Wholesale/EventPersistenceDemo/README.md)
 adds a stock-issue acceptance/rejection journey through its module Contract; the
-[independent storage executable](../samples/EventStorageDemo/README.md) adds a bounded counter
+[independent storage executable](../src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) adds a bounded counter
 using captured history/direct JSON. Both visibly own native transactions/saves/commits, and
 both retain their existing authored fixtures/output. No migration or template option is added.
 The provided IEventStore implementation now concentrates loading/version/required-state
@@ -336,7 +336,7 @@ dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/Persistenc
 dotnet test --project samples/Wholesale/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-build --no-restore
 ```
 
@@ -370,7 +370,7 @@ implementations; both independently adoptable HTTP library suites remain contain
 [the E3.3 Access report](reports/e3-3-persisted-access.md) and
 [HTTP/database setup](../samples/Wholesale/HttpIdentityDemo/README.md), and
 [the native event-history consumer](../samples/Wholesale/EventPersistenceDemo/README.md).
-The [independent storage consumer](../samples/EventStorageDemo/README.md) uses the mapping
+The [independent storage consumer](../src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) uses the mapping
 segment alone with custom table names and mixed stream types; its tests use actual migrations.
 
 ## Wholesale runtime verification
@@ -501,13 +501,13 @@ WHOLESALE_DEMO_CONNECTION_STRING='Host=localhost;Database=domain_events_demo;Use
 dotnet test --project samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj
 ```
 
-The independent [EventReactions consumer](../samples/EventReactionsDemo/README.md) demonstrates a
+The independent [EventReactions consumer](../src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md) demonstrates a
 consumer-owned base with composed buffers, a package-free immutable model and scoped request sources.
 Source selectors are explicit. No event marker, source interface or library aggregate base is required.
 
 ```sh
 dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj
-dotnet test --project samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj
+dotnet test --project src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj
 ```
 
 The PostgreSQL/Testcontainers proofs cover ordered capture, selected/deleted sources, downstream

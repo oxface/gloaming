@@ -126,7 +126,7 @@ Logs use /tmp/domain-policy-*.log. These fresh executions are separate from EF1.
 Review [capture](../../src/Gloaming.EventReactions/Gloaming.EventReactions/PendingEvents.cs),
 [dispatch](../../src/Gloaming.EventReactions/Gloaming.EventReactions/EventReactionDispatcher.cs),
 [core ordering proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs),
-[PostgreSQL ordering usage](../../samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs),
+[PostgreSQL ordering usage](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs),
 [local contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md) and
 [workflow ownership/durability](../../src/Gloaming.Messaging/docs/workflows.md).
 

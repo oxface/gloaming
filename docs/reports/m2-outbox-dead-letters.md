@@ -35,7 +35,7 @@ There is no new library package/dependency or template preset.
 
 ## Executable adoption and schema findings
 
-[OutboxDemo](../../samples/OutboxDemo/README.md) keeps its finite EF submit/dispatch journey
+[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md) keeps its finite EF submit/dispatch journey
 and adds explicit --setup, --serve and --serve --worker modes. Its HTTP policy stops
 unsupported contracts immediately and bounds selected transient observations to three per
 cycle. Optional authenticated operator endpoints fix exports.render and return metadata

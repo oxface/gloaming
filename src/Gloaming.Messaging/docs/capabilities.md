@@ -176,8 +176,8 @@ semantics remain visible in the sample. Additional helpers must earn their inter
 
 ## Separate worker composition
 
-[W1's native host](../../../samples/MessagingWorkerDemo/README.md) composes the existing library
-workers outside an [API-only producer](../../../samples/MessagingProducerDemo/README.md).
+[W1's native host](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) composes the existing library
+workers outside an [API-only producer](../src/Gloaming.Messaging/samples/MessagingProducerDemo/README.md).
 Explicit setup applies the existing module migrations and declares the durable queue; worker
 startup only checks its required tables/queue. Dispatch, broker intake and local processing
 are separate roles. Processing needs only its receiving module's connection. The host owns

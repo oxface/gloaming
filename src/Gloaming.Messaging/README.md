@@ -20,10 +20,10 @@ Only PostgreSQL dispatch/intake/processing is supported. No generic provider dia
 
 Start with [setup, guarantees and deferred capabilities](docs/capabilities.md). Executable
 adopters are [Inventory/RabbitMQ](../../samples/Wholesale/EventPersistenceDemo/README.md)
-and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.md),
-[inbox-only receiver](../../samples/InboxDemo/README.md) and
-[two-module RabbitMQ journey](../../samples/MessagingDemo/README.md), followed by
-[separate API/worker hosts](../../samples/MessagingWorkerDemo/README.md) and
+and the [independent state-stored HTTP sender](src/Gloaming.Messaging/samples/OutboxDemo/README.md),
+[inbox-only receiver](src/Gloaming.Messaging/samples/InboxDemo/README.md) and
+[two-module RabbitMQ journey](src/Gloaming.Messaging/samples/MessagingDemo/README.md), followed by
+[separate API/worker hosts](src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) and
 [Sales → Inventory request/reply progress](../../samples/Wholesale/WorkflowDemo/README.md) and
 [two-line reservations with compensation](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
@@ -53,9 +53,9 @@ dotnet test --project src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.c
 dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj
 dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj
-dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj
-dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj
+dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj
+dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj
 ```
 

@@ -101,7 +101,7 @@ repository script is introduced.
 
 Review the new `InboxFailureAccountingException.cs`, the PostgreSQL processor's existing
 accounting catch, the optional `InboxWorker.cs` fault branch, and InboxWorkerOptions documentation.
-Review the explicit native host choice in `samples/InboxDemo/InboxDemoHost.cs`; this intentionally
+Review the explicit native host choice in `src/Gloaming.Messaging/samples/InboxDemo/InboxDemoHost.cs`; this intentionally
 governs the entire consuming sample host. Library/sample FailureSupervisionTests and the new
 InboxRecoveryProcessTests case prove adoption. Existing FailureRecoveryTests and restricted
 SalesReplyRecoveryTests use the named errors. Family/package/sample documentation, ADR 0018,

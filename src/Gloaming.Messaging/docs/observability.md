@@ -178,7 +178,7 @@ It does not create a separate inbox intake span; the sample enables native trans
 database instrumentation around that lane. Dashboard navigation is documented behavior;
 the automated process proof verifies actual OTLP data with a Collector, not dashboard UI.
 
-See [the separate host example](../../../samples/MessagingWorkerDemo/README.md) for executable
+See [the separate host example](../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) for executable
 OTLP configuration. Its tests use real PostgreSQL/RabbitMQ and an official test Collector,
 including process exit, completion/handler failure, new send spans, duplicate intake and
 unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)

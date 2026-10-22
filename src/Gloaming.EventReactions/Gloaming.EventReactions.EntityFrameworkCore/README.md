@@ -72,7 +72,7 @@ Suppression, SQL/bulk writes, arbitrary tracker changes, options omitting shared
 automatic same-context retry are outside this contract. No tracker mirror, repository, durable queue,
 event log, serializer, integration-message mapping or aggregate base is provided.
 
-[Compiled registration](../../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-[scoped request proof](../../../samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
+[Compiled registration](../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+[scoped request proof](../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
 [execution contract](../docs/local-dispatch.md) and
 [current report](../../../docs/reports/event-reactions-consolidation.md).

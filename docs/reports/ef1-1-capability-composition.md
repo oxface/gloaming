@@ -45,7 +45,7 @@ requires a caller transaction when facts are pending. The caller saves and commi
 
 ## What is proven and what was rejected
 
-[CapabilityCompositionTests](../../samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs)
+[CapabilityCompositionTests](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs)
 uses the real domain, ownership and PostgreSQL outbox packages. Validators are registered before
 dispatch. Both save paths persist a submitted aggregate, required receipt and staged outgoing message
 in one caller transaction. The message remains undispatched. Foreign-owner handler work and tampered
@@ -138,8 +138,8 @@ Local logs use /tmp/ef1-1-*.log.
   [EF binding](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionServiceCollectionExtensions.cs):
   reduced lifecycle and explicit caller transaction.
 - [Sales database composition](../../samples/Wholesale/modules/Sales/Sales/SalesDatabase.cs),
-  [standalone module](../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-  [real composition proofs](../../samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs)
+  [standalone module](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+  [real composition proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs)
   and [template relocation](../../tools/template/create.ts).
 
 Any failure requires rollback/disposal and a fresh operation with reloaded state and a new decision.

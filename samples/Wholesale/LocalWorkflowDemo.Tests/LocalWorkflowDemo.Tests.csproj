@@ -9,7 +9,7 @@
     <PackageReference Include="Testcontainers.PostgreSql" />
     <ProjectReference Include="../LocalWorkflowDemo/LocalWorkflowDemo.csproj" />
     <Compile Include="../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
-    <Compile Include="../../MessagingWorkerDemo.Tests/ChildHost.cs" Link="ChildHost.cs" />
+    <Compile Include="../../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs" Link="ChildHost.cs" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

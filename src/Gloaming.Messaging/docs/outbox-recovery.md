@@ -28,7 +28,7 @@ consumer-code obligations, not a sandbox against database misuse.
 
 Omission retains indefinite retry by the existing nonnegative OutboxDispatchOptions.RetryDelay,
 with code `publication-failed` and durable observations. There is no library poison threshold.
-[Exports' policy](../../../samples/OutboxDemo/ExportOutboxFailurePolicy.cs) illustrates consumer
+[Exports' policy](../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxFailurePolicy.cs) illustrates consumer
 HTTP classification and a three-observation cycle budget; it does not govern RabbitMQ.
 Direct construction can append the named `failurePolicy:` argument; existing three/four-argument
 calls remain valid.
@@ -220,7 +220,7 @@ can use these column grants without payload SELECT. Column privileges do not enf
 legal lifecycle protocol: a credential able to set dead_lettered_at can issue arbitrary SQL
 to clear it. Database grants/RLS and trusted application authority remain separate obligations.
 
-[OutboxDemo](../../../samples/OutboxDemo/README.md) provides executable fixed-route operator
+[OutboxDemo](../src/Gloaming.Messaging/samples/OutboxDemo/README.md) provides executable fixed-route operator
 endpoints and HTTP policy. [The slice report](../../../docs/reports/m2-outbox-dead-letters.md)
 separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 results.
 The [completion supervision report](../../../docs/reports/m2-outbox-completion-supervision.md)

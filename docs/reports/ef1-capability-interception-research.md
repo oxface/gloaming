@@ -8,7 +8,7 @@ links now lead to replacements; test counts below remain dated evidence.
 Date: 2026-10-15 (Europe/Kiev). Investigation requested during D2.1d owner review.
 This report completes the [research scope](../plans/ef1-capability-interception-research.md),
 with [external implementation comparisons](ef1-external-patterns.md) and retained
-[native EF probes](../../samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
+[native EF probes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
 Production libraries and contexts are unchanged. Interfaces and package names below are proposals.
 
 ## Recommendation
@@ -91,8 +91,8 @@ and [validation](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.Entit
 
 Sales currently appends its validators after event dispatch through OnConfiguring. Inventory calls
 tenant/audit/event-stream/outbox/inbox validation in both save overrides; Purchasing calls tenant
-and event-stream validation. Independent [ExportDbContext](../../samples/OutboxDemo/ExportDbContext.cs)
-and [RenderDbContext](../../samples/InboxDemo/RenderDbContext.cs) call their owning capability guards.
+and event-stream validation. Independent [ExportDbContext](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportDbContext.cs)
+and [RenderDbContext](../../src/Gloaming.Messaging/samples/InboxDemo/RenderDbContext.cs) call their owning capability guards.
 Those small consumers are necessary adoption targets for any common integration, not just Wholesale.
 Existing utility methods remain useful as the lower-level implementation and explicit adoption seam.
 

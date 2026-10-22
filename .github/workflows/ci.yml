@@ -63,7 +63,7 @@ jobs:
     env:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   tenancy:
@@ -116,7 +116,7 @@ jobs:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-not-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
@@ -134,9 +134,9 @@ jobs:
         dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed

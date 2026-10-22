@@ -19,7 +19,7 @@ The owner requested applying the settled inline-state/query directions. The
 signatures and necessary finite-seed adaptations for review. Required-state save enforcement,
 appender simplification and the new availability query are not yet implemented or proven.
 
-A new [independent-consumer test](../../samples/EventStorageDemo.Tests/AppendTests.cs) uses
+A new [independent-consumer test](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) uses
 the existing reviewed appender to prepare a JsonElement payload from a JsonDocument, disposes
 the source before staging/saving, commits, then reloads it through EF in a fresh context. It
 checks nested objects/arrays/null, Unicode and escaped text, and a high-precision decimal;
@@ -47,7 +47,7 @@ quantity fits observed OnHand. Its executable opens a separate position, receive
 issues 4+3 from 13 at version 3 to reach 6 at version 5. A fresh operation rejects 7. All ten
 Wholesale output lines remain asserted, including the nine preceding demonstrations.
 
-[The independent counter](../../samples/EventStorageDemo/CounterAggregate.cs) loads a captured
+[The independent counter](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterAggregate.cs) loads a captured
 ordered history prefix through its existing local reader, encodes typed facts directly to
 JSON, and has no tenancy, codec/history-library, DI or required-view dependency. Increases
 are eligible only when the resulting counter is at most 25. Its separate stream starts at
@@ -141,7 +141,7 @@ append/history/required-participant checks are freshly exercised through the rev
 - Inline edits reuse their established load paths without event SELECT. Explicit live/temporal
   reads retain captured-head, integrity and historical policy behavior.
 
-[Independent PostgreSQL tests](../../samples/EventStorageDemo.Tests/AppendTests.cs) prove
+[Independent PostgreSQL tests](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) prove
 history-dependent eligibility, rejected complete batches, competing creation/append, native
 rollback and fresh-context redecision. A deterministic commit between header capture and event
 SELECT reconstructs the captured prefix and corresponding proposal, then loses at save; fresh
@@ -214,7 +214,7 @@ and [former prepared batch](../plans/es2-native-ef-simplification.md).
 Then review [Inventory store](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
 [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
 [Purchasing store](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs)
-and [independent store](../../samples/EventStorageDemo/CounterStore.cs), alongside their
+and [independent store](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), alongside their
 aggregates/adapters and tests linked above. The [brief](../plans/es1-bounded-event-append.md#exact-replacement-file-and-behavior-map)
 contains the exact file/behavior change map, including documentation, clock setup and CI.
 

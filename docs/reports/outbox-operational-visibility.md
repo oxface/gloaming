@@ -30,7 +30,7 @@ Existing accounting/completion uncertainty, Attempts and operator retry semantic
 
 ## Executable adoption
 
-[OutboxDemo](../../samples/OutboxDemo/README.md#backlog-and-health) adds the existing operator
+[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#backlog-and-health) adds the existing operator
 credential's `/operations/outbox/status`, fixing exports.render. It returns a fresh snapshot
 with no-store caching; storage faults return 503 without details. Public native health endpoints
 separate liveness from fresh-storage/expected-worker readiness. Faulted/stopped workers are
@@ -109,9 +109,9 @@ Reproduce from the repository root with the configured Docker-compatible runtime
 ```bash
 dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-build --no-restore
-dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
@@ -123,10 +123,10 @@ git diff --check
 
 Review the [DTO](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxBacklogSnapshot.cs)
 and [provider read](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDiagnosticsExtensions.cs),
-then [native health](../../samples/OutboxDemo/ExportOutboxHealthCheck.cs),
-[sampling/gauges](../../samples/OutboxDemo/ExportOutboxMetrics.cs), status authorization and the
+then [native health](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxHealthCheck.cs),
+[sampling/gauges](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxMetrics.cs), status authorization and the
 Sales command. Follow with the [PostgreSQL](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/BacklogTests.cs),
-[HTTP/metrics](../../samples/OutboxDemo.Tests/OperationalVisibilityTests.cs) and
+[HTTP/metrics](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/OperationalVisibilityTests.cs) and
 [restricted process](../../samples/Wholesale/WorkflowDemo.Tests/SalesDispatchTests.Visibility.cs) proofs.
 The [family contract](../../src/Gloaming.Messaging/docs/outbox-observability.md) makes integration
 obligations discoverable beside the implementation.

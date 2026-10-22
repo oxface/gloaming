@@ -40,7 +40,7 @@ reason for another shared abstraction.
 
 ## Executable consumer adoption
 
-[InboxDemo --cleanup](../../samples/InboxDemo/README.md#processed-inbox-cleanup) is a separate
+[InboxDemo --cleanup](../../src/Gloaming.Messaging/samples/InboxDemo/README.md#processed-inbox-cleanup) is a separate
 finite maintenance role with explicit maintenance connection, UTC-Z cutoff and batch settings.
 It verifies the actual restricted login/effective privileges, authorizes rendering.jobs/exports,
 requests a thirty-second cancellation deadline, invokes one batch and prints JSON with the
@@ -79,12 +79,12 @@ schema compatibility and restricted Sales. Old revision-only binaries must stop 
 | [Intake](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs) | Handles deleted comparison evidence; bounded visibility observations preserve native caller transaction ownership. |
 | [Existing retry interface](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/IInboxDeadLetters.cs), [metadata](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxDeadLetter.cs) and [implementation](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxDeadLetters.cs) | Required receipt-generation condition; no unsafe revision-only overload. |
 | [EF record](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxMessageRecord.cs), mapping and native storage validation | Immutable receipt generation; failure counts remain observations within that retained generation. Delivery key/wire fields remain intact. |
-| [Rendering migration](../../samples/InboxDemo/Migrations/20261022092922_AddInboxReceiptGeneration.cs) | Backfill receipt_id, enforce nonempty UUID and opt into a partial processed-row cleanup index. |
+| [Rendering migration](../../src/Gloaming.Messaging/samples/InboxDemo/Migrations/20261022092922_AddInboxReceiptGeneration.cs) | Backfill receipt_id, enforce nonempty UUID and opt into a partial processed-row cleanup index. |
 | [Inventory migration](../../samples/Wholesale/modules/Inventory/Inventory/Migrations/20261022093022_AddInboxReceiptGeneration.cs) and [Sales migration](../../samples/Wholesale/modules/Sales/Sales/Migrations/20261022093117_AddInboxReceiptGeneration.cs) | Same receipt-generation backfill/constraint; no unselected cleanup or mandatory retention index. Snapshots retain existing declaration order. |
-| [Finite maintenance](../../samples/InboxDemo/RenderInboxRetention.cs) and [CLI](../../samples/InboxDemo/Program.cs) | Checked separate credentials, explicit policy inputs and one-batch execution. |
-| [HTTP operator](../../samples/InboxDemo/RenderInboxOperations.cs) | Requires and logs receipt generation alongside observed revision under existing authorization. |
+| [Finite maintenance](../../src/Gloaming.Messaging/samples/InboxDemo/RenderInboxRetention.cs) and [CLI](../../src/Gloaming.Messaging/samples/InboxDemo/Program.cs) | Checked separate credentials, explicit policy inputs and one-batch execution. |
+| [HTTP operator](../../src/Gloaming.Messaging/samples/InboxDemo/RenderInboxOperations.cs) | Requires and logs receipt generation alongside observed revision under existing authorization. |
 | [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionTests.cs), [contract cases](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionContractTests.cs), [races](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionConcurrencyTests.cs) and [authority](../../src/Gloaming.Messaging/tests/InboxPostgresTests/RetentionAuthorityTests.cs) | Real storage/effects, observable lock races, generation reuse and native privilege/RLS controls. |
-| [Receiver upgrade](../../samples/InboxDemo.Tests/RetentionMigrationTests.cs), [module upgrades](../../samples/Wholesale/WorkflowDemo.Tests/OutboxMigrationTests.cs) and [process proofs](../../samples/MessagingWorkerDemo.Tests/InboxRetentionProcessTests.cs) | Historical row preservation, actual CLI operation and killed-cleaner rollback/restart. |
+| [Receiver upgrade](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/RetentionMigrationTests.cs), [module upgrades](../../samples/Wholesale/WorkflowDemo.Tests/OutboxMigrationTests.cs) and [process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/InboxRetentionProcessTests.cs) | Historical row preservation, actual CLI operation and killed-cleaner rollback/restart. |
 | [Family contract](../../src/Gloaming.Messaging/docs/inbox-retention.md), package/sample guides and [ADR 0020](../adr/0020-inbox-expiry-and-receipt-generations.md) | Consumer setup, expiry/authority semantics, migration/deployment ordering and the chosen generation trade-off. |
 
 All three forward migrations backfill nonnull UUID receipt_id using gen_random_uuid() and
@@ -172,8 +172,8 @@ Reproduce from the repository root using a Docker-compatible PostgreSQL/RabbitMQ
 ```bash
 dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-build --no-restore
-dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
 dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore
 ```
 
