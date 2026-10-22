@@ -7,7 +7,11 @@ public interface IInbox<TDbContext>
     where TDbContext : DbContext
 {
     /// <summary>Inserts or compares retained work. Commit before acknowledging the transport.</summary>
-    /// <remarks>Requires native ReadCommitted isolation; incompatible redelivery throws InboxMessageConflictException.</remarks>
+    /// <remarks>
+    /// Requires native ReadCommitted isolation. Retained incompatible content throws InboxMessageConflictException.
+    /// A receipt removed by retention can queue again. Three unobservable conflicting-key observations throw
+    /// DbUpdateConcurrencyException without acceptance; native SELECT/RLS visibility remains consumer-owned.
+    /// </remarks>
     Task<InboxReceiveResult> ReceiveAsync(
         string subscriptionKey,
         IncomingMessage message,

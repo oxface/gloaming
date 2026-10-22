@@ -15,6 +15,60 @@ public sealed class OutboxMigrationTests(PostgreSqlFixture postgres, RabbitMqFix
     : IClassFixture<PostgreSqlFixture>,
         IClassFixture<RabbitMqFixture>
 {
+    [Theory]
+    [InlineData("sales", "20261021103653_AddOutboxDeadLetters")]
+    [InlineData("inventory", "20261021103629_AddOutboxDeadLetters")]
+    public async Task ReceiptGenerationUpgradePreservesLegacyInboxKeysEnvelopesAndRecoveryStates(
+        string schema,
+        string checkpoint
+    )
+    {
+        var token = TestContext.Current.CancellationToken;
+        await using var proof = await WorkflowProof.CreateAsync(postgres, rabbit, token);
+        await using var scope = proof.Scope();
+        DbContext database =
+            schema == "sales"
+                ? scope.ServiceProvider.GetRequiredService<SalesDbContext>()
+                : scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
+        await database.GetService<IMigrator>().MigrateAsync(checkpoint, token);
+        using var identifiers = new NpgsqlCommandBuilder();
+        string table = identifiers.QuoteIdentifier(schema) + ".inbox_messages";
+        await using var native = new NpgsqlConnection(database.Database.GetConnectionString());
+        await native.OpenAsync(token);
+        await using var command = new NpgsqlCommand(
+            $"""
+            INSERT INTO {table}
+                (subscription_key, producer_key, message_id, message_name, schema_version, payload, tenant_key,
+                 processed_at, revision, failure_count, failures_since_redrive, last_failed_at, last_failure_code, quarantined_at)
+            VALUES ('retention-proof', 'producer-proof', gen_random_uuid(), 'legacy', 1, jsonb_build_object('preserved', true), 'wholesale-alpha',
+                    NULL, 0, 0, 0, NULL, NULL, NULL),
+                   ('retention-proof', 'producer-proof', gen_random_uuid(), 'legacy', 1, jsonb_build_object('preserved', true), 'wholesale-alpha',
+                    '2020-01-01Z', 1, 0, 0, NULL, NULL, NULL),
+                   ('retention-proof', 'producer-proof', gen_random_uuid(), 'legacy', 1, jsonb_build_object('preserved', true), 'wholesale-beta',
+                    NULL, 1, 1, 1, '2020-01-01Z', 'review', '2020-01-01Z');
+            """,
+            native
+        );
+        await command.ExecuteNonQueryAsync(token);
+        command.CommandText =
+            $"SELECT jsonb_agg(to_jsonb(r) ORDER BY message_id)::text FROM {table} r";
+        string before = (string)(await command.ExecuteScalarAsync(token))!;
+        await database.Database.MigrateAsync(token);
+        Assert.False(database.Database.HasPendingModelChanges());
+        command.CommandText =
+            $"SELECT jsonb_agg(to_jsonb(r) - 'receipt_id' ORDER BY message_id)::text FROM {table} r";
+        string after = (string)(await command.ExecuteScalarAsync(token))!;
+        Assert.True(
+            JsonElement.DeepEquals(
+                JsonSerializer.Deserialize<JsonElement>(before),
+                JsonSerializer.Deserialize<JsonElement>(after)
+            )
+        );
+        command.CommandText =
+            $"SELECT count(DISTINCT receipt_id) = count(*) AND bool_and(receipt_id <> '00000000-0000-0000-0000-000000000000'::uuid) FROM {table}";
+        Assert.Equal(true, await command.ExecuteScalarAsync(token));
+    }
+
     [Fact]
     public async Task SalesAndInventoryUpgradePreserveAllLegacyOutboxStateAndSnapshotsMatch()
     {

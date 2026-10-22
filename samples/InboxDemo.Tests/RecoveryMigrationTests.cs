@@ -31,35 +31,29 @@ public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
         services.AddPostgresInboxDeadLetters<RenderDbContext>();
         await using var provider = services.BuildServiceProvider();
         Guid id = Guid.NewGuid();
-        await using (var scope = provider.CreateAsyncScope())
-        {
-            var database = scope.ServiceProvider.GetRequiredService<RenderDbContext>();
-            await using var transaction = await database.Database.BeginTransactionAsync(token);
-            await scope
-                .ServiceProvider.GetRequiredService<IInbox<RenderDbContext>>()
-                .ReceiveAsync(
-                    RenderExportHandler.Subscription,
-                    new(
-                        id,
-                        "exports",
-                        "exports.render",
-                        1,
-                        JsonSerializer.SerializeToElement(
-                            new { ExportRequestId = Guid.NewGuid(), Pages = 2 }
-                        ),
-                        correlationId: "preserved-correlation",
-                        causationId: "preserved-cause"
-                    ),
-                    token
-                );
-            await transaction.CommitAsync(token);
-        }
-
-        await Assert.ThrowsAsync<DbUpdateException>(() => AdoptionTests.ProcessAsync(provider));
+        // Independent pre-generation fixture; current binaries require the new receipt schema.
+        await using (var checkpoint = RenderDbContext.Create(connection))
+            await checkpoint.Database.ExecuteSqlInterpolatedAsync(
+                $"""
+                INSERT INTO rendering.incoming_work
+                    (subscription_key, producer_key, message_id, message_name, schema_version, payload,
+                     correlation_id, causation_id, revision, failure_count, failures_since_redrive,
+                     last_failed_at, last_failure_code, quarantined_at)
+                VALUES ('rendering.jobs', 'exports', {id}, 'exports.render', 1,
+                    jsonb_build_object('ExportRequestId', gen_random_uuid(), 'Pages', 2),
+                    'preserved-correlation', 'preserved-cause', 1, 1, 1,
+                    clock_timestamp(), 'render-command-conflict', clock_timestamp())
+                """,
+                token
+            );
         JsonElement original;
         await using (var before = RenderDbContext.Create(connection))
-            original = JsonSerializer.SerializeToElement(
-                await before.Set<InboxMessageRecord>().SingleAsync(token)
+            original = JsonSerializer.Deserialize<JsonElement>(
+                await before
+                    .Database.SqlQueryRaw<string>(
+                        "SELECT to_jsonb(r)::text AS \"Value\" FROM rendering.incoming_work r"
+                    )
+                    .SingleAsync(token)
             );
 
         await using (var upgraded = RenderDbContext.Create(connection))
@@ -69,8 +63,12 @@ public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
             Assert.True(
                 JsonElement.DeepEquals(
                     original,
-                    JsonSerializer.SerializeToElement(
-                        await upgraded.Set<InboxMessageRecord>().SingleAsync(token)
+                    JsonSerializer.Deserialize<JsonElement>(
+                        await upgraded
+                            .Database.SqlQueryRaw<string>(
+                                "SELECT (to_jsonb(r) - 'receipt_id')::text AS \"Value\" FROM rendering.incoming_work r"
+                            )
+                            .SingleAsync(token)
                     )
                 )
             );
@@ -100,6 +98,7 @@ public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
                 RenderExportHandler.Subscription,
                 "exports",
                 id,
+                retained.ReceiptId,
                 retained.Revision,
                 token
             )
@@ -114,8 +113,8 @@ public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
         Assert.NotNull(row.ProcessedAt);
         Assert.Equal(1, row.FailureCount);
         Assert.Equal(1, row.RedriveCount);
-        Assert.True(JsonElement.DeepEquals(original.GetProperty("Payload"), row.Payload));
-        Assert.Equal(original.GetProperty("ReceivedAt").GetDateTimeOffset(), row.ReceivedAt);
+        Assert.True(JsonElement.DeepEquals(original.GetProperty("payload"), row.Payload));
+        Assert.Equal(original.GetProperty("received_at").GetDateTimeOffset(), row.ReceivedAt);
     }
 
     [Fact]

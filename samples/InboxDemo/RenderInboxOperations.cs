@@ -57,7 +57,7 @@ internal static partial class RenderInboxOperations
         return state is null ? Results.NotFound() : Results.Ok(state);
     }
 
-    internal sealed record RetryRequest(long ExpectedRevision);
+    internal sealed record RetryRequest(Guid ExpectedReceiptId, long ExpectedRevision);
 
     private static async Task<IResult> RetryAsync(
         Guid messageId,
@@ -68,7 +68,11 @@ internal static partial class RenderInboxOperations
         CancellationToken cancellation
     )
     {
-        if (messageId == Guid.Empty || request.ExpectedRevision < 0)
+        if (
+            messageId == Guid.Empty
+            || request.ExpectedReceiptId == Guid.Empty
+            || request.ExpectedRevision < 0
+        )
             return Results.BadRequest();
 
         // Native authorization middleware completed before this endpoint resolves/invokes recovery.
@@ -76,6 +80,7 @@ internal static partial class RenderInboxOperations
             RenderExportHandler.Subscription,
             "exports",
             messageId,
+            request.ExpectedReceiptId,
             request.ExpectedRevision,
             cancellation
         );
@@ -83,7 +88,14 @@ internal static partial class RenderInboxOperations
         if (logger.IsEnabled(LogLevel.Information))
         {
             string? operatorId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-            OperatorRetry(logger, operatorId, messageId, request.ExpectedRevision, result);
+            OperatorRetry(
+                logger,
+                operatorId,
+                messageId,
+                request.ExpectedReceiptId,
+                request.ExpectedRevision,
+                result
+            );
         }
 
         return result == InboxRetryResult.Retried ? Results.NoContent() : Results.Conflict();
@@ -91,12 +103,13 @@ internal static partial class RenderInboxOperations
 
     [LoggerMessage(
         Level = LogLevel.Information,
-        Message = "Operator {Operator} requested inbox retry for {MessageId} at revision {Revision}: {Result}."
+        Message = "Operator {Operator} requested inbox retry for {MessageId}, receipt {ReceiptId}, at revision {Revision}: {Result}."
     )]
     private static partial void OperatorRetry(
         ILogger logger,
         string? @operator,
         Guid messageId,
+        Guid receiptId,
         long revision,
         InboxRetryResult result
     );

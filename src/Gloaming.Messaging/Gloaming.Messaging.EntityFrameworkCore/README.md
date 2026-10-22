@@ -60,7 +60,9 @@ Inbox composition is independent: IInbox<TDbContext> retains delivery in a calle
 native transaction; IInboxProcessor<TDbContext> owns the separate processing save/commit.
 Optional subscription-keyed IInboxFailurePolicy selects delayed retry or dead-letter state using
 durable confirmed-failure counts. Independently registered IInboxDeadLetters supplies bounded
-metadata list/detail and revision-conditional retry; caller authorization remains consumer wiring.
+metadata list/detail and receipt-generation/revision-conditional retry; caller authorization
+remains consumer wiring. ReceiptId distinguishes a retained receipt from later intake after
+deletion. No revision-only retry overload is retained.
 AddInboxHandler<TDbContext,THandler>(subscriptionKey) binds a consumer-owned scoped handler
 through native keyed DI. The handler stages bounded local effects on that context, including
 optional outbox work. It does not commit or perform external effects. No public lease or
@@ -75,6 +77,10 @@ ConfigureInbox supplies relational mapping, specialized by ConfigurePostgresInbo
 supported runtime. Call ValidateInboxChanges in both save overrides: tracked inserts/edits/
 deletes of provided records reject. Native intake/completion owns lifecycle SQL; no inbox weak
 registry or transaction field is needed. DbSet properties are optional.
+
+The PostgreSQL package separately supplies [finite processed-receipt cleanup](../docs/inbox-retention.md).
+Only processed work qualifies. Deletion ends envelope/deduplication evidence and permits old
+delivery to execute again; consumer semantic idempotency can outlive the receipt.
 
 Keep domain eligibility, whole-operation retry, tenant admission and deployment policy with
 the consumer. Producer/intake final save/commit remain explicit; the processor owns its bounded

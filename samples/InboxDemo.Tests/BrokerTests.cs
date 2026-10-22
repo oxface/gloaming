@@ -397,6 +397,7 @@ public sealed class BrokerTests(PostgreSqlFixture postgres, RabbitMqFixture rabb
                         stopped.SubscriptionKey,
                         stopped.ProducerKey,
                         stopped.MessageId,
+                        stopped.ReceiptId,
                         stopped.Revision,
                         Token
                     )

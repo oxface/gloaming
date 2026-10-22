@@ -31,6 +31,7 @@ public static class InboxModelExtensions
         row.Property(item => item.SubscriptionKey).HasColumnName("subscription_key");
         row.Property(item => item.ProducerKey).HasColumnName("producer_key");
         row.Property(item => item.MessageId).HasColumnName("message_id").ValueGeneratedNever();
+        row.Property(item => item.ReceiptId).HasColumnName("receipt_id");
         row.Property(item => item.MessageName).HasColumnName("message_name");
         row.Property(item => item.SchemaVersion).HasColumnName("schema_version");
         row.Property(item => item.Payload).HasColumnName("payload");

@@ -27,7 +27,8 @@ and the [independent state-stored HTTP sender](../../samples/OutboxDemo/README.m
 [two-line reservations with compensation](../../samples/Wholesale/WorkflowDemo/compensating-reservations.md).
 See [inbox setup and transaction ownership](docs/inbox.md).
 See [failed inbox work and authorized retry](docs/inbox-recovery.md) for durable failure
-accounting, consumer-selected dead-letter state, revision-conditional redrive and upgrade obligations.
+accounting, consumer-selected dead-letter state, receipt-generation/revision-conditional retry
+and upgrade obligations.
 See [outbox dead letters and operator retry](docs/outbox-recovery.md) for publication-failure
 observations, lease fencing, acceptance uncertainty, inspection, completion/accounting supervision
 and restricted-grant upgrades.
@@ -35,6 +36,8 @@ See [outbox backlog and worker health](docs/outbox-observability.md) for the cal
 snapshot, native consumer gauges/readiness and metadata-only authority.
 See [completed-outbox retention](docs/outbox-retention.md) for an authorized, finite cleanup
 batch, separate maintenance credentials and the sender identity-history boundary.
+See [processed-inbox retention](docs/inbox-retention.md) for finite cleanup, receipt generations
+and the explicit possibility of delivery re-execution once duplicate evidence is deleted.
 See [retained-message schema compatibility](docs/schema-compatibility.md) for an optional existing
 JSON codec, original-envelope deduplication and a concrete reader-before-writer consumer rollout.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.

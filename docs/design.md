@@ -767,6 +767,21 @@ lifetime. Exports owns its finite credential-checked command and optional comple
 dispatch permissions and lifecycle protocols remain unchanged. See the [current contract](../src/Gloaming.Messaging/docs/outbox-retention.md)
 and [fresh evidence](reports/outbox-completed-retention.md).
 
+The owner includes [inbox receipt retention/deduplication expiry](plans/m2-inbox-retention.md)
+in M2 before v1, approving the concrete contract on 2026-10-22. A finite PostgreSQL cleanup
+call removes only processed, non-dead-lettered receipts in an exact subscription/producer lane.
+Actual deletion ends duplicate/content evidence and permits old delivery to execute again;
+consumer semantic idempotency and retention duration/scheduling remain explicit. Intake handles
+concurrent evidence removal, with bounded missing-winner observations instead of a false content
+conflict or an unbounded RLS-hidden-key loop. Immutable receipt-generation UUIDs condition the
+existing operator retry alongside revision, preserving operator authority across expiry when
+revision values repeat. Wire delivery identity, inbox row-lock/savepoint processing and outbox
+publication/lease fencing stay intact. Forward consumer migrations precede updated intake/operator
+binaries and cleanup activation. [ADR 0020](adr/0020-inbox-expiry-and-receipt-generations.md),
+[family setup](../src/Gloaming.Messaging/docs/inbox-retention.md) and the
+[slice report](reports/m2-inbox-retention.md) record the trade-off, evidence and pending
+owner dispositions for M2 closure.
+
 The owner-approved [queued-message compatibility continuation](plans/queued-message-schema-compatibility.md)
 uses the existing optional JSON codec in the receiving sample. Exports deliberately selects
 v1 or v2 writes; Rendering interprets a field rename without changing business meaning or

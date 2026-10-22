@@ -38,6 +38,7 @@ internal sealed class PostgresInboxStorage
             [nameof(InboxMessageRecord.SubscriptionKey)] = "subscription_key",
             [nameof(InboxMessageRecord.ProducerKey)] = "producer_key",
             [nameof(InboxMessageRecord.MessageId)] = "message_id",
+            [nameof(InboxMessageRecord.ReceiptId)] = "receipt_id",
             [nameof(InboxMessageRecord.MessageName)] = "message_name",
             [nameof(InboxMessageRecord.SchemaVersion)] = "schema_version",
             [nameof(InboxMessageRecord.Payload)] = "payload",
@@ -71,6 +72,8 @@ internal sealed class PostgresInboxStorage
                 != "clock_timestamp()"
             || entity.FindProperty(nameof(InboxMessageRecord.AvailableAt))!.GetDefaultValueSql()
                 != "clock_timestamp()"
+            || entity.FindProperty(nameof(InboxMessageRecord.ReceiptId))!.GetDefaultValueSql()
+                != "gen_random_uuid()"
             || new[]
             {
                 nameof(InboxMessageRecord.Revision),
@@ -100,7 +103,7 @@ internal sealed class PostgresInboxStorage
             || database.ChangeTracker.Entries().Any()
         )
             throw new InvalidOperationException(
-                "Inbox processing/recovery requires a fresh context without tracked entities or native/ambient/enlisted transactions."
+                "Inbox processing/recovery/retention requires a fresh context without tracked entities or native/ambient/enlisted transactions."
             );
     }
 

@@ -4,7 +4,7 @@ namespace Gloaming.Messaging.EntityFrameworkCore;
 /// <param name="SubscriptionKey">Receiver-selected processing lane.</param>
 /// <param name="Message">Unchanged retained envelope; its metadata grants no authority.</param>
 /// <param name="Exception">Original processing error, not a durable diagnostic string.</param>
-/// <param name="FailureCount">Lifetime confirmed failures including this one.</param>
+/// <param name="FailureCount">Confirmed failures in this receipt generation including this one.</param>
 /// <param name="FailuresSinceRedrive">Confirmed failures since the latest applied operator retry.</param>
 public sealed record InboxFailure(
     string SubscriptionKey,

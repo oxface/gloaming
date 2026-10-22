@@ -24,12 +24,13 @@ public interface IInboxDeadLetters<TDbContext>
         CancellationToken cancellationToken = default
     );
 
-    /// <summary>Make one unprocessed dead-lettered delivery eligible only at the observed revision.</summary>
+    /// <summary>Make one unprocessed dead letter eligible only in the observed receipt generation and revision.</summary>
     /// <remarks>Retains total failures and the complete envelope. Faults/cancellation throw; do not infer rollback from a lost commit response.</remarks>
     Task<InboxRetryResult> RetryAsync(
         string subscriptionKey,
         string producerKey,
         Guid messageId,
+        Guid expectedReceiptId,
         long expectedRevision,
         CancellationToken cancellationToken = default
     );

@@ -41,7 +41,7 @@ executed saves and outgoing SQL. The original delivery lock remains held. Parame
 SQL commits only the failure decision/metadata in the surviving transaction. Failed tracked
 proposals are never saved again; dispose the entire scope.
 
-FailureCount is lifetime committed failure observations. FailuresSinceRedrive counts them since
+FailureCount is committed failure observations within the retained receipt generation. FailuresSinceRedrive counts them since
 the latest applied retry. Both increment once with Revision, LastFailedAt and LastFailureCode.
 Retry sets database-clock AvailableAt; dead-letter state sets DeadLetteredAt and excludes selection.
 Success retains failure/redrive evidence and increments revision with completion. All recorded
@@ -85,7 +85,7 @@ host-wide supervision setting.
 Repair the accounting dependency, then restart the worker/host and inspect fresh storage.
 An unrecorded failure leaves the last committed row state; a missing commit response can
 instead leave committed retry/dead-letter state. The existing authorized operator retry applies only
-to an actually dead-lettered row at its observed revision. It is not a command to restart a
+to an actually dead-lettered row at its observed ReceiptId and revision. It is not a command to restart a
 faulted worker. Stopping contains repeated selection but pauses all messages on that worker
 until it is restarted; it does not promise progress while accounting remains broken.
 
@@ -103,8 +103,9 @@ var page = await deadLetters.ListAsync(
     "rendering.jobs", "exports", new(PageSize: 25), cancellationToken);
 var item = await deadLetters.GetAsync(
     "rendering.jobs", "exports", messageId, cancellationToken);
-InboxRetryResult result = await deadLetters.RetryAsync(
-    "rendering.jobs", "exports", messageId, observedRevision, cancellationToken);
+if (item is not null)
+    await deadLetters.RetryAsync("rendering.jobs", "exports", messageId,
+        item.ReceiptId, item.Revision, cancellationToken);
 ```
 
 IInboxDeadLetters requires a fresh context with no tracked entities or native/enlisted/ambient
@@ -124,11 +125,13 @@ are not encoded in the token.
 Ordering is database dead-letter time then database UUID order. In an unchanged result set,
 tied timestamps page without skipping or repeating stable rows. Retried rows disappear, and
 a delivery dead-lettered again can move forward and appear again. An empty continuation page
-is possible after concurrent retries. There is no total count or retained change feed.
+is possible after concurrent retries. There is no total count or retained change feed. After a processed receipt expires, a later
+dead letter under the same delivery key belongs to a new ReceiptId; consumers distinguish
+that observed generation rather than treating MessageId as permanent receipt evidence.
 
 GetAsync returns metadata for a currently dead-lettered, unprocessed row, or null for missing,
 invisible, pending, redriven or completed work. Results include identity, wire alias/version,
-revision, safe failure code, counts and lifecycle times. They exclude payload, tenant,
+ReceiptId, revision, safe failure code, counts and lifecycle times. They exclude payload, tenant,
 correlation/causation, tracing and exception text. Inspection takes no processing claim or
 row lock; its observed revision can become stale immediately.
 
@@ -139,26 +142,38 @@ inspection; retry needs its existing UPDATE grants. Retry uses native SQL, so EF
 are not its authorization boundary. Authorize every invocation and establish admitted tenant
 context/appropriate credentials before use.
 
-Retried means a dead-lettered, unprocessed row at the observed revision became eligible at database
-now. It clears dead-letter state, resets only the cycle count, increments revision/redrive count and
-records last-redrive time. Lifetime failures and last-failure diagnostics remain. NotApplied means
+Retried means a dead-lettered, unprocessed row at the observed ReceiptId and revision became
+eligible at database now. It clears dead-letter state, resets only the cycle count, increments revision/redrive count and
+records last-redrive time. Receipt-generation failure history and last-failure diagnostics remain. NotApplied means
 missing/invisible, not dead-lettered, completed or stale state. SQL faults/cancellation throw. The
 complete envelope, delivery identity, schema, receipt and diagnostic fields remain unchanged.
 
 The conditional UPDATE uses ordinary row locking. A qualifying locked row waits and rechecks
-after the competing transaction. Same-revision requests apply at most once. Active work outside
+after the competing transaction. Requests for the same receipt generation/revision apply at most once. Active work outside
 the dead-letter state is inapplicable and may return NotApplied immediately; retry does not interrupt a processor.
-Stale requests cannot reopen a later dead-letter state. After response loss, reuse the original revision;
-obtaining a new revision requires a new consumer operator-policy decision.
+Stale requests cannot reopen a later dead-letter state, including a new receipt under the same
+key after expiry. After response loss, reuse the original ReceiptId/revision pair; obtaining
+new tokens requires a new consumer operator-policy decision. Empty receipt tokens reject and
+no revision-only retry overload remains.
 
 A later processor repeats current admission/decoding/business rules. Permanent conflicts can
 be dead-lettered again. Equivalent intake still deduplicates dead-lettered, redriven and completed rows;
-incompatible envelope reuse conflicts. No retention/deletion or external exactly-once guarantee.
+incompatible envelope reuse conflicts while the evidence remains. Separately authorized
+[processed-receipt cleanup](inbox-retention.md) ends duplicate/content evidence and permits
+new intake/execution. No external exactly-once guarantee follows.
 Operator identity, approval/audit records, logs and presentation remain consumer policy. No generic
 administration framework or audit store is supplied; the store provides bounded metadata reads
 and one conditional retry. It provides no payload editor, discard or mark-processed operation.
 
 ## Schema and rollout
+
+The M2 retention continuation adds immutable nonnull UUID `receipt_id` with native
+`gen_random_uuid()` default and a nonempty constraint. Rendering, Inventory and Sales forward
+migrations backfill historical receipts without changing keys/envelopes/recovery state.
+Column-restricted inspection/retry roles must add receipt_id SELECT. Existing full inbox
+SELECT already covers it; no new INSERT, UPDATE or DELETE authority is implied. Upgrade
+all intake/operator binaries and request bodies before enabling cleanup. Old revision-only
+operators are unsafe across receipt expiry. See [retention rollout](inbox-retention.md).
 
 Migrations add zero-default nonnegative bigint `revision`, `failure_count`, `failures_since_redrive`,
 `redrive_count`; nullable `last_failed_at`, `quarantined_at`, `last_redriven_at` timestamps and nullable
@@ -186,6 +201,7 @@ Sales roles need an explicit grant update; finite provisioning is not a role rec
 performs no DDL. [Sales setup](../../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) documents
 that consumer. [InboxDemo](../../../samples/InboxDemo/README.md) shows optional operator usage;
 [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md) records current evidence
-separately from the original M2 recovery/supervision results. Cleanup, payload editing,
-schema-evolution rollout, global execution caps and template
-presets remain deferred.
+separately from the original M2 recovery/supervision results. Processed cleanup has its own
+[contract and evidence](inbox-retention.md); unprocessed/dead-lettered work is preserved.
+Payload editing, global execution caps and template presets remain unsupported. The selected
+[schema compatibility journey](schema-compatibility.md) retains consumer rollout policy.

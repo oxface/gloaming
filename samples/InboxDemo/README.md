@@ -46,7 +46,7 @@ The handler registers the current receiver-local command at schema 2 and an expl
 JSON transformation in the existing optional codec. Admission and processing both decode, but
 intake retains the original schema/payload. The sender's CLR DTOs are not referenced.
 
-Original v1 redelivery therefore still deduplicates after upgrading. Reusing that delivery ID
+Original v1 redelivery therefore still deduplicates after upgrading while its receipt remains. Reusing that delivery ID
 for v2 conflicts even when the decoded export/pages are equal; a new delivery ID can use the
 existing semantic job key. Operator retry reexecutes the current decoder without editing
 payloads. Installing compatible code can resolve an old reader's dead letter; unsupported
@@ -81,7 +81,7 @@ compares bearer-credential SHA-256 digests in constant time and grants the fixed
 `rendering.inbox.retry` permission to `rendering-operator`. Replace this finite demo policy with
 your production identity/permission policy; use HTTPS for remote credential-bearing requests.
 
-Inspect and resolve the consumer precondition, then submit the exact revision returned by GET:
+Inspect and resolve the consumer precondition, then submit both ReceiptId and Revision returned by GET:
 
 ```sh
 curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
@@ -89,7 +89,8 @@ curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
 curl -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
   "http://localhost:5087/operations/inbox/dead-letters/$MESSAGE_ID"
 curl -X POST -H "Authorization: Bearer $INBOX_DEMO_OPERATOR_TOKEN" \
-  -H 'Content-Type: application/json' -d '{"expectedRevision":1}' \
+  -H 'Content-Type: application/json' \
+  -d "{\"expectedReceiptId\":\"$RECEIPT_ID\",\"expectedRevision\":$REVISION}" \
   "http://localhost:5087/operations/inbox/dead-letters/$MESSAGE_ID/retry"
 ```
 
@@ -100,14 +101,16 @@ returns 400. Detail GET returns current dead-letter metadata or 404, excluding p
 diagnostic context and exception text. Pending/redriven/completed work is absent. Pages observe
 live state: retry removes a row and a later failure can put it back. Inspection reserves nothing.
 POST returns 204 for applied retry and 409 for stale/inapplicable state. Missing/wrong credentials
-return 401 before storage work. Requests/results log the fixed principal, delivery ID and revision;
-durable approval/audit is a separate consumer choice.
+return 401 before storage work. Missing/empty receipt tokens return 400. Requests/results log
+the fixed principal, delivery ID, receipt generation and revision; durable approval/audit
+is a separate consumer choice.
 
 Retry preserves identity, payload, metadata and total failures, resets only the cycle count and
 makes the retained row eligible. Processing repeats current admission/business rules; permanent
 conflicts can be dead-lettered again. Stale requests cannot reopen that later dead-letter state. After response
-loss reuse the same revision, not an automatically refreshed one. Equivalent intake deduplicates
-throughout.
+loss reuse the same ReceiptId/revision pair, not automatically refreshed tokens. Equivalent
+intake deduplicates while its receipt remains. An old request cannot apply to a new receipt
+generation after cleanup even if revision values repeat.
 
 Apply `--setup` with old processors stopped before using the updated model. The additive recovery
 migration preserves historical pending/completed rows, setting unknown past counts to zero. Old
@@ -117,3 +120,54 @@ index; DeadLetteredAt retains the physical `quarantined_at` column and existing 
 
 Optional message diagnostic context and native telemetry setup are documented in the
 [Messaging observability contract](../../src/Gloaming.Messaging/docs/observability.md).
+
+## Processed-inbox cleanup
+
+Choose a retention horizon that accepts possible re-execution after expiry. Receipt cleanup
+never removes RenderJob business state: the independent ExportRequestId key still keeps one
+local job for equivalent business requirements. Library delivery deduplication itself ends
+when the processed receipt is deleted. A changed envelope under that expired delivery key
+can also be admitted under current decoding/business rules.
+
+Apply `--setup` using migration authority, upgrade every intake/operator binary and caller,
+then separately authorize the finite cleanup command. The new receipt-generation migration
+backfills `receipt_id` and adds Rendering's processed-row index; native migration locks apply.
+An existing column-restricted operator role needs receipt_id SELECT. No intake/processing/
+operator role should receive DELETE just to use this command.
+
+Example dedicated role provisioning, run explicitly by the database owner and adapted to
+local credential handling:
+
+```sql
+CREATE ROLE rendering_maintenance LOGIN PASSWORD 'replace-with-private-secret'
+    NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE NOREPLICATION NOINHERIT;
+GRANT USAGE ON SCHEMA rendering TO rendering_maintenance;
+GRANT SELECT(subscription_key, producer_key, message_id, receipt_id, processed_at, quarantined_at),
+    DELETE ON rendering.incoming_work TO rendering_maintenance;
+```
+
+```bash
+export INBOX_DEMO_MAINTENANCE_CONNECTION_STRING='Host=localhost;Database=inbox_demo;Username=rendering_maintenance;Password=replace-with-private-secret'
+export INBOX_DEMO_PROCESSED_BEFORE='2026-09-01T00:00:00Z' # illustrative; choose your evidence horizon
+export INBOX_DEMO_CLEANUP_BATCH_SIZE=100
+dotnet run --project samples/InboxDemo/InboxDemo.csproj -- --cleanup
+```
+
+The command needs only these three settings. It authorizes the fixed `rendering.jobs`/`exports`
+lane, checks actual maintenance privileges, requests a thirty-second cancellation deadline,
+deletes one batch and emits JSON with SubscriptionKey, ProducerKey, ProcessedBefore, BatchSize
+and Deleted. It rejects owner/superuser/BYPASSRLS and expanded effective privileges. It starts
+no API, intake/processing worker, telemetry loop or migrations. Invoke manually or schedule
+through existing consumer infrastructure; no separate permanent worker is required.
+
+Only processed, non-dead-lettered receipts strictly before the explicit UTC-Z cutoff qualify;
+batch size is 1–1000. Other lanes and all unprocessed/dead-lettered work are preserved. Native
+DELETE locking can wait; repeated calls can delete another batch, and zero during contention
+is not global exhaustion. A lost commit response can leave deletion committed. Retention
+duration, repetition, scheduling, logs and business idempotency stay consumer-owned.
+
+The sample's minimal table DELETE grant cannot prevent arbitrary SQL by its credential holder
+from deleting active rows. Trusted invocation is required; install consumer-native row-security
+policies when database-enforced tenant/lane/lifecycle restrictions are needed. The library
+respects those policies and bypasses no RLS. See [the full retention/expiry/authority contract](../../src/Gloaming.Messaging/docs/inbox-retention.md)
+and [new PostgreSQL/process evidence](../../docs/reports/m2-inbox-retention.md).

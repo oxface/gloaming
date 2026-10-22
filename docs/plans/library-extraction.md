@@ -237,6 +237,19 @@ authority; dispatch credentials are unchanged. Deletion removes sender identity/
 history without altering inbox lifetime or stopping obsolete publishers. The [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md)
 and [new report](../reports/outbox-completed-retention.md) record current boundaries and proofs.
 
+## M2 remaining scope: inbox retention and deduplication expiry
+
+On 2026-10-22 the owner clarified that completed M2 sub-slices do not close the block:
+inbox retention/deduplication expiry belongs to M2 before v1. The
+[current-code assessment](../reports/m2-inbox-retention-assessment.md) and
+[concrete proposal](m2-inbox-retention.md) recorded the preparation findings and review scope.
+The owner subsequently approved implementation.
+The [slice report](../reports/m2-inbox-retention.md) records processed-only cleanup, preserved
+unprocessed/dead-lettered work, intake safety across deletion/RLS visibility and receipt-generation
+conditions on the existing retry interface. An expired receipt permits old delivery to execute
+again. Consumer duration/scheduling remain explicit. M2 stays open pending change-set review
+and explicit owner dispositions for the listed post-v1 gaps.
+
 ## Queued-message schema compatibility
 
 After squash-merging the outbox series and CI fixes into origin/main `86331de` (PR #41),
