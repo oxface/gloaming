@@ -112,10 +112,125 @@ Standards confirmed both P2 corrections; Spec independently checked the ordinary
 all archive hashes, package-only dependency assets and retained consumer/renderer logs. Neither
 reviewer reran tests. The two findings are resolved.
 
-## Remaining review gates
+## Canonical Directory adoption and route selection
 
-S1 consolidation/archive retirement and the demonstrated route-claim extension need their
-two-axis review.
-The final complete diff then needs an independent Standards/Spec review and the requested
-architecture/isolation review. This record does not close those gates or substitute historical
-test counts for current execution.
+Reviewed `f8b1969`, followed by the private policy correction `3b8dbde`.
+
+### Standards
+
+One heuristic P3 finding: restricted and ordinary broker roles repeated the same Sales
+route/lease/retry policy. A private `SalesDispatchOptions()` factory removes that duplication
+without hiding context credentials, role branches or publisher registration. Follow-up
+inspection reports zero findings. The owning report records its focused build/style checks.
+
+### Spec
+
+No findings. The actual API profile edit, separate Worker relay and receiver search exercise
+the public contract with source tables unavailable at search time. `RouteKeys` addresses a
+demonstrated shared-outbox claim obligation; business disclosure/admission and native
+transactions remain consumer-owned. Provider tests retain the existing lease protocol.
+
+## S1 consolidation and archive retirement
+
+Reviewed the complete S1 scope in `790a8b7...10d938f`, including proof transfers and retirement.
+
+### Standards
+
+One P2 finding: two relocated family examples executed only in the Wholesale job, but their
+source paths did not select that job. One grouped P3 finding: two missing statement separators.
+Working-tree corrections move the examples to Tenancy/Persistence, add actual dependent
+inputs and both Wholesale infrastructure fixtures, and insert the separators. The
+[repair report](s1-ci-selection-repair.md) records 1,921 covered job/input pairs and 97 probes.
+
+### Spec
+
+One P2 finding: the same missing CI selection leaves the relocation proof map incomplete.
+The correction preserves the command inventory while assigning each example its owning lane.
+Inspection independently confirmed all 69 inherited product test files and 302 Fact/Theory
+methods, retained migration/literal obligations, actual product entry points, independent
+family composition and the exact 803-file retirement. No other extraction was demonstrated.
+
+## Final integration review and remaining gates
+
+Fresh independent Standards/Spec reviewers inspect `790a8b7...10d938f` and the exact pending
+six-file correction separately. The final Spec inspection reports zero actionable findings:
+the implementation satisfies the selected scope, with native/runtime execution and independent
+architecture review still required. It independently verified the final package manifest hash.
+The independent Standards inspection also reports zero new findings. It confirmed that the
+pending correction resolves the earlier CI/spacing findings and found no further actionable
+Fowler smell. Both axes distinguish worthwhile route-claim mechanics from consumer policy;
+neither justifies a generic replication, command or deployment framework. This record does
+not substitute historical test counts or review inspection for fresh runtime execution.
+
+## P2 architecture and isolation review
+
+After both final code-review axes completed, the requested architecture skill independently
+explored the same complete integration diff and pending corrections, with a separate walker.
+It read the existing glossary and relevant decisions, inspected actual module interfaces and
+test surfaces, and applied the deletion test rather than inventing another framework.
+
+**No required architecture change or additional worthwhile Gloaming mechanism was found.**
+Route selection earns depth behind the existing claim/lease interface and has materially
+different actual publishers. Directory merge/readiness remains private consumer policy.
+Catalog commands/queries and native transaction ownership remain ordinary application code.
+Independent family examples, module-owned contexts/migrations, explicit operation scopes and
+the generated default's omission of messaging/events retain their documented isolation.
+
+The standalone visual report is
+`/home/oxface/.cache/tmp/architecture-review-20261022T192448Z.html`. It contains before/after
+views, real ownership/test interfaces, supported assumptions and rejected speculative
+abstractions. `xdg-open` was unavailable; the artifact can be opened directly. This temporary
+visual supplements the durable decisions here and is not required by any runtime or proof.
+
+Two speculative navigation changes were explicitly rejected for this increment, rather than
+left as required v1 gaps: the optional Catalog worker's executable-project reference shares
+editable application composition without executing the console entry point; removing it now
+would add an assembly or duplicate/conditional composition for little leverage. The neutral
+ChildHost helper has three explicit linked adopters with CI inputs; moving it to another
+folder changes ownership/navigation but removes no demonstrated technical burden. Neither
+candidate justifies a Gloaming registration/hosting runtime.
+
+No repository implementation or tests changed during P2. Reviewer inspection is not fresh
+runtime execution. Subsequent final native/runtime verification and the requirement audit
+passed; the [execution record](v1-final-verification.md) retains the commands and evidence.
+
+The [dated reference inventory](remaining-capability-reference-review.md) was also reconciled
+with current mechanisms. Its external-source findings remain dated research, not newly checked
+framework-version claims or a parity target:
+
+| Reference pressure | Current decision and evidence surface |
+| --- | --- |
+| Stream writes and inline decision state | Keep typed stores, expected versions and required inline state in native module transactions; EventSourcing provider/adoption proofs own the contract. No snapshot/daemon dependency follows. |
+| Durable handlers and recoverable publication | Existing inbox transactional ownership, outbox fenced leases, explicit scopes and optional native workers/session helper concentrate demonstrated correctness work. Actual broker outage, process-death and shutdown proofs remain active after consolidation. |
+| Durable process continuity | Small typed continuation selection and atomic outgoing requests earn reuse; branching, compensation and compatible deployment remain consumer policy with separate old/new executable proofs. No scheduler/replay/multiversion engine is justified. |
+| Replication and projections | Native EF handles selected local filters/joins. The independently available Directory needs disclosed revisions, overlap and consumer merge/readiness. Route claim selection is the demonstrated cross-publisher mechanism; there is no generic feed/projector requirement. |
+| Distributed agent ownership and registration machinery | Competing row claims and leases already satisfy selected work. No unmet singleton scheduler/partition-owner requirement justifies leader election, code generation, another transaction runtime or a global registration abstraction. |
+
+## Final runtime correction and follow-up review
+
+Fresh runtime execution after the independent reviews found one stale S1 integration
+expectation: the restricted browser setup still counted six protected Sales tables after B2
+intentionally added protected outbox publication. The first run passed five of six cases.
+The correction queries actual sorted role/table arrays and independently asserts the two
+restricted roles and all seven forced-RLS tables, including `outbox_messages`. It changes no
+production policy, provisioning, grants, startup guard or browser business/security assertion.
+The complete real runtime rerun subsequently passed all six cases, zero skipped, in
+`/tmp/v1-final-runtime-corrected.log`. The changed test also passed its build, CSharpier and
+native style/analyzer checks. These are new execution results, separate from review inspection.
+
+### Standards
+
+One report-description inconsistency was identified: the introduction called the remaining
+working-tree changes documentation-only despite the new test correction. The description is
+corrected to name the test and pending verification. Follow-up inspection confirms zero
+remaining findings, no new consumer burden and no production architecture change.
+
+### Spec
+
+The same report-description inconsistency was identified and corrected. The reviewer confirmed
+that the independent exact-name check preserves S1's RLS/browser proof, matches the actual
+seven-table policy and retains OIDC, admission, antiforgery, isolation, conflict and audit
+assertions. Zero remaining actionable findings. The reviewer did not rerun tests or infer a
+pass from the then-running process; the later complete execution is recorded above. No new
+architecture or extraction opportunity follows from this test-only correction; the final P2
+decisions remain applicable.
