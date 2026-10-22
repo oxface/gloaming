@@ -11,7 +11,10 @@
     <ProjectReference Include="../WorkflowDemo/WorkflowDemo.csproj" />
     <Compile Include="../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
     <Compile Include="../../../tests/Support/RabbitMqFixture.cs" Link="RabbitMqFixture.cs" />
-    <Compile Include="../../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs" Link="ChildHost.cs" />
+    <Compile
+      Include="../../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs"
+      Link="ChildHost.cs"
+    />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

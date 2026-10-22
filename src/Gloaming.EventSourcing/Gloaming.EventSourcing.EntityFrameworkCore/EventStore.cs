@@ -17,6 +17,7 @@ public abstract class EventStore<TAggregate, TEvent, TStreamRecord, TStoredEvent
     private readonly Dictionary<Guid, StreamWriteObservation> loadedStreams = [];
     private InlineAggregatePersistence<TAggregate, TStreamRecord>? inlineStatePersistence;
 
+    /// <summary>Binds the native context, event envelope mapping and application append clock; caller transaction/save/commit remain explicit.</summary>
     protected EventStore(
         DbContext database,
         EventRecordMapping<TEvent, TStreamRecord, TStoredEventRecord> records,
@@ -38,6 +39,7 @@ public abstract class EventStore<TAggregate, TEvent, TStreamRecord, TStoredEvent
     ) =>
         throw new InvalidOperationException("Configure aggregate state or a raw aggregate reader.");
 
+    /// <summary>Selects the consumer mapping for the required transactionally current inline aggregate.</summary>
     protected void ConfigureInlineState<TInlineStateRecord>(
         AggregateStateMapping<TAggregate, TInlineStateRecord> mapping
     )
@@ -67,6 +69,7 @@ public abstract class EventStore<TAggregate, TEvent, TStreamRecord, TStoredEvent
         >(database, mapping);
     }
 
+    /// <summary>Loads an aggregate and its consistent observed stream version in the owning write transaction; optional expected version rejects stale callers.</summary>
     public async Task<TAggregate?> GetForWritingAsync(
         Guid id,
         long? expectedVersion = null,
@@ -139,6 +142,7 @@ public abstract class EventStore<TAggregate, TEvent, TStreamRecord, TStoredEvent
         return aggregate;
     }
 
+    /// <summary>Proposes the aggregate accepted pending batch, stream metadata and required inline state against its observed version; does not save or commit.</summary>
     public Task<EventAppendResult> AppendAsync(
         TAggregate aggregate,
         CancellationToken cancellationToken = default

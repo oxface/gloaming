@@ -13,6 +13,7 @@ public sealed class ActorContextAccessor
     private ActorContext? _context;
     private bool _disposed;
 
+    /// <inheritdoc />
     public ActorContext Current
     {
         get
@@ -28,6 +29,7 @@ public sealed class ActorContextAccessor
         }
     }
 
+    /// <inheritdoc />
     public void Initialize(ActorContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -43,6 +45,7 @@ public sealed class ActorContextAccessor
         }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         lock (_gate)

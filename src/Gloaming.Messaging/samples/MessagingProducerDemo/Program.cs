@@ -1,7 +1,7 @@
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.OutboxDemo;
 using ModulithFoundry.Samples.Messaging.ServiceDefaults;
+using ModulithFoundry.Samples.OutboxDemo;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;

@@ -16,9 +16,12 @@ public sealed class TenantOwnershipException : InvalidOperationException
         PropertyName = propertyName;
     }
 
+    /// <summary>The ownership rule that rejected the native proposal.</summary>
     public TenantOwnershipFailure Reason { get; }
 
+    /// <summary>The native mapped entity type associated with the rejected proposal.</summary>
     public string EntityTypeName { get; }
 
+    /// <summary>The mapped ownership property associated with the failure.</summary>
     public string? PropertyName { get; }
 }

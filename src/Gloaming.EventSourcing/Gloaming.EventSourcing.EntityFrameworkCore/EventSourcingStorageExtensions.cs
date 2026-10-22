@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Gloaming.EventSourcing.EntityFrameworkCore;
 
+/// <summary>Registers explicit native stream/event mappings without choosing consumer ownership, decoding or transactions.</summary>
 public static class EventSourcingStorageExtensions
 {
     /// <summary>Registers storage using Id/EventId keys and StreamId references, without tenancy.</summary>

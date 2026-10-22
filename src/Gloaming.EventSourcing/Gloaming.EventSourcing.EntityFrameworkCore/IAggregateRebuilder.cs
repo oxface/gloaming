@@ -4,6 +4,7 @@ namespace Gloaming.EventSourcing.EntityFrameworkCore;
 public interface IAggregateRebuilder<TAggregate>
     where TAggregate : class
 {
+    /// <summary>Replays one captured stream and proposes its inline-state repair in the existing transaction; the caller owns save and commit.</summary>
     Task<AggregateRebuildResult?> RebuildAsync(
         Guid id,
         CancellationToken cancellationToken = default

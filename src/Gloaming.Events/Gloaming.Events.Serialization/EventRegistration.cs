@@ -14,9 +14,14 @@ public sealed class EventRegistration<TEvent>
     }
 
     internal Type EventType { get; }
+
+    /// <summary>Stable consumer-selected durable alias, independent of the CLR type name.</summary>
     public string EventName { get; }
+
+    /// <summary>Positive schema version written by this concrete event registration.</summary>
     public int SchemaVersion { get; }
 
+    /// <summary>Registers the exact concrete CLR event type with an explicit durable alias and positive schema version.</summary>
     [SuppressMessage(
         "Design",
         "CA1000:Do not declare static members on generic types",

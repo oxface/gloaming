@@ -1,0 +1,31 @@
+<Project>
+  <Import Project="../Directory.Build.props" />
+  <PropertyGroup>
+    <IsGloamingPackage
+      Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Gloaming.'))"
+      >true</IsGloamingPackage>
+    <IsPackable Condition="'$(IsGloamingPackage)' != 'true'">false</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsGloamingPackage)' == 'true'">
+    <IsPackable>true</IsPackable>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>preview.1</VersionSuffix>
+    <Authors>oxface</Authors>
+    <Description>Independently adoptable $(MSBuildProjectName) capabilities for native .NET applications.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/oxface/modulith-foundry</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/oxface/modulith-foundry</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeSource
+      Condition="'$(PackageReadmeSource)' == '' and Exists('$(MSBuildProjectDirectory)/README.md')"
+      >$(MSBuildProjectDirectory)/README.md</PackageReadmeSource>
+    <PackageReadmeSource Condition="'$(PackageReadmeSource)' == ''"
+      >$(MSBuildProjectDirectory)/../README.md</PackageReadmeSource>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsGloamingPackage)' == 'true'">
+    <None Include="$(PackageReadmeSource)" Pack="true" PackagePath="README.md" />
+  </ItemGroup>
+</Project>

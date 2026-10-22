@@ -6,16 +6,22 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Gloaming.EntityFrameworkCore;
 
+/// <summary>Selects preparation before change detection or validation before native saving.</summary>
 public enum CapabilityPhase
 {
+    /// <summary>Runs selected preparation before the shared change-detection pass.</summary>
     Prepare = 1,
+
+    /// <summary>Checks the detected native proposal before EF executes the save.</summary>
     Validate = 2,
 }
 
+/// <summary>Explicit model-selected native EF save composition; it does not own transactions or commit.</summary>
 public static class CapabilityConfiguration
 {
     private const string Prefix = "Gloaming:Requires:";
 
+    /// <summary>Declares a required save capability in model metadata; the operation must register and install its matching integration.</summary>
     public static ModelBuilder RequireGloamingCapability(this ModelBuilder model, string key)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -24,6 +30,7 @@ public static class CapabilityConfiguration
         return model;
     }
 
+    /// <summary>Declares a required save capability in model metadata; the operation must register and install its matching integration.</summary>
     public static void RequireGloamingCapability(this IMutableModel model, string key)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -32,6 +39,7 @@ public static class CapabilityConfiguration
         model.SetAnnotation(Prefix + key, true);
     }
 
+    /// <summary>Registers one context-typed preparation or validation callback; repeated identical registrations do not add another execution.</summary>
     public static IServiceCollection TryAddGloamingCapability<TContext>(
         this IServiceCollection services,
         string key,
@@ -73,6 +81,7 @@ public static class CapabilityConfiguration
         return services;
     }
 
+    /// <summary>Installs native save interception for the current scoped context using its model-selected capabilities.</summary>
     public static DbContextOptionsBuilder ConfigureGloamingCapabilities<TContext>(
         this DbContextOptionsBuilder options,
         IServiceProvider provider

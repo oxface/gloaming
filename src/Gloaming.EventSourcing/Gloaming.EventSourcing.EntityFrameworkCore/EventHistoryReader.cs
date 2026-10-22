@@ -16,6 +16,7 @@ public abstract class EventHistoryReader<TEvent, TStreamRecord, TStoredEventReco
     private readonly string streamType;
     private readonly IForeignKey streamForeignKey;
 
+    /// <summary>Binds the native context and stable stream discriminator without selecting a serializer or reducer.</summary>
     protected EventHistoryReader(DbContext database, string streamType)
     {
         ArgumentNullException.ThrowIfNull(database);

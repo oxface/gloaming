@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gloaming.Persistence.EntityFrameworkCore.Postgres;
 
+/// <summary>Registers scoped native PostgreSQL tenant transaction setup without choosing admission or deploying policies.</summary>
 public static class PostgresTenantRegistration
 {
     /// <summary>Registers automatic tenant setup for caller-owned native transactions.</summary>

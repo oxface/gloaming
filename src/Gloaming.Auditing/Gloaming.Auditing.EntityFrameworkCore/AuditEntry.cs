@@ -56,29 +56,39 @@ public sealed class AuditEntry
         TenantKey = tenantKey;
     }
 
+    /// <summary>Consumer-assigned audit entry identity.</summary>
     public Guid Id { get; }
 
+    /// <summary>Consumer-supplied UTC time of the selected audited action, not a database commit timestamp.</summary>
     public DateTimeOffset OccurredAt { get; }
 
+    /// <summary>The executing actor and optional trusted initiator captured for the audited action.</summary>
     public ActorContext Attribution { get; }
 
+    /// <summary>Consumer-owned source vocabulary for the audited action.</summary>
     public string Source { get; }
 
+    /// <summary>Consumer-owned action name; staging does not infer which actions must be audited.</summary>
     public string Action { get; }
 
+    /// <summary>Consumer-owned type of the business subject.</summary>
     public string SubjectType { get; }
 
     /// <summary>Opaque item/aggregate identity; null denotes a subject-wide or global event.</summary>
     public string? SubjectKey { get; }
 
+    /// <summary>The consumer-selected audited outcome; it does not independently establish commit.</summary>
     public string Outcome { get; }
 
+    /// <summary>Positive version of the consumer safe-details schema.</summary>
     public int SchemaVersion { get; }
 
+    /// <summary>The retained JSON value of consumer-classified safe details.</summary>
     public JsonElement Details { get; }
 
     /// <summary>Optional consumer-selected business explanation, distinct from the outcome.</summary>
     public string? ReasonCode { get; }
 
+    /// <summary>Optional opaque tenant attribution; it neither admits the tenant nor authorizes reading this audit.</summary>
     public string? TenantKey { get; }
 }

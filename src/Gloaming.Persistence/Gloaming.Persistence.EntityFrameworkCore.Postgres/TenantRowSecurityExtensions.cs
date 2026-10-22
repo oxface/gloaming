@@ -8,6 +8,7 @@ using Npgsql;
 
 namespace Gloaming.Persistence.EntityFrameworkCore.Postgres;
 
+/// <summary>Declares optional tenant row security and explicit native policy migration operations for consumer-owned tables.</summary>
 public static class TenantRowSecurityExtensions
 {
     internal const string Capability = "postgres-tenant-rls";

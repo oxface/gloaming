@@ -1,5 +1,6 @@
 namespace Gloaming.ActorIdentity;
 
+/// <summary>Presence and actor-kind checks; these checks do not supply authentication or permission policy.</summary>
 public static class ActorContextRequirements
 {
     /// <summary>Checks identity presence only; the consumer must establish trust and permission.</summary>

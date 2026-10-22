@@ -11,6 +11,7 @@ public sealed class JsonEventCodec<TEvent>
     private readonly Dictionary<(string Name, int Version), DecodePath> upcastPaths = [];
     private readonly JsonSerializerOptions options;
 
+    /// <summary>Copies serializer options and validates concrete registrations and unambiguous complete forward upgrade paths.</summary>
     public JsonEventCodec(
         JsonSerializerOptions options,
         IEnumerable<EventRegistration<TEvent>> registrations,
@@ -43,6 +44,7 @@ public sealed class JsonEventCodec<TEvent>
         this.options.MakeReadOnly(populateMissingResolver: true);
     }
 
+    /// <summary>Encodes the exact registered runtime event type with its explicit durable alias/version; unknown types are rejected.</summary>
     public SerializedEvent Serialize(TEvent @event)
     {
         ArgumentNullException.ThrowIfNull(@event);
@@ -56,6 +58,7 @@ public sealed class JsonEventCodec<TEvent>
         );
     }
 
+    /// <summary>Decodes an exact durable alias/version through its selected forward path; retained JSON and stored event rows are not rewritten.</summary>
     public TEvent Deserialize(string eventName, int schemaVersion, JsonElement payload)
     {
         ArgumentNullException.ThrowIfNull(eventName);

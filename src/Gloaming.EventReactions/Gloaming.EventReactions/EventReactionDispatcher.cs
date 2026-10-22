@@ -1,5 +1,6 @@
 namespace Gloaming.EventReactions;
 
+/// <summary>Dispatches selected buffers and the scoped sink in bounded, ordered waves; it neither saves nor commits.</summary>
 public sealed class EventReactionDispatcher<TModule>
 {
     private readonly EventReactionRegistry<TModule> _registry;
@@ -8,6 +9,7 @@ public sealed class EventReactionDispatcher<TModule>
     private bool _executing;
     private bool _failed;
 
+    /// <summary>Binds the explicit registry, operation sink and finite reaction invocation ceiling for a serialized operation.</summary>
     public EventReactionDispatcher(
         EventReactionRegistry<TModule> registry,
         PendingEvents sink,
@@ -24,9 +26,13 @@ public sealed class EventReactionDispatcher<TModule>
         registry.Freeze();
     }
 
+    /// <summary>The operation sink collected alongside explicitly selected buffers.</summary>
     public IEventSink Sink => _sink;
+
+    /// <summary>The number of occurrences currently retained by the operation sink.</summary>
     public int PendingCount => _sink.Count;
 
+    /// <summary>Drains selected buffers in capture order, including downstream waves; rejects asynchronous-only reactions in this synchronous lane.</summary>
     public void Dispatch(Func<IEnumerable<PendingEvents>> collectSources)
     {
         ArgumentNullException.ThrowIfNull(collectSources);
@@ -69,6 +75,7 @@ public sealed class EventReactionDispatcher<TModule>
         }
     }
 
+    /// <summary>Awaits ordered reaction waves until empty or the invocation ceiling/cancellation fails the operation; saving remains caller-owned.</summary>
     public async Task DispatchAsync(
         Func<IEnumerable<PendingEvents>> collectSources,
         CancellationToken cancellationToken = default

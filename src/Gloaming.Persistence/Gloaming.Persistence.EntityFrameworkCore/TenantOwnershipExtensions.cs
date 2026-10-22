@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gloaming.Persistence.EntityFrameworkCore;
 
+/// <summary>Native EF ownership filters and tracked-write validation; consumers populate ownership and admit operations.</summary>
 public static class TenantOwnershipExtensions
 {
     /// <summary>Reads the declared ownership property for optional provider integrations.</summary>
