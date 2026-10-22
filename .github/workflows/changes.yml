@@ -27,6 +27,8 @@ on:
         value: ${{ jobs.changes.outputs.runtime }}
       repository_dotnet:
         value: ${{ jobs.changes.outputs.repository_dotnet }}
+      packages:
+        value: ${{ jobs.changes.outputs.packages }}
 
 permissions:
   contents: read
@@ -50,6 +52,7 @@ jobs:
       template: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.template == 'true') && 'true' || 'false' }}
       runtime: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.runtime == 'true') && 'true' || 'false' }}
       repository_dotnet: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.repository_dotnet == 'true') && 'true' || 'false' }}
+      packages: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.packages == 'true') && 'true' || 'false' }}
     steps:
       - name: Check out filters and push history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
