@@ -11,11 +11,14 @@ internal static class CatalogFilters
         if (name is not null)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
             rows = rows.Where(row => row.Name.Contains(name));
         }
+
         if (minimumPrice is { } minimum)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(minimum);
+
             rows = rows.Where(row => row.Price >= minimum);
         }
 

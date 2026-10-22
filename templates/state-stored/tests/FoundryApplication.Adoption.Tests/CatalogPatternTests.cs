@@ -72,6 +72,7 @@ public sealed partial class CatalogJourneyTests
                     Assert.False(database.ChangeTracker.HasChanges());
                     await transaction.RollbackAsync(Token);
                 }
+
                 await using (var rollback = Operation(services, "tenant-a"))
                 {
                     var database = rollback.ServiceProvider.GetRequiredService<CatalogDbContext>();

@@ -10,6 +10,7 @@ if (args is not ([] or ["--once"]))
     );
     return 2;
 }
+
 string? connection = Environment.GetEnvironmentVariable("CATALOG_CONNECTION_STRING");
 string? tenant = Environment.GetEnvironmentVariable("CATALOG_WORKER_TENANT");
 if (string.IsNullOrWhiteSpace(connection) || string.IsNullOrWhiteSpace(tenant))
@@ -19,6 +20,7 @@ if (string.IsNullOrWhiteSpace(connection) || string.IsNullOrWhiteSpace(tenant))
     );
     return 2;
 }
+
 if (
     !int.TryParse(
         Environment.GetEnvironmentVariable("CATALOG_WORKER_INTERVAL_SECONDS") ?? "30",
@@ -29,6 +31,7 @@ if (
     Console.Error.WriteLine("CATALOG_WORKER_INTERVAL_SECONDS must be from 1 to 3600.");
     return 2;
 }
+
 var builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder();
 Composition.AddServices(builder.Services, connection);
 var outcome = new WorkerOutcome();

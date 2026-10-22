@@ -52,6 +52,7 @@ public sealed partial class CatalogJourneyTests
                             reports++;
                         }
                     }
+
                     // The supported generator platform is Linux. Exercise native generic-host SIGTERM.
                     using var signal = Process.Start(
                         new ProcessStartInfo("kill")
@@ -121,6 +122,7 @@ public sealed partial class CatalogJourneyTests
         start.ArgumentList.Add(typeof(WorkerMarker).Assembly.Location);
         if (once)
             start.ArgumentList.Add("--once");
+
         start.Environment["CATALOG_CONNECTION_STRING"] = connection;
         start.Environment["CATALOG_WORKER_TENANT"] = tenant;
         start.Environment["CATALOG_WORKER_INTERVAL_SECONDS"] = "1";

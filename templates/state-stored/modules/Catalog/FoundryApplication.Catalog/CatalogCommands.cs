@@ -57,6 +57,7 @@ internal sealed class CatalogCommands(
         );
         if (row is null)
             return new CatalogChange.NotFound();
+
         if (row.Version != expectedVersion)
             return new CatalogChange.Conflict();
 
