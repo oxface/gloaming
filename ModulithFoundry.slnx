@@ -107,6 +107,8 @@
     <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Sample modules/">
+    <Project Path="samples/Wholesale/modules/Dispatch/Dispatch/Dispatch.csproj" />
+    <Project Path="samples/Wholesale/modules/Dispatch/Dispatch.Contracts/Dispatch.Contracts.csproj" />
     <Project Path="samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
     <Project Path="samples/Wholesale/modules/Purchasing/Purchasing.Contracts/Purchasing.Contracts.csproj" />
     <Project Path="samples/Wholesale/modules/Sales/Sales/Sales.csproj" />

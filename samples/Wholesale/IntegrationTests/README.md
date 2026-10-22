@@ -34,3 +34,5 @@ The Access SQL fixture stays byte-for-byte intact. Event fixture JSON remains ow
 independent Events consumer and is linked read-only into the output directory. Module migrations
 remain in their owning modules. The [slice report](../../../docs/reports/s1-wholesale-consolidation.md)
 maps the old projects and records fresh results separately from earlier slice evidence.
+
+`Directory/` retains fourteen B2 population, transaction and wire proofs. API/Worker process adoption and broker/local route-selection tests prove the canonical product path.

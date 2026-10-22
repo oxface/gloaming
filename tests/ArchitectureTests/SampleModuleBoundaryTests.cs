@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.Wholesale.Access.Contracts;
 using ModulithFoundry.Samples.Wholesale.Access.Persistence;
 using ModulithFoundry.Samples.Wholesale.Api;
+using ModulithFoundry.Samples.Wholesale.Dispatch;
+using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using ModulithFoundry.Samples.Wholesale.Purchasing;
@@ -34,6 +36,7 @@ public sealed class SampleModuleBoundaryTests
         typeof(InventoryDbContext).Assembly,
         typeof(SalesDbContext).Assembly,
         typeof(PurchasingDbContext).Assembly,
+        typeof(DispatchDbContext).Assembly,
     ];
     private static readonly ReflectionAssembly[] Contracts =
     [
@@ -41,6 +44,7 @@ public sealed class SampleModuleBoundaryTests
         typeof(IStockCatalog).Assembly,
         typeof(ICustomerProfiles).Assembly,
         typeof(IPurchaseOrderHistory).Assembly,
+        typeof(ICustomerDirectory).Assembly,
     ];
     private static readonly ReflectionAssembly[] Libraries =
     [
@@ -75,6 +79,15 @@ public sealed class SampleModuleBoundaryTests
         .Build();
 
     [Theory]
+    [InlineData("Dispatch", "Access")]
+    [InlineData("Dispatch", "Sales")]
+    [InlineData("Dispatch", "Inventory")]
+    [InlineData("Dispatch", "Purchasing")]
+    [InlineData("Dispatch", "Wholesale.Api")]
+    [InlineData("Access", "Dispatch")]
+    [InlineData("Sales", "Dispatch")]
+    [InlineData("Inventory", "Dispatch")]
+    [InlineData("Purchasing", "Dispatch")]
     [InlineData("Purchasing", "Access")]
     [InlineData("Access", "Purchasing")]
     [InlineData("Purchasing", "Inventory")]
@@ -95,6 +108,7 @@ public sealed class SampleModuleBoundaryTests
         NoDependency(ReflectionAssembly.Load(module), ReflectionAssembly.Load(forbidden));
 
     [Theory]
+    [InlineData("Dispatch.Contracts")]
     [InlineData("Purchasing.Contracts")]
     [InlineData("Access.Contracts")]
     [InlineData("Inventory.Contracts")]
@@ -150,12 +164,12 @@ public sealed class SampleModuleBoundaryTests
                 .Check(Architecture);
     }
 
-    [Fact]
-    public void LocalReservationRelaysUseContractsWithoutModulePersistenceOrBrokerDependencies()
+    [Theory]
+    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery")]
+    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory.Delivery")]
+    public void RelaysUseContractsWithoutModulePersistenceOrBrokerDependencies(string namespaceName)
     {
-        var relays = Types()
-            .That()
-            .ResideInNamespace("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery");
+        var relays = Types().That().ResideInNamespace(namespaceName);
         Assert.NotEmpty(relays.GetObjects(Architecture));
         foreach (ReflectionAssembly forbidden in Modules.Append(typeof(DbContext).Assembly))
             relays
@@ -179,6 +193,8 @@ public sealed class SampleModuleBoundaryTests
     [Theory]
     [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local")]
     [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery")]
+    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory")]
+    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory.Delivery")]
     public void EveryLocalTransportComponentRemainsIndependentOfBrokerApis(string namespaceName)
     {
         var components = Types().That().ResideInNamespace(namespaceName);

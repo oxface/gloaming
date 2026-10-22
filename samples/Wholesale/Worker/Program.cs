@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using ModulithFoundry.Samples.Wholesale.Worker.Directory;
 using ModulithFoundry.Samples.Wholesale.Worker.Local;
 using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
 
@@ -13,6 +14,12 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .AddCommandLine(args)
     .Build();
+if (configuration["role"] == "directory")
+{
+    await DirectoryHost.RunAsync(args);
+    return;
+}
+
 if (configuration["role"] is "inventory" or "purchasing")
 {
     using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));

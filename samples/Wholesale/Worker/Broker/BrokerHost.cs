@@ -149,7 +149,7 @@ internal static class BrokerHost
             builder.Services.AddPostgresOutboxDispatcher<
                 SalesOutboxDbContext,
                 SalesCommandPublisher
-            >(new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1)));
+            >(SalesDispatchOptions());
             builder.Services.AddOutboxWorker<SalesOutboxDbContext>(
                 new(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1))
             );
@@ -323,7 +323,7 @@ internal static class BrokerHost
             )
             .WithMetrics(metrics => metrics.AddGloamingMessaging());
         builder.Services.AddPostgresOutboxDispatcher<SalesDbContext, SalesCommandPublisher>(
-            new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
+            SalesDispatchOptions()
         );
         builder.Services.AddPostgresOutboxDispatcher<InventoryDbContext, InventoryReplyPublisher>(
             new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
@@ -395,4 +395,15 @@ internal static class BrokerHost
             builder.Configuration[key]
             ?? throw new InvalidOperationException("Configure " + key + ".");
     }
+
+    private static OutboxDispatchOptions SalesDispatchOptions() =>
+        new(TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(1))
+        {
+            RouteKeys =
+            [
+                "inventory.issue-stock",
+                "inventory.reserve-stock",
+                "inventory.release-reservation",
+            ],
+        };
 }

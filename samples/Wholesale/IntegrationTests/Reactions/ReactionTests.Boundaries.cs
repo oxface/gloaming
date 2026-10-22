@@ -102,8 +102,16 @@ public sealed partial class ReactionTests
             await database
                 .GetService<IMigrator>()
                 .MigrateAsync("20261014171512_AddDraftOrderChildren", Token);
-            SalesDemoSeed.Stage(database);
-            await database.SaveChangesAsync(Token);
+            // The retained schema predates the current EF delivery columns.
+            await database.Database.ExecuteSqlRawAsync(
+                """
+                INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)
+                VALUES ('10000000-0000-0000-0000-000000000001', 'wholesale-alpha', 'DEMO-CUSTOMER', 'Alpha Customer', 1);
+                INSERT INTO sales.customer_addresses (id, organization_key, customer_id, address_line)
+                VALUES ('20000000-0000-0000-0000-000000000001', 'wholesale-alpha', '10000000-0000-0000-0000-000000000001', 'Alpha Street');
+                """,
+                Token
+            );
         }
 
         // Insert the previous schema's valid shape without asking the new runtime to query a missing column.

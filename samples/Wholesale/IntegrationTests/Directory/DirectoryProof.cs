@@ -1,15 +1,18 @@
+using Gloaming.ActorIdentity;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Dispatch;
 using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using ModulithFoundry.Samples.Wholesale.Worker.Directory;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.DirectoryDemo.Tests;
+namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Directory;
 
 internal sealed class DirectoryProof : IAsyncDisposable
 {
@@ -53,7 +56,13 @@ internal sealed class DirectoryProof : IAsyncDisposable
     )
     {
         await using var scope = Services.CreateAsyncScope();
-        DirectoryComposition.Establish(scope.ServiceProvider, organization);
+        // Trusted test setup supplies an admitted human for the existing Sales mutation policy.
+        scope
+            .ServiceProvider.GetRequiredService<ITenantContextInitializer>()
+            .Initialize(TenantContext.ForTenant(new TenantId(organization)));
+        scope
+            .ServiceProvider.GetRequiredService<IActorContextInitializer>()
+            .Initialize(new(Actor.Human(new ActorId("directory-proof-human"))));
         return await action(scope.ServiceProvider);
     }
 

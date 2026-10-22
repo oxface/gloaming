@@ -4,10 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Dispatch;
 using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using ModulithFoundry.Samples.Wholesale.Worker.Directory;
 using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.DirectoryDemo.Tests;
+namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Directory;
 
 public sealed class PopulationTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

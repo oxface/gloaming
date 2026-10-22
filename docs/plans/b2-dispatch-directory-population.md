@@ -1,6 +1,8 @@
 # B2: populate Dispatch's customer delivery directory
 
-Status: implementation selected under the owner's preapproved V1 continuation, 2026-10-22.
+Status: implemented in canonical Wholesale Worker and IntegrationTests under the owner's
+preapproved V1 continuation, 2026-10-22. The adoption proof is recorded separately in the
+[canonical product report](../reports/b2-directory-product-adoption.md).
 This is a bounded Wholesale capability, not revival of B1's rejected public feed.
 
 Dispatch needs to search the complete set of customer names, codes and delivery addresses
@@ -41,6 +43,6 @@ deletion fences, duplicate/conflicting messages, durable restart progress, tenan
 copy/checkpoint rollback, inbox completion rollback and source-publication rollback. Use native
 module persistence and existing Gloaming delivery rather than a custom replication engine.
 
-The [consumer guide](../../samples/Wholesale/modules/Dispatch/README.md), temporary
-[executable composition](../../samples/Wholesale/DirectoryDemo/README.md) and
+The [consumer guide](../../samples/Wholesale/modules/Dispatch/README.md), canonical Worker
+[executable composition](../../samples/Wholesale/Worker/Directory/README.md) and
 [result report](../reports/b2-dispatch-directory-population.md) record implementation and proof.

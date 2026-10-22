@@ -70,3 +70,5 @@ records the new inbox/adoption proofs separately.
 
 See [durable message observability](docs/observability.md) for optional W3C context, schema upgrades, native
 activity/meter names, failure logs and host-owned exporter configuration.
+
+See [outbox route selection](docs/route-selection.md) when independently composed publishers share one module outbox.

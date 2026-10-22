@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
+    <ProjectReference Include="../modules/Dispatch/Dispatch/Dispatch.csproj" />
     <ProjectReference Include="../modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
     <ProjectReference Include="../ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
