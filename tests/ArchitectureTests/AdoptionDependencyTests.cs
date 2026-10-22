@@ -253,12 +253,11 @@ public sealed class AdoptionDependencyTests
     [Fact]
     public void MessagingLayersDeclareOnlyUsedContractsAndNativeDependencies()
     {
-        Check("Gloaming.Messaging.Workflows", ["Gloaming.Messaging"], []);
         Check(
             "Gloaming.Messaging.Workflows.EntityFrameworkCore",
             [
                 "Gloaming.EntityFrameworkCore",
-                "Gloaming.Messaging.Workflows",
+                "Gloaming.Messaging",
                 "Gloaming.Messaging.EntityFrameworkCore",
             ],
             [

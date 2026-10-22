@@ -27,7 +27,6 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <ProjectReference Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
@@ -90,11 +89,6 @@
     <None
       Include="../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj"
       Link="ProjectDeclarations/Gloaming.EventReactions.EntityFrameworkCore.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj"
-      Link="ProjectDeclarations/Gloaming.Messaging.Workflows.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None

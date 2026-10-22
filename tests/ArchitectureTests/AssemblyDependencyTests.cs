@@ -44,7 +44,6 @@ public sealed class AssemblyDependencyTests
             typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
             typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly,
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
-            typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Hosting.OutboxWorkerOptions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
@@ -85,7 +84,6 @@ public sealed class AssemblyDependencyTests
                 "Gloaming.Messaging",
                 "Gloaming.Messaging.EntityFrameworkCore",
                 "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                "Gloaming.Messaging.Workflows",
                 "Gloaming.Messaging.Workflows.EntityFrameworkCore",
                 "Gloaming.EntityFrameworkCore",
             }
@@ -96,7 +94,6 @@ public sealed class AssemblyDependencyTests
             string forbidden in new[]
             {
                 "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                "Gloaming.Messaging.Workflows",
                 "Gloaming.Messaging.Workflows.EntityFrameworkCore",
                 "Gloaming.Messaging.RabbitMQ",
                 "Sales",
@@ -166,45 +163,49 @@ public sealed class AssemblyDependencyTests
     }
 
     [Fact]
-    public void WorkflowCoreAndRunnerRemainOptionalWithoutTransportOrModuleDependencies()
+    public void ContinuationsRemainOptionalWithoutTransportHostingOrModuleDependencies()
     {
+        const string library = "Gloaming.Messaging.Workflows.EntityFrameworkCore";
         foreach (
-            string library in new[]
+            string forbidden in new[]
             {
-                "Gloaming.Messaging.Workflows",
-                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                Actor,
+                Tenancy,
+                Persistence,
+                EventSerialization,
+                History,
+                AggregateCore,
+                Storage,
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Gloaming.Messaging.RabbitMQ",
+                "Sales",
+                "Access",
             }
         )
-        {
-            foreach (
-                string forbidden in new[]
-                {
-                    Actor,
-                    Tenancy,
-                    Persistence,
-                    EventSerialization,
-                    History,
-                    AggregateCore,
-                    Storage,
-                    "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                }
-            )
-                NoDependency(library, forbidden).Check(Architecture);
-        }
+            NoDependency(library, forbidden).Check(Architecture);
 
         Assert.DoesNotContain(
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly.GetReferencedAssemblies(),
             reference =>
-                reference.Name!.StartsWith(
-                    "Microsoft.EntityFrameworkCore",
+                reference.Name!.StartsWith("Npgsql", StringComparison.Ordinal)
+                || reference.Name.StartsWith(
+                    "Microsoft.Extensions.Hosting",
                     StringComparison.Ordinal
                 )
-                || reference.Name.StartsWith("Npgsql", StringComparison.Ordinal)
                 || reference.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)
         );
-        NoDependency("Gloaming.Messaging", "Gloaming.Messaging.Workflows").Check(Architecture);
-        NoDependency("Gloaming.Messaging.EntityFrameworkCore", "Gloaming.Messaging.Workflows")
-            .Check(Architecture);
+        foreach (
+            string independent in new[]
+            {
+                "Gloaming.Messaging",
+                "Gloaming.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+            }
+        )
+            NoDependency(independent, library).Check(Architecture);
     }
 
     [Theory]

@@ -135,7 +135,7 @@ interface Assets {
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  22,
+  21,
   "Review the package inventory when adding/removing libraries.",
 );
 
@@ -373,6 +373,15 @@ try {
       external: true,
     },
     {
+      name: "workflows",
+      source: "Workflows.cs",
+      ids: [
+        "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+      external: true,
+    },
+    {
       name: "all-packages",
       source: undefined,
       ids: packages.map((item) => item.id),
@@ -389,7 +398,7 @@ try {
             join(import.meta.dirname, "consumers", profile.source),
             "utf8",
           )
-        : 'Console.WriteLine("PASS all 22 package references compile together");',
+        : 'Console.WriteLine("PASS all 21 package references compile together");',
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),
@@ -454,6 +463,13 @@ try {
       expected.has("Gloaming.Messaging.EntityFrameworkCore.Hosting"),
       `Hosting dependency must follow explicit worker selection in ${profile.name}`,
     );
+    if (profile.name === "workflows")
+      assert(
+        !Object.keys(assets.libraries).some((name) =>
+          name.startsWith("RabbitMQ.Client/"),
+        ),
+        "Continuation execution must not select a transport client.",
+      );
     for (const [name, library] of gloaming) {
       assert.equal(name.split("/")[1], version);
       assert(

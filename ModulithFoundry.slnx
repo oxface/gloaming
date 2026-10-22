@@ -23,7 +23,6 @@
   </Folder>
   <Folder Name="/Libraries/Messaging/">
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
-    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />

@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="../Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
+    <ProjectReference Include="../Gloaming.Messaging/Gloaming.Messaging.csproj" />
     <ProjectReference Include="../Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

@@ -1,5 +1,9 @@
 # WF2: bounded durable continuations
 
+Later package composition: [the consolidation](../reports/continuation-package-consolidation.md)
+combines definitions and native EF execution in one optional package. The two-package
+description below retains its original reviewed scope and dated evidence.
+
 Date: 2026-10-12. Owner-approved public interfaces and replacement scope implemented for
 line-by-line review on `feat/compensating-workflow`. No checkpoint has been made for this
 replacement; the owner's staged sequential-experiment snapshot remains byte-for-byte intact.
@@ -45,9 +49,9 @@ and replay engines are not introduced speculatively.
 
 ## Review-worthy code and scope
 
-- [WorkflowBuilder](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowBuilder.cs),
-  [WorkflowTurn](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowTurn.cs),
-  [IWorkflow](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/IWorkflow.cs): reviewed
+- [WorkflowBuilder](https://github.com/oxface/modulith-foundry/blob/ffc6ec22a01085cf7352b5ab2cc91d91a5fd6e4e/src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowBuilder.cs),
+  [WorkflowTurn](https://github.com/oxface/modulith-foundry/blob/ffc6ec22a01085cf7352b5ab2cc91d91a5fd6e4e/src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowTurn.cs),
+  [IWorkflow](https://github.com/oxface/modulith-foundry/blob/ffc6ec22a01085cf7352b5ab2cc91d91a5fd6e4e/src/Gloaming.Messaging/Gloaming.Messaging.Workflows/IWorkflow.cs): reviewed
   typed API with XML documentation, copied/frozen options and immutable bindings.
 - [EfWorkflow](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/EfWorkflow.cs):
   explicit start/continue/resume/read lanes, detached candidates and one accepted turn per instance/scope.

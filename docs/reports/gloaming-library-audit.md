@@ -2,8 +2,9 @@
 
 Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Status: active audit and implementation record. The local package command and two thin
-adapter removals are committed as `d63f567`. Optional worker hosting is implemented in the
-working tree; other package, interface, sample and test changes remain proposals.
+adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
+Continuation package consolidation is implemented in the working tree; further sample,
+documentation, test and CI cleanup remains open.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -47,11 +48,18 @@ introduced by combining these changes. The owner subsequently approved that snap
 committed as `d63f567` after all commit hooks passed; it has not been pushed.
 
 The next [worker-hosting slice](messaging-worker-hosting.md) adds the explicitly selected
-hosting package, bringing the inventory to 22. This slice remains unstaged and uncommitted;
+hosting package, bringing that checkpoint inventory to 22. It is committed as `ffc6ec2`;
 333 fresh test cases and all 22 packages/five independent package consumers pass. Persistence
 consumers omit Hosting abstractions; selecting the hosting package runs the existing workers.
 Its detailed results and remaining demo dependency cleanup are recorded separately. The staged
 review snapshot remains empty.
+
+The [continuation consolidation](continuation-package-consolidation.md) now brings the
+inventory to 21 by retaining definitions and execution in the existing EF package. This
+new slice remains unstaged and uncommitted. All 176 selected test cases, 21 archives and
+six package-only consumers pass, including real continuation execution from the combined
+archive. Its evidence and EF-dependency trade-off are recorded separately. The estimated
+remaining cleanup is [8–10 further slices](#remaining-cleanup-slices), excluding Umbrine.
 
 ## Confirmed direction and review criteria
 
@@ -107,30 +115,29 @@ division unless the row states otherwise; it does not certify every implementati
 | Gloaming.Auditing.EntityFrameworkCore | Keep | Explicit envelopes, mapping and same-transaction staging/validation. The ActorIdentity dependency supplies actual attribution types. Required-audit selection, visibility and retention stay outside. |
 | Gloaming.Auditing.EntityFrameworkCore.Postgres | Retired in d63f567 | Its sole mapping helper called ConfigureAudit and selected JSONB. The audit protocol remains in the EF package. |
 | Gloaming.Messaging | Keep | Owned wire envelopes, publication acceptance seam and native diagnostics. JSON payloads and GUID delivery IDs are supported protocol choices; routing and receiver trust remain consumer decisions. |
-| Gloaming.Messaging.EntityFrameworkCore | Simplified in the working tree | Storage records, save guards and callable roles remain. Hosted loops, options and registration now belong to the optional Hosting package. |
+| Gloaming.Messaging.EntityFrameworkCore | Simplified in ffc6ec2 | Storage records, save guards and callable roles remain. Hosted loops, options and registration now belong to the optional Hosting package. |
 | Gloaming.Messaging.EntityFrameworkCore.Postgres | Keep | PostgreSQL leases, deduplicating intake, locked processing, recovery and maintenance concentrate substantial correctness work. The fixed technical mappings are part of its contract. |
 | Gloaming.Messaging.OpenTelemetry | Retired in d63f567 | Its two helpers only subscribed native builders to the documented activity-source and meter names. Emitted diagnostics and their tests are retained. |
 | Gloaming.Messaging.RabbitMQ | Keep | Native connection/channel lifetime, partial-acquisition cleanup and terminal observation have independent value. Continue exposing native channels and consumer-selected recovery/topology. |
-| Gloaming.Messaging.Workflows | Combine with the EF workflow package | Definitions and return instructions are only executable by the friend EF assembly through internal members. No public executable seam currently justifies this package split. |
-| Gloaming.Messaging.Workflows.EntityFrameworkCore | Keep the mechanism in one combined optional package | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
+| Gloaming.Messaging.Workflows | Consolidated into the EF package in the working tree | Definition types keep their namespaces; the friend-only assembly split is removed. Definition-only consumers now take EF dependencies. |
+| Gloaming.Messaging.Workflows.EntityFrameworkCore | Combined optional package in the working tree | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
 
-The proposed combined workflow package can retain the existing Workflows namespaces. Naming
-and assembly identity should be reviewed with its concrete change. A proposed hosting package
-such as `Gloaming.Messaging.EntityFrameworkCore.Hosting` would depend on the callable EF roles;
-the EF/provider layers would not depend on hosting. There is no package-count target.
+The combined continuation package retains the EF package/assembly identity and both existing
+Workflows namespaces. Optional `Gloaming.Messaging.EntityFrameworkCore.Hosting` depends on
+callable EF roles; the EF/provider layers do not depend on hosting. There is no package-count target.
 
 ## Findings requiring concrete follow-up
 
 ### Combine the workflow packages without discarding the protocol
 
-[WorkflowDefinition](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowDefinition.cs)
+[WorkflowDefinition](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/WorkflowDefinition.cs)
 exposes its name/version but keeps its start delegate, serializer and reply/signal bindings
-internal. [WorkflowTurn](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowTurn.cs)
+internal. [WorkflowTurn](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/WorkflowTurn.cs)
 also hides its state, command and continuation data.
-[The core project](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj)
-grants the EF runner friend access. An alternative runner cannot consume the supplied definition
-through its public interface. Core-only tests exercise definition validation, not independent
-execution. The inspected Wholesale Contracts do not require workflow types.
+[The former core project](https://github.com/oxface/modulith-foundry/blob/ffc6ec22a01085cf7352b5ab2cc91d91a5fd6e4e/src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj)
+granted the EF runner friend access. An alternative runner could not consume the supplied definition
+through its public interface. Former core-only tests exercised definition validation, not
+independent execution. The inspected Wholesale Contracts do not require workflow types.
 
 Combine these packages rather than making internal execution machinery public merely to
 justify the split. Keep the combined package optional from ordinary Messaging. Preserve
@@ -321,7 +328,27 @@ schemas/rows only where a retained migration or durable-payload guarantee needs 
 upgrade fixture. A clean initial schema and an intentionally old compatibility fixture have
 different purposes; neither requires retaining every experimental migration chain.
 
-## Implementation sequence and completion checks
+## Remaining cleanup slices
+
+After the current continuation-package slice, estimate **8–10 more cleanup increments**:
+
+| Work | Estimated slices | Completion evidence |
+| --- | --- | --- |
+| Messaging demos and deployment fixtures | 1–2 | One focused producer/worker example; separately compiled compatibility fixtures owned by tests; unique delivery/recovery/export assertions retained. |
+| Other family examples | 1–2 | Remove ContextDemo and reduce persistence, event-sourcing and reaction examples; transfer unique mechanism proofs to family tests before removing their hosts. |
+| Wholesale reduction | 2 | Three retained modules and one order/reservation journey; preserved persistence/authorization/audit/workflow proofs, with Purchasing and Dispatch experiments retired or rehomed. |
+| Template retirement and pattern guidance | 1 | Generator/presets and generator-only dependencies/CI removed; concise exercised setup guidance remains. Skills follow real consumer usage rather than a speculative option matrix. |
+| Documentation relevance and pruning | 1 | Current consumer contracts, conventions and decisions are clear; redundant historical plans/reports are distilled or retired through Git. Keep one active cleanup queue. |
+| Test/CI/tooling cleanup and empty directories | 1 | Tests target retained libraries/examples; checks and hooks follow the reduced graph; stale paths, unused tooling and truly empty directories are removed. |
+| Final publication review | 1 | Integrated package/adoption and retained-sample checks, independent architecture/code review, and an explicit remaining-gap assessment. |
+
+This is a planning estimate, not a fixed batch size or release sign-off. Assertion-transfer
+discoveries or library defects may split a slice; small related removals may combine. CI,
+references and consumer docs must stay valid within each earlier increment as well.
+The count excludes Umbrine implementation, new capabilities and remote package publication.
+Umbrine can start using the reviewed libraries before this cleanup queue is exhausted.
+
+## Original implementation sequence and completion checks
 
 1. **Enable ordinary local consumption.** Add a small pack-only developer command reusing
    the existing library inventory. Pack unique prerelease snapshots into a persistent local

@@ -10,8 +10,7 @@ selected sequential workers. Transport configuration and business contracts belo
 | [Gloaming.Messaging.EntityFrameworkCore.Hosting](Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md) | Optional sequential workers, polling options, fresh scopes and native host supervision. |
 | [Gloaming.Messaging.EntityFrameworkCore.Postgres](Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md) | JSONB/database-time mapping, outbox leases, inbox deduplication and locked transactional processing. |
 | [Gloaming.Messaging.RabbitMQ](Gloaming.Messaging.RabbitMQ/README.md) | Optional native connection/channel ownership, phase timeouts, terminal observation and cleanup; independent of core/EF/Generic Host. |
-| [Gloaming.Messaging.Workflows](Gloaming.Messaging.Workflows/README.md) | Optional typed continuation bindings, return instructions and detached snapshots. |
-| [Gloaming.Messaging.Workflows.EntityFrameworkCore](Gloaming.Messaging.Workflows.EntityFrameworkCore/README.md) | Optional provided process table, typed runner, atomic request enqueue and native concurrency. |
+| [Gloaming.Messaging.Workflows.EntityFrameworkCore](Gloaming.Messaging.Workflows.EntityFrameworkCore/README.md) | Optional bounded continuation definitions and native EF execution: provided process table, typed runner, atomic request enqueue and concurrency. |
 
 Each module owns its context, schema/table, publisher and registrations. The family does
 not supply a global bus, shared DbContext or cross-module transaction. Core publisher code

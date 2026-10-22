@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="../Gloaming.Messaging/Gloaming.Messaging.csproj" />
-    <InternalsVisibleTo Include="Gloaming.Messaging.Workflows.EntityFrameworkCore" />
-  </ItemGroup>
-</Project>

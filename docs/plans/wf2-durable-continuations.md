@@ -1,5 +1,9 @@
 # WF2 replacement proposal: bounded durable continuations
 
+Later package composition: [the consolidation](../reports/continuation-package-consolidation.md)
+combines definitions and native EF execution in one optional package. The two-package
+description below retains its original reviewed scope and dated evidence.
+
 Status: the owner approved the public interface and exact replacement scope on 2026-10-12.
 Implemented for line-by-line code review on `feat/compensating-workflow`; see the
 [fresh slice report](../reports/wf2-durable-continuations.md). The original proposal is retained

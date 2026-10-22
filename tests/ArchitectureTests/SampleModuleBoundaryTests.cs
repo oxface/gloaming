@@ -59,7 +59,6 @@ public sealed class SampleModuleBoundaryTests
         typeof(IEventSourcedAggregate<>).Assembly,
         typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
         typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
-        typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
         typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
         typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
     ];

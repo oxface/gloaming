@@ -694,7 +694,10 @@ DDD and private event history do not establish generic integration-event replay 
 Revisit state transfer only for a later concrete receiver need; B2 implementation remains separate.
 
 The owner-approved WF2 replacement provides optional bounded durable continuations and a typed
-native EF runner. The provided process row retains initial input, consumer state and requested
+native EF runner. The [package consolidation](reports/continuation-package-consolidation.md)
+places definitions and execution together in `Gloaming.Messaging.Workflows.EntityFrameworkCore`,
+retaining both public namespaces. Definition consumers take its native EF dependency; ordinary
+Messaging, persistence and optional Hosting remain independent. The provided process row retains initial input, consumer state and requested
 operations/outcomes, with scalar version concurrency. Only the saved continuation executes;
 ordinary consumer methods choose branching and compensation. The runner enqueues one returned
 request in the owning transaction. Admission, Contracts, business validation and native save/commit

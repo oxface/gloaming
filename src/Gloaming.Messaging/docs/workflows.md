@@ -1,7 +1,12 @@
 # Durable continuations
 
-Optional `Gloaming.Messaging.Workflows` and `Gloaming.Messaging.Workflows.EntityFrameworkCore`
-execute named consumer methods from a stored process. A new reply invokes only its saved
+The optional `Gloaming.Messaging.Workflows.EntityFrameworkCore` package supplies definitions
+and native EF execution together. The `Gloaming.Messaging.Workflows` and
+`Gloaming.Messaging.Workflows.EntityFrameworkCore` namespaces are unchanged. Definition-only
+consumers also take the EF dependency; ordinary messaging/hosting consumers do not depend
+on this package.
+
+Execute named consumer methods from a stored process. A new reply invokes only its saved
 continuation. Start and earlier methods are not replayed. Business branching and compensation
 are ordinary C# decisions; there is no graph interpreter, scheduler or workflow worker.
 
@@ -37,6 +42,9 @@ direct calls. Shared native transaction adoption remains a separate proof.
 A module registers its own typed context, existing typed outbox and definition:
 
 ```csharp
+using Gloaming.Messaging.Workflows;
+using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+
 services.AddWorkflow<OrdersDbContext, StartOrder, OrderState>(_ =>
     new WorkflowBuilder<StartOrder, OrderState>("order", 1, Json)
         .StartWith(Start)
