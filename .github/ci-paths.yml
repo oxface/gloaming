@@ -10,22 +10,20 @@ shared:
   - 'global.json'
   - 'NuGet.Config'
   - '!**/*.md'
-  - '!archive/**'
   - '!templates/**'
 
 # New inputs outside the mapped roots conservatively request full coverage.
 unmapped:
   - '**'
   - '!**/*.md'
-  - '!archive/**'
   - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
-  - '!samples/{EventStorageDemo,EventStorageDemo.Tests,OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
   - '!samples/Wholesale/**'
-  - '!samples/EventReactionsDemo/**'
+  - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!templates/**'
   - '!tools/template/**'
+  - '!tools/release/**'
 
 Auditing:
   - 'src/Gloaming.EntityFrameworkCore/**'
@@ -43,12 +41,13 @@ EventReactions:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging{,.EntityFrameworkCore,.EntityFrameworkCore.Postgres}/**'
   - 'src/Gloaming.EventReactions/**'
-  - 'samples/EventReactionsDemo/**'
+  - 'src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
 
@@ -61,10 +60,10 @@ Persistence:
 
 Events:
   - 'src/Gloaming.Events/**'
-  - 'samples/Wholesale/EventCodecDemo{,.Tests}/**'
+  - 'src/Gloaming.Events/samples/EventCodecDemo{,.Tests}/**'
   - '!**/*.md'
 
-# EventPersistenceDemo composes event sourcing, messaging and accepted-change audit.
+# Wholesale composes event sourcing, messaging and accepted-change audit.
 # Its owning lanes include those dependencies and the module implementation paths.
 EventSourcing:
   - 'src/Gloaming.EntityFrameworkCore/**'
@@ -75,8 +74,8 @@ EventSourcing:
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'samples/EventStorageDemo{,.Tests}/**'
-  - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
+  - 'src/Gloaming.EventSourcing/samples/EventStorageDemo{,.Tests}/**'
+  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
@@ -89,20 +88,18 @@ Messaging:
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'samples/{OutboxDemo,OutboxDemo.Tests,InboxDemo,InboxDemo.Tests,MessagingDemo,MessagingProducerDemo,MessagingWorkerDemo,MessagingWorkerDemo.Tests}/**'
-  - 'samples/Wholesale/{modules,EventPersistenceDemo,EventPersistenceDemo.Tests}/**'
-  - 'samples/Wholesale/ServiceDefaults/**'
-  - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'
-  - 'samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'src/Gloaming.Messaging/samples/**'
+  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
+  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
 wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
-  - 'samples/Wholesale/CqrsDemo{,.Tests}/**'
-  - 'samples/Wholesale/{ContextDemo,ContextDemo.Tests,PersistenceDemo,PersistenceDemo.Tests,HttpIdentityDemo,HttpIdentityDemo.Tests,DddDemo,DddDemo.Tests,RichAggregateDemo,RichAggregateDemo.Tests,DomainEventsDemo,DomainEventsDemo.Tests,modules,ServiceDefaults}/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - 'samples/Wholesale/{WorkflowDemo,LocalWorkflowDemo}{,.Tests}/**'
+  - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
+  - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
+  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
 template:
@@ -124,3 +121,11 @@ repository_dotnet:
   - 'tests/**'
   - 'templates/**'
   - '!**/*.md'
+
+# Package README links are artifact content, so this lane includes their changes.
+packages:
+  - 'src/Gloaming.*/Gloaming.*/**'
+  - 'src/Gloaming.*/README.md'
+  - 'src/Gloaming.*/docs/**'
+  - 'src/Directory.Build.props'
+  - 'tools/release/**'

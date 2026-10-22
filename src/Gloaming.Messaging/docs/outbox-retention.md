@@ -60,7 +60,7 @@ not install roles, change policies, bypass RLS or reconcile grants.
 
 ## Consumer adoption and schema
 
-[OutboxDemo](../../../samples/OutboxDemo/README.md#completed-outbox-cleanup) provides a separate
+[OutboxDemo](../samples/OutboxDemo/README.md#completed-outbox-cleanup) provides a separate
 `--cleanup` role. Required maintenance connection, UTC-Z cutoff and batch-size environment
 settings produce one batch and one JSON result. The command verifies its actual maintenance
 login/effective privileges, rejects owner/overprivileged credentials, requests a thirty-second

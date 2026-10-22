@@ -86,7 +86,7 @@ between domain, event-sourcing and integration events.
 
 ## Independent consumer and new proofs
 
-[EventStorageDemo](../../samples/EventStorageDemo/README.md) references only this Foundry segment
+[EventStorageDemo](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) references only this Foundry segment
 and native EF/provider tooling. Its consumer rows map to **journal.streams/journal.facts**;
 the header has a consumer-defined Description column. Explicit native migrations and transaction
 ownership remain visible in the executable. Authored counter/note facts are standalone proof
@@ -155,9 +155,9 @@ Review [the row interfaces](../../src/Gloaming.EventSourcing/Gloaming.EventSourc
 and [registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventSourcingStorageExtensions.cs).
 Compare [Inventory configuration](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/HistoryMapping.cs)
 and [Purchasing configuration](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/HistoryMapping.cs)
-with their concrete rows and unchanged snapshots. Then inspect [the independent context](../../samples/EventStorageDemo/StorageDbContext.cs),
-[caller transaction recipe](../../samples/EventStorageDemo/DemoJourneys.cs), new native migration
-and [database proofs](../../samples/EventStorageDemo.Tests/StorageTests.cs).
+with their concrete rows and unchanged snapshots. Then inspect [the independent context](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/StorageDbContext.cs),
+[caller transaction recipe](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs), new native migration
+and [database proofs](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/StorageTests.cs).
 
 GUID/JsonElement ordinary rows and the documented key shape are the initial surface. Inheritance,
 owned/shared entities, converted or arbitrary identities/payloads, type-scoped keys and other

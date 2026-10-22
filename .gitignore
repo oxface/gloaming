@@ -433,3 +433,6 @@ FodyWeavers.xsd
 
 # Aspire local state
 .aspire/
+
+# Repository release verification is source, not a build output directory.
+!tools/release/

@@ -172,21 +172,21 @@ All paths below are relative to the repository root. No existing source file is 
 | `samples/Wholesale/modules/Purchasing/Purchasing/PurchasingDbContext.cs` | Same save integration. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs` | Use revised appender and private configured adapter; existing loading/required views stay local. |
 | `samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs` | Same appender adaptation; preserve independent summary evolution. |
-| `samples/EventStorageDemo/CounterStore.cs` | Use revised appender; retain captured history, direct JSON and absence of inline state. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs` | Use revised appender; retain captured history, direct JSON and absence of inline state. |
 | `samples/Wholesale/modules/Inventory/Inventory/InventoryHistorySeed.cs` | Prepare initial main state from decoded retained facts before tracking the finite imported history. |
 | `samples/Wholesale/modules/Purchasing/Purchasing/PurchasingHistorySeed.cs` | Prepare initial main state and summary from retained facts before tracking the finite imported history. |
-| `samples/Wholesale/EventPersistenceDemo/DemoJourneys.cs` | Explicit separate native transactions around finite module history seeds. Preserve authored history/output. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs` | Adapt finite seed call sites to explicit module transactions; keep corruption/temporal fixtures and expectations. |
+| `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/DemoJourneys.cs` | Explicit separate native transactions around finite module history seeds. Preserve authored history/output. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs` | Adapt finite seed call sites to explicit module transactions; keep corruption/temporal fixtures and expectations. |
 | `samples/Wholesale/modules/Inventory/Inventory.Contracts/IStockPositionQueries.cs` | Add the exact availability read operation described above. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionFilters.cs` | New internal reusable mapped-state filter. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionQueries.cs` | Implement availability read through native filtering/join/materialization. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionInlineProjection.cs` | Share existing metadata validation with selected query rows; reducer/staging ownership unchanged. |
-| `samples/Wholesale/EventPersistenceDemo/StockIssueJourney.cs` | Exercise availability query before/after issue, preserving existing output lines. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.RequiredInlineState.cs` | New omission/tampering/save-path/rollback/concurrency and SQL filter consumer proofs. |
-| `samples/EventStorageDemo.Tests/AppendTests.cs` | New JSONB lifetime/fresh-context proof; adapt appender call sites and prove instance reuse for distinct stored row types. |
+| `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/StockIssueJourney.cs` | Exercise availability query before/after issue, preserving existing output lines. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.RequiredInlineState.cs` | New omission/tampering/save-path/rollback/concurrency and SQL filter consumer proofs. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs` | New JSONB lifetime/fresh-context proof; adapt appender call sites and prove instance reuse for distinct stored row types. |
 | `docs/plans/es1-bounded-event-append.md` | Link this exact revision scope; retain previous reviewed interfaces as history. |
 | `docs/plans/event-sourcing-capabilities.md`, `docs/plans/library-extraction.md`, `docs/design.md`, `docs/adr/0006-transactional-main-inline-state.md` | Update implementation status only after approval/verification. |
-| `docs/reports/es1-bounded-event-append.md`, `docs/development.md`, `samples/Wholesale/EventPersistenceDemo/README.md`, `samples/EventStorageDemo/README.md` | Record executable adoption, checks and limits separately from previous evidence. |
+| `docs/reports/es1-bounded-event-append.md`, `docs/development.md`, `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md`, `src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md` | Record executable adoption, checks and limits separately from previous evidence. |
 
 Finite seed adaptation is necessary: those helpers currently persist registered-family events
 without any main state and without explicit caller transactions. Preserve literal fixture bytes

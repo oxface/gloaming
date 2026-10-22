@@ -8,6 +8,9 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../../src/FoundryApplication.Host/FoundryApplication.Host.csproj" />
+    <!--#if (CatalogWorker)-->
+    <ProjectReference Include="../../src/FoundryApplication.CatalogWorker/FoundryApplication.CatalogWorker.csproj" />
+    <!--#endif-->
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

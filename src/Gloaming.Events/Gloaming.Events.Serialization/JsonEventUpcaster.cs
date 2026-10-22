@@ -5,6 +5,7 @@ namespace Gloaming.Events.Serialization;
 /// <summary>A consumer-owned forward schema transformation under one durable event name.</summary>
 public abstract class JsonEventUpcaster
 {
+    /// <summary>Declares one forward schema edge for a stable event alias; no payload transformation runs during construction.</summary>
     protected JsonEventUpcaster(string eventName, int fromSchemaVersion, int toSchemaVersion)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(eventName);
@@ -15,8 +16,13 @@ public abstract class JsonEventUpcaster
         ToSchemaVersion = toSchemaVersion;
     }
 
+    /// <summary>The durable event alias to which this forward transformation applies.</summary>
     public string EventName { get; }
+
+    /// <summary>The positive source payload schema version.</summary>
     public int FromSchemaVersion { get; }
+
+    /// <summary>The strictly later payload schema version produced by this transformation.</summary>
     public int ToSchemaVersion { get; }
 
     /// <summary>Explicitly permits compatible JSON to use a later schema's native defaults.</summary>

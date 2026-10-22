@@ -26,7 +26,7 @@ behavior and may fail or require an operator; durable state does not guarantee e
 
 The [D2.3 comparison](../../../docs/reports/d2-3-module-consistency-and-coordination.md) separates
 process state, delivery and transaction ownership. The
-[local reservation consumer](../../../samples/Wholesale/LocalWorkflowDemo/README.md) now demonstrates
+[local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md) now demonstrates
 broker-free delivery through public module intake Contracts using existing inbox/outbox seams.
 Its [proof report](../../../docs/reports/d2-3a-local-durable-module-delivery.md) records adoption
 and process-death evidence without adding a general transport or extending this package to arbitrary
@@ -151,6 +151,11 @@ explicit `[JsonRequired]` fields and consumer validation where missing fields wo
 become a valid-looking default. No payload/state upcasting or automatic definition migration is
 supplied. Incompatible persisted DefinitionVersion fails; deploy an explicit migration or retain
 compatible definitions before changing it.
+
+The [deployment guide](workflow-deployments.md) covers keeping a compatible definition, draining,
+retained completed rows, delayed replies and practical recovery. Its independent Earlier/Current
+executable consumer proves PostgreSQL continuity across actual process replacement; equal version
+numbers alone do not certify compatible bindings, JSON or business behavior.
 
 ## Errors and limits
 

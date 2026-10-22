@@ -13,6 +13,7 @@ public sealed class TenantContextAccessor
     private TenantContext? _context;
     private bool _disposed;
 
+    /// <inheritdoc />
     public TenantContext Current
     {
         get
@@ -28,6 +29,7 @@ public sealed class TenantContextAccessor
         }
     }
 
+    /// <inheritdoc />
     public void Initialize(TenantContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -43,6 +45,7 @@ public sealed class TenantContextAccessor
         }
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         lock (_gate)

@@ -1,0 +1,90 @@
+<Project>
+  <!-- Repository-only pack preparation; this task is not included in consumer packages. -->
+  <UsingTask
+    TaskName="RenderGloamingPackageReadme"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll"
+    Condition="'$(IsGloamingPackage)' == 'true'"
+  >
+    <ParameterGroup>
+      <SourceFile ParameterType="System.String" Required="true" />
+      <RepositoryRoot ParameterType="System.String" Required="true" />
+      <RepositoryUrl ParameterType="System.String" Required="true" />
+      <DestinationFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        try
+        {
+            string root = Path.GetFullPath(RepositoryRoot);
+            string rootPrefix = root.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            StringComparison comparison = Path.DirectorySeparatorChar == '\\'
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+            string source = Path.GetFullPath(SourceFile);
+            string rendered = Regex.Replace(
+                File.ReadAllText(source),
+                @"\]\(([^\s)]+)\)",
+                match =>
+                {
+                    string target = match.Groups[1].Value;
+                    if (Regex.IsMatch(target, @"^(?:[a-z][a-z0-9+.-]*:|#|//)", RegexOptions.IgnoreCase))
+                        return match.Value;
+
+                    int anchor = target.IndexOf('#');
+                    string path = anchor < 0 ? target : target.Substring(0, anchor);
+                    string fragment = anchor < 0 ? "" : target.Substring(anchor);
+                    path = Uri.UnescapeDataString(path).Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
+                    if (path.Length == 0 || Path.IsPathRooted(path))
+                        throw new InvalidOperationException("Unsupported README link: " + source + " -> " + target);
+
+                    string destination = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(source), path)).TrimEnd(Path.DirectorySeparatorChar);
+                    if (!destination.StartsWith(rootPrefix, comparison) && !string.Equals(destination, root, comparison))
+                        throw new InvalidOperationException("README link escapes repository: " + source + " -> " + target);
+
+                    if (!File.Exists(destination) && !Directory.Exists(destination))
+                        throw new InvalidOperationException("Broken README link: " + source + " -> " + target);
+
+                    string relative = string.Equals(destination, root, comparison) ? "" : destination.Substring(rootPrefix.Length);
+                    string encoded = string.Join("/", relative.Split(Path.DirectorySeparatorChar).Select(segment => Uri.EscapeDataString(segment)));
+                    return "](" + RepositoryUrl.TrimEnd('/') + "/blob/main/" + encoded + fragment + ")";
+                });
+            Directory.CreateDirectory(Path.GetDirectoryName(DestinationFile));
+            if (!File.Exists(DestinationFile) || File.ReadAllText(DestinationFile) != rendered)
+                File.WriteAllText(DestinationFile, rendered, new UTF8Encoding(false));
+        }
+        catch (Exception exception)
+        {
+            Log.LogErrorFromException(exception);
+            return false;
+        }
+      ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+  <!-- NuGet gathers Pack=true None items in this SDK target, including when packing without a build. -->
+  <Target
+    Name="PrepareGloamingPackageReadme"
+    BeforeTargets="_GetPackageFiles"
+    Condition="'$(IsGloamingPackage)' == 'true' and '$(IsPackable)' == 'true'"
+  >
+    <PropertyGroup>
+      <_GloamingPackageReadme>$(IntermediateOutputPath)package/README.md</_GloamingPackageReadme>
+    </PropertyGroup>
+    <RenderGloamingPackageReadme
+      SourceFile="$(PackageReadmeSource)"
+      RepositoryRoot="$(MSBuildThisFileDirectory).."
+      RepositoryUrl="$(RepositoryUrl)"
+      DestinationFile="$(_GloamingPackageReadme)"
+    />
+    <ItemGroup>
+      <None Include="$(_GloamingPackageReadme)" Pack="true" PackagePath="README.md" />
+    </ItemGroup>
+  </Target>
+</Project>

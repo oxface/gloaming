@@ -116,36 +116,36 @@ and passing protocol tests do not settle that interface concern.
 
 ### What the archived implementation actually does
 
-- [IssuePurchaseOrderHandler](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/IssuePurchaseOrder/IssuePurchaseOrderHandler.cs)
+- [IssuePurchaseOrderHandler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/IssuePurchaseOrder/IssuePurchaseOrderHandler.cs)
   opens a native transaction, loads an aggregate through the store with the command's expected
   version, calls Issue(), stages the aggregate, then explicitly saves and commits. Neither
   event arrays nor JSON envelopes appear in the business operation. The handler still supplies
   actor/Organization and a TimeProvider timestamp; reducing those append arguments would be
   a deliberate change from the archive, not a behavior inherited from it. Archived audit
   participation is excluded from this ES1 revision.
-- [PurchaseOrderAggregate](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderAggregate.cs)
+- [PurchaseOrderAggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderAggregate.cs)
   captures Id and ExpectedVersion on loading. Its methods invoke the module's decider, evolve
   the whole candidate, validate the final candidate, then update State, Version and Pending.
   A failed candidate is not accepted. Purchasing captures ExpectedVersion as a fixed value;
   Inventory derives it from Version minus pending count. A shared mechanism should capture
   the observed version once and use checked arithmetic before changing any accepted field.
-- [PurchaseOrderStore](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
+- [PurchaseOrderStore](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
   checks the stream against the command expectation and required write-state version. It
   constructs the aggregate from that state, encodes pending events, fills envelope positions
   and invokes explicit required inline participants. It is a concrete module-local store.
   The inspected snapshot contains no shared generic event store or generic aggregate base.
   A reusable typed store would be a new extraction of those repeated obligations.
-- [Inventory's aggregate](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
+- [Inventory's aggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
   makes the distinction between AcceptDecision and ApplyHistorical explicit. Historical
   application advances reconstructed state/version but never collects pending facts or runs
-  current candidate policy. Purchasing's [event reader](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs)
+  current candidate policy. Purchasing's [event reader](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs)
   instead folds its reducer directly and returns reconstructed state/version/time. Both
   loading paths are legitimate; sharing aggregate bookkeeping does not require replacing them.
-- [Purchasing's inline projector](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderInlineProjection.cs)
+- [Purchasing's inline projector](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderInlineProjection.cs)
   advances an aggregate-shaped write model and an independently reduced summary. The aggregate
   candidate cannot become the mutable baseline of both projectors. Required-view selection,
   reduction and native staging remain explicit consumer responsibilities.
-- [Purchasing's existing persistence tests](../../archive/proof-sample/tests/PersistenceTests/PurchaseOrderPersistenceTests.cs)
+- [Purchasing's existing persistence tests](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/PersistenceTests/PurchaseOrderPersistenceTests.cs)
   include literal historical facts above current command limits, editing without event SELECT,
   competing writers, participant faults and clock regression. These are inspected historical
   tests, not new results for a revised interface. The archive's handler Clear() recovery and
@@ -527,11 +527,11 @@ or removed. This is the additional revision scope, preserving unrelated staged/u
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs`, `StockPositionDecisions.cs`; `samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs`, `PurchaseOrderDecisions.cs` | Commands delegate persistence to module stores and business operations to aggregates; retain or adapt existing pure decision rules. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionEvolution.cs`; `samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderEvolution.cs` | Rename the pure batch Apply method to Evolve for consistency; reuse it from aggregate candidate calculation and the existing Rehydrate method. Preserve historical meaning and the existing batch implementation. |
 | `samples/Wholesale/modules/Inventory/Inventory/InventoryRegistration.cs`, `Inventory.csproj`; `samples/Wholesale/modules/Purchasing/Purchasing/PurchasingRegistration.cs`, `Purchasing.csproj` | Register module stores/default clock and explicitly reference the core. Native context lifetimes stay unchanged. |
-| `samples/EventStorageDemo/CounterAggregate.cs`, `CounterStore.cs`, `CounterEventRecordAdapter.cs`, `CounterEvents.cs` (new) | Typed counter decisions/pending facts; local history loading and direct JSON encoding in persistence. |
-| `samples/EventStorageDemo/CounterCommands.cs`, `CounterAppendJourney.cs`, `CounterClock.cs` (new), `EventStorageDemo.csproj`, `README.md` | Remove timestamp parameters, use configured store/clock and reference the core. Retain committed output/history policy and original DemoJourneys. |
-| `samples/Wholesale/EventPersistenceDemo/DemoComposition.cs`, `AppendJourneys.cs`, `StockIssueJourney.cs`, `README.md`; `DemoClock.cs` (new) | Configure demo clock and invoke simplified Contracts; preserve original stream IDs, fixtures and all ten expected output lines. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.cs`, `AppendTests.InlineViews.cs`, `AppendTests.StateDependent.cs`; `TestClock.cs` (new) | Control clock in operation setup; retain all PostgreSQL assertions and state-dependent command proofs, adding aggregate/store lifecycle cases where needed. |
-| `samples/EventStorageDemo.Tests/AppendTests.cs`; `CounterClock.cs` (new) | Replace static-Prepare test calls with real typed adapters/aggregates. Preserve supported rollback/ownership/concurrency/payload-lifetime assertions; generate identity assertions rather than submit now-unowned envelope IDs. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterAggregate.cs`, `CounterStore.cs`, `CounterEventRecordAdapter.cs`, `CounterEvents.cs` (new) | Typed counter decisions/pending facts; local history loading and direct JSON encoding in persistence. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterCommands.cs`, `CounterAppendJourney.cs`, `CounterClock.cs` (new), `EventStorageDemo.csproj`, `README.md` | Remove timestamp parameters, use configured store/clock and reference the core. Retain committed output/history policy and original DemoJourneys. |
+| `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/DemoComposition.cs`, `AppendJourneys.cs`, `StockIssueJourney.cs`, `README.md`; `DemoClock.cs` (new) | Configure demo clock and invoke simplified Contracts; preserve original stream IDs, fixtures and all ten expected output lines. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs`, `AppendTests.InlineViews.cs`, `AppendTests.StateDependent.cs`; `TestClock.cs` (new) | Control clock in operation setup; retain all PostgreSQL assertions and state-dependent command proofs, adding aggregate/store lifecycle cases where needed. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs`; `CounterClock.cs` (new) | Replace static-Prepare test calls with real typed adapters/aggregates. Preserve supported rollback/ownership/concurrency/payload-lifetime assertions; generate identity assertions rather than submit now-unowned envelope IDs. |
 | `src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj`, `AggregateTests.cs` (new) | Pure core-interface proofs: whole-candidate failure, later event/null/overflow faults, ordered multiple decisions, immutable captured version, empty decisions/read-only pending and historic initialization without current policy. |
 | `tests/ArchitectureTests/ArchitectureTests.csproj`, `AdoptionDependencyTests.cs`, `AssemblyDependencyTests.cs`, `SampleModuleBoundaryTests.cs` | Prove package-free core, exact EF-to-core dependency and retained independent adoption/no business dependencies. |
 | `ModulithFoundry.slnx`, `.github/workflows/ci.yml` | Add core/test projects and core tests to the existing active context CI lane. Preserve archive lanes and current PostgreSQL coverage. |
@@ -573,13 +573,13 @@ executions; no runtime guarantee follows from the document review alone.
 
 ### Reference inspection and implementation choices
 
-The archived [Inventory store](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
+The archived [Inventory store](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
 checks a write-gate transaction, validates view/header versions, stages stream advancement,
 serializes pending facts into positions and invokes its projector. The archived
-[aggregate](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
+[aggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
 evolves and validates a complete candidate before retaining uncommitted facts; historical
 evolution does not collect new pending events. The archived
-[Purchasing store](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
+[Purchasing store](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
 uses the same append shape, but treats an empty pending batch as a no-op and classifies
 concurrency more broadly. These are inspected historical source, not ES1 test results.
 
@@ -624,7 +624,7 @@ creation/advancement and Attach/AddRange. Purchasing then stages two required vi
 Inventory stages one. Their projectors already load untracked version/timestamp-checked
 state, so no new reader or projector contract is needed.
 
-The standalone [storage journey](../../samples/EventStorageDemo/DemoJourneys.cs) currently
+The standalone [storage journey](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs) currently
 authors finite rows and demonstrates native transactions/mapping, not accepted-batch append.
 Its tenant-free rows and customized tables already exercise independent storage adoption.
 Its existing counter prefix provides the consumer loading/reconstruction recipe to reuse.
@@ -851,13 +851,13 @@ will be additive and identified separately in the final report.
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionDecisions.cs` | Add whole-batch state-dependent issue eligibility and checked requested total, with rejection before accepted facts. |
 | `samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionEvents.cs`, `StockPositionCodec.cs`, `StockPositionEvolution.cs` | Add issued v1 fact/registration and deterministic subtraction; retain existing schemas and reducer behavior. |
 | `samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs` | Adopt the same append interface for drafts/lines; retain detached complete candidate and independently prepared summary, existing loading and error behavior. |
-| `samples/Wholesale/EventPersistenceDemo/StockIssueJourney.cs` (new), `Program.cs` | Executable separate issue stream journey, state-dependent accept/reject and fresh committed read; call after existing journeys. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.StateDependent.cs` (new) | Contract-driven issue proofs: independently expected batch/state, rejection, stale/ahead/damaged observations, competing state-dependent writers, rollback and fresh recovery, tenant isolation and live replay. Reuse existing fixture/helpers. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs` | Extend child-process expected output for the additional journey while retaining existing nine expectations. |
-| `samples/EventStorageDemo/CounterCommands.cs`, `CounterAppendJourney.cs` (new), `Program.cs` | Independent bounded counter loading/decision/append and separate explicit transaction journey. Preserve existing DemoData/DemoJourneys. |
-| `samples/EventStorageDemo.Tests/AppendTests.cs` (new) | Public API and counter proofs on PostgreSQL, including no required views/tenancy, prefix consistency, rejection, competing creation/append, preparation faults, transaction/repeated-call restrictions, rollback and fresh recovery. |
-| `samples/EventStorageDemo.Tests/StorageTests.cs` | Preserve existing storage assertions; extend executable output/row counts for the added command stream. |
-| `samples/Wholesale/modules/README.md`, `samples/Wholesale/EventPersistenceDemo/README.md`, `samples/EventStorageDemo/README.md` | Record module rule ownership, invocation, independently expected output and technical versus consumer obligations. |
+| `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/StockIssueJourney.cs` (new), `Program.cs` | Executable separate issue stream journey, state-dependent accept/reject and fresh committed read; call after existing journeys. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.StateDependent.cs` (new) | Contract-driven issue proofs: independently expected batch/state, rejection, stale/ahead/damaged observations, competing state-dependent writers, rollback and fresh recovery, tenant isolation and live replay. Reuse existing fixture/helpers. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs` | Extend child-process expected output for the additional journey while retaining existing nine expectations. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterCommands.cs`, `CounterAppendJourney.cs` (new), `Program.cs` | Independent bounded counter loading/decision/append and separate explicit transaction journey. Preserve existing DemoData/DemoJourneys. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs` (new) | Public API and counter proofs on PostgreSQL, including no required views/tenancy, prefix consistency, rejection, competing creation/append, preparation faults, transaction/repeated-call restrictions, rollback and fresh recovery. |
+| `src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/StorageTests.cs` | Preserve existing storage assertions; extend executable output/row counts for the added command stream. |
+| `samples/Wholesale/modules/README.md`, `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md`, `src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md` | Record module rule ownership, invocation, independently expected output and technical versus consumer obligations. |
 | `docs/plans/es1-bounded-event-append.md` | This concrete proposal, then record owner review and implemented deviations/results. |
 | `docs/plans/library-extraction.md`, `docs/design.md`, `docs/development.md`, `README.md` | Add reviewed capability/status/invocations without replacing current checkpoint and T1 notes. No architecture choice is recorded as accepted before review. |
 | `docs/reports/es1-bounded-event-append.md` (new) | Slice outcome, implementation leverage, library/template/sample findings, exact new executions, historical evidence and limits. |

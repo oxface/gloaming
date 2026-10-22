@@ -110,13 +110,13 @@ Review [Sales Contracts](../../samples/Wholesale/modules/Sales/Sales.Contracts/I
 [profile results](../../samples/Wholesale/modules/Sales/Sales.Contracts/CustomerProfile.cs),
 [transaction implementation](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs),
 [model](../../samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs),
-[actor binding](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/ActorAntiforgeryData.cs),
-[filter](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/ValidateAntiforgeryFilter.cs),
-[endpoints](../../samples/Wholesale/HttpIdentityDemo/Endpoints/CustomerProfileEndpoints.cs),
-[composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-[finite setup](../../samples/Wholesale/HttpIdentityDemo/DemoSetup.cs),
-[mutation proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/ProfileTests.cs) and
-[persistence proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/ProfilePersistenceTests.cs).
+[actor binding](../../samples/Wholesale/Api/HttpIntegration/ActorAntiforgeryData.cs),
+[filter](../../samples/Wholesale/Api/HttpIntegration/ValidateAntiforgeryFilter.cs),
+[endpoints](../../samples/Wholesale/Api/Endpoints/CustomerProfileEndpoints.cs),
+[composition](../../samples/Wholesale/Api/DemoComposition.cs),
+[finite setup](../../samples/Wholesale/Api/DemoSetup.cs),
+[mutation proofs](../../samples/Wholesale/IntegrationTests/Api/ProfileTests.cs) and
+[persistence proofs](../../samples/Wholesale/IntegrationTests/Api/ProfilePersistenceTests.cs).
 
 Failed contexts are discarded, without retry/rebase. General lost-response cancellation
 cannot prove noncommit; no durable receipt/idempotency mechanism exists. Revocation remains

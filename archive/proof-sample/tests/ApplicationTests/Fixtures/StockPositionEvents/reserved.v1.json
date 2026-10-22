@@ -1,9 +1,0 @@
-{
-  "eventName": "inventory.stock-position.reserved",
-  "schemaVersion": 1,
-  "payload": {
-    "reservationId": "33333333-3333-3333-3333-333333333333",
-    "operationId": "44444444-4444-4444-4444-444444444444",
-    "quantity": 4
-  }
-}

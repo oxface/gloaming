@@ -1,10 +1,10 @@
 # D2.1b: Gloaming.Domain promotion
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
-Historical record: the owner subsequently authorized [EF1.1](../reports/ef1-1-capability-composition.md)
+Historical record: the owner subsequently authorized [EF1.1](ef1-1-capability-composition.md)
 common capability composition and clear-before-handling dispatch. That implementation supersedes
 retained sessions, Stage, owned transactions and completion enforcement described below. Source
 links now lead to replacements; test counts below remain dated evidence.
@@ -102,12 +102,12 @@ Podman/Testcontainers setup. No checks were disabled to obtain these results.
   [EF setup](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md) and the
   [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md) document current consumer
   guarantees, options and obligations beside the packages.
-- [DirectOrders](../../samples/EventReactionsDemo/Consumer/DirectOrders.cs) and
-  [MappedQuotes](../../samples/EventReactionsDemo/Consumer/MappedQuotes.cs) consume the actual
+- [DirectOrders](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs) and
+  [MappedQuotes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs) consume the actual
   library namespaces. Their native migrations and finite business outcomes are unchanged.
 - [Core proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs),
-  [database proofs](../../samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs),
-  [fault proofs](../../samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs) and
+  [database proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs),
+  [fault proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs) and
   [boundary proofs](../../tests/ArchitectureTests/EventReactionBoundaryTests.cs) establish the
   current evidence and supported limits.
 

@@ -87,7 +87,7 @@ Worker and message operations continue using their own core initialization direc
 
 ## Consumer and evidence
 
-[HttpIdentityDemo](../../../samples/Wholesale/HttpIdentityDemo/README.md) demonstrates editable
+[HttpIdentityDemo](../../../samples/Wholesale/Api/README.md) demonstrates editable
 native cookie/OIDC configuration, explicit directory mapping and a consumer-owned 403 response.
 E3.2 extends that consumer with an optional, independent tenancy adapter and Organization
 catalog reads; actor-only adoption remains exercised by the standalone suite.

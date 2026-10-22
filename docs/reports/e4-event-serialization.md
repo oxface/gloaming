@@ -71,7 +71,7 @@ choice with the factory itself.
 
 The two Inventory files are byte-for-byte copies of retained fixtures. Purchasing literals
 are newly authored from the archived payload contract, not claimed as retained historical
-files. [Provenance](../../samples/Wholesale/EventCodecDemo/Fixtures/README.md) records the
+files. [Provenance](../../src/Gloaming.Events/samples/EventCodecDemo/Fixtures/README.md) records the
 distinction. Active builds/runtime use local copies without archive references.
 
 The two internal example families live in the standalone consumer pending E5 module
@@ -129,10 +129,10 @@ and [failure enum](../../src/Gloaming.Events/Gloaming.Events.Serialization/Event
 The [library guide](../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md) describes
 the consumer obligations.
 
-Review the actual [Inventory recipe](../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionExample.cs)
-and [Purchasing recipe](../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
+Review the actual [Inventory recipe](../../src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionExample.cs)
+and [Purchasing recipe](../../src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
 with [library proofs](../../src/Gloaming.Events/tests/EventSerializationTests/CodecTests.cs) and
-[consumer proofs](../../samples/Wholesale/EventCodecDemo.Tests/CompatibilityTests.cs).
+[consumer proofs](../../src/Gloaming.Events/samples/EventCodecDemo.Tests/CompatibilityTests.cs).
 The [architecture changes](../../tests/ArchitectureTests/AssemblyDependencyTests.cs),
 [CI](../../.github/workflows/ci.yml) and [hooks](../../lefthook.yml) accompany the capability.
 Checkpoint-document updates record E3.7's already approved commit; they introduce no new

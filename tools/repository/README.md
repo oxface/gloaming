@@ -6,8 +6,8 @@ Requires Node.js 24; CI pins 24.21.0. Install the existing locked commit/hook to
 npm ci --prefix tools/repository --ignore-scripts
 ```
 
-Commitlint uses `commitlint.config.mjs`; the existing archive verifier remains Python and
-checks the frozen original manifest.
+Commitlint uses `commitlint.config.mjs`. The retired archive/checksum tooling remains available
+through the [immutable provenance record](../../docs/reports/s1-archive-retirement.md).
 
 Commit messages follow Conventional Commits: a recognized lowercase type, optional
 scope and nonempty subject. Subject capitalization is unrestricted, so both
@@ -28,9 +28,8 @@ Shared build/project/CI inputs and paths outside mapped roots request full cover
 Manual dispatch also requests full coverage. Detection failures fail required Repository
 integrity. Changes inside mapped roots follow their explicit filters.
 
-Markdown is documentation, including family-local docs and sample READMEs. Archive-only
-changes require checksum validation but never schedule archived tests. Repository integrity
-always runs commitlint and archive verification. Its .NET checks run for relevant code/build
+Markdown is documentation, including family-local docs and sample READMEs. Repository integrity
+always runs commitlint. Its .NET checks run for relevant code/build
 changes. Update the path map when project dependencies, linked fixtures, new consumers or
 template source snapshots change; dependency discovery is deliberately manual. Wholesale
 runtime retains sample/shared-input

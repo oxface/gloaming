@@ -7,6 +7,7 @@ public sealed class ActorContextMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
 
+    /// <summary>Completes actor context on requests not already initialized by native policy evaluation, then invokes the next middleware.</summary>
     public async Task InvokeAsync(
         HttpContext context,
         IHttpActorContextResolver resolver,

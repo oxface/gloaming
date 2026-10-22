@@ -167,8 +167,8 @@ not results for the simplified current implementation.
 Reproduction uses the repository's native commands. Local resource limits require
 `DOTNET_PROCESSOR_COUNT=2`; the solution build used `--disable-build-servers -m:1 --no-restore`.
 Test projects are `src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj`,
-`samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj`,
-`samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj` and
+`samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`,
+`samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj` and
 `tests/ArchitectureTests/ArchitectureTests.csproj`. Run `dotnet test --project <path>` with
 the existing native no-progress/output flags. After a successful build, `--no-build --no-restore`
 avoids concurrent compilation; the refinement suites used the completed solution build. Logs are summarized here rather
@@ -228,9 +228,9 @@ mechanism is proven by this slice.
   their module registrations/DbContexts, StockIssueMessages, the finite InboxJourney and two
   new forward audit migrations/snapshots.
 - [Independent proofs](../../src/Gloaming.Auditing/tests/AuditPostgresTests/TransactionTests.cs),
-  [Sales proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/ProfileAuditTests.cs) and
-  [Inventory proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs)
-  and [outbox retry proof](../../samples/Wholesale/EventPersistenceDemo.Tests/OutboxDispatchTests.cs).
+  [Sales proofs](../../samples/Wholesale/IntegrationTests/Api/ProfileAuditTests.cs) and
+  [Inventory proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/InboxDispatchTests.cs)
+  and [outbox retry proof](../../samples/Wholesale/IntegrationTests/EventPersistence/OutboxDispatchTests.cs).
   Two supporting older Sales migration assertions now compare all declared migrations.
 - [Library-local contract](../../src/Gloaming.Auditing/docs/transactional-audit.md),
   [reviewed scope](../plans/e9-explicit-transactional-audit.md) and

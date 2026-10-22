@@ -1,10 +1,10 @@
 # D2.1d: module-owned composition and EF interception
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
-Historical record: the owner subsequently authorized [EF1.1](../reports/ef1-1-capability-composition.md)
+Historical record: the owner subsequently authorized [EF1.1](ef1-1-capability-composition.md)
 common capability composition and clear-before-handling dispatch. That implementation supersedes
 retained sessions, Stage, owned transactions and completion enforcement described below. Source
 links now lead to replacements; test counts below remain dated evidence.
@@ -110,12 +110,12 @@ No staging, unstaging, commit or push was performed.
   [registration](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionServiceCollectionExtensions.cs)
   and [session lifecycle](../../src/Gloaming.EventReactions/Gloaming.EventReactions/EventReactionDispatcher.cs): public surface,
   transaction ownership, busy/failure state and event acknowledgment.
-- [Direct module registration](../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-  [mapped module registration](../../samples/EventReactionsDemo/Consumer/MappedQuotesRegistration.cs),
-  [typed reactions](../../samples/EventReactionsDemo/Consumer/DirectOrderReactions.cs) and
-  [mapped commands](../../samples/EventReactionsDemo/Consumer/MappedQuoteCommands.cs): consumer ownership.
+- [Direct module registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+  [mapped module registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotesRegistration.cs),
+  [typed reactions](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrderReactions.cs) and
+  [mapped commands](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuoteCommands.cs): consumer ownership.
 - [Sales context](../../samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs): existing validation order.
-- [Native failure proofs](../../samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs),
+- [Native failure proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs),
   [core lifecycle proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs) and
   [current package contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md).
 

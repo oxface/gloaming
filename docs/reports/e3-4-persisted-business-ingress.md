@@ -73,7 +73,7 @@ admission/initialization still reads Alpha's database row.
 
 ## Compatibility and explicit setup
 
-The [retained SQL fixture](../../samples/Wholesale/HttpIdentityDemo.Tests/Fixtures/README.md)
+The [retained SQL fixture](../../samples/Wholesale/IntegrationTests/Api/Fixtures/README.md)
 was generated with native EF 10.0.12 from the checkpointed `20a02be` binary before relocation.
 Its migration/history are applied to a fresh database before adding independent existing
 user, external identity, Organization and membership witnesses. The relocated Access module
@@ -136,12 +136,12 @@ universal runtime enforcement.
   [DbContext](../../samples/Wholesale/modules/Inventory/Inventory/InventoryDbContext.cs),
   [initial migration](../../samples/Wholesale/modules/Inventory/Inventory/Migrations/20261005214919_InitialInventory.cs)
   and staging/configuration helpers.
-- [Host composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-  [business endpoints](../../samples/Wholesale/HttpIdentityDemo/Endpoints/OrganizationEndpoints.cs),
-  [HTTP admission bridge](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs)
-  and [explicit setup](../../samples/Wholesale/HttpIdentityDemo/DemoSetup.cs).
-- [Catalog/integration proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/CatalogTests.cs),
-  [setup proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/PersistenceTests.cs),
+- [Host composition](../../samples/Wholesale/Api/DemoComposition.cs),
+  [business endpoints](../../samples/Wholesale/Api/Endpoints/OrganizationEndpoints.cs),
+  [HTTP admission bridge](../../samples/Wholesale/Api/HttpIntegration/OrganizationTenantResolver.cs)
+  and [explicit setup](../../samples/Wholesale/Api/DemoSetup.cs).
+- [Catalog/integration proofs](../../samples/Wholesale/IntegrationTests/Api/CatalogTests.cs),
+  [setup proofs](../../samples/Wholesale/IntegrationTests/Api/PersistenceTests.cs),
   retained SQL baseline and [module rules](../../tests/ArchitectureTests/SampleModuleBoundaryTests.cs).
 
 Setup supports fresh disposable demonstration databases, not repeat reconciliation or atomic

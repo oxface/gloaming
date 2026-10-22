@@ -14,6 +14,7 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
     private readonly TDbContext database;
     private readonly IMessagePublisher publisher;
     private readonly OutboxDispatchOptions options;
+    private readonly string[]? routeKeys;
     private readonly string table;
     private readonly PostgresOutboxStorage storage;
     private readonly IOutboxFailurePolicy<TDbContext>? failurePolicy;
@@ -36,7 +37,8 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
         ArgumentNullException.ThrowIfNull(publisher);
         ArgumentNullException.ThrowIfNull(options);
 
-        ValidateOptions(options);
+        routeKeys = options.RouteKeys?.ToArray();
+        ValidateOptions(options with { RouteKeys = routeKeys });
         storage = new(database);
         this.database = database;
         this.publisher = publisher;
@@ -148,6 +150,15 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
                 nameof(options),
                 "Use a positive lease duration and nonnegative retry delay."
             );
+
+        if (
+            options.RouteKeys is { } routes
+            && (routes.Count == 0 || routes.Any(string.IsNullOrWhiteSpace))
+        )
+            throw new ArgumentException(
+                "Route selection must contain only nonblank keys, or be null for all routes.",
+                nameof(options)
+            );
     }
 
     internal static void ValidateModel(DbContext database) =>
@@ -166,6 +177,7 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
                 SELECT message_id FROM {table}
                 WHERE dispatched_at IS NULL AND dead_lettered_at IS NULL AND available_at <= clock_timestamp()
                   AND (lease_until IS NULL OR lease_until <= clock_timestamp())
+                  {(routeKeys is null ? "" : "AND destination COLLATE \"C\" = ANY(@routeKeys)")}
                 ORDER BY available_at, queued_at, message_id
                 FOR UPDATE SKIP LOCKED LIMIT 1
             )
@@ -180,6 +192,9 @@ public sealed partial class PostgresOutboxDispatcher<TDbContext> : IOutboxDispat
         Guid token = Guid.NewGuid();
         PostgresOutboxStorage.Parameter(command, "token", token);
         PostgresOutboxStorage.Parameter(command, "duration", options.LeaseDuration);
+        if (routeKeys is not null)
+            PostgresOutboxStorage.Parameter(command, "routeKeys", routeKeys);
+
         Claim? claim = null;
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
         {

@@ -4,6 +4,20 @@ Sales owns customer profiles, drafts, customer allowances and its durable stock 
 Business Contracts contain ordinary intent/result/query types. Native module persistence,
 grants, business rules and transactions remain consumer-owned.
 
+## Public delivery directory
+
+`AddCustomerProfiles` also registers `ICustomerDeliveryDirectory` and durable source publication.
+Actual profile edits now atomically enqueue `sales.customer-delivery-state` on the fixed
+`dispatch.customer-directory` route. Compose that route in any Sales outbox publisher alongside
+other selected workflows. `RegisterAsync` creates a real profile/address; `SetListedAsync`
+withdraws or relists its public state. Both require a trusted human and selected Organization.
+
+The profile version explicitly orders this complete public directory state. Historical profiles
+are listed by the migration; source tombstones and immutable keys are retained permanently.
+The [Dispatch guide](../Dispatch/README.md) defines disclosure, population, eventual readiness,
+writer participation and unsupported deletion/ID-reuse policies. The
+[composition](../../Worker/Directory/README.md) demonstrates separate source/receiver databases.
+
 ## Private draft access
 
 Register `AddSalesDatabase`, `AddDraftOrderQueries` and/or `AddDraftOrderCommands` with trusted
@@ -44,7 +58,7 @@ Privileged/raw/bulk writes and code bypassing these Contracts can bypass busines
 Draft visibility governs the lines/customer display fields returned here; independently
 protected fields need their own selected capability and proof.
 
-The separate [opt-in PostgreSQL RLS consumer](../../CqrsDemo/TenantIsolation/README.md)
+The separate [opt-in PostgreSQL RLS consumer](../../IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 adds database tenant equality on five Sales tables under restricted credentials and explicit
 transaction-local setup. It proves reads/existing-draft edits; ordinary module registration,
 default HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
@@ -56,7 +70,7 @@ replaces the executable's private setup helper with an optional Tenancy/PostgreS
 Sales module registration and permission semantics remain unchanged; the executable owns
 that adapter reference and calls it explicitly inside each native transaction.
 
-The separate [Sales HTTP RLS composition](../../HttpIdentityDemo/README.md#optional-sales-http-row-security)
+The separate [Sales HTTP RLS composition](../../Api/README.md#optional-sales-http-row-security)
 now calls `AddSalesDatabase(connection, useRowSecurity: true)`. A stateless native EF model
 customizer selects six existing ownership mappings with `.WithRls`, including profile audit;
 EF caches this model separately from ordinary Sales options. No relational table/column or
@@ -66,7 +80,7 @@ authorization checks. Its finite host installer supplies reviewed policies and r
 credentials; it does not enable grant administration, draft creation/submission, transport
 or workflow rights. The normal registration remains filter/save-validation based.
 
-The separate [WF2 reply processor](../../WorkflowDemo/sales-inbox-rls.md) uses
+The separate [WF2 reply processor](../../Worker/Broker/sales-inbox-rls.md) uses
 `AddSalesReservationReplyDatabase` and `AddAdmittedStockReservationReplies` with a host-established
 immutable Organization/system-actor scope. The inbox processor still owns its native transaction,
 saves and commit. A different stateless model selects workflow/inbox RLS and keeps named ownership
@@ -77,9 +91,9 @@ This consumer profile adds no Gloaming interface, schema migration or general wo
 
 ## Executable usage and evidence
 
-- [HTTP identity/admission consumer](../../HttpIdentityDemo/README.md#private-draft-permissions)
+- [HTTP identity/admission consumer](../../Api/README.md#private-draft-permissions)
   composes late native resource checks, queries and antiforgery-protected versioned edits.
-- [CQRS consumer](../../CqrsDemo/README.md) creates and reads drafts using the creator's grants;
+- [CQRS consumer](../../IntegrationTests/Scenarios/Cqrs/README.md) creates and reads drafts using the creator's grants;
   its PostgreSQL cases exercise complete permitted selection and native snapshot timing.
 - [A2.1 scope](../../../../docs/plans/a2-1-sales-resource-permissions.md) and
   [implementation report](../../../../docs/reports/a2-1-sales-resource-permissions.md) record

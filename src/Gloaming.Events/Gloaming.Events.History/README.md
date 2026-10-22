@@ -22,8 +22,8 @@ var state = MyDomain.Rehydrate(events);
 The validator receives only positions/timestamps. It has no payload generic, event base
 class, retained collection, selector, decoder or domain reducer. Native EF filtering,
 ordering and materialization belong to the consumer before this call. See the executable
-[Inventory](../../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
-and [Purchasing](../../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
+[Inventory](../samples/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
+and [Purchasing](../samples/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
 recipes; their current queries operate on fixture rows, not PostgreSQL.
 
 ## Contract and failures

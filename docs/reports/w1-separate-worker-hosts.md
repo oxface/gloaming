@@ -11,8 +11,8 @@ The executions and results below remain historical W1 evidence.
 ## Outcome and scope
 
 The existing Messaging APIs run outside an API without a new worker library or coordination
-protocol. [The producer](../../samples/MessagingProducerDemo/Program.cs) registers Exports-only
-enqueue and native command transactions. [The worker entry point](../../samples/MessagingWorkerDemo/Program.cs)
+protocol. [The producer](../../src/Gloaming.Messaging/samples/MessagingProducerDemo/Program.cs) registers Exports-only
+enqueue and native command transactions. [The worker entry point](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs)
 selects finite setup, outbox dispatch, RabbitMQ intake or inbox processing. The three worker
 roles run in separate processes and receive only their respective module/transport settings.
 Processing does not need broker or producer configuration. The existing finite demos remain.
@@ -44,7 +44,7 @@ library leases, row locks, fresh scopes and operation contracts removed the need
 
 ## New process evidence
 
-[WorkerProcessTests](../../samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) starts the
+[WorkerProcessTests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/WorkerProcessTests.cs) starts the
 built producer/worker executables as actual child processes against PostgreSQL **18.6** and
 RabbitMQ **4.3.6** via the existing Testcontainers fixtures. Each test gets fresh module
 databases and a private queue. No external/personal runtime is required.
@@ -58,7 +58,7 @@ databases and a private queue. No external/personal runtime is required.
 | Graceful in-flight stopping | Hold that same uncommitted insert, send SIGTERM and keep the barrier closed. Native cancellation exits successfully and rolls back. A fresh process handles the delivery after release. |
 | Confirmed publication death | Block database completion after broker confirmation, then terminate the dispatcher. Retained intake/local processing succeeds; outbox completion rolls back, leaving its committed claim. Observe actual database-clock lease expiry and start a replacement. It republishes the same MessageId; intake returns AlreadyReceived, with one retained delivery and one job, and the second claim completes. |
 
-[DatabaseBarrier](../../samples/MessagingWorkerDemo.Tests/DatabaseBarrier.cs) uses test-only
+[DatabaseBarrier](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/DatabaseBarrier.cs) uses test-only
 triggers in disposable databases: AFTER INSERT for uncommitted jobs and BEFORE UPDATE for
 outbox completion. `pg_locks`/`pg_stat_activity` establish in-flight work. These are not
 consumer migrations, product fault switches or arbitrarily timed kill/sleep tests. Fresh
@@ -76,13 +76,13 @@ throughput guarantees. This is distinct from historical O1/I1 connection-loss/co
 Reproduce all six with:
 
 ```bash
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj
 ```
 
 The focused final invocation was:
 
 ```bash
-dotnet samples/MessagingWorkerDemo.Tests/bin/Debug/net10.0/MessagingWorkerDemo.Tests.dll \
+dotnet src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/bin/Debug/net10.0/MessagingWorkerDemo.Tests.dll \
   -noColor -reporter verbose -method '*KilledProcessor*' \
   -method '*CompetingProcessing*' -method '*GracefulStop*'
 ```
@@ -118,7 +118,7 @@ The complete active solution build includes their projects. No hosted CI run is 
 
 - Producer and worker directories: executable composition and sample transport/lifecycle policy.
 - Worker test directory: six actual-process proofs, bounded child lifecycle and SQL barriers.
-- `samples/OutboxDemo/ExportDbContext.cs`: existing configuration shared with the new host.
+- `src/Gloaming.Messaging/samples/OutboxDemo/ExportDbContext.cs`: existing configuration shared with the new host.
 - Architecture tests/solution: three new projects and module/host independence checks.
 - CI family command/path map: process suite belongs to Messaging; future edits to these
   sample roots do not select unrelated sample runtime. This PR's project/CI metadata changes

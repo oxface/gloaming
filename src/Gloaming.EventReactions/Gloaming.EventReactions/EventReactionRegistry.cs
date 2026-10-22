@@ -1,10 +1,12 @@
 namespace Gloaming.EventReactions;
 
+/// <summary>Explicit exact-type reaction bindings, frozen when used by a dispatcher.</summary>
 public sealed class EventReactionRegistry<TModule>
 {
     private readonly Dictionary<Type, List<Handler>> _handlers = [];
     private bool _frozen;
 
+    /// <summary>Adds an exact-type reaction in registration order before the registry is frozen.</summary>
     public void Add<TEvent>(IEventReaction<TEvent> handler)
         where TEvent : notnull
     {

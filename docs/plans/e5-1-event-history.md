@@ -7,8 +7,8 @@ Status: the owner reviewed and approved the selected-range revision and its comp
 ## Approved revision and extraction case
 
 Keep the repeated integrity checks seen in the archived
-[Inventory reader](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionEventReader.cs)
-and [Purchasing reader](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs).
+[Inventory reader](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionEventReader.cs)
+and [Purchasing reader](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs).
 Replace the complete in-memory history/snapshot/selection object with a small metadata
 range validator. Ordinary persistence reads should select their range through native EF
 queries before materialization, validation, decoding and consumer-owned hydration.

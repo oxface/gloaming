@@ -4,13 +4,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Gloaming.EventReactions.EntityFrameworkCore;
 
+/// <summary>Context-typed dependency registration and model selection for local reaction save composition.</summary>
 public static class EventReactionServiceCollectionExtensions
 {
     private const string CapabilityKey = "event-reactions";
 
+    /// <summary>Marks this native model as requiring explicitly registered local-reaction save composition.</summary>
     public static ModelBuilder ConfigureEventReactions(this ModelBuilder model) =>
         model.RequireGloamingCapability(CapabilityKey);
 
+    /// <summary>Registers scoped reactions and explicit sources for one typed context/module save integration.</summary>
     public static IServiceCollection AddEventReactions<TContext, TModule>(
         this IServiceCollection services,
         Action<EventReactionRegistration<TContext, TModule>> configure

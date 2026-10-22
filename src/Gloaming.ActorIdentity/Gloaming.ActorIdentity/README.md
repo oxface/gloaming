@@ -47,7 +47,7 @@ optional attribution and authorization; there is no implicit initiator populatio
 propagation. For OIDC, the sample will map validated issuer/subject to a globally unique
 application user in consumer-owned Access code. The core performs no provider lookup.
 
-See [actor-only and combined sample composition](../../../samples/Wholesale/ContextDemo/README.md),
+See [actor-only and combined sample composition](../../Gloaming.Tenancy/samples/ContextDemo/README.md),
 [the split interfaces for review](../../../docs/plans/e1-tenant-actor.md) and
 [the split report](../../../docs/reports/e1-identity-split.md). Optional
 [ASP.NET Core integration](../Gloaming.ActorIdentity.AspNetCore/README.md) and its native

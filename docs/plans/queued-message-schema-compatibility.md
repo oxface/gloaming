@@ -62,7 +62,7 @@ The finite MessagingDemo adds --schema-compatibility alongside its existing defa
 ```bash
 # Use the existing MESSAGING_DEMO_SENDER_CONNECTION_STRING,
 # MESSAGING_DEMO_RECEIVER_CONNECTION_STRING and MESSAGING_DEMO_RABBITMQ settings.
-dotnet run --project samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
+dotnet run --project src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
 ```
 
 Use disposable sender/receiver databases. The journey explicitly sets up storage, retains v1
@@ -135,13 +135,13 @@ mode or claim certification of arbitrary rolling deployments.
 
 | Files | Change |
 | --- | --- |
-| samples/OutboxDemo/ExportRequestCommands.cs | Add V2 DTO and explicit optional writer-schema selection; preserve existing V1 callers. |
-| samples/OutboxDemo/HttpCommandPublisher.cs; samples/MessagingDemo/RabbitMqExportPublisher.cs | Explicitly admit 1 and 2; preserve original wire envelope. |
-| samples/InboxDemo/InboxDemo.csproj; RenderExportHandler.cs; new RenderV1ToV2.cs | Consumer-only Serialization reference and receiver-local decoding/transform. |
-| samples/MessagingDemo/Program.cs; new SchemaCompatibilityJourney.cs | Opt-in finite executable adoption using existing contexts/transports. |
-| samples/OutboxDemo.Tests/new SchemaCompatibilityTests.cs; FailureRecoveryTests.cs | Version selection, unchanged raw rows, unsupported future version and retry classification. The existing negative control's schema 2 becomes valid and must move to a truly unsupported version. |
-| samples/InboxDemo.Tests/new SchemaCompatibilityTests.cs; BrokerTests.cs as needed | Independent historical JSON fixtures, old/new reader matrix, HTTP/RabbitMQ admission, original-envelope deduplication, retained/dead-letter processing and conditional retry after reader replacement. |
-| samples/MessagingWorkerDemo.Tests/new SchemaCompatibilityProcessTests.cs | Actual dispatch/receive/process roles, retained mixed-version work and kill/restart/redelivery. |
+| src/Gloaming.Messaging/samples/OutboxDemo/ExportRequestCommands.cs | Add V2 DTO and explicit optional writer-schema selection; preserve existing V1 callers. |
+| src/Gloaming.Messaging/samples/OutboxDemo/HttpCommandPublisher.cs; src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs | Explicitly admit 1 and 2; preserve original wire envelope. |
+| src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj; RenderExportHandler.cs; new RenderV1ToV2.cs | Consumer-only Serialization reference and receiver-local decoding/transform. |
+| src/Gloaming.Messaging/samples/MessagingDemo/Program.cs; new SchemaCompatibilityJourney.cs | Opt-in finite executable adoption using existing contexts/transports. |
+| src/Gloaming.Messaging/samples/OutboxDemo.Tests/new SchemaCompatibilityTests.cs; FailureRecoveryTests.cs | Version selection, unchanged raw rows, unsupported future version and retry classification. The existing negative control's schema 2 becomes valid and must move to a truly unsupported version. |
+| src/Gloaming.Messaging/samples/InboxDemo.Tests/new SchemaCompatibilityTests.cs; BrokerTests.cs as needed | Independent historical JSON fixtures, old/new reader matrix, HTTP/RabbitMQ admission, original-envelope deduplication, retained/dead-letter processing and conditional retry after reader replacement. |
+| src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/new SchemaCompatibilityProcessTests.cs | Actual dispatch/receive/process roles, retained mixed-version work and kill/restart/redelivery. |
 | tests/ArchitectureTests/AdoptionDependencyTests.cs; AssemblyDependencyTests.cs | Admit the receiving sample's exact optional codec dependency; preserve codec-free Messaging/producer and event-store isolation. |
 | OutboxDemo, InboxDemo and MessagingDemo README files | Explicit writer selection, executable command and deployment/rollback examples. |
 | Messaging README, capabilities and new docs/schema-compatibility.md; Serialization README/capabilities | Proven optional composition and precise limits beside the owning families. |

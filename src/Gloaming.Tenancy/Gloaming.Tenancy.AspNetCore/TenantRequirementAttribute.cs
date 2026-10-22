@@ -8,6 +8,7 @@ namespace Gloaming.Tenancy.AspNetCore;
 )]
 public sealed class TenantRequirementAttribute : Attribute
 {
+    /// <summary>Declares one explicit endpoint tenancy requirement; native authorization remains independent.</summary>
     public TenantRequirementAttribute(TenantRequirement requirement)
     {
         if (!Enum.IsDefined(requirement))
@@ -15,5 +16,6 @@ public sealed class TenantRequirementAttribute : Attribute
         Requirement = requirement;
     }
 
+    /// <summary>The endpoint tenancy requirement selected by this metadata.</summary>
     public TenantRequirement Requirement { get; }
 }

@@ -10,6 +10,7 @@ public sealed class TenantContextMiddleware
     private readonly RequestDelegate _next;
     private readonly TenantRequirement _defaultRequirement;
 
+    /// <summary>Binds the next middleware and default endpoint tenancy requirement.</summary>
     public TenantContextMiddleware(RequestDelegate next, IOptions<HttpTenantContextOptions> options)
     {
         _next = next ?? throw new ArgumentNullException(nameof(next));
@@ -19,6 +20,7 @@ public sealed class TenantContextMiddleware
             throw new ArgumentException("Choose a defined tenant requirement.", nameof(options));
     }
 
+    /// <summary>Resolves consumer admission, establishes immutable tenancy once and invokes the endpoint only when its tenancy requirement is satisfied.</summary>
     public async Task InvokeAsync(
         HttpContext context,
         IHttpTenantContextResolver resolver,

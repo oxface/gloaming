@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gloaming.EventReactions.EntityFrameworkCore;
 
+/// <summary>Explicit context/module reaction bindings and selected tracked or scoped event sources.</summary>
 public sealed class EventReactionRegistration<TContext, TModule>
     where TContext : DbContext
 {
@@ -13,8 +14,10 @@ public sealed class EventReactionRegistration<TContext, TModule>
 
     internal EventReactionRegistration(IServiceCollection services) => _services = services;
 
+    /// <summary>Positive maximum reaction invocations across all waves of one save dispatch.</summary>
     public int MaxReactionInvocations { get; set; } = 128;
 
+    /// <summary>Adds one exact-type reaction to this context/module before bindings are frozen; consumer registration order is retained.</summary>
     public EventReactionRegistration<TContext, TModule> AddReaction<TEvent, THandler>()
         where TEvent : notnull
         where THandler : class, IEventReaction<TEvent>
@@ -23,6 +26,7 @@ public sealed class EventReactionRegistration<TContext, TModule>
         return AddReaction<TEvent, THandler>(provider => provider.GetRequiredService<THandler>());
     }
 
+    /// <summary>Adds one exact-type reaction to this context/module before bindings are frozen; consumer registration order is retained.</summary>
     public EventReactionRegistration<TContext, TModule> AddReaction<TEvent, THandler>(
         Func<IServiceProvider, THandler> factory
     )
@@ -44,6 +48,7 @@ public sealed class EventReactionRegistration<TContext, TModule>
         return this;
     }
 
+    /// <summary>Selects additional scoped event buffers explicitly for each save; no source discovery is inferred.</summary>
     public EventReactionRegistration<TContext, TModule> CollectSources(
         Func<IServiceProvider, TContext, IEnumerable<PendingEvents>> collect
     )
@@ -57,6 +62,7 @@ public sealed class EventReactionRegistration<TContext, TModule>
         return this;
     }
 
+    /// <summary>Selects a PendingEvents buffer on tracked entities assignable to <typeparamref name="TEntity"/>.</summary>
     public EventReactionRegistration<TContext, TModule> CollectFrom<TEntity>(
         Func<TEntity, PendingEvents> selectEvents
     )

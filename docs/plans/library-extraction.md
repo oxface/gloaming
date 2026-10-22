@@ -1,5 +1,11 @@
 # Library and sample extraction plan
 
+The owner has authorized the remaining v1 work through local commits and integration, stopping
+before push. The [execution ledger](v1-integration-completion.md) records current status,
+required evidence and the [sample/experiment consolidation](s1-sample-experiment-consolidation.md).
+The [closure audit](../reports/v1-slice-closure-audit.md) is historical source assessment; inbox
+retention and broker/shutdown closure are now merged.
+
 ## Current delivery status and next slice — 2026-10-17
 
 The three outputs remain reusable libraries, configurable repository population, and samples.
@@ -22,24 +28,24 @@ forward from E10; that rehearsal is now complete and owner-approved.
 | Transactional outbox O1 | Owner-reviewed and checkpointed as `2d7a865`; merged through PR #1 as `beafa4e`. [Implementation and executable adoption](../../src/Gloaming.Messaging/README.md); [fresh proofs and remaining gaps](../reports/outbox1-transactional-dispatch.md). |
 | Durable inbox I1 | Owner-reviewed implementation checkpoint `ecab884`, followed by CI refinement `863456b`; merged through PR #2 as `0f4d8bf`. [Reviewed scope](inbox1-durable-intake-processing.md); [implementation evidence and remaining gaps](../reports/inbox1-durable-intake-processing.md). |
 | Explicit transactional audit E9 | Owner considers the slice complete; checkpoint `18a76f8` is present in `origin/main`. [Reviewed scope](e9-explicit-transactional-audit.md); [library contract](../../src/Gloaming.Auditing/README.md); [verification and remaining gaps](../reports/e9-explicit-transactional-audit.md). |
-| Separate worker hosts W1 | Owner-approved checkpoint `7b43201`, merged into `origin/main` as `94ca57a`. Existing inbox/outbox APIs compose separate native roles with explicit setup; [scope](w1-separate-worker-hosts.md), [usage](../../samples/MessagingWorkerDemo/README.md) and [process proofs](../reports/w1-separate-worker-hosts.md). No new library interface or mechanism. |
+| Separate worker hosts W1 | Owner-approved checkpoint `7b43201`, merged into `origin/main` as `94ca57a`. Existing inbox/outbox APIs compose separate native roles with explicit setup; [scope](w1-separate-worker-hosts.md), [usage](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) and [process proofs](../reports/w1-separate-worker-hosts.md). No new library interface or mechanism. |
 | Durable message observability OBS1 | Owner-approved checkpoint `b44b5d5`, merged into `origin/main` at `4c0e0c5`, including the optional native OTel subscription adapter. [Local contract](../../src/Gloaming.Messaging/docs/observability.md), [scope/file map](durable-message-observability.md) and [fresh proofs](../reports/obs1-durable-message-observability.md). |
-| Durable inter-module workflow WF1 | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: Sales-owned stock-issue progress, independent Inventory decisions and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/WorkflowDemo/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism. |
+| Durable inter-module workflow WF1 | Owner-approved checkpoint `e05ae58`, merged into `origin/main` as `161a33e`: Sales-owned stock-issue progress, independent Inventory decisions and overdue-state recovery. [Scope/file map](wf1-durable-inter-module-workflow.md), [executable adoption](../../samples/Wholesale/Worker/Broker/README.md) and [fresh evidence](../reports/wf1-durable-inter-module-workflow.md). No new library interface or reusable mechanism. |
 | Compensating workflow WF2 | Owner-approved [bounded continuation interface/replacement scope](wf2-durable-continuations.md), merged into fetched `origin/main` as `d674e39`. Optional core/EF packages, Sales continuation adoption and standalone branching PostgreSQL proofs; [new evidence](../reports/wf2-durable-continuations.md) supersedes the uncommitted fixed-sequence experiment. |
 | Replayable source B1 | Closed by owner direction on 2026-10-14 as a [retention/contract assessment](../reports/b1-retention-and-contract-assessment.md). Experiment source, tests and patch artifacts removed; dated results and research retained. Revisit only for a later concrete receiver need; no new library mechanism. B2 implementation remains separate. |
-| DDD sample patterns D1 | Committed as `041c64a`: [bounded scope](d1-ddd-sample-patterns.md), [executable comparison](../../samples/Wholesale/DddDemo/README.md) and [proof/extraction report](../reports/d1-ddd-sample-patterns.md). Immutable state-stored Sales decisions compared with existing event-sourced Purchasing decisions; no new reusable mechanism or template preset. |
+| DDD sample patterns D1 | Committed as `041c64a`: [bounded scope](d1-ddd-sample-patterns.md), [executable comparison](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/README.md) and [proof/extraction report](../reports/d1-ddd-sample-patterns.md). Immutable state-stored Sales decisions compared with existing event-sourced Purchasing decisions; no new reusable mechanism or template preset. |
 | DDD follow-ups D1.1 / D2 | Owner-agreed planning scopes: [rich relational aggregates](d1-1-rich-state-stored-aggregate.md) and [domain-event reactions](d2-domain-events-and-required-reactions.md). SaveChanges handling is proven for the sample local transaction, with native write bypasses and save-versus-commit limits. D1.1 is checkpointed and D2.1 local handling is prepared below; the owner subsequently authorized the standalone Domain extraction recorded below. |
-| Rich state-stored aggregate D1.1 | Owner-approved [Sales draft/relational-child scope](d1-1-rich-state-stored-aggregate.md), [executable usage](../../samples/Wholesale/RichAggregateDemo/README.md) and [fresh proof/extraction report](../reports/d1-1-rich-state-stored-aggregate.md), checkpointed as `f55d803`. Root-wide invariants/concurrency and explicit row staging stay sample-owned; no new reusable mechanism. |
+| Rich state-stored aggregate D1.1 | Owner-approved [Sales draft/relational-child scope](d1-1-rich-state-stored-aggregate.md), [executable usage](../../samples/Wholesale/IntegrationTests/Scenarios/RichAggregate/README.md) and [fresh proof/extraction report](../reports/d1-1-rich-state-stored-aggregate.md), checkpointed as `f55d803`. Root-wide invariants/concurrency and explicit row staging stay sample-owned; no new reusable mechanism. |
 | EventReactions consolidation | Owner-approved [cohesive reshaping](../reports/event-reactions-consolidation.md) of the local reaction experiments into Gloaming.EventReactions and its EF adapter. Plain records, composed buffers, explicit scoped selectors and ordered bounded reactions replace marker/base requirements. Independent model, application and PostgreSQL proofs accompany the mechanism. D2.1a–e reports retain superseded intermediate evidence; one final contract is reviewed. |
 | Shared EF capability integration | Gloaming.EntityFrameworkCore supplies model-selected preparation/change detection/validation. Existing feature bindings and module composition remain separate from EventReactions. [Research](../reports/ef1-capability-interception-research.md), [MassTransit comparison](../reports/ef1-masstransit-applicable-patterns.md) and [original implementation evidence](../reports/ef1-1-capability-composition.md) remain dated records; the consolidation report is current. |
 | Module consistency research D2.3 | Owner-selected [comparison and recommendations](../reports/d2-3-module-consistency-and-coordination.md) prepared for review against the [bounded scope](d2-3-module-consistency-and-coordination-research.md). Existing WF1/WF2 cover durable process state and messaging. The separately selected D2.3a now proves existing inbox/outbox composition through public intake Contracts; shared native transactions remain conditional on an atomic-acceptance requirement and a separate consumer proof. No new reusable mechanism or runtime behavior is added; D2.2 remains deferred. |
-| Local durable module delivery D2.3a | Owner-selected [public-contract intake scope](d2-3a-local-durable-module-delivery.md), [broker-free executable](../../samples/Wholesale/LocalWorkflowDemo/README.md) and [fresh adoption/proof report](../reports/d2-3a-local-durable-module-delivery.md). Module-owned fresh-scope intake composes existing inbox/outbox/workflow services, preserving independent commits and RabbitMQ usage. No new reusable mechanism, migration or template preset. |
-| Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15; present in fetched main `7ea6652`: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/CqrsDemo/README.md) and [dated proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Earlier uncommitted/staged statements describe that handoff. Sales joins/filters/counts/pages use native EF and typed Contracts, without resource-permission filtering; Inventory availability remains module-owned. No new reusable mechanism. Template generation remains separate. |
+| Local durable module delivery D2.3a | Owner-selected [public-contract intake scope](d2-3a-local-durable-module-delivery.md), [broker-free executable](../../samples/Wholesale/Worker/Local/README.md) and [fresh adoption/proof report](../reports/d2-3a-local-durable-module-delivery.md). Module-owned fresh-scope intake composes existing inbox/outbox/workflow services, preserving independent commits and RabbitMQ usage. No new reusable mechanism, migration or template preset. |
+| Native CQRS consumer patterns C1 | Owner-approved on 2026-10-15; present in fetched main `7ea6652`: [bounded scope](c1-cqrs-consumer-patterns.md), [executable consumer](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/README.md) and [dated proof/extraction report](../reports/c1-cqrs-consumer-patterns.md). Earlier uncommitted/staged statements describe that handoff. Sales joins/filters/counts/pages use native EF and typed Contracts, without resource-permission filtering; Inventory availability remains module-owned. No new reusable mechanism. Template generation remains separate. |
 | Access/resource authorization A1 | [Assessment prepared for review](../reports/access-authorization-assessment.md), 2026-10-16, with [pinned primary sources](../reports/access-authorization-primary-sources.md). Recommend native resource checks/module-owned relational predicates initially; the separately authorized A1.1 consumer journey is recorded below. The assessment adds no engine adoption, runtime/library interface or new reusable mechanism. A2 receives authority/query input; RLS remains separate. |
 | Membership administration A1.1 | Merged in fetched main `d35b3ee`: owner-authorized [consumer scope](a1-1-membership-suspension.md), [Access usage](../../samples/Wholesale/modules/Access/README.md) and [dated proof report](../reports/a1-1-membership-suspension.md). Narrow suspend/reactivate Contracts, current scoped administration grant, self/last-admin safeguards, retained grants, revision/Organization concurrency and atomic audit. Existing admission is reused; no library interface or new reusable mechanism. Earlier unstaged statements describe its handoff. |
 | Tenant authorization / optional RLS A2 | [Assessment prepared for review](../reports/tenant-authorization-assessment.md), 2026-10-16, baseline `d35b3ee`, with [primary-source evidence](../reports/tenant-authorization-primary-sources.md). Corrects actor-before-native-handler ordering; tenancy remains later. Recommends late consumer permission checks/queries and optional restricted-role RLS proofs with explicit transaction and transport boundaries. No runtime integration, middleware reorder, library interface or new reusable mechanism. |
 | Sales resource permissions A2.1 | Owner-selected [consumer implementation](a2-1-sales-resource-permissions.md) following A2: scoped positive draft Read/Edit grants, complete permission-filtered queries, actual module entry checks and late native HTTP adoption. [Sales usage](../../samples/Wholesale/modules/Sales/README.md) and [proof report](../reports/a2-1-sales-resource-permissions.md) record its bounded behavior. No RLS, library interface, mandatory Access/FGA dependency or template preset. |
-| Optional Sales PostgreSQL RLS A2.2 | Owner-selected [consumer proof](a2-2-sales-postgres-rls.md) after A2.1 commit `b2f0d01`: explicit [CQRS mode](../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md), five-table ENABLE/FORCE policies, restricted runtime credentials and native transaction-local setup. [Fresh report](../reports/a2-2-sales-postgres-rls.md) records role, raw/bulk and physical-pool/retry controls plus setting-forgery limits. Reads/existing-draft edits only; no default HTTP/worker adoption, library interface, new reusable mechanism or template preset. |
+| Optional Sales PostgreSQL RLS A2.2 | Owner-selected [consumer proof](a2-2-sales-postgres-rls.md) after A2.1 commit `b2f0d01`: explicit [CQRS mode](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md), five-table ENABLE/FORCE policies, restricted runtime credentials and native transaction-local setup. [Fresh report](../reports/a2-2-sales-postgres-rls.md) records role, raw/bulk and physical-pool/retry controls plus setting-forgery limits. Reads/existing-draft edits only; no default HTTP/worker adoption, library interface, new reusable mechanism or template preset. |
 | Explicit PostgreSQL tenant context A2.3 | Owner-selected [extraction](a2-3-postgres-tenant-context.md) of A2.2's setup into [Gloaming.Tenancy.EntityFrameworkCore.Postgres](../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md). One explicit DbContext extension, required consumer setting, immutable accessor and native transaction checks; independent PostgreSQL adoption and transferred Sales lifecycle proofs are recorded in the [report](../reports/a2-3-postgres-tenant-context.md). No automatic interceptor, policy generator, core/Persistence dependency or template preset. |
 | Ownership-declared RLS A2.4 | Owner-requested research into `.HasTenantOwnership(...).WithRls()` and native interceptors, comparing Bytefish, Marten and EF integrations in the [primary-source note](../reports/a2-4-rls-capability-reference-research.md). The owner subsequently authorized implementation, retaining HasQueryFilter and requiring write protection. The optional [adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md) and [implementation report](../reports/a2-4-ownership-rls-capability.md) record the initial session implementation; the owner-selected transaction refinement below replaces that wiring. Automatic migration scaffolding remains deferred. |
 | Transaction-local RLS simplification A2.5 | Owner-selected refinement: keep the existing operation/request owner responsible for beginning transactions, and establish tenant context automatically. [Current adapter](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md), [implementation/proofs](../reports/a2-5-transaction-rls-simplification.md). One scoped native transaction/command interceptor, direct `.UseRls` installation and existing save capability; no native registry, session lifetime or connection-lease tracking. |
@@ -51,12 +57,12 @@ checkpointed as `192fe7d`: optional finite runtime-role provisioning and explici
 [fresh evidence](../reports/a2-7-aspire-sales-rls.md) is separate. The owner then selected
 [A2.8 restricted Sales outbox dispatch](a2-8-sales-outbox-dispatch.md): an independent executable
 role, a context limited to the existing queue and column-level delivery grants, using the
-existing dispatcher/worker. [Consumer setup](../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md)
+existing dispatcher/worker. [Consumer setup](../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md)
 and the [report](../reports/a2-8-sales-outbox-dispatch.md) separate cross-tenant queue authority
 from business RLS. A2.8 is owner-approved and checkpointed as `087a008`.
 The selected [A2.9 inbox continuation](a2-9-sales-inbox-rls.md) adds an optional WF2 processor per
 admitted Organization, automatic operation contexts and existing native RLS/processor transactions.
-[Consumer usage](../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) and the
+[Consumer usage](../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) and the
 [report](../reports/a2-9-sales-inbox-rls.md) cover atomic workflow/outbox/inbox effects and
 command-specific enqueue protection that preserves global dispatch. Broader coverage, production
 rollout, templates and library interfaces remain separately selectable.
@@ -977,13 +983,14 @@ reviewed strategy change can reorder later increments; neither is silently assum
 - `tests/`: repository-wide architecture checks and shared test support; library-interface
   and independence tests live in the owning family's `tests/` directory.
 - `templates/`: exercised consumer setup, consolidated after working sample usage.
-- `archive/proof-sample/`: frozen original source, tests, fixtures, and historical documents.
+- [Historical Git source](../reports/s1-archive-retirement.md): original source, tests, fixtures
+  and dated documents, retired from the active checkout after selected S1 proof transfer.
 - `docs/`: current decisions, development commands, reviewed slice designs and proof reports.
 
-Create an active root solution with the first active projects. It must exclude the archive;
-the archive retains its own solution, build policy and test lanes. Active references never
-point into the archive. Library naming and exact package splits are reviewed within the
-first increment that needs them; no empty projects are added to reserve names.
+The active root solution contains current projects; original solution/build/test policy remains
+historical Git evidence. Active references use current owned sources. Library naming and exact
+package splits are reviewed within the first increment that needs them; no empty projects are
+added to reserve names.
 
 ## Candidate inventory
 
@@ -1010,11 +1017,11 @@ interfaces. Links below deliberately point to the historical evidence.
 
 Evidence entry points:
 
-- [Tenant context and module collaboration](../../archive/proof-sample/docs/modules/README.md).
-- [Second aggregate comparison](../../archive/proof-sample/docs/plans/second-event-sourced-aggregate.md).
-- [Event-sourcing gate](../../archive/proof-sample/docs/plans/event-sourcing-correctness-gate.md).
-- [Messaging reuse comparison](../../archive/proof-sample/docs/plans/messaging-reuse.md).
-- [Durability closure](../../archive/proof-sample/docs/plans/durability-closure-checklist.md).
+- [Tenant context and module collaboration](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/modules/README.md).
+- [Second aggregate comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/second-event-sourced-aggregate.md).
+- [Event-sourcing gate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/event-sourcing-correctness-gate.md).
+- [Messaging reuse comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/messaging-reuse.md).
+- [Durability closure](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/durability-closure-checklist.md).
 
 ## Dependency and interface review
 
@@ -1140,13 +1147,13 @@ or sample Access.Contracts. Add active solution, Fast lane and hook coverage.
 Template output: explicit context establishment and lifetime recipe if this is a new setup
 pattern. Domain policy stays in the sample.
 
-Historical comparison: Access uses [GUID-based tenant IDs](../../archive/proof-sample/modules/Access/Access.Contracts/Organizations/OrganizationId.cs)
-and [user IDs](../../archive/proof-sample/modules/Access/Access.Contracts/Identity/UserId.cs),
-while [external identity](../../archive/proof-sample/modules/Access/Access.Contracts/Identity/ExternalIdentity.cs)
-uses issuer/subject strings and [Sales workflow identity](../../archive/proof-sample/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
+Historical comparison: Access uses [GUID-based tenant IDs](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Organizations/OrganizationId.cs)
+and [user IDs](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Identity/UserId.cs),
+while [external identity](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Identity/ExternalIdentity.cs)
+uses issuer/subject strings and [Sales workflow identity](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
 is a name. This does not prove that a reusable context must prescribe GUIDs. Archived
-[HTTP admission](../../archive/proof-sample/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
-and [module authorization](../../archive/proof-sample/modules/Sales/Sales/Authorization/SalesRequestAuthorization.cs)
+[HTTP admission](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
+and [module authorization](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Authorization/SalesRequestAuthorization.cs)
 are explicit consumer checks; they do not prove a universal library authorization mechanism.
 
 The owner agreed to start the sample/template with a stable, globally unique application
@@ -1154,7 +1161,7 @@ UserId, with consumer-owned external-identity resolution feeding the human actor
 Authentication-provider details stay outside both foundation libraries; neither requires
 provider fields nor an application User entity. Human/system actor kind distinguishes
 otherwise equal key text.
-In the archive, [identity resolution](../../archive/proof-sample/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
+In the archive, [identity resolution](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
 matches issuer and subject; an unrecognized pair creates a new user. It does not automatically
 merge users with matching email addresses. For OIDC, [claim stability rules](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability)
 identify issuer/subject as the stable pair and do not guarantee email stability or uniqueness.
@@ -1513,3 +1520,18 @@ references, passing capability-specific proofs, tested independent adoption, and
 template creation. Candidate inventory and matching archived results alone do not complete
 that goal. Only guarantees exercised by the active implementation and documented in its
 report count as new reusable proofs; later increments remain proposals.
+
+
+### B2 canonical adoption: outbox route claim selection
+
+Implemented under the current owner preapproval after canonical Wholesale exposed real duplicate
+claim-routing burden. `OutboxDispatchOptions.RouteKeys` is an optional init-only
+`IReadOnlyCollection<string>?`; null preserves all-route behavior. The PostgreSQL dispatcher
+copies it at construction and uses exact C-collated parameterized route selection before native
+locking. Empty/blank/null entries fail validation before I/O. There are no new dependencies,
+transport interfaces or sample policy in the library. Route assignment remains consumer-owned;
+this does not authorize tenants or bypass RLS. See the self-contained
+[family contract](../../src/Gloaming.Messaging/docs/route-selection.md) and
+[product adoption evidence](../reports/b2-directory-product-adoption.md). Existing S1/B2 reports'
+initial no-extraction findings describe their earlier checkpoints; this later composition supplied
+the first concrete need and new provider/consumer proofs.

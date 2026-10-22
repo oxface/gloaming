@@ -34,7 +34,7 @@ configuration. Copying or referencing one package does not automatically install
 family's context or policy. Consumers keep DI lifetimes, host wiring and native dependency
 selection visible.
 
-An optional [Sales HTTP composition](../../../samples/Wholesale/HttpIdentityDemo/README.md#optional-sales-http-row-security)
+An optional [Sales HTTP composition](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 now exercises the PostgreSQL capability against six finite tables, including accepted profile
 audit. Unconverted PostgreSQL text/varchar ownership is supported; blank-padded character
 keys remain rejected. Default HTTP/AppHost/transport rollout remains separate.
@@ -60,7 +60,7 @@ prepared for review. Optional RLS needs a restricted runtime role and transactio
 for every protected read/write/retry; current local credentials and raw transport paths do
 not provide that guarantee. Tenant equality supplies no within-tenant resource permissions.
 These findings add no supported library capability or approved interface. The later
-[A2.2 consumer proof](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md) now exercises
+[A2.2 consumer proof](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md) now exercises
 five Sales tables with separate credentials, raw/bulk paths and physical-pool/transaction
 lifecycle controls. Its [report](../../../docs/reports/a2-2-sales-postgres-rls.md) records the
 setting-forgery limit and paths not adopted. The current library guarantees and dependencies

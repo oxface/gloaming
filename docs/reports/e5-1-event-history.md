@@ -81,7 +81,7 @@ template output remains E10. No reusable query-selector or generic domain hydrat
 was proven.
 
 Both retained Inventory copies and all four E4 fixtures are unchanged. Two E5.1 literals
-use existing v1 schemas. [Provenance](../../samples/Wholesale/EventCodecDemo/Fixtures/README.md)
+use existing v1 schemas. [Provenance](../../src/Gloaming.Events/samples/EventCodecDemo/Fixtures/README.md)
 distinguishes retained payloads from new literals and authored metadata/head values.
 
 ## Fresh verification
@@ -135,11 +135,11 @@ Review [the validator](../../src/Gloaming.Events/Gloaming.Events.History/EventHi
 [exception](../../src/Gloaming.Events/Gloaming.Events.History/EventHistoryException.cs) with
 [the usage guide](../../src/Gloaming.Events/Gloaming.Events.History/README.md).
 
-Review [Inventory selection](../../samples/Wholesale/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
-and [Purchasing selection](../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
+Review [Inventory selection](../../src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
+and [Purchasing selection](../../src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
 with [range proofs](../../src/Gloaming.Events/tests/EventHistoryTests/HistoryTests.cs) and
-[consumer proofs](../../samples/Wholesale/EventCodecDemo.Tests/HistoryCompatibilityTests.cs).
-The shared [row shape](../../samples/Wholesale/EventCodecDemo/RecordedEvent.cs) remains sample code.
+[consumer proofs](../../src/Gloaming.Events/samples/EventCodecDemo.Tests/HistoryCompatibilityTests.cs).
+The shared [row shape](../../src/Gloaming.Events/samples/EventCodecDemo/RecordedEvent.cs) remains sample code.
 
 The implemented [E5.2.1 native EF readers](e5-2-1-native-event-history.md) now exercise both
 libraries through actual tenant-scoped queries, captured-head boundaries and header/event

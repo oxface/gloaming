@@ -12,7 +12,7 @@ Earlier ES2 gate/secondary-view proposals are superseded by ADR 0008 and the cur
 
 ```sh
 WHOLESALE_DEMO_CONNECTION_STRING='<existing migrated PostgreSQL database>' \
-  dotnet run --project samples/Wholesale/EventPersistenceDemo -- \
+  dotnet run --project samples/Wholesale/Worker -- \
   --regenerate-stock rebuild-demo e5020000-0000-0000-0000-000000000001
 ```
 

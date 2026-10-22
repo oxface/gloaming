@@ -107,7 +107,7 @@ and storage strategies need their own proofs of consistent identity semantics. T
 neither opens transactions, saves, commits, retries nor registers services. Native saves/transactions remain
 visible; no ambient scope, base DbContext or automatic stamping is introduced.
 
-See [the executable Inventory/Sales consumer](../../../samples/Wholesale/PersistenceDemo/README.md),
+See [the executable Inventory/Sales consumer](../samples/PersistenceDemo/README.md),
 [the first-slice plan](../../../docs/plans/e2-1-tenant-ownership.md) and
 [the first proof report](../../../docs/reports/e2-1-tenant-ownership.md) and
 [the relationship proof report](../../../docs/reports/e2-3-tenant-relationships.md).
@@ -125,7 +125,7 @@ helpers and automatic scoped transaction setup through a native transaction inte
 independent of Tenancy and Npgsql. `FindTenantOwnershipProperty` exposes the declared property
 for optional integrations without duplicating private annotation names.
 
-The separate [A2.2 Sales consumer](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md)
+The separate [A2.2 Sales consumer](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 now demonstrates restricted-role policies and explicit native setup, with
 [role/lifecycle proofs and limits](../../../docs/reports/a2-2-sales-postgres-rls.md). It is
 sample-owned SQL, not a capability of this adapter. RLS does not enforce within-tenant

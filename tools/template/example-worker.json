@@ -1,0 +1,5 @@
+{
+  "applicationName": "CedarWorker",
+  "rootNamespace": "Acme.CedarWorker",
+  "catalogWorker": true
+}

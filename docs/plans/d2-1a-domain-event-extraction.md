@@ -145,7 +145,7 @@ automatically become integration contracts; cross-module publication remains exp
 ## Proof obligations and promotion gate
 
 The [assessment report](../reports/d2-1a-domain-event-extraction.md) records new executions and
-the extraction recommendation. The [consumer README](../../samples/EventReactionsDemo/README.md)
+the extraction recommendation. The [consumer README](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md)
 contains actual runnable usage. The owner-authorized promotion uses two projects in the
 `src/Gloaming.Domain/` family: package-free `Gloaming.Domain` and
 `Gloaming.Domain.EntityFrameworkCore` (core plus EF Relational only). No DI/transport,

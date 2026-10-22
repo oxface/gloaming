@@ -9,7 +9,7 @@ the working tree and preserves that snapshot. No commit or push was made.
 
 ## Outcome and evidence
 
-The [executable](../../samples/Wholesale/CqrsDemo/README.md) composes real Sales
+The [executable](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/README.md) composes real Sales
 commands and queries with Inventory Contract reads using native typed scoped DI.
 It observes availability 3 (on-hand 10 minus reserved 7), creates drafts, changes
 one from total 40 to 45, rejects total 105 against limit 100, and reads a filtered
@@ -58,7 +58,7 @@ Inventory Contracts; no cross-module persistence join or `IQueryable` export app
 Executed against this working tree on 2026-10-15 with .NET SDK 10.0.401 and
 PostgreSQL 18.6 Testcontainers on the rootless Podman socket; resource reaping
 remained enabled. Commands and required environment are in the
-[consumer README](../../samples/Wholesale/CqrsDemo/README.md) and
+[consumer README](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/README.md) and
 [development guide](../development.md#cqrs-consumer-patterns).
 
 | Check | Fresh result |
@@ -86,8 +86,8 @@ disposable database in-process; it does not claim a new HTTP or deployed-host pr
 | --- | --- |
 | [Sales query Contracts](../../samples/Wholesale/modules/Sales/Sales.Contracts/IDraftOrderQueries.cs) | Concrete search request/page and documented sort/snapshot obligations; no new Gloaming interface |
 | [DraftOrderQueries](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderQueries.cs), [DraftOrderReadView](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderReadView.cs), [DraftOrderFilters](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderFilters.cs) | Complete-key joins, correlated children, predicate reuse, validation, deterministic pagination and untracked materialization |
-| [CqrsJourney](../../samples/Wholesale/CqrsDemo/CqrsJourney.cs), [composition](../../samples/Wholesale/CqrsDemo/CqrsComposition.cs), [finite data](../../samples/Wholesale/CqrsDemo/CqrsDemoData.cs) | Concrete typed usage, separate operation scopes and explicit independent module transactions |
-| [QueryTests](../../samples/Wholesale/CqrsDemo.Tests/QueryTests.cs), [transaction cases](../../samples/Wholesale/CqrsDemo.Tests/QueryTests.Transactions.cs), [SQL probe](../../samples/Wholesale/CqrsDemo.Tests/QueryProbe.cs) | Independent expected values, controlled concurrent commit, tenant collision and ownership evidence |
+| [CqrsJourney](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/CqrsJourney.cs), [composition](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/CqrsComposition.cs), [finite data](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/CqrsDemoData.cs) | Concrete typed usage, separate operation scopes and explicit independent module transactions |
+| [QueryTests](../../samples/Wholesale/IntegrationTests/Queries/QueryTests.cs), [transaction cases](../../samples/Wholesale/IntegrationTests/Queries/QueryTests.Transactions.cs), [SQL probe](../../samples/Wholesale/IntegrationTests/Queries/QueryProbe.cs) | Independent expected values, controlled concurrent commit, tenant collision and ownership evidence |
 | [Wholesale CI](../../.github/workflows/ci.yml), [solution](../../ModulithFoundry.slnx), [module-boundary tests](../../tests/ArchitectureTests/SampleModuleBoundaryTests.cs) | Suite discovery and module/Contracts/library independence from the new host |
 
 The Sales project grants internal visibility to the proof assembly for finite

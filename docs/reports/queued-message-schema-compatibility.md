@@ -44,10 +44,10 @@ With the existing MessagingDemo connection/broker variables pointing to empty di
 module databases, run:
 
 ```bash
-dotnet run --project samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
+dotnet run --project src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj -- --schema-compatibility
 ```
 
-The [finite journey](../../samples/MessagingDemo/SchemaCompatibilityJourney.cs) commits v1
+The [finite journey](../../src/Gloaming.Messaging/samples/MessagingDemo/SchemaCompatibilityJourney.cs) commits v1
 submission/intake, closes those scopes, explicitly selects v2, then processes both using fresh
 scopes, independent PostgreSQL databases and real RabbitMQ. It checks retained schemas/payloads
 and prints message identities plus two local jobs. Reusing the storage rejects before another
@@ -56,16 +56,16 @@ continue unchanged. No new hosted worker or version-selection environment settin
 
 Review these files first:
 
-- [Writer surface](../../samples/OutboxDemo/ExportRequestCommands.cs) and the native
-  [HTTP](../../samples/OutboxDemo/HttpCommandPublisher.cs)/[RabbitMQ](../../samples/MessagingDemo/RabbitMqExportPublisher.cs)
+- [Writer surface](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportRequestCommands.cs) and the native
+  [HTTP](../../src/Gloaming.Messaging/samples/OutboxDemo/HttpCommandPublisher.cs)/[RabbitMQ](../../src/Gloaming.Messaging/samples/MessagingDemo/RabbitMqExportPublisher.cs)
   contract gates.
-- [Receiver decoder](../../samples/InboxDemo/RenderExportHandler.cs),
-  [pure receiver-owned transformation](../../samples/InboxDemo/RenderV1ToV2.cs) and
-  [receiver-only project dependency](../../samples/InboxDemo/InboxDemo.csproj).
-- [Literal/retained-message/HTTP/operator proofs](../../samples/InboxDemo.Tests/SchemaCompatibilityTests.cs),
-  [broker proofs](../../samples/InboxDemo.Tests/BrokerTests.cs),
-  [producer proofs](../../samples/OutboxDemo.Tests/SchemaCompatibilityTests.cs) and
-  [built-process proofs](../../samples/MessagingWorkerDemo.Tests/SchemaCompatibilityProcessTests.cs).
+- [Receiver decoder](../../src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs),
+  [pure receiver-owned transformation](../../src/Gloaming.Messaging/samples/InboxDemo/RenderV1ToV2.cs) and
+  [receiver-only project dependency](../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj).
+- [Literal/retained-message/HTTP/operator proofs](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/SchemaCompatibilityTests.cs),
+  [broker proofs](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs),
+  [producer proofs](../../src/Gloaming.Messaging/samples/OutboxDemo.Tests/SchemaCompatibilityTests.cs) and
+  [built-process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/SchemaCompatibilityProcessTests.cs).
 - [Exact project dependencies](../../tests/ArchitectureTests/AdoptionDependencyTests.cs) and
   [assembly independence](../../tests/ArchitectureTests/AssemblyDependencyTests.cs): only InboxDemo
   opts into Serialization; all Messaging layers and OutboxDemo retain their codec prohibition,
@@ -152,9 +152,9 @@ Reproduce after the active solution build with the repository's Docker-compatibl
 
 ```bash
 dotnet build ModulithFoundry.slnx --no-restore
-dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-build --no-restore
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore

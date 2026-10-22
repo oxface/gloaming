@@ -39,9 +39,9 @@ await host.RunAsync();
 ```
 
 Use `Gloaming.Messaging.RabbitMQ`, `RabbitMQ.Client` and the host's usual namespaces.
-The complete executable examples are [standalone workers](../../../samples/MessagingWorkerDemo/README.md),
-the [finite journey](../../../samples/MessagingDemo/README.md) and
-[multi-channel workflow](../../../samples/Wholesale/WorkflowDemo/README.md).
+The complete executable examples are [standalone workers](../samples/MessagingWorkerDemo/README.md),
+the [finite journey](../samples/MessagingDemo/README.md) and
+[multi-channel workflow](../../../samples/Wholesale/Worker/Broker/README.md).
 
 ## Ownership and native configuration
 

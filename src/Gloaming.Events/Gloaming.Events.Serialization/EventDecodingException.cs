@@ -18,7 +18,12 @@ public sealed class EventDecodingException : Exception
         Failure = failure;
     }
 
+    /// <summary>The durable event alias supplied for decoding.</summary>
     public string EventName { get; }
+
+    /// <summary>The durable schema version supplied for decoding.</summary>
     public int SchemaVersion { get; }
+
+    /// <summary>Whether no supported identity/path exists or the payload cannot be decoded.</summary>
     public EventDecodingFailure Failure { get; }
 }

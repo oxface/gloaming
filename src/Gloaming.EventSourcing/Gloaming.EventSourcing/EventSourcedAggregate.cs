@@ -23,10 +23,19 @@ public abstract class EventSourcedAggregate<TState, TEvent> : IEventSourcedAggre
         PendingEvents = pending.AsReadOnly();
     }
 
+    /// <summary>The consumer aggregate and stream identity.</summary>
     public Guid Id { get; }
+
+    /// <summary>The observed committed version captured when this aggregate was loaded; accepted decisions do not advance it.</summary>
     public long ExpectedVersion { get; }
+
+    /// <summary>The proposed stream version including all accepted pending events.</summary>
     public long Version { get; private set; }
+
+    /// <summary>The accepted candidate state at Version; historical evolution and command eligibility remain consumer-owned.</summary>
     public TState? State { get; private set; }
+
+    /// <summary>The accepted ordered event batch proposed since ExpectedVersion, without clearing it or saving.</summary>
     public IReadOnlyList<TEvent> PendingEvents { get; }
 
     /// <summary>Accepts the complete candidate only after pure evolution, policy and checked arithmetic succeed.</summary>

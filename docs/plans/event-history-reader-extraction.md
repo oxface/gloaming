@@ -264,11 +264,11 @@ src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.
 | EF/AggregateRebuilder.cs | Inject typed reader; remove ReadEventsAsync override requirement; preserve native reconstruction/save/concurrency behavior. |
 | samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs; Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs | Derive from shared reader; remove ReadRowsAsync/ReadReplayAsync; preserve temporal target selection, module Contracts and pure evolution. |
 | Corresponding StockPositionRebuilder.cs; PurchaseOrderRebuilder.cs | Pass existing reader to base; remove the one-line history hook. |
-| samples/EventStorageDemo/CounterHistoryReader.cs | Add a thin typed-context decoder using direct JSON, without tenancy/codec registration. |
-| samples/EventStorageDemo/CounterStore.cs | Delegate captured history loading to provided implementation; retain domain evolution and local error classification. |
+| src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterHistoryReader.cs | Add a thin typed-context decoder using direct JSON, without tenancy/codec registration. |
+| src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs | Delegate captured history loading to provided implementation; retain domain evolution and local error classification. |
 | src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildConsumer.cs | Adopt shared reader in tenant-free ledger; preserve independent maintenance composition. |
 | Same tests/EventHistoryReaderTests.cs; RegistrationTests.cs; RebuildTests.cs | Add actual reader proof coverage and update consumer constructor composition. |
-| samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs; samples/EventStorageDemo.Tests/AppendTests.cs | Extend adoption checks only where existing cases do not cover the extracted behavior. |
+| samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs; src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs | Extend adoption checks only where existing cases do not cover the extracted behavior. |
 | tests/ArchitectureTests/AdoptionDependencyTests.cs; AssemblyDependencyTests.cs | Update both project and assembly dependency assertions for the approved Events.History dependency and consumer error translation; retain other independent consumer/T1 exclusions. |
 | EF/README.md; EF/docs/capabilities.md; EventSourcing/docs/capabilities.md; docs/plans/library-extraction.md; new docs/reports/event-history-reader-extraction.md | Document supported setup/limits and separate fresh proof results from prior evidence. |
 

@@ -50,12 +50,12 @@ DDD foundation, generic decider, event-history store or new durable-delivery mec
 
 ## Executable consumer evidence
 
-The [standalone consumer](../../samples/EventReactionsDemo/README.md) has no Wholesale dependency:
+The [standalone consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md) has no Wholesale dependency:
 
 - DirectOrders inherits a consumer-owned OwnedEntity and composes buffers in its root and allowance.
   Its module registration selects those buffers explicitly, and EF mappings ignore them.
 - MappedQuotes keeps immutable state, decisions and plain facts in a separate
-  [model project](../../samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj) with no
+  [model project](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj) with no
   package, framework or project references. Application adapters map rows and forward accepted facts
   to the operation sink. Domain code has no EventReactions or EF dependency.
 - Scoped-request proofs select a non-entity ImportRun buffer and combine it with the operation sink.
@@ -68,7 +68,7 @@ ceilings, false acceptance, SQL bypass and late callback behavior. Composition p
 tenant and outbox validation with reactions. Architecture checks verify actual assembly boundaries,
 the dependency-free model and consumer-owned inheritance.
 
-Wholesale's [Sales example](../../samples/Wholesale/DomainEventsDemo/README.md) still uses domain
+Wholesale's [Sales example](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) still uses domain
 facts because that is its business meaning. Draft submission reserves customer allowance and records
 the required work in the same module transaction. Its immutable aggregate does not depend on a marker
 or base class. Business constraints, concurrency tokens, handler choices and row mapping stay sample-owned.
@@ -174,8 +174,8 @@ Start with the [core contract](../../src/Gloaming.EventReactions/Gloaming.EventR
 [core implementation](../../src/Gloaming.EventReactions/Gloaming.EventReactions),
 [EF registration](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionRegistration.cs)
 and [shared save integration](../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/CapabilityConfiguration.cs).
-Then compare [DirectOrders registration](../../samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-[pure model](../../samples/EventReactionsDemo/Model),
-[ad-hoc source proofs](../../samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
-[ordering proofs](../../samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs) and
+Then compare [DirectOrders registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+[pure model](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Model),
+[ad-hoc source proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
+[ordering proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs) and
 [architecture boundaries](../../tests/ArchitectureTests/EventReactionBoundaryTests.cs).

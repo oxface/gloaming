@@ -104,7 +104,7 @@ Reminder recipient/content checks and manual responsibility reassignment remain 
 
 ## HTTP adoption and migrations
 
-[HttpIdentityDemo](../../HttpIdentityDemo/README.md#membership-administration) exposes native
+[HttpIdentityDemo](../../Api/README.md#membership-administration) exposes native
 authenticated point-read and antiforgery-protected POST intents after existing admission.
 The forward MembershipAdministration migration adds revision=1, grant=false and audit storage.
 It preserves populated pre-administration identities/memberships and grants no existing user

@@ -29,7 +29,7 @@ projections remain separate deferred capabilities in their owning family's catal
 Evidence and adoption:
 
 - [Pure codec proofs](../../tests/EventSerializationTests/UpcastingTests.cs): explicit routing, optional defaults, strict fields, original-identity errors and JSON lifetime ownership.
-- [Standalone chained/nested adopter](../../../../samples/Wholesale/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs) and [literal proofs](../../../../samples/Wholesale/EventCodecDemo.Tests/UpcastingCompatibilityTests.cs).
-- [Inventory receipt upgrade](../../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs) and [PostgreSQL mixed-schema/rebuild proofs](../../../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.Upcasting.cs).
+- [Standalone chained/nested adopter](../../samples/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs) and [literal proofs](../../samples/EventCodecDemo.Tests/UpcastingCompatibilityTests.cs).
+- [Inventory receipt upgrade](../../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs) and [PostgreSQL mixed-schema/rebuild proofs](../../../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.Upcasting.cs).
 - [Rendering message-payload adoption](../../../Gloaming.Messaging/docs/schema-compatibility.md) and its [fresh consumer proof report](../../../../docs/reports/queued-message-schema-compatibility.md): original-envelope deduplication, retained schemas, HTTP/RabbitMQ, operator retry and process recovery using the existing codec.
 - [Reviewed scope](../../../../docs/plans/event-payload-upcasting.md) and [dated slice report](../../../../docs/reports/event-payload-upcasting.md), separating new results from historical evidence.

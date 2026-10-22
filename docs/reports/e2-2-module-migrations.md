@@ -88,17 +88,17 @@ migration internals in isolation.
 
 ## Review files and remaining gaps
 
-Review [runtime composition](../../samples/Wholesale/PersistenceDemo/DemoComposition.cs) and
-[explicit initialization/usage](../../samples/Wholesale/PersistenceDemo/Program.cs), then
-[Inventory options](../../samples/Wholesale/PersistenceDemo/Inventory/InventoryDatabase.cs),
-[its design-time factory](../../samples/Wholesale/PersistenceDemo/Inventory/InventoryDesignTimeFactory.cs),
-[Sales mapping/save overrides](../../samples/Wholesale/PersistenceDemo/Sales/SalesDbContext.cs),
-[Sales options](../../samples/Wholesale/PersistenceDemo/Sales/SalesDatabase.cs) and
-[its factory](../../samples/Wholesale/PersistenceDemo/Sales/SalesDesignTimeFactory.cs).
+Review [runtime composition](../../src/Gloaming.Persistence/samples/PersistenceDemo/DemoComposition.cs) and
+[explicit initialization/usage](../../src/Gloaming.Persistence/samples/PersistenceDemo/Program.cs), then
+[Inventory options](../../src/Gloaming.Persistence/samples/PersistenceDemo/Inventory/InventoryDatabase.cs),
+[its design-time factory](../../src/Gloaming.Persistence/samples/PersistenceDemo/Inventory/InventoryDesignTimeFactory.cs),
+[Sales mapping/save overrides](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/SalesDbContext.cs),
+[Sales options](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/SalesDatabase.cs) and
+[its factory](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/SalesDesignTimeFactory.cs).
 Review the initial migrations, designers and snapshots under each module's `Migrations`
 folder, [schema policies](../../tests/ArchitectureTests/ModulePersistenceTests.cs),
-[database proofs](../../samples/Wholesale/PersistenceDemo.Tests/ModuleMigrationTests.cs)
-and the [updated consumer recipe](../../samples/Wholesale/PersistenceDemo/README.md).
+[database proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/ModuleMigrationTests.cs)
+and the [updated consumer recipe](../../src/Gloaming.Persistence/samples/PersistenceDemo/README.md).
 
 Schemas are ownership conventions, not hostile-code or credential isolation. This sample
 uses fresh disposable databases; E2.1 databases created with `EnsureCreated` must be recreated.

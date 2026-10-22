@@ -35,22 +35,22 @@ not multiple database providers or storage strategies.
 
 ## Archived evidence and gaps
 
-- [Shared ownership filters](../../archive/proof-sample/shared/Persistence/ModelBuilderExtensions.cs)
+- [Shared ownership filters](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/shared/Persistence/ModelBuilderExtensions.cs)
   rewrite a consumer predicate for entities implementing the consumer ownership interface.
-- [Inventory](../../archive/proof-sample/modules/Inventory/Inventory/Persistence/InventoryDbContext.cs),
-  [Sales](../../archive/proof-sample/modules/Sales/Sales/Persistence/SalesDbContext.cs) and
-  [Purchasing](../../archive/proof-sample/modules/Purchasing/Purchasing/Persistence/PurchasingDbContext.cs)
+- [Inventory](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/Persistence/InventoryDbContext.cs),
+  [Sales](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Persistence/SalesDbContext.cs) and
+  [Purchasing](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/Persistence/PurchasingDbContext.cs)
   reuse it with separate schemas. Their workflow tenant fallback rules differ; E1 replaces
   that establishment with one immutable operation identity.
-- [Customer persistence tests](../../archive/proof-sample/tests/PersistenceTests/CustomerPersistenceTests.cs)
+- [Customer persistence tests](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/PersistenceTests/CustomerPersistenceTests.cs)
   exercise module authorization, scoped lookup, tenant uniqueness and transactional failure.
   They do not establish general detached-write protection.
-- [Customer mapping](../../archive/proof-sample/modules/Sales/Sales/Customers/Persistence/CustomerConfiguration.cs)
+- [Customer mapping](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Customers/Persistence/CustomerConfiguration.cs)
   has an ID-only primary key; its tenant is not a concurrency predicate.
-- [Order mapping](../../archive/proof-sample/modules/Sales/Sales/Orders/Persistence/SalesOrderConfiguration.cs)
+- [Order mapping](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Orders/Persistence/SalesOrderConfiguration.cs)
   has a separate version token and ID-only customer foreign key. A version is not an ownership
   predicate; a relationship by ID alone does not prove same-tenant linkage.
-- [Architecture checks](../../archive/proof-sample/tests/ArchitectureTests/ModulePersistenceRulesTests.cs)
+- [Architecture checks](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/ArchitectureTests/ModulePersistenceRulesTests.cs)
   inspect models/migrations. Their raw-SQL schema annotation is a declaration, not SQL parsing.
 
 No module save override or save interceptor supplying a general tenant-write guard was

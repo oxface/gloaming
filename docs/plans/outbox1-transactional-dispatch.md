@@ -83,20 +83,20 @@ its lease remains valid. Delivery can repeat; this does not promise exactly-once
 
 The archive supplies three genuinely repeated implementations:
 
-- [Inventory relay](../../archive/proof-sample/modules/Inventory/Inventory/Messaging/InventoryOutboxRelay.cs)
+- [Inventory relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/Messaging/InventoryOutboxRelay.cs)
   publishes typed outcome/reference topics.
-- [Sales relay](../../archive/proof-sample/modules/Sales/Sales/Messaging/SalesOutboxRelay.cs)
+- [Sales relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Messaging/SalesOutboxRelay.cs)
   sends directed reservation, release and replenishment commands.
-- [Purchasing relay](../../archive/proof-sample/modules/Purchasing/Purchasing/Messaging/PurchasingOutboxRelay.cs)
+- [Purchasing relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/Messaging/PurchasingOutboxRelay.cs)
   publishes created/rejected replenishment outcomes.
 
 Each repeats the same row lifecycle, JSONB storage, PostgreSQL candidate claim, lease token,
 attempt increment and guarded completion/backoff. Their row factories and publisher switches
 encode business contracts, correlation and routing; those differences remain consumer-owned.
-[ReserveStockHandler](../../archive/proof-sample/modules/Inventory/Inventory/Reservations/ReserveStockHandler.cs)
+[ReserveStockHandler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/Reservations/ReserveStockHandler.cs)
 commits its state/history, operation, inbox, audit and outbox together. Its application protocol
 is historical evidence, not authorization to extract all those participants in O1.
-See [the archived comparison](../../archive/proof-sample/docs/plans/messaging-reuse.md).
+See [the archived comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/messaging-reuse.md).
 
 Deleting the proposed library would restore claim/lease/fencing/recovery SQL and technical
 envelope/transaction validation in every adopter. Enqueue alone would remove much less
@@ -254,7 +254,7 @@ ID, logical destination, message identity and admitted owner. Delivery ID is gen
 for the accepted outgoing row and retained through every retry; semantic command idempotency
 and ambiguous producer commits remain consumer responsibilities.
 
-A new independent `samples/OutboxDemo` uses ordinary EF state: submit a draft export request
+A new independent `src/Gloaming.Messaging/samples/OutboxDemo` uses ordinary EF state: submit a draft export request
 and enqueue a directed `RenderExportV1` command in one transaction. It uses direct JSON, no
 event-sourced aggregate, no tenant/access model and no template/module layout. A rejected
 submission or competing stale edit emits no outgoing work. This varies transaction
@@ -551,9 +551,9 @@ business rejection or silently reset/retry the producer context. Recovery uses a
 | `samples/Wholesale/modules/Inventory/Inventory/{Inventory.csproj,InventoryDbContext.cs,InventoryRegistration.cs}` | Explicit outbox dependency/model, existing tenant validation reuse, both save guards and typed producer registration. No automatic dispatch registration. |
 | Inventory `StockPositions/StockPositionCommands.cs`; new `Messaging/StockIssueMessages.cs`; `Inventory.Contracts/StockIssueRecordedV1.cs` | Explicitly map and enqueue only accepted stock issues; integration DTO remains consumer-owned and independent of library types. Existing open/receive/rebuild behavior has no automatic publication. |
 | Inventory `Migrations/{new AddTransactionalOutbox.cs,new AddTransactionalOutbox.Designer.cs,InventoryDbContextModelSnapshot.cs}` | Add only `inventory.outbox_messages` through a forward native migration. Preserve every previous migration/fixture. |
-| `samples/Wholesale/EventPersistenceDemo/{Program.cs,DemoComposition.cs,new OutboxJourney.cs,new InventoryRabbitMqPublisher.cs,EventPersistenceDemo.csproj,README.md}` | Add an explicit `--outbox` journey, consumer-owned RabbitMQ topology/publisher and callable dispatch. Preserve default journeys and authored fixtures/output. Broker URL supplied explicitly; no new Aspire graph or template preset. |
-| `samples/Wholesale/EventPersistenceDemo.Tests/{new AppendTests.Outbox.cs,new OutboxDispatchTests.cs,EventPersistenceDemo.Tests.csproj}`; new `tests/Support/RabbitMqFixture.cs` | Real PostgreSQL/RabbitMQ proofs: append/main-state/outbox atomicity, tenant policy, rejection/races/rollback/recovery, confirms, unroutable publication, duplicate stable identity and effect-free rebuild. A receiving observer is not an inbox business proof. Preserve prior semantic tests. |
-| `samples/OutboxDemo/{OutboxDemo.csproj,Program.cs,DemoJourneys.cs,ExportDbContext.cs,ExportRequestCommands.cs,HttpCommandPublisher.cs,README.md,Migrations/*}`; `samples/OutboxDemo.Tests/{OutboxDemo.Tests.csproj,AdoptionTests.cs}` | Add the ordinary state-stored/direct-JSON executable adopter, module-free composition, native migration and real transaction/delivery proofs. No event-sourcing/context-library reference. |
+| `samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/{Program.cs,DemoComposition.cs,new OutboxJourney.cs,new InventoryRabbitMqPublisher.cs,EventPersistenceDemo.csproj,README.md}` | Add an explicit `--outbox` journey, consumer-owned RabbitMQ topology/publisher and callable dispatch. Preserve default journeys and authored fixtures/output. Broker URL supplied explicitly; no new Aspire graph or template preset. |
+| `samples/Wholesale/IntegrationTests/EventPersistence/{new AppendTests.Outbox.cs,new OutboxDispatchTests.cs,EventPersistenceDemo.Tests.csproj}`; new `tests/Support/RabbitMqFixture.cs` | Real PostgreSQL/RabbitMQ proofs: append/main-state/outbox atomicity, tenant policy, rejection/races/rollback/recovery, confirms, unroutable publication, duplicate stable identity and effect-free rebuild. A receiving observer is not an inbox business proof. Preserve prior semantic tests. |
+| `src/Gloaming.Messaging/samples/OutboxDemo/{OutboxDemo.csproj,Program.cs,DemoJourneys.cs,ExportDbContext.cs,ExportRequestCommands.cs,HttpCommandPublisher.cs,README.md,Migrations/*}`; `src/Gloaming.Messaging/samples/OutboxDemo.Tests/{OutboxDemo.Tests.csproj,AdoptionTests.cs}` | Add the ordinary state-stored/direct-JSON executable adopter, module-free composition, native migration and real transaction/delivery proofs. No event-sourcing/context-library reference. |
 | `tests/ArchitectureTests/{ArchitectureTests.csproj,AssemblyDependencyTests.cs,AdoptionDependencyTests.cs,SampleModuleBoundaryTests.cs}` | Prove core/EF/Postgres dependency direction, transport-free libraries, module-typed registration and intentional adoption. Contracts remain free of technical dependencies. |
 | `Directory.Packages.props`, `ModulithFoundry.slnx`, `.github/workflows/ci.yml`, `README.md`, `docs/development.md`, extraction plan and O1 report | Pin native Hosting/Logging abstractions and sample/test-only RabbitMQ.Client/Testcontainers.RabbitMq dependencies. Add a Messaging family lane for core/EF/PG/worker, standalone and focused broker adoption proofs; existing Wholesale event checks remain in EventSourcing. No archived broker/topology suite revival. |
 

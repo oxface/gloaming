@@ -132,10 +132,10 @@ underlying batch mechanism, with their existing public shapes.
 
 Then review [Inventory binding](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
 [Purchasing binding](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs),
-[raw counter](../../samples/EventStorageDemo/CounterStore.cs), native model/save integration,
+[raw counter](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), native model/save integration,
 creation/command changes and fixture-seed adaptations. The
-[required-state proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.RequiredInlineState.cs)
-and [independent proofs](../../samples/EventStorageDemo.Tests/AppendTests.cs) exercise the
+[required-state proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.RequiredInlineState.cs)
+and [independent proofs](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) exercise the
 supported seam. [The brief](../plans/es1-library-write-store.md) lists exact public types,
 errors/dependencies and every file/behavior group beyond the prior ES1 surface.
 

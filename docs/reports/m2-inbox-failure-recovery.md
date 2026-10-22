@@ -151,7 +151,7 @@ Paths below are repository-relative; review public interfaces and implementation
    PostgresInboxProcessor savepoint placement and commit-error paths, PostgresInboxStorage
    accounting SQL/model guards, PostgresInboxRecovery revision predicate, mapping constraints
    and separate recovery registration.
-3. `samples/InboxDemo/`: RenderInboxFailurePolicy, RenderOperatorAuthenticationHandler,
+3. `src/Gloaming.Messaging/samples/InboxDemo/`: RenderInboxFailurePolicy, RenderOperatorAuthenticationHandler,
    RenderInboxOperations and explicit host/Program wiring. Review auth-before-invocation,
    fixed lane, safe DTO and consumer classification.
 4. Forward `AddInboxFailureRecovery` migrations/designers and current snapshots in Rendering
@@ -159,7 +159,7 @@ Paths below are repository-relative; review public interfaces and implementation
    only each inbox's new columns/checks/index. Native scaffolding also refreshes existing model
    annotations; Inventory snapshot entity ordering is retained to reduce unrelated diff noise.
    Old migrations were not changed.
-5. `samples/Wholesale/WorkflowDemo/SalesReplyDatabase.cs`: processor-only new column grants
+5. `samples/Wholesale/Worker/Broker/SalesReplyDatabase.cs`: processor-only new column grants
    and the shared exact effective-grant inventory. No redrive count/time rights are added.
 6. Proofs: library FailureRecoveryTests, Rendering FailureRecoveryTests/RecoveryMigrationTests,
    InboxRecoveryProcessTests and SalesReplyRecoveryTests. Existing broker/OTLP proofs now call

@@ -5,6 +5,10 @@ This repository develops them against an executable modular-monolith sample and 
 a consumer-owned application template. Consumers own their application composition, module
 policy, transactions, transport routing, and worker deployment.
 
+Wholesale is now [one reference product](samples/Wholesale/README.md): an API, one worker/maintenance
+executable, module-owned persistence and one integration-test suite plus real runtime/browser proofs.
+Independent adoption examples live beside their owning library families.
+
 The reusable libraries use `Gloaming.*` namespaces, project names and assembly names.
 The repository, sample applications and template retain their existing identities.
 See [the rename report](docs/reports/gloaming-library-renaming.md) for the scope and verification.
@@ -30,16 +34,16 @@ Catalog/console repository with configurable naming and existing library source
 snapshots, now including shared EF infrastructure required by Persistence, without domain-event or messaging dependencies. [The report](docs/reports/t1-template-rehearsal.md)
 records the supported creation behavior and limits.
 
-[The separate worker host](samples/MessagingWorkerDemo/README.md) demonstrates API-independent
+[The separate worker host](src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md) demonstrates API-independent
 dispatch, broker intake and local processing using existing Messaging APIs. Explicit finite
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.
 
-The [local reservation workflow](samples/Wholesale/LocalWorkflowDemo/README.md) delivers through
+The [local reservation workflow](samples/Wholesale/Worker/Local/README.md) delivers through
 public module intake Contracts without a broker. Existing inbox/outbox workers retain independently
 committed decisions and Sales-owned compensation; PostgreSQL/process-death proofs cover the handoff.
 
-The [CQRS consumer journey](samples/Wholesale/CqrsDemo/README.md) composes typed Sales
+The [test-owned CQRS scenarios](samples/Wholesale/IntegrationTests/Scenarios/Cqrs/README.md) composes typed Sales
 commands, joined read filters and deterministic pagination with Inventory Contract reads.
 Native EF owns storage and explicit transactions; no CQRS runtime or new library is added.
 
@@ -51,20 +55,22 @@ domain rules, view definitions and native save/commit. Existing event experiment
 remain intact. See [the store slice report](docs/reports/es1-library-write-store.md) and
 [the current plan](docs/plans/library-extraction.md).
 
-The original wholesale sample and its documentation are preserved under
-[`archive/proof-sample`](archive/proof-sample). They supply behavioral evidence and known
-limits for deliberate reimplementation, rather than prescribing the new library design.
+The original wholesale sample and its documentation remain available at
+[their immutable source revision](https://github.com/oxface/modulith-foundry/tree/15d1ec6ce85f872e4547b37c33658dea76b25d03).
+The [retirement record](docs/reports/s1-archive-retirement.md) maps retained proof ownership
+and provenance. Historical findings supply behavioral comparisons and known limits for
+deliberate reimplementation; current library contracts describe supported behavior.
 The first active segments are independent [actor identity](src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
-and [tenancy](src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), exercised by [the finite wholesale context sample](samples/Wholesale/ContextDemo/README.md).
+and [tenancy](src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), exercised by [the finite wholesale context sample](src/Gloaming.Tenancy/samples/ContextDemo/README.md).
 The first [EF ownership utility](src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md)
 was checkpointed with an executable Inventory consumer. The
-[two-module persistence sample](samples/Wholesale/PersistenceDemo/README.md) now owns native
+[two-module persistence sample](src/Gloaming.Persistence/samples/PersistenceDemo/README.md) now owns native
 Inventory/Sales migrations and separate histories checkpointed as `f2dcf2b`.
 Same-tenant customer/address relationships were checkpointed as `d67c7fc`.
 Versioned profile changes with caller-owned transactions were checkpointed as `6069c05`,
 completing the initial E2 persistence scope. The optional
 [actor HTTP adapter](src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
-[HTTP identity sample](samples/Wholesale/HttpIdentityDemo/README.md) were reviewed and
+[HTTP identity sample](samples/Wholesale/Api/README.md) were reviewed and
 checkpointed as `faefc0b`. The independently adoptable
 [tenancy HTTP adapter](src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.md) and Organization-scoped
 catalog sample were reviewed and checkpointed as `cfbac9a`, including explicit selection
@@ -82,14 +88,14 @@ optional local Keycloak, explicit application account mappings and real browser 
 checkpointed as `dc3ac3b` with [implementation findings](docs/reports/e3-7-oidc-browser-journey.md).
 [E4](docs/plans/e4-event-serialization.md) implements the independent
 [Events.Serialization library](src/Gloaming.Events/Gloaming.Events.Serialization/README.md), immediately
-used by a [two-family consumer](samples/Wholesale/EventCodecDemo/README.md), with
+used by a [two-family consumer](src/Gloaming.Events/samples/EventCodecDemo/README.md), with
 [fresh proofs](docs/reports/e4-event-serialization.md) checkpointed as `2a49ef3b`.
 [E5.1](docs/plans/e5-1-event-history.md) adds independently adoptable
 [ordered-range validation](src/Gloaming.Events/Gloaming.Events.History/README.md) with explicit two-family
 hydration, owner-reviewed and checkpointed as `4cc12a1`. [Its report](docs/reports/e5-1-event-history.md)
 separates memory-only proofs from database guarantees.
 [E5.2.1 native EF reads](docs/plans/e5-2-1-native-event-history.md) adds owning Inventory/Purchasing
-modules and an [executable database consumer](samples/Wholesale/EventPersistenceDemo/README.md),
+modules and [retained database integration scenarios](samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
 owner-reviewed and checkpointed as `4f4d5b2`. [Its report](docs/reports/e5-2-1-native-event-history.md)
 records PostgreSQL selection/isolation/capture proofs. The owner-reviewed
 [E5.2.2 append slice](docs/plans/e5-2-2-native-event-append.md) adds explicit command staging
@@ -97,7 +103,7 @@ and caller-owned transactions before views and messaging. [Its report](docs/repo
 records real PostgreSQL conflict/rollback proofs; no new library mechanism was needed.
 [E5.3 storage registration](docs/plans/e5-3-event-storage-registration.md) adds
 [EventSourcing.EntityFrameworkCore](src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md),
-adopted by both modules and an [independent shared-table consumer](samples/EventStorageDemo/README.md).
+adopted by both modules and an [independent shared-table consumer](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md).
 E5.2.2 and E5.3 were checkpointed together as `abcd370`;
 [the storage report](docs/reports/e5-3-event-storage-registration.md) records
 fresh tenant-free/customized/mixed-stream proofs and preserved module schemas.
@@ -138,7 +144,7 @@ records atomic view updates and editing without history replay; no new library m
 - [Active test value audit](docs/reports/test-audit.md)
 - [Development and verification](docs/development.md)
 - [Repository workflow](docs/conventions/repository.md)
-- [Archive provenance and commands](archive/README.md)
+- [Archive retirement and immutable provenance](docs/reports/s1-archive-retirement.md)
 
 ## Development
 
@@ -154,7 +160,7 @@ npm exec --prefix tools/repository -- lefthook install
 Run the active sample with:
 
 ```bash
-dotnet run --project samples/Wholesale/ContextDemo/ContextDemo.csproj
+dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj
 ```
 
 Every push to main and PR selects relevant checks from changed paths and their native

@@ -1,10 +1,10 @@
 # D2.1a: local domain-event extraction assessment
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
-Historical record: the owner subsequently authorized [EF1.1](../reports/ef1-1-capability-composition.md)
+Historical record: the owner subsequently authorized [EF1.1](ef1-1-capability-composition.md)
 common capability composition and clear-before-handling dispatch. That implementation supersedes
 retained sessions, Stage, owned transactions and completion enforcement described below. Source
 links now lead to replacements; test counts below remain dated evidence.
@@ -34,7 +34,7 @@ with an optional base, and immutable domain decisions mapped to separate persist
 an explicit sink. Both have two submission handlers and a downstream allocation handler. Deletion
 releases the reservation, with facts surviving deletion/detachment until successful native saving.
 There is no reflection scanner, global service provider, event store, transport or tenant dependency
-in the core. The executable, migrations and [consumer setup](../../samples/EventReactionsDemo/README.md)
+in the core. The executable, migrations and [consumer setup](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md)
 are included, rather than treating a copied routing loop as sufficient extraction evidence.
 
 D2.1's earlier conclusion that no reusable mechanism was proven remains accurate for that slice's
@@ -136,13 +136,13 @@ the tests passed with the permitted local IPC/container execution environment.
   [session](../../src/Gloaming.EventReactions/Gloaming.EventReactions/EventReactionDispatcher.cs)
   and [EF adapter](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionServiceCollectionExtensions.cs)
   are the proposed mechanism implementation.
-- [DirectOrders](../../samples/EventReactionsDemo/Consumer/DirectOrders.cs),
-  [MappedQuotes](../../samples/EventReactionsDemo/Consumer/MappedQuotes.cs) and the
-  [finite journey](../../samples/EventReactionsDemo/Consumer/ExtractionJourney.cs) show
+- [DirectOrders](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
+  [MappedQuotes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs) and the
+  [finite journey](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/ExtractionJourney.cs) show
   actual consumer obligations.
 - [Core proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs),
-  [database lifecycle proofs](../../samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs)
-  and [database fault proofs](../../samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs)
+  [database lifecycle proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs)
+  and [database fault proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs)
   show expected outcomes and limits independently of the implementation.
 
 Five assessment projects are included in the solution. CI explicitly maps this sample directory

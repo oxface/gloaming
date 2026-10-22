@@ -13,6 +13,7 @@ public static class RequiredInlineStateExtensions
 {
     private const string Prefix = "ModulithFoundry:RequiredInlineState:";
 
+    /// <summary>Declares the required stream/event/inline-state save association for one stable stream discriminator.</summary>
     public static ModelBuilder ConfigureRequiredInlineState<TStream, TStoredEvent, TState>(
         this ModelBuilder model,
         string streamType

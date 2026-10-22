@@ -35,7 +35,7 @@ There is no new library package/dependency or template preset.
 
 ## Executable adoption and schema findings
 
-[OutboxDemo](../../samples/OutboxDemo/README.md) keeps its finite EF submit/dispatch journey
+[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md) keeps its finite EF submit/dispatch journey
 and adds explicit --setup, --serve and --serve --worker modes. Its HTTP policy stops
 unsupported contracts immediately and bounds selected transient observations to three per
 cycle. Optional authenticated operator endpoints fix exports.render and return metadata
@@ -144,7 +144,7 @@ Review [public contracts](../../src/Gloaming.Messaging/Gloaming.Messaging.Entity
 failure inputs/decisions and [the callable protocol](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
 first. Then inspect [metadata/retry SQL](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDeadLetters.cs),
 model/producer guards, worker supervision, the three forward migrations and
-[restricted grant inventories](../../samples/Wholesale/WorkflowDemo/SalesDispatchDatabase.cs),
+[restricted grant inventories](../../samples/Wholesale/Worker/Broker/SalesDispatchDatabase.cs),
 including SalesReplyDatabase's generated-default reads. Finally review executable policy/
 operator endpoints and the independent PostgreSQL/process assertions. The
 [accepted decision](../adr/0019-lease-fenced-outbox-dead-letters.md) records the durable boundary.

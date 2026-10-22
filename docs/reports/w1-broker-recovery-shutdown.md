@@ -32,7 +32,7 @@ failure remain ambiguous; receiver deduplication is required while receipts are 
 Receipt deletion still permits old delivery to execute again.
 
 See [family recovery/cancellation obligations](../../src/Gloaming.Messaging/docs/worker-recovery.md)
-and [executable adoption](../../samples/MessagingWorkerDemo/README.md). Supervision must restart
+and [executable adoption](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md). Supervision must restart
 unexpected exits including status 0 from existing native StopHost paths, and own external
 grace/force-termination policy for noncooperative code. No deployment supervisor is supplied.
 
@@ -103,15 +103,15 @@ socket (`DOCKER_HOST` and `TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE`; disable Ryuk 
 
 ```sh
 dotnet build ModulithFoundry.slnx --no-restore -m:1
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 ```
 
 ## Review surface and closure disposition
 
-- Consumer runtime: [BrokerSession](../../samples/MessagingWorkerDemo/BrokerSession.cs),
-  [host attachment](../../samples/MessagingWorkerDemo/Program.cs) and publication-start logging
-  in [WorkerPublisher](../../samples/MessagingWorkerDemo/WorkerPublisher.cs).
-- Process proof: [BrokerRecoveryTests](../../samples/MessagingWorkerDemo.Tests/BrokerRecoveryTests.cs),
+- Consumer runtime: [BrokerSession](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/BrokerSession.cs),
+  [host attachment](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/Program.cs) and publication-start logging
+  in [WorkerPublisher](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/WorkerPublisher.cs).
+- Process proof: [BrokerRecoveryTests](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/BrokerRecoveryTests.cs),
   dedicated native broker controls, minimal intake barrier/connection-string topology overload,
   timeout diagnostics and the existing collector case's stop budget.
 - Family/sample docs: recovery/shutdown contract, capabilities, observability and outbox recovery;

@@ -14,9 +14,9 @@ Before choosing change scope, staging, preparing a pull request, or committing, 
   Library interfaces and implementations receive owner review line by line.
 - Keep sample business rules and module Contracts out of technical libraries. Establish
   sample module ownership and domain language when the corresponding sample behavior is added.
-- Treat `archive/proof-sample` as historical evidence. Its plans, instructions, and accepted
-  patterns do not authorize active implementation. Preserve archived source and fixtures;
-  explain any necessary relocation repair separately from library changes.
+- Use the [retirement provenance](docs/reports/s1-archive-retirement.md) for historical source.
+  Historical plans and instructions do not authorize active implementation. Preserve current
+  owned fixtures and migrations; document compatibility repairs with their owning capability.
 - Record settled, hard-to-reverse architecture choices in `docs/adr/`. Proposed interfaces
   remain in the extraction plan until reviewed.
 

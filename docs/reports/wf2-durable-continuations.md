@@ -86,7 +86,7 @@ Reproduce the core protocol with:
 ```sh
 dotnet build ModulithFoundry.slnx -m:2
 dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 ```
 
 Local child-host runs retain `DOTNET_USE_POLLING_FILE_WATCHER=1` for this machine's watcher limits.

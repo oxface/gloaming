@@ -60,7 +60,7 @@ edits inside the same tenant; consumers configure a separate version when needed
 
 ## Consumer and first supported surface
 
-Add a finite `samples/Wholesale/PersistenceDemo` with one Inventory-owned table in an
+Add a finite `src/Gloaming.Persistence/samples/PersistenceDemo` with one Inventory-owned table in an
 explicit schema. Its reference rows have an ID, consumer-named tenant key, business key,
 quantity and an independent soft-deletion flag. Independently seed two tenants with the same
 business key and quantities 42/7; do not inherit archived entity types or migrations.

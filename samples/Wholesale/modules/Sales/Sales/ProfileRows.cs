@@ -7,6 +7,7 @@ internal sealed class CustomerRow
     public required string Code { get; set; }
     public required string DisplayName { get; set; }
     public long Version { get; set; } = 1;
+    public bool DeliveryListed { get; set; } = true;
 }
 
 internal sealed class AddressRow

@@ -5,9 +5,9 @@ using Aspire.Hosting.Testing;
 using Gloaming.ActorIdentity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
+using ModulithFoundry.Samples.Wholesale.Api;
+using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
 using ModulithFoundry.Samples.Wholesale.AppHost;
-using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
-using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo.Endpoints;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
@@ -273,13 +273,32 @@ public sealed class BrowserTests
                     await database.OpenAsync(Token);
                     await using var policies = new NpgsqlCommand(
                         """
-                        SELECT (SELECT count(*) FROM pg_roles WHERE rolname IN ('wholesale_access', 'wholesale_sales')) = 2
-                            AND (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-                                WHERE n.nspname = 'sales' AND c.relrowsecurity AND c.relforcerowsecurity) = 6
+                        SELECT ARRAY(SELECT rolname::text FROM pg_roles
+                                WHERE rolname IN ('wholesale_access', 'wholesale_sales') ORDER BY rolname),
+                            ARRAY(SELECT c.relname::text FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                                WHERE n.nspname = 'sales' AND c.relrowsecurity AND c.relforcerowsecurity
+                                ORDER BY c.relname)
                         """,
                         database
                     );
-                    Assert.Equal(true, await policies.ExecuteScalarAsync(Token));
+                    await using var policiesReader = await policies.ExecuteReaderAsync(Token);
+                    Assert.True(await policiesReader.ReadAsync(Token));
+                    Assert.Equal<string>(
+                        ["wholesale_access", "wholesale_sales"],
+                        policiesReader.GetFieldValue<string[]>(0)
+                    );
+                    Assert.Equal<string>(
+                        [
+                            "audit_entries",
+                            "customer_addresses",
+                            "customer_profiles",
+                            "draft_order_grants",
+                            "draft_order_lines",
+                            "draft_orders",
+                            "outbox_messages",
+                        ],
+                        policiesReader.GetFieldValue<string[]>(1)
+                    );
                 }
 
                 var api = await commands.ExecuteCommandAsync(

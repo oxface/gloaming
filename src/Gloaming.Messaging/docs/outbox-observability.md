@@ -52,7 +52,7 @@ no schema migration, additional index, permission reconciliation or grant expans
 
 ## Native sample health and metrics
 
-[OutboxDemo](../../../samples/OutboxDemo/README.md#backlog-and-health) supplies editable consumer
+[OutboxDemo](../samples/OutboxDemo/README.md#backlog-and-health) supplies editable consumer
 wiring. Its authenticated `/operations/outbox/status` fixes exports.render and returns a live
 snapshot with no-store caching. Database errors, including EF-wrapped native connection faults,
 return 503 with no error details. Without its configured operator credential the route is absent.
@@ -117,7 +117,7 @@ Choose actual values, aggregation and escalation for the owning workload. Pendin
 alone need not indicate an outage. Health responses, alert delivery, dashboards and deployment
 restart policy are consumer responsibilities.
 
-[Restricted Sales inspection](../../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md#backlog-inspection)
+[Restricted Sales inspection](../../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md#backlog-inspection)
 uses the same callable read for three fixed command routes without opening a broker. The
 [slice report](../../../docs/reports/outbox-operational-visibility.md) distinguishes new
 PostgreSQL/native-metrics/HTTP/process evidence from earlier attempt telemetry and recovery

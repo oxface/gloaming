@@ -6,6 +6,7 @@ public abstract class EventRecordMapping<TEvent, TStreamRecord, TStoredEventReco
     where TStreamRecord : class, IEventStreamRecord
     where TStoredEventRecord : class, IStoredEventRecord
 {
+    /// <summary>Stable consumer-selected stream discriminator, independent of the event payload CLR type.</summary>
     public abstract string StreamType { get; }
 
     /// <summary>Returns a fresh detached envelope with encoding/ownership fields only; do not retain or mutate it.</summary>

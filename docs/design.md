@@ -421,9 +421,9 @@ worker. Consumers may host those operations themselves. Competing-consumer mecha
 their own claim, ordering, concurrency, and recovery evidence; leader election is excluded.
 
 Library execution uses ordinary C# calls. Runtime code generation, a mediator, generic
-repositories, and a generic workflow DSL are excluded. Existing archived EF migrations are
-retained as evidence; native development-time EF migration scaffolding is allowed, with
-generated migrations remaining consumer-owned and reviewed. Additional scaffolding choices
+repositories, and a generic workflow DSL are excluded. Historical EF migrations remain
+[Git evidence](reports/s1-archive-retirement.md); native development-time EF migration scaffolding
+is allowed, with generated migrations remaining consumer-owned and reviewed. Additional scaffolding choices
 are stated in their slice.
 
 ## Dependencies and configuration

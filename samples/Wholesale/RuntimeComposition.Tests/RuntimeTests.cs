@@ -4,8 +4,8 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using ModulithFoundry.Samples.Wholesale.Api;
 using ModulithFoundry.Samples.Wholesale.AppHost;
-using ModulithFoundry.Samples.Wholesale.HttpIdentityDemo;
 using Npgsql;
 
 namespace ModulithFoundry.Samples.Wholesale.RuntimeComposition.Tests;

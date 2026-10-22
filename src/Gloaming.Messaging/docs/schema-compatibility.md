@@ -7,7 +7,7 @@ queued-payload upgrade or required serializer dependency.
 
 ## Executable adoption
 
-The [Exports/Rendering composition](../../../samples/MessagingDemo/README.md#schema-compatibility-journey)
+The [Exports/Rendering composition](../samples/MessagingDemo/README.md#schema-compatibility-journey)
 demonstrates one shape-only evolution, using two independent PostgreSQL databases and RabbitMQ:
 
 | Contract | Original JSON fields | Local business requirement |
@@ -52,7 +52,7 @@ into its consumer-owned InvalidDataException boundary, preserving the inner diag
 Unsupported versions and malformed fields therefore follow the existing admission/failure policy.
 The codec supplies no transport acknowledgement, transaction, failure policy or operator authority.
 
-The [actual decoder](../../../samples/InboxDemo/RenderExportHandler.cs) is used both before
+The [actual decoder](../samples/InboxDemo/RenderExportHandler.cs) is used both before
 intake and during retained processing. The optional codec belongs only to InboxDemo's dependency
 graph; Messaging libraries remain codec-free, and inbox-only use still needs no event store.
 

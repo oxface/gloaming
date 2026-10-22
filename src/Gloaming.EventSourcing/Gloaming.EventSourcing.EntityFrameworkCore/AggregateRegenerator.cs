@@ -16,6 +16,7 @@ public sealed class AggregateRegenerator<TAggregate, TContext>
 {
     private readonly IServiceScopeFactory scopes;
 
+    /// <summary>Uses native scope creation for independent regeneration attempts with consumer-established context.</summary>
     public AggregateRegenerator(IServiceScopeFactory scopes)
     {
         ArgumentNullException.ThrowIfNull(scopes);
@@ -23,6 +24,7 @@ public sealed class AggregateRegenerator<TAggregate, TContext>
         this.scopes = scopes;
     }
 
+    /// <summary>Executes bounded fresh-scope replay/save/commit attempts and reports terminal success, conflict, cancellation or commit uncertainty.</summary>
     public async Task<AggregateRegenerationResult> RegenerateAsync(
         Guid id,
         AggregateRegenerationOptions options,

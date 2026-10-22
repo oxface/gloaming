@@ -26,13 +26,13 @@ different Organizations in separate requests without changing their actor identi
 
 ## Evidence and scope choice
 
-The archived [OrganizationScopeMiddleware](../../archive/proof-sample/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
-runs after native authorization in [the old host](../../archive/proof-sample/apps/Api/Program.cs).
+The archived [OrganizationScopeMiddleware](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
+runs after native authorization in [the old host](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/apps/Api/Program.cs).
 It reads one fixed route value, resolves the current user's Organization access and attaches
 a combined user/Organization/membership/role context. Its focused
-[HTTP unit cases](../../archive/proof-sample/tests/ApplicationTests/OrganizationScopeMiddlewareTests.cs)
+[HTTP unit cases](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/ApplicationTests/OrganizationScopeMiddlewareTests.cs)
 exercise successful attachment and inaccessible Organization handling. The old
-[query implementation](../../archive/proof-sample/modules/Access/Access/Organizations/Queries/OrganizationQueries.cs)
+[query implementation](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Organizations/Queries/OrganizationQueries.cs)
 performs canonical slug lookup and active-membership admission together. These are historical
 source findings; no archived tenancy tests were rerun for this proposal.
 

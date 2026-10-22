@@ -19,6 +19,7 @@ public sealed class ActorContextPolicyEvaluator(
     private readonly IActorContextInitializer _initializer =
         initializer ?? throw new ArgumentNullException(nameof(initializer));
 
+    /// <summary>Delegates native authentication and establishes the canonical actor before authorization handlers run.</summary>
     public async Task<AuthenticateResult> AuthenticateAsync(
         AuthorizationPolicy policy,
         HttpContext context
@@ -33,6 +34,7 @@ public sealed class ActorContextPolicyEvaluator(
         return result;
     }
 
+    /// <summary>Preserves native policy authorization outcomes using the already established operation actor.</summary>
     public Task<PolicyAuthorizationResult> AuthorizeAsync(
         AuthorizationPolicy policy,
         AuthenticateResult authenticationResult,

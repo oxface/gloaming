@@ -18,6 +18,7 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
     private readonly InlineStateReader<TStreamRecord, TInlineStateRecord> reader;
     private readonly InlineStateWriter<TStreamRecord, TInlineStateRecord> writer;
 
+    /// <summary>Binds native storage, stream discriminator, consumer aggregate mapping and independent history loading; owns no transaction.</summary>
     protected AggregateRebuilder(
         DbContext database,
         string streamType,
@@ -48,11 +49,13 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
         writer = new(database);
     }
 
+    /// <summary>Reconstructs consumer aggregate state from the captured ordered events using deterministic, effect-free historical evolution.</summary>
     protected abstract TAggregate Rehydrate(
         TStreamRecord observedStream,
         IReadOnlyList<TEvent> events
     );
 
+    /// <summary>Replays one captured stream and proposes its inline-state repair in the existing transaction; the caller owns save and commit.</summary>
     public async Task<AggregateRebuildResult?> RebuildAsync(
         Guid id,
         CancellationToken cancellationToken = default

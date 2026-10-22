@@ -34,7 +34,7 @@ receiver deduplication and semantic idempotency remain necessary.
 
 ## Consumer, authority and schema scope
 
-[OutboxDemo](../../samples/OutboxDemo/README.md#completed-outbox-cleanup) has a separate finite
+[OutboxDemo](../../src/Gloaming.Messaging/samples/OutboxDemo/README.md#completed-outbox-cleanup) has a separate finite
 `--cleanup` role. Required maintenance connection, UTC-Z cutoff and batch-size settings run one
 fixed exports.render batch and print only route/cutoff/batch/count after observed commit.
 It requests a thirty-second cancellation deadline and starts no producer, receiver, worker,
@@ -50,7 +50,7 @@ admitted completed rows. Existing Sales dispatcher grants are unchanged and cann
 
 Exports explicitly adds partial `(destination, dispatched_at, message_id)` index
 `ix_exports_outbox_completed_retention`. Its forward
-[migration](../../samples/OutboxDemo/Migrations/20261021125631_AddCompletedOutboxRetentionIndex.cs)
+[migration](../../src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261021125631_AddCompletedOutboxRetentionIndex.cs)
 and four-line snapshot addition preserve rows and existing constraints. Historical migrations
 and archived source are unchanged. The library imposes no index or migration on other contexts;
 consumers choose their own rollout. The ordinary index build is not a concurrent/online rollout
@@ -112,9 +112,9 @@ Reproduce from the repository root with the configured Docker-compatible runtime
 ```bash
 dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-build --no-restore
-dotnet test --project samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
+dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
+dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
@@ -125,9 +125,9 @@ git diff --check
 ## Review files and remaining limits
 
 Review [the callable SQL](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxRetentionExtensions.cs),
-[consumer authority](../../samples/OutboxDemo/ExportOutboxRetention.cs), Program role selection,
+[consumer authority](../../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxRetention.cs), Program role selection,
 the index/migration, [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/RetentionTests.cs),
-[process proofs](../../samples/MessagingWorkerDemo.Tests/OutboxRetentionProcessTests.cs) and
+[process proofs](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRetentionProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-retention.md) first.
 
 Native RLS/grants and trusted consumer maintenance admission remain essential. No retention
@@ -139,7 +139,7 @@ unstaged/uncommitted and the originally empty index is preserved. No push or pul
 ## PR #41 CI follow-up
 
 The supplied PR CI log exposed an outdated native-exception assertion in
-[InboxDemo BrokerTests](../../samples/InboxDemo.Tests/BrokerTests.cs). That suite was absent
+[InboxDemo BrokerTests](../../src/Gloaming.Messaging/samples/InboxDemo.Tests/BrokerTests.cs). That suite was absent
 from the original retention verification above. Its forced completion rejection correctly
 produces the previously documented OutboxCompletionException. The existing RabbitMQ proof
 now checks that signal, its original PostgreSQL CheckViolation and proof_completion constraint,
@@ -149,9 +149,9 @@ business effect remain asserted. The targeted test failed before this correction
 Running every command in the [Messaging CI job](../../.github/workflows/ci.yml) exposed a second
 failure in LocalWorkflowDemo process recovery: the observer read a stream, a real worker committed,
 then the observer read newer inline state under ReadCommitted. Its fresh context ruled out retained
-tracking. The [test observer](../../samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowProof.cs)
+tracking. The [test observer](../../samples/Wholesale/IntegrationTests/Reservations/Local/LocalWorkflowProof.cs)
 now selects a short RepeatableRead transaction for each stock observation. A new
-[PostgreSQL barrier proof](../../samples/Wholesale/LocalWorkflowDemo.Tests/StockObservationTests.cs)
+[PostgreSQL barrier proof](../../samples/Wholesale/IntegrationTests/Reservations/Local/StockObservationTests.cs)
 forces the worker commit between those reads. It reproduced the same concurrency exception
 before the fix; afterward it observes the old consistent snapshot, while a fresh observation
 sees the committed reservation. The worker commits while the observer is paused.

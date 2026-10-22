@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+    <StartupObject>ModulithFoundry.Samples.Wholesale.IntegrationTests.TestEntryPoint</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="OpenTelemetry.Exporter.InMemory" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Testcontainers.RabbitMq" />
+    <ProjectReference Include="../../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../Api/Wholesale.Api.csproj" />
+    <ProjectReference Include="../Worker/Wholesale.Worker.csproj" />
+    <Compile Include="../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../../../tests/Support/RabbitMqFixture.cs" Link="RabbitMqFixture.cs" />
+    <Compile
+      Include="../../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs"
+      Link="ChildHost.cs"
+    />
+    <None
+      Include="Api/Fixtures/Access-20a02be.sql"
+      Link="Fixtures/Access-20a02be.sql"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../../src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**/*.json"
+      Link="Fixtures/%(RecursiveDir)%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

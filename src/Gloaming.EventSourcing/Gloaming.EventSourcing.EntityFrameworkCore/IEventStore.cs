@@ -4,12 +4,14 @@ namespace Gloaming.EventSourcing.EntityFrameworkCore;
 public interface IEventStore<TAggregate>
     where TAggregate : class
 {
+    /// <summary>Loads an aggregate and its consistent observed stream version in the owning write transaction; optional expected version rejects stale callers.</summary>
     Task<TAggregate?> GetForWritingAsync(
         Guid id,
         long? expectedVersion = null,
         CancellationToken cancellationToken = default
     );
 
+    /// <summary>Proposes the aggregate accepted pending batch, stream metadata and required inline state against its observed version; does not save or commit.</summary>
     Task<EventAppendResult> AppendAsync(
         TAggregate aggregate,
         CancellationToken cancellationToken = default

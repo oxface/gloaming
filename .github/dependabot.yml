@@ -7,8 +7,6 @@ updates:
     directories:
       - /
       - /templates/state-stored
-    exclude-paths:
-      - archive/**
     schedule:
       interval: weekly
       day: monday
@@ -90,6 +88,28 @@ updates:
       include: scope
     groups:
       template-tools:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: npm
+    directory: /tools/release
+    ignore:
+      - dependency-name: "@types/node"
+        versions: [">=25.0.0"]
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Etc/UTC
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      release-tools:
         patterns: ["*"]
         update-types: [minor, patch]
 

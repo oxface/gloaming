@@ -11,7 +11,7 @@ using Npgsql;
 
 namespace ConsumerRoot.Adoption.Tests;
 
-public sealed class CatalogJourneyTests
+public sealed partial class CatalogJourneyTests
 {
     [Fact]
     public async global::System.Threading.Tasks.Task Explicit_initialization_and_tenant_owned_catalog_work_in_a_fresh_database()

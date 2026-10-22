@@ -15,7 +15,12 @@ public sealed class EventHistoryException : Exception
         ObservedVersion = observedVersion;
     }
 
+    /// <summary>The integrity rule that the supplied history violated.</summary>
     public EventHistoryFailure Failure { get; }
+
+    /// <summary>The expected stream position when the failure concerns a version boundary.</summary>
     public long? ExpectedVersion { get; }
+
+    /// <summary>The supplied stream position associated with the integrity failure.</summary>
     public long? ObservedVersion { get; }
 }

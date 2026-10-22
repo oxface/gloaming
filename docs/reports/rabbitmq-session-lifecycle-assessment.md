@@ -25,14 +25,14 @@ every consumer to reimplement error-prone mechanics.
 
 | Adopter | Current native mechanics | Consumer-specific semantics |
 | --- | --- | --- |
-| [Standalone BrokerSession](../../samples/MessagingWorkerDemo/BrokerSession.cs) | One connection/confirm channel; explicit automatic recovery false; new terminal observation, five-second protocol continuation and connection-abort settings; exception-safe cleanup. | One role per process, queue declaration only for setup, passive check for workers, host stop/nonzero exit on unexpected loss, external supervised restart. |
-| [MessagingJourney](../../samples/MessagingDemo/MessagingJourney.cs) and [schema journey](../../samples/MessagingDemo/SchemaCompatibilityJourney.cs) | Explicit automatic recovery false; one confirm-enabled channel; native nested await-using channel-before-connection disposal. | Finite operations, module migrations and explicitly owned private queue lifecycle; no host stop/restart loop. |
-| [WorkflowBroker](../../samples/Wholesale/WorkflowDemo/WorkflowBroker.cs) | One connection, confirm-enabled commands/replies plus separate intake channel; recovery setting omitted; channel-first sequential cleanup. | Multiple concurrently hosted roles, consumer routes/headers/validation, setup/passive queue checks, native recovery currently enabled and retrying intake. |
-| [Inventory journeys](../../samples/Wholesale/EventPersistenceDemo/OutboxJourney.cs) | Similar explicit nonrecovering connection/confirm channel ownership. | Finite historical adopter with its own module composition and topology; broad migration is not needed to prove this candidate. |
+| [Standalone BrokerSession](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/BrokerSession.cs) | One connection/confirm channel; explicit automatic recovery false; new terminal observation, five-second protocol continuation and connection-abort settings; exception-safe cleanup. | One role per process, queue declaration only for setup, passive check for workers, host stop/nonzero exit on unexpected loss, external supervised restart. |
+| [MessagingJourney](../../src/Gloaming.Messaging/samples/MessagingDemo/MessagingJourney.cs) and [schema journey](../../src/Gloaming.Messaging/samples/MessagingDemo/SchemaCompatibilityJourney.cs) | Explicit automatic recovery false; one confirm-enabled channel; native nested await-using channel-before-connection disposal. | Finite operations, module migrations and explicitly owned private queue lifecycle; no host stop/restart loop. |
+| [WorkflowBroker](../../samples/Wholesale/Worker/Broker/WorkflowBroker.cs) | One connection, confirm-enabled commands/replies plus separate intake channel; recovery setting omitted; channel-first sequential cleanup. | Multiple concurrently hosted roles, consumer routes/headers/validation, setup/passive queue checks, native recovery currently enabled and retrying intake. |
+| [Inventory journeys](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/OutboxJourney.cs) | Similar explicit nonrecovering connection/confirm channel ownership. | Finite historical adopter with its own module composition and topology; broad migration is not needed to prove this candidate. |
 
 The exact pinned RabbitMQ.Client 7.2.2 local XML documents AutomaticRecoveryEnabled's
 default as true. WorkflowBroker therefore differs from the worker; omission must not be
-misreported as disabled recovery. Its [intake loop](../../samples/Wholesale/WorkflowDemo/WorkflowPollingWorkers.cs)
+misreported as disabled recovery. Its [intake loop](../../samples/Wholesale/Worker/Broker/WorkflowPollingWorkers.cs)
 logs ordinary failures and retries. Recovery remains the native client's operation; current
 source inspection is not a whole-workflow live-outage proof.
 

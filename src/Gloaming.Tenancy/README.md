@@ -14,7 +14,7 @@ public contract and dependencies; the family is not an umbrella runtime package.
 
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.
-The [executable consumer](../../samples/Wholesale/HttpIdentityDemo/README.md) demonstrates adoption.
+The [executable consumer](../../samples/Wholesale/Api/README.md) demonstrates adoption.
 
 For ownership-declared automatic PostgreSQL transaction setup, select the separate optional
 [Persistence/PostgreSQL adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md).

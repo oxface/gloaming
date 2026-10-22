@@ -14,6 +14,7 @@ public sealed class InlineStateReader<TStreamRecord, TInlineStateRecord>
     // EF relationship metadata maps this state row's foreign-key properties to the stream record's primary key.
     private readonly IForeignKey streamForeignKey;
 
+    /// <summary>Binds native expression-based inline-state lookup to the provided context.</summary>
     public InlineStateReader(DbContext database)
     {
         ArgumentNullException.ThrowIfNull(database);
@@ -25,6 +26,7 @@ public sealed class InlineStateReader<TStreamRecord, TInlineStateRecord>
         );
     }
 
+    /// <summary>Loads the mapped inline state for the captured stream and validates matching identity/version metadata; it does not repair stale state.</summary>
     public async Task<TInlineStateRecord> ReadAsync(
         TStreamRecord observedStream,
         CancellationToken cancellationToken = default

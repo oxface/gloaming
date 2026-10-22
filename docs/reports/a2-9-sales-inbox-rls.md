@@ -2,7 +2,7 @@
 
 Implemented for owner review on 2026-10-17 after A2.8 checkpoint `087a008`, on the existing
 `feat/sales-postgres-rls` branch. The owner selected the [bounded inbox slice](../plans/a2-9-sales-inbox-rls.md).
-The [consumer guide](../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) gives setup, execution,
+The [consumer guide](../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) gives setup, execution,
 the operation scope and exact persistence limitations. All new changes remain unstaged.
 
 ## Outcome and decisions
@@ -127,19 +127,19 @@ the affected workflow/local consumers and architecture suites; no project/depend
 
 Review-worthy files:
 
-- [Worker role composition](../../samples/Wholesale/WorkflowDemo/Program.cs),
-  [scoped admission](../../samples/Wholesale/WorkflowDemo/SalesReplyProcessing.cs),
-  [finite setup/grant checks](../../samples/Wholesale/WorkflowDemo/SalesReplyDatabase.cs),
-  [queue policies](../../samples/Wholesale/WorkflowDemo/SalesOutboxPolicies.cs) and
-  [dispatcher compatibility](../../samples/Wholesale/WorkflowDemo/SalesDispatchDatabase.cs).
+- [Worker role composition](../../samples/Wholesale/Worker/Broker/BrokerHost.cs),
+  [scoped admission](../../samples/Wholesale/Worker/Broker/SalesReplyProcessing.cs),
+  [finite setup/grant checks](../../samples/Wholesale/Worker/Broker/SalesReplyDatabase.cs),
+  [queue policies](../../samples/Wholesale/Worker/Broker/SalesOutboxPolicies.cs) and
+  [dispatcher compatibility](../../samples/Wholesale/Worker/Broker/SalesDispatchDatabase.cs).
 - [Sample model selection](../../samples/Wholesale/modules/Sales/Sales/SalesReservationReplyDatabase.cs),
   [module registrations](../../samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs),
   [shared admitted/default handler](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs)
   and [receiver-owned actor declaration](../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyAdmission.cs).
-- [Atomicity/isolation proofs](../../samples/Wholesale/WorkflowDemo.Tests/SalesReplyTests.cs),
-  [process/broker recovery](../../samples/Wholesale/WorkflowDemo.Tests/SalesReplyTests.Recovery.cs),
-  [startup controls](../../samples/Wholesale/WorkflowDemo.Tests/SalesReplyTests.Startup.cs) and
-  [fixture](../../samples/Wholesale/WorkflowDemo.Tests/SalesReplyProof.cs).
+- [Atomicity/isolation proofs](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesReplyTests.cs),
+  [process/broker recovery](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesReplyTests.Recovery.cs),
+  [startup controls](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesReplyTests.Startup.cs) and
+  [fixture](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesReplyProof.cs).
 
 This closes the selected bounded HTTP/dispatch/WF2 processing demonstration once owner-reviewed.
 It does not certify every application table, Inventory runtime, WF1 worker, broker receiver or

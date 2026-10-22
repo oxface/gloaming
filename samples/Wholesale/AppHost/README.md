@@ -54,7 +54,7 @@ The provider-free runtime test uses inert `https://identity.test` settings solel
 For external authentication configure the API's
 `Oidc:ClientSecret` if required, provision an exact external issuer/subject pair against an
 application user and register the discovered HTTPS `/signin-oidc` callback. This graph does
-not provision your external provider. See [HTTP configuration](../HttpIdentityDemo/README.md).
+not provision your external provider. See [HTTP configuration](../Api/README.md).
 
 ## Optional local identity provider
 
@@ -102,7 +102,7 @@ certificate-trust evidence.
 ## Optional Sales RLS graph
 
 Set `LocalDevelopment:UseSalesRowSecurity=true` and supply the two runtime password parameters.
-This selects the [six-table Sales HTTP composition](../HttpIdentityDemo/README.md#optional-sales-http-row-security)
+This selects the [six-table Sales HTTP composition](../Api/README.md#optional-sales-http-row-security)
 for profile/draft reads and writes, including accepted profile audit. Access/Inventory uses
 `wholesale_access`; Sales uses `wholesale_sales`. Both are non-owner logins without superuser,
 BYPASSRLS, role-creation or database-creation rights. Transport and other Sales tables remain

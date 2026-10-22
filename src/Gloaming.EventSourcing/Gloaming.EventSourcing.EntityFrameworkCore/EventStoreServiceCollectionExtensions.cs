@@ -6,6 +6,7 @@ namespace Gloaming.EventSourcing.EntityFrameworkCore;
 /// <summary>Independent scoped writing and maintenance roles, using consumer-typed contexts.</summary>
 public static class EventStoreServiceCollectionExtensions
 {
+    /// <summary>Registers a typed consumer store and, when selected, its independent rebuilder without adding history to ordinary writes.</summary>
     public static IServiceCollection AddEventStore<TAggregate, TStore>(
         this IServiceCollection services
     )
@@ -21,6 +22,7 @@ public static class EventStoreServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>Registers the consumer full-replay rebuilder as a separately selected maintenance dependency.</summary>
     public static IServiceCollection AddAggregateRebuilder<TAggregate, TRebuilder>(
         this IServiceCollection services
     )
@@ -35,6 +37,7 @@ public static class EventStoreServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>Registers a typed consumer store and, when selected, its independent rebuilder without adding history to ordinary writes.</summary>
     public static IServiceCollection AddEventStore<TAggregate, TStore, TRebuilder>(
         this IServiceCollection services
     )

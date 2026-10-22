@@ -122,21 +122,22 @@ after SaveChanges. Discard the context and aggregate after rollback or faults.
 ## Executable examples
 
 - Aggregate writes: [StockPositionCommands](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs)
-  shows load/create, state-dependent decisions and append; [StockIssueJourney](../../../samples/Wholesale/EventPersistenceDemo/StockIssueJourney.cs)
+  shows load/create, state-dependent decisions and append; [StockIssueJourney](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/StockIssueJourney.cs)
   supplies explicit transactions, save/commit and rollback.
 - Required inline aggregate: [StockPositionStateMapping](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStateMapping.cs)
   converts domain/persistence state; [StockPositionQueries](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionQueries.cs)
   filters and joins that stored state with native EF. This is the single required aggregate,
   not an additional persisted read projection. Additional inline views remain deferred.
 - Explicit rebuild: [StockPositionRebuilder](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionRebuilder.cs)
-  delegates history loading and evolution; [RebuildJourney](../../../samples/Wholesale/EventPersistenceDemo/RebuildJourney.cs)
+  delegates history loading and evolution; [RebuildJourney](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/RebuildJourney.cs)
   registers maintenance independently and executes replay, save/commit and a subsequent command.
 - Minimal consumer without tenant or codec setup: [Ledger consumer](../tests/EventSourcingPostgresTests/RebuildConsumer.cs)
   and [executable rebuild tests](../tests/EventSourcingPostgresTests/RebuildTests.cs).
 
-Run the complete Wholesale executable using the PostgreSQL connection and command in its
-[README](../../../samples/Wholesale/EventPersistenceDemo/README.md). The examples use the same
-consumer-owned completion boundary as the snippets above.
+Run the canonical [Wholesale product](../../../samples/Wholesale/README.md) through its API and
+[Worker module operations](../../../samples/Wholesale/Worker/README.md#module-operations). The retained
+[test-owned scenarios](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md)
+exercise the same consumer-owned completion boundary as the snippets above.
 
 ## Independent maintenance
 
@@ -262,7 +263,7 @@ writes can exhaust retries. Admission, retry values, logs, reducer rollout, any 
 window and scheduling remain consumer-owned. Bad retained facts and previously committed bad
 business decisions are not repaired by regenerating derived state.
 
-The [ES3 CLI guide](../../../samples/Wholesale/EventPersistenceDemo/aggregate-regeneration.md)
+The [ES3 CLI guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 documents the finite operator journey, and the [slice report](../../../docs/reports/es3-aggregate-regeneration-operations.md)
 separates new execution evidence from earlier research and consumer-only proofs.
 
@@ -293,7 +294,7 @@ SQL, rollback and fresh recovery.
 
 See [current capabilities and deferred directions](docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
-[standalone raw adoption](../../../samples/EventStorageDemo/README.md),
-[tenant-owned adoption](../../../samples/Wholesale/EventPersistenceDemo/README.md),
+[standalone raw adoption](../samples/EventStorageDemo/README.md),
+[tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
 [reviewed replacement](../../../docs/plans/es2-native-ef-simplification.md) and
 [dated ES2 evidence](../../../docs/reports/es2-rebuild-design.md).

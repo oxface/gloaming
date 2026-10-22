@@ -1,8 +1,0 @@
-{
-  "eventName": "inventory.stock-position.quantity-corrected",
-  "schemaVersion": 1,
-  "payload": {
-    "onHandQuantity": 7.5,
-    "reason": "Count confirmed"
-  }
-}

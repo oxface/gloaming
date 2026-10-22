@@ -1,0 +1,23 @@
+{
+  "name": "gloaming-release-proofs",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "verify": "node verify.ts",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write '*.ts' '*.json' '*.md'",
+    "format:check": "prettier --check '*.ts' '*.json' '*.md'",
+    "check": "npm run typecheck && npm run format:check"
+  },
+  "dependencies": {
+    "fast-xml-parser": "5.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "prettier": "3.9.10",
+    "typescript": "7.0.2"
+  }
+}
