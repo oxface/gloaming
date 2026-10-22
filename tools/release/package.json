@@ -6,6 +6,7 @@
     "node": ">=24.21.0 <25"
   },
   "scripts": {
+    "pack": "node pack.ts",
     "verify": "node verify.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write '*.ts' '*.json' '*.md'",

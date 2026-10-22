@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Auditing.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gloaming.Auditing.Tests;
@@ -15,7 +14,8 @@ internal sealed class AuditDatabase(DbContextOptions<AuditDatabase> options) : D
 
     protected override void OnModelCreating(ModelBuilder model)
     {
-        var audit = model.ConfigurePostgresAudit("operations", "accepted_log");
+        var audit = model.ConfigureAudit("operations", "accepted_log");
+        audit.Property(row => row.Details).HasColumnType("jsonb");
         audit.Property(row => row.Id).HasColumnName("audit_id");
         var business = model.Entity<BusinessRow>();
         business.ToTable(
@@ -56,7 +56,8 @@ internal sealed class AlternateAuditDatabase(DbContextOptions<AlternateAuditData
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
-        var audit = model.ConfigurePostgresAudit("operations", "accepted_log");
+        var audit = model.ConfigureAudit("operations", "accepted_log");
+        audit.Property(row => row.Details).HasColumnType("jsonb");
         audit.Property(row => row.Id).HasColumnName("audit_id");
     }
 

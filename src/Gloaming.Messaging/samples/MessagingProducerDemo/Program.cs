@@ -16,8 +16,8 @@ builder
             serviceInstanceId: Guid.NewGuid().ToString()
         )
     )
-    .WithTracing(tracing => tracing.AddGloamingMessaging())
-    .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    .WithTracing(tracing => tracing.AddSource("Gloaming.Messaging"))
+    .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
 
 string connection =
     builder.Configuration.GetConnectionString("Exports")

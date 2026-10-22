@@ -1,5 +1,10 @@
 # ADR 0011: Explicit audit participation in the owning native transaction
 
+Package refinement, 2026-10-22: the convenience adapter described below is retired.
+Consumers use the native configuration shown in the
+[retirement report](../reports/thin-adapter-retirement.md). The underlying transaction
+and diagnostic guarantees are unchanged; the original decision is retained below.
+
 Status: interface and bounded scope owner-approved, 2026-10-09; implementation remains
 unstaged for line-by-line review. [Reviewed scope](../plans/e9-explicit-transactional-audit.md).
 

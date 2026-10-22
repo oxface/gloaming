@@ -123,13 +123,8 @@ public sealed class AdoptionDependencyTests
         "Microsoft.EntityFrameworkCore.Relational"
     )]
     [InlineData(
-        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
-        "Gloaming.Auditing.EntityFrameworkCore",
-        "Npgsql.EntityFrameworkCore.PostgreSQL"
-    )]
-    [InlineData(
         "AuditPostgresTests",
-        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
+        "Gloaming.Auditing.EntityFrameworkCore",
         "Npgsql.EntityFrameworkCore.PostgreSQL",
         "Testcontainers.PostgreSql",
         "xunit.v3.mtp-v2"
@@ -194,7 +189,6 @@ public sealed class AdoptionDependencyTests
     [InlineData("Gloaming.Events.Serialization", null)]
     [InlineData("Gloaming.Events.History", null)]
     [InlineData("Gloaming.Messaging", null)]
-    [InlineData("Gloaming.Messaging.OpenTelemetry", "OpenTelemetry.Api")]
     [InlineData(
         "Gloaming.Persistence.EntityFrameworkCore",
         "Microsoft.EntityFrameworkCore.Relational"

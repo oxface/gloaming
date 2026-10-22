@@ -1,5 +1,12 @@
 # Library and template design decisions
 
+Direction update, 2026-10-22: Gloaming is the primary product; application patterns and
+exercised skills replace further template expansion as the intended direction. Explicitly
+selected bounded library execution is permitted. The [architecture audit](reports/gloaming-library-audit.md)
+records confirmed ownership choices, implemented thin-adapter removals and proposed further
+package/sample changes. Detailed historical decisions below retain their dated context;
+current consumer contracts remain beside their libraries.
+
 Status: direction approved by the owner on 2026-10-03. Public interfaces, package divisions,
 and implementation increments in [the extraction plan](plans/library-extraction.md) remain
 review proposals.
@@ -635,8 +642,9 @@ infrastructure, not a required library runtime.
 W3C messaging context, links at native attempt creation and diagnostic-independent inbox
 deduplication. [Local observability setup](../src/Gloaming.Messaging/docs/observability.md)
 keeps SDK/exporter, sampling and transport decisions in consumers; transaction ownership is unchanged.
-The optional `Gloaming.Messaging.OpenTelemetry` adapter supplies native trace/meter builder
-subscription helpers, with an API-only dependency and no host/provider/exporter policy.
+Consumers subscribe with native `AddSource("Gloaming.Messaging")` and
+`AddMeter("Gloaming.Messaging")` calls. The former subscription adapter is retired;
+[the simplification report](reports/thin-adapter-retirement.md) records the replacement and proofs.
 
 [E3.6](plans/e3-6-runtime-composition.md), checkpointed as `28ee797`, adds sample-owned AppHost
 and ServiceDefaults source,
@@ -814,9 +822,10 @@ on 2026-10-09. `Gloaming.Auditing.EntityFrameworkCore` explicitly captures consu
 ActorIdentity attribution and owned JSON, maps a provided row and validates staged envelopes
 against their owning native context/transaction. No hidden save/commit, context fallback,
 automatic entity auditing or product classification is introduced. Native DI stays consumer
-wiring; only ActorIdentity and EF Relational are dependencies of the provider-independent EF
-package. The optional `Gloaming.Auditing.EntityFrameworkCore.Postgres` package composes its
-mapping with JSONB details. Sample wrappers capture actor/tenant, generated ID and clock;
+wiring; the provider-independent EF package depends on ActorIdentity, shared EF save
+coordination and EF Relational. Each PostgreSQL consumer selects
+JSONB details with native EF mapping; the former convenience package is retired.
+Sample wrappers capture actor/tenant, generated ID and clock;
 business calls provide accepted changes. SubjectKey is
 nullable for events without an individual item. ConfigureAudit supplies the portable subject
 timeline index by default; consumers retain native customization. Named

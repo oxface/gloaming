@@ -3,7 +3,7 @@
     <RootNamespace>ModulithFoundry.Samples.Wholesale.Inventory</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />

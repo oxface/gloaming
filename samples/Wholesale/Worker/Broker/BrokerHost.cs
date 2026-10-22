@@ -67,8 +67,8 @@ internal static class BrokerHost
             builder.AddServiceDefaults();
             builder
                 .Services.AddOpenTelemetry()
-                .WithTracing(tracing => tracing.AddGloamingMessaging())
-                .WithMetrics(metrics => metrics.AddGloamingMessaging());
+                .WithTracing(tracing => tracing.AddSource("Gloaming.Messaging"))
+                .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
             using var replyHost = builder.Build();
             await replyHost.RunAsync();
             return;
@@ -157,9 +157,9 @@ internal static class BrokerHost
             builder
                 .Services.AddOpenTelemetry()
                 .WithTracing(tracing =>
-                    tracing.AddGloamingMessaging().AddSource("RabbitMQ.Client.Publisher")
+                    tracing.AddSource("Gloaming.Messaging").AddSource("RabbitMQ.Client.Publisher")
                 )
-                .WithMetrics(metrics => metrics.AddGloamingMessaging());
+                .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
             using var dispatchHost = builder.Build();
             await dispatchHost.RunAsync();
             return;
@@ -318,10 +318,10 @@ internal static class BrokerHost
             .Services.AddOpenTelemetry()
             .WithTracing(tracing =>
                 tracing
-                    .AddGloamingMessaging()
+                    .AddSource("Gloaming.Messaging")
                     .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber")
             )
-            .WithMetrics(metrics => metrics.AddGloamingMessaging());
+            .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
         builder.Services.AddPostgresOutboxDispatcher<SalesDbContext, SalesCommandPublisher>(
             SalesDispatchOptions()
         );

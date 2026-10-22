@@ -45,7 +45,7 @@ EnsureCreated; the module consumers use reviewed forward migrations.
 
 SubjectKey is the optional item/aggregate identity; null allows a global/subject-wide event.
 ConfigureAudit supplies the native tenant/type/item/time/ID index by default as
-ix_audit_subject_timeline; ConfigurePostgresAudit inherits it. Consumers can rename or
+ix_audit_subject_timeline. Consumers can rename or
 replace it with native EF configuration.
 Read permission and tenant visibility remain consumer policy; there is no timeline service.
 The optional PostgreSQL package maps JSONB; generic relational mapping requires an explicit

@@ -38,6 +38,7 @@ wire alias/version, rather than accessing Exports' DbContext or business DTOs.
 Optional message diagnostic context and native telemetry setup are documented in the
 [Messaging observability contract](../../docs/observability.md).
 Program.cs calls the existing editable [ServiceDefaults](../../../../samples/Wholesale/ServiceDefaults/README.md)
-and adds its messaging source/meter through the optional AddGloamingMessaging extensions,
+and subscribes through native `AddSource("Gloaming.Messaging")` and
+`AddMeter("Gloaming.Messaging")` calls,
 along with its producer resource. No broker/worker dependencies
 are introduced by sharing that host configuration.

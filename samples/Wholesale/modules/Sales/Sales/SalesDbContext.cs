@@ -1,5 +1,4 @@
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Auditing.EntityFrameworkCore.Postgres;
 using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
@@ -51,7 +50,8 @@ public sealed class SalesDbContext(
                 () => RequiredOrganizationKey,
                 "OrganizationScope"
             );
-        var audit = modelBuilder.ConfigurePostgresAudit("sales", "audit_entries");
+        var audit = modelBuilder.ConfigureAudit("sales", "audit_entries");
+        audit.Property(row => row.Details).HasColumnType("jsonb");
         audit.HasTenantOwnership(
             row => row.TenantKey!,
             () => RequiredOrganizationKey,

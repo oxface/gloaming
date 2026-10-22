@@ -1,5 +1,4 @@
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Auditing.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
@@ -31,7 +30,10 @@ public sealed class AccessDbContext(DbContextOptions<AccessDbContext> options) :
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("access");
-        modelBuilder.ConfigurePostgresAudit("access", "audit_entries");
+        modelBuilder
+            .ConfigureAudit("access", "audit_entries")
+            .Property(row => row.Details)
+            .HasColumnType("jsonb");
         var user = modelBuilder.Entity<UserRow>();
         user.ToTable("users");
         user.HasKey(row => row.Id);

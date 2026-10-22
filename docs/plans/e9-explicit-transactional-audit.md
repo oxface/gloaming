@@ -1,5 +1,9 @@
 # E9 Explicit transactional accepted-change audit
 
+Historical adapter setup: [the later retirement](../reports/thin-adapter-retirement.md)
+replaces the convenience package with native consumer configuration. The mechanism and
+evidence below retain their original scope.
+
 Status: public interface and bounded scope owner-approved for implementation, 2026-10-09.
 Branch: `feat/explicit-transactional-audit`, created from refreshed `origin/main` at `0f4d8bf`.
 The owner subsequently instructed proceeding with implementation. The capability is implemented

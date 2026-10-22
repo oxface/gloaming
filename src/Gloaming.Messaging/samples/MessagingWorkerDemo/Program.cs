@@ -35,10 +35,10 @@ builder
     )
     .WithTracing(tracing =>
         tracing
-            .AddGloamingMessaging()
+            .AddSource("Gloaming.Messaging")
             .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber")
     )
-    .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
 
 // Each long-lived transport belongs to this process. Scoped dispatch/intake operations
 // reuse its channel sequentially; they do not create a broker connection per message.

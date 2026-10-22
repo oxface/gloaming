@@ -1,5 +1,10 @@
 # ADR 0012: durable diagnostic context and native telemetry
 
+Package refinement, 2026-10-22: the convenience adapter described below is retired.
+Consumers use the native configuration shown in the
+[retirement report](../reports/thin-adapter-retirement.md). The underlying transaction
+and diagnostic guarantees are unchanged; the original decision is retained below.
+
 Status: accepted, 2026-10-10; implementation owner-approved at `b44b5d5`,
 merged into `origin/main` at `4c0e0c5`.
 

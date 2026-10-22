@@ -1,5 +1,11 @@
 # Library and sample extraction plan
 
+Direction update, 2026-10-22: use the [library architecture audit](../reports/gloaming-library-audit.md)
+for the current assessment and proposed next increments. The template/extraction sequence
+and dated authorizations below retain historical context; they do not select further template
+work or authorize the audit's proposed interface/removal changes. Current package contracts
+remain with their library families until concrete changes are reviewed.
+
 The owner has authorized the remaining v1 work through local commits and integration, stopping
 before push. The [execution ledger](v1-integration-completion.md) records current status,
 required evidence and the [sample/experiment consolidation](s1-sample-experiment-consolidation.md).

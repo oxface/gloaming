@@ -1,9 +1,14 @@
 # Modulith Foundry
 
-Gloaming is a set of opt-in .NET libraries usable independently in APIs and workers.
-This repository develops them against an executable modular-monolith sample and provides
-a consumer-owned application template. Consumers own their application composition, module
-policy, transactions, transport routing, and worker deployment.
+Gloaming is the primary product of this repository: opt-in .NET libraries usable independently
+in APIs and workers. Consumers own application composition, business policy, transport routing
+and worker deployment. Selected library operations can own a bounded transaction and invoke
+consumer handlers under their documented contracts.
+
+The [library architecture audit](docs/reports/gloaming-library-audit.md) records the current
+direction and proposed package/sample simplifications. Application setup will move toward a
+concise pattern guide and exercised task skills. The existing template, package divisions and
+samples below remain implemented; the audit's proposed removals have not been applied.
 
 Wholesale is now [one reference product](samples/Wholesale/README.md): an API, one worker/maintenance
 executable, module-owned persistence and one integration-test suite plus real runtime/browser proofs.
@@ -12,7 +17,8 @@ Independent adoption examples live beside their owning library families.
 The reusable libraries use `Gloaming.*` namespaces, project names and assembly names.
 The repository, sample applications and template retain their existing identities.
 See [the rename report](docs/reports/gloaming-library-renaming.md) for the scope and verification.
-Umbrine is the future ERP product built on this template and Gloaming; the names share a darkness theme.
+Umbrine is the planned ERP consumer of selected Gloaming libraries and application patterns;
+the names share a darkness theme.
 
 Library families own their package source, documentation and library tests. Each package is
 independently selectable; a family folder does not add an umbrella dependency.
@@ -26,6 +32,7 @@ independently selectable; a family folder does not add an umbrella dependency.
 | [Events](src/Gloaming.Events/README.md) | Independent serialization and history utilities |
 | [EventReactions](src/Gloaming.EventReactions/README.md) | Composable event buffers, ordered reactions and optional EF preparation |
 | [EventSourcing](src/Gloaming.EventSourcing/README.md) | Aggregate core and optional EF Core write store |
+| [Auditing](src/Gloaming.Auditing/README.md) | Explicit accepted-change envelopes and transactional EF staging |
 | [Messaging](src/Gloaming.Messaging/README.md) | Incoming/outgoing envelopes, EF inbox/outbox and optional workers, PostgreSQL delivery |
 
 The [state-stored template rehearsal](docs/plans/t1-template-rehearsal.md) is owner-approved

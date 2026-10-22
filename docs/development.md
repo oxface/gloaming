@@ -96,6 +96,24 @@ For local Linux HTTPS trust, follow the runtime guide; the local proof uses
 `SSL_CERT_DIR=$HOME/.aspnet/dev-certs/trust:/etc/ssl/certs`. Keep runtime graphs serialized:
 container-network teardown from one graph can disturb another browser navigation.
 
+## Local package development
+
+Pack a new local Gloaming snapshot without a database or remote publication:
+
+```bash
+npm --prefix tools/release run pack
+```
+
+The command prints a unique prerelease version and the feed at `.artifacts/local-feed`.
+Use `-- --output /absolute/feed/path` to choose another feed. The
+[local package guide](../tools/release/README.md#everyday-local-packages) covers consumer
+NuGet.Config, source mapping and exact package references. Take a new snapshot version
+after each library change so consumers receive the new bytes through normal restore.
+
+The existing [package-adoption workflow](../.github/workflows/packages.yml) runs the
+[full proof](../tools/release/README.md#full-package-adoption-proof) through this same
+command, then checks archives and clean external consumers, including PostgreSQL.
+
 ## Library and generated-template proofs
 
 Each family's README/docs give current guarantees, optional composition and commands for its

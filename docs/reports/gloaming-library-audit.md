@@ -1,0 +1,387 @@
+# Gloaming library architecture audit
+
+Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
+Status: active audit and implementation record. The local package command and two thin
+adapter removals are implemented in the working tree; other package, interface, sample and
+test changes below remain proposals.
+
+Make Gloaming the repository's primary product. Keep its useful persistence and delivery
+mechanisms, simplify package divisions that provide little independent value, and reduce
+the application examples. The strongest changes are to combine the workflow definition and
+EF runner packages, separate optional messaging worker hosting, and replace two thin
+adapter packages with ordinary consumer configuration.
+
+These recommendations revisit adoption cost under the new library-first scope. Earlier
+v1 reviews assessed the previous integrated deliverable; this assessment does not establish
+a regression in its tested guarantees.
+
+## Implementation progress
+
+All current work is consolidated in `/home/oxface/repos/modulith-foundry`, on
+`docs/gloaming-library-audit`, at the owner's request. Continue subsequent audit increments
+in this checkout. The earlier isolated worktrees remain unchanged as recovery copies;
+there is no need to switch to them to review or use the combined result.
+
+- [Local package development](local-package-development.md): the everyday `pack` command,
+  source-mapping guidance and full package-adoption verifier are present here.
+- [Thin adapter retirement](thin-adapter-retirement.md): PostgreSQL audit JSONB mapping and
+  messaging source/meter subscriptions now use native consumer configuration. The current
+  inventory is 21 libraries; the package table below records the original 23-package audit.
+- The shared verifier combines both increments: it invokes the real pack command, expects
+  21 packages and adopts the retained audit EF package directly.
+
+The two earlier passes' results remain dated evidence in their reports. Fresh verification
+from this consolidated checkout passed all 112 architecture tests, release-tool TypeScript/
+formatting checks, all 21 archive checks and all four fresh-cache package-only consumers
+(core: two Gloaming packages; events: two; PostgreSQL: seven; all-packages: 21). The full
+proof invoked the real `pack` command. All 706 checked local file links and active tracked
+project references resolve. The original C# and project changes match the tested isolated
+pass byte for byte; its 55 audit/telemetry runtime cases were not rerun for this transfer.
+
+Combined proof version: `1.0.0-local.1792705144078.gdce65da5`. Local evidence:
+`/home/oxface/.cache/tmp/gloaming-package-proof-tkyLuy/manifest.json`, SHA-256
+`34701eb77bfe1ab6ee7f10e671cb7799e411a4f86b53decae4e2e93a3b986ee2`.
+Logs: `/tmp/gloaming-audit-consolidation-{architecture,packages}.log`. The disposable
+PostgreSQL server was stopped and auto-removed. No new reusable runtime mechanism is
+introduced by combining these changes. All changes remain unstaged; no commit or push is
+included. The staged review snapshot and original worktree checkpoints are unchanged.
+
+## Confirmed direction and review criteria
+
+The owner selected the following direction in the discussion leading to this assessment:
+
+- Gloaming is a set of reusable libraries. Application patterns belong in concise guidance
+  and, after real usage, focused skills. A configurable bootstrap CLI is deferred.
+- An explicitly selected library operation may own a bounded transaction and invoke a
+  consumer handler when its guarantees and obligations are clear.
+- Umbrine is the next real consumer: a modular-monolith ERP with module-owned persistence,
+  multitenancy and durable business processes. Its checkout currently contains requirements,
+  not an application implementation. Its business rules remain consumer-owned.
+- There are no external consumers or databases requiring compatibility with today's public
+  interfaces, sample schemas or retained messages. Breaking changes are acceptable.
+- Most experimental applications may be removed. Retain a small Wholesale composition with
+  three or four modules and focused examples for the retained libraries.
+
+A library earns its interface when deleting it would return meaningful technical complexity
+to consumers. Assess required configuration, ordering, scopes, failure behavior and supported
+models together with public methods. Small source size alone does not decide package value.
+Optional registration alone does not establish a useful interface either.
+
+Consumers retain business decisions, authorization, tenant admission, domain/payload meaning,
+module Contracts, deployment topology and final persistence outside deliberately delegated
+operations. Provider-specific storage protocols and fixed technical tables can be legitimate
+library choices; document their limits instead of promising arbitrary storage authority.
+
+This review does not select another database provider, transport abstraction, authorization
+engine, scheduler, application module runtime or general workflow builder.
+
+## Package dispositions
+
+The inspected tree has 23 packable library projects across nine families. Package entries
+below cover the complete inventory. Keep means retain the capability and current package
+division unless the row states otherwise; it does not certify every implementation detail.
+
+| Package | Disposition | Reason and consumer obligation |
+| --- | --- | --- |
+| Gloaming.ActorIdentity | Keep | Opaque identities, actor/initiator attribution and single-assignment operation context. Authentication and permissions stay outside. |
+| Gloaming.ActorIdentity.AspNetCore | Keep | Effective-principal mapping and native policy-evaluator ordering remove actual integration work. Preserve explicit custom-inner-evaluator support and consumer failure presentation. |
+| Gloaming.Tenancy | Keep | Independent immutable tenant selection; deliberate tenantless execution remains distinct from missing context. Admission stays outside. |
+| Gloaming.Tenancy.AspNetCore | Keep | Explicit resolver, requirement metadata and candidate helpers. Neither route/subdomain selection nor established tenancy grants membership or resource permission. |
+| Gloaming.Tenancy.EntityFrameworkCore.Postgres | Keep | Explicit transaction-local setup with native connection/transaction checks, independently usable without ownership mapping. Present this and automatic RLS setup as separate recipes. |
+| Gloaming.Persistence.EntityFrameworkCore | Keep | Named ownership filters, tracked-write checks and stored-owner concurrency predicates. Make its ordinary single-table model restrictions prominent. |
+| Gloaming.Persistence.EntityFrameworkCore.Postgres | Keep | Selected transaction-local RLS integration and migration helpers. Policies, runtime roles, permissions and caller-owned read/write transactions remain explicit. |
+| Gloaming.EntityFrameworkCore | Keep | Bounded preparation, change detection and validation ordering shared by actual feature families. Keep this independent of features, providers and hosting. |
+| Gloaming.Events.Serialization | Keep | Explicit durable identities, native JSON policy and validated forward upcast paths. Consumers own schema meaning and reader/writer rollout. |
+| Gloaming.Events.History | Keep | Independent contiguous-range and recorded-time integrity checks. Its small implementation still concentrates shared validation; it does not certify database ordering or isolation. |
+| Gloaming.EventReactions | Keep | Consumer-composed buffers and bounded, ordered exact-type reactions without required domain inheritance. No external effects or business dependency graph is inferred. |
+| Gloaming.EventReactions.EntityFrameworkCore | Keep | Explicit source selectors and native save preparation. Keep transactions, required sources and whole-operation recovery visible. |
+| Gloaming.EventSourcing | Keep | Optional aggregate bookkeeping and a replaceable aggregate interface. Immutable evolution, domain decisions and event meaning remain consumer code. |
+| Gloaming.EventSourcing.EntityFrameworkCore | Keep and simplify setup | Retain append/version coordination, required state, history and independent rebuilding. Keep complete regeneration optional; improve contextual setup only from concrete adopter feedback. |
+| Gloaming.Auditing.EntityFrameworkCore | Keep | Explicit envelopes, mapping and same-transaction staging/validation. The ActorIdentity dependency supplies actual attribution types. Required-audit selection, visibility and retention stay outside. |
+| Gloaming.Auditing.EntityFrameworkCore.Postgres | Retired in the working tree | Its sole mapping helper called ConfigureAudit and selected JSONB. The audit protocol remains in the EF package. |
+| Gloaming.Messaging | Keep | Owned wire envelopes, publication acceptance seam and native diagnostics. JSON payloads and GUID delivery IDs are supported protocol choices; routing and receiver trust remain consumer decisions. |
+| Gloaming.Messaging.EntityFrameworkCore | Simplify | Keep storage records, save guards and callable roles. Move the hosted loops, their options and registration into optional hosting integration. |
+| Gloaming.Messaging.EntityFrameworkCore.Postgres | Keep | PostgreSQL leases, deduplicating intake, locked processing, recovery and maintenance concentrate substantial correctness work. The fixed technical mappings are part of its contract. |
+| Gloaming.Messaging.OpenTelemetry | Retired in the working tree | Its two helpers only subscribed native builders to the documented activity-source and meter names. Emitted diagnostics and their tests are retained. |
+| Gloaming.Messaging.RabbitMQ | Keep | Native connection/channel lifetime, partial-acquisition cleanup and terminal observation have independent value. Continue exposing native channels and consumer-selected recovery/topology. |
+| Gloaming.Messaging.Workflows | Combine with the EF workflow package | Definitions and return instructions are only executable by the friend EF assembly through internal members. No public executable seam currently justifies this package split. |
+| Gloaming.Messaging.Workflows.EntityFrameworkCore | Keep the mechanism in one combined optional package | Saved-continuation selection, retained outcomes, concurrency and atomic outgoing requests earn reuse. Narrow its description to bounded durable continuations. |
+
+The proposed combined workflow package can retain the existing Workflows namespaces. Naming
+and assembly identity should be reviewed with its concrete change. A proposed hosting package
+such as `Gloaming.Messaging.EntityFrameworkCore.Hosting` would depend on the callable EF roles;
+the EF/provider layers would not depend on hosting. There is no package-count target.
+
+## Findings requiring concrete follow-up
+
+### Combine the workflow packages without discarding the protocol
+
+[WorkflowDefinition](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowDefinition.cs)
+exposes its name/version but keeps its start delegate, serializer and reply/signal bindings
+internal. [WorkflowTurn](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/WorkflowTurn.cs)
+also hides its state, command and continuation data.
+[The core project](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj)
+grants the EF runner friend access. An alternative runner cannot consume the supplied definition
+through its public interface. Core-only tests exercise definition validation, not independent
+execution. The inspected Wholesale Contracts do not require workflow types.
+
+Combine these packages rather than making internal execution machinery public merely to
+justify the split. Keep the combined package optional from ordinary Messaging. Preserve
+caller-owned save/commit, frozen definitions, stable persisted continuation names, duplicate
+outcome checks, concurrency and atomic request staging.
+
+The trade-off is an EF dependency wherever consumers reference the combined definitions.
+If Umbrine needs definitions in a provider-free policy assembly, retain the split and review
+a small public execution/inspection seam with independent public-interface tests. The current
+adopters do not establish that need. Combining is the present recommendation, not a reason
+to abandon an independently useful dependency separation if real adoption demonstrates it.
+
+[EfWorkflow](../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/EfWorkflow.cs)
+does meaningful work: it retains initial input, invokes only the saved continuation and
+stages its next request with progress. Existing
+[transaction](../../src/Gloaming.Messaging/tests/WorkflowPostgresTests/TransactionTests.cs)
+and [inbox-composition](../../src/Gloaming.Messaging/tests/WorkflowPostgresTests/InboxCompositionTests.cs)
+assertions cover rollback, competing turns, unchanged duplicate outcomes and next-request
+atomicity. These are reasons to retain the mechanism.
+
+Its limits must remain explicit: one outgoing request per turn, one pending continuation,
+JSON state/input/outcome storage, synchronous consumer methods, definition-version checks,
+and the runner's GUID-form correlation/causation convention. State changes can represent
+business branching, but there is no provided human-assignment model, fan-out/join protocol,
+reminder scheduler or authorization engine. Umbrine's human processes should retain their
+own module state and rules; adopt this runner only for interactions that fit its protocol.
+
+### Separate worker hosting from persistence
+
+[The EF messaging project](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj)
+references Hosting abstractions even for an enqueue-only consumer.
+[OutboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/OutboxWorker.cs)
+and [InboxWorker](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/InboxWorker.cs)
+own sequential polling, fresh DI scopes, delays, startup resolution and fault supervision.
+Those are useful optional execution policies, distinct from record mapping and callable work.
+
+Move the two loops, options and worker registration helpers together. Keep callable
+dispatch/processing and their failure distinctions in the owning persistence packages.
+An enqueue-only consumer should restore no Gloaming worker integration and no Hosting
+abstractions through Messaging. Selecting hosting should retain current fresh-scope,
+cancellation and fatal-accounting/completion behavior. Consumers can still write native
+workers around the callable operations.
+
+This is a dependency/interface improvement, not a claim that importing today's package
+starts a worker. Current worker registration is already explicit.
+
+### Replace two thin adapters with native configuration
+
+[ConfigurePostgresAudit](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/PostgresAuditModelExtensions.cs)
+adds only JSONB selection to the existing relational mapping. Its separate package also
+declares the Npgsql EF dependency. The consumer already chooses its provider and can write:
+
+```csharp
+model.ConfigureAudit("operations", "audit")
+    .Property(row => row.Details).HasColumnType("jsonb");
+```
+
+The [OTel helpers](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/GloamingMessagingTracerProviderBuilderExtensions.cs)
+similarly reduce to native configuration:
+
+```csharp
+traces.AddSource("Gloaming.Messaging");
+metrics.AddMeter("Gloaming.Messaging");
+```
+
+Document these source/meter names as a supported diagnostics contract. Remove adapter-only
+extension tests with the adapters, while retaining tests of actual emitted activities,
+links, measurements, exporter independence and audit persistence. These packages are
+shallow conveniences, not evidence of a framework violation.
+
+### Preserve the inbox and outbox protocols and their different transaction owners
+
+| Operation | Persistence owner | Consumer responsibility |
+| --- | --- | --- |
+| Outbox enqueue | Caller stages business state and envelope, then saves/commits. | Choose semantic operation identity, wire contract and publication route. |
+| Outbox dispatch | Library commits a short claim, publishes outside that transaction, then fences completion/accounting. | Supply acceptance semantics, transport lifetime and continued execution. |
+| Inbox intake | Library executes retained insert/compare in the caller's transaction; caller commits before acknowledgment. | Validate producer binding/admission and control native acknowledgment. |
+| Inbox processing | Explicitly invoked processor owns its row lock, savepoint, local save, completion and commit. | Supply bounded local handler effects and business concurrency; queue external work. |
+| Dead-letter retry and retention | Explicit operations own bounded native transactions. | Authorize invocation, select retention/evidence windows and schedule repetition. |
+
+[PostgresOutboxDispatcher](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs)
+and [PostgresInboxProcessor](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxProcessor.cs)
+remove actual protocol complexity. Replacing them with public claim handles or consumer-authored
+transaction choreography would spread that complexity. The owner's explicit-delegation
+decision supports retaining these operations.
+
+Keep lease fencing, lock-before-savepoint accounting, uncertain completion distinctions,
+receipt generations, conditional redrive and bounded maintenance. Keep inbox and outbox
+separate; they do not share one interchangeable delivery/lease protocol. Do not add a common
+bus, repository, transaction wrapper or provider dialect.
+
+The provider requires supplied records, fixed column/JSONB/time mappings and explicit schema
+and table names, as checked by
+[outbox storage](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxStorage.cs)
+and [inbox storage](../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInboxStorage.cs).
+Consumers own these tables' deployment and permissions; they cannot arbitrarily remap the
+protocol. No second provider is established by the relational package names.
+
+### Make operation-context and model constraints visible during adoption
+
+Automatic RLS establishes tenancy when the transaction starts. Inbox processing starts its
+transaction before selecting a row and invoking the handler. Establishing tenancy only in
+that handler is too late for an RLS-selected context. A global dispatcher also executes raw
+SQL outside EF filters. These compositions need deliberately different authority.
+
+The existing [restricted reply composition](../../samples/Wholesale/Worker/Broker/SalesReplyProcessing.cs)
+establishes the selected tenant/system actor through scoped factories before processing.
+Retain this example's ordering and restricted-credential proofs. Umbrine must choose its
+admission/revocation policy and tenant/global processing lanes; Messaging must not infer
+authority from TenantKey or create a universal tenant worker.
+
+[Shared EF composition](../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/CapabilityConfiguration.cs)
+has demonstrated value in preparation-before-validation ordering and missing-binding checks.
+Keep explicit feature validators available. Its scoped options/interceptor state excludes
+pooled contexts and singleton options; do not present it as general EF integration for
+every lifetime. SQL/bulk bypasses and later native callbacks retain their existing limits.
+
+[Ownership metadata](../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/TenantOwnershipMetadata.cs)
+rejects inheritance, owned/shared/split mappings, complex properties and converted keys.
+RLS further selects unconverted text discriminators. These are current supported-model
+limits, not proof that rich domain objects or all EF mappings are supported. Revisit an
+individual restriction when a concrete Umbrine model needs it, with the corresponding
+stored-owner and RLS proofs; do not preemptively generalize the mapping system.
+
+[Aggregate regeneration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRegenerator.cs)
+also earns retention through bounded retries, disposal and indeterminate-commit handling.
+Its contextual adopter currently
+[decorates IServiceScopeFactory](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionMaintenance.cs)
+to initialize tenancy before resolving each context. This is adoption friction to revisit
+with a real consumer, especially if asynchronous admission is needed. It does not justify
+a new operation runtime or a new package in this audit. Direct rebuild remains available
+with caller-owned transaction/save/commit.
+
+## Samples and test ownership
+
+Use three primary example goals: focused adoption of a selected library, one small
+cross-family composition, and executable fault/compatibility proof fixtures. A process
+fixture or literal payload need not remain a separately advertised application.
+
+| Current example | Proposed disposition | Evidence condition |
+| --- | --- | --- |
+| ContextDemo | Retire the SKU fixture application; show a short context-establishment recipe. | Reconcile accessor, requirement and independent actor/tenant coverage with family and package-consumer tests before deleting its tests. |
+| PersistenceDemo | Replace with a small ownership example, using the existing independent RLS consumer for optional provider setup. | Retain stored-owner forgery, GUID/string ownership, same-tenant relationships and independent migration ownership where still promised. |
+| EventCodecDemo | Keep a small literal-payload codec/upcasting example. | Literal historic schemas and independent expected outcomes stay useful even without external legacy consumers. Remove incidental wholesale vocabulary when it obscures setup. |
+| EventStorageDemo | Keep one concise raw counter/ledger adoption path; trim older mapping demonstrations. | Preserve event-sourcing adoption without Tenancy, Messaging or the optional codec; maintain append/rebuild/concurrency proof coverage. |
+| EventReactionsDemo | Keep consumer-owned inheritance and the package-free model examples; simplify unrelated hosting. | Source selection, ordering, bounded waves, failed-save recovery and absence of required domain markers remain distinct obligations. |
+| OutboxDemo, InboxDemo, MessagingDemo, MessagingProducerDemo, MessagingWorkerDemo and their ServiceDefaults | Consolidate into one focused messaging example with explicit producer/worker entry points. Move one-sided adoption and fault plumbing into small test-owned consumers. | Preserve inbox-only/outbox-only dependency omission, commit-before-ack, broker delivery, supervision, retention and real process-death recovery. Current executable references are relocation dependencies, not independent applications that must all survive. |
+| WorkflowDeploymentDemo Earlier/Current | Move to test-owned fixtures for the retained continuation package. | Separately compiled old/new consumers and literal state/message fixtures test something an in-process current-version test cannot replace. |
+| Wholesale | Reduce to Access, Sales and Inventory with one order/reservation journey. | Retain the chosen HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition. Keep focused failure scenarios with their library owners. |
+| Wholesale Purchasing | Retire from the primary sample. | Transfer any unique event-store assertions first; independent raw/ledger consumers can retain variation without another business module. |
+| Wholesale Dispatch | Retire from the primary sample. | Route-selection guarantees already have provider tests. Snapshot/population, disclosure and directory merge/readiness are consumer-owned policy; retaining that experiment is not required by Messaging's route selector. |
+| templates/state-stored and tools/template | Retire the generator and its template-specific proof lane in a later coherent change. | Keep selected ownership/independent-adoption assertions under their library owners. Derive the pattern guide and future skills from real application setup; do not replace the generator with another CLI now. |
+
+This is a removal proposal, not a claim that the existing tests are already duplicates.
+Before each deletion, map its assertions to a retained test or explicitly retire the
+behavior. An application can be removed while its useful independent consumer fixture stays.
+Conversely, do not preserve business-scenario tests solely to preserve historical counts.
+
+Keep repository architecture checks for library independence, intended dependencies and
+the retained sample's Contracts/persistence ownership. Remove assertions that only freeze
+retired package identities or application graphs. Shared test support can remain under
+`tests/Support`; it is not another application or runtime library.
+
+## Proof obligations for implementation
+
+The following source assertions were inspected or located as current proof owners. No test
+execution is claimed by this table; the final-tree executions in
+[the previous verification report](v1-final-verification.md) remain historical evidence.
+
+| Retained guarantee | Current proof owner and required follow-up |
+| --- | --- |
+| Actor lifecycle, scheme-selected identity and independent tenancy | ActorIdentity/Tenancy family tests. Keep policy evaluation, anonymous/tenantless exceptions and fresh operation scopes when shortening examples. |
+| Stored-owner checks and actual RLS | Persistence family tests, especially [RowSecurityTests](../../src/Gloaming.Persistence/tests/PostgresTests/RowSecurityTests.cs), plus selected restricted HTTP/worker tests. Keep restricted roles, same-backend reset/rollback and raw/bulk enforcement cases. |
+| Explicit audit atomicity | [Audit transaction tests](../../src/Gloaming.Auditing/tests/AuditPostgresTests/TransactionTests.cs) and guard tests. Rerun after replacing JSONB helper calls; verify business/audit rollback and fresh recovery. |
+| Preparation and validation ordering | [CapabilityCompositionTests](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs), registration, event ordering and dispatch fault tests. Rehome shared-coordinator assertions when simplifying the demo. |
+| Codec and history integrity | Events family tests and independently authored literal payload fixtures. Keep incompatible/unknown schema, upcast and range failures; no current serializer may manufacture the historic expectation. |
+| Append, required state and repair | EventSourcing Guard, Concurrency, Rebuild, Regeneration and history-reader tests, plus the raw adoption consumer. Keep rollback, stale observations, disposal and ambiguous commit cases. |
+| Outbox claims and completion | [DispatchTests](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/DispatchTests.cs), RouteSelectionTests, failure recovery and CompletionSupervisionTests. Keep expiry/takeover, stale completion, acceptance followed by storage failure and worker containment. |
+| Inbox intake, processing and expiry | Inbox Intake, Processing, FailureRecovery, DeadLetter, RetentionConcurrency and authority tests. Keep duplicate-content comparison, lock/savepoint atomicity, generation-conditional retry and post-retention re-execution. |
+| Worker lifetime and native transport | Inbox HostingTests, Outbox WorkerTests, RabbitMq Lifecycle/NativeRecovery tests and MessagingWorkerDemo.Tests. Rerun startup, fresh scopes, cancellation, fatal fault supervision, SIGTERM/abrupt death and recovery after the hosting move. |
+| Bounded continuation durability | Workflow Execution, Transaction, Serialization and InboxComposition tests plus separately compiled deployment fixtures. Preserve combined progress/outbox/inbox effects after package consolidation. |
+| Independent package consumption | [Release harness](../../tools/release/README.md). Update its package inventory, dependency expectations and native telemetry/audit setup; verify archives and consumers without source references. |
+
+Removing historic sample migrations is permitted by the compatibility decision. Keep old
+schemas/rows only where a retained migration or durable-payload guarantee needs an executable
+upgrade fixture. A clean initial schema and an intentionally old compatibility fixture have
+different purposes; neither requires retaining every experimental migration chain.
+
+## Implementation sequence and completion checks
+
+1. **Enable ordinary local consumption.** Add a small pack-only developer command reusing
+   the existing library inventory. Pack unique prerelease snapshots into a persistent local
+   feed; map Gloaming packages to it in the actual consumer. Retain the heavier isolated
+   package-adoption harness as CI verification. This can use today's packages and does not
+   depend on the simplifications below. No remote publication is required.
+2. **Simplify the two thin adapters.** Replace JSONB and OTel helper usage with native
+   configuration, remove their packages, and update package inventories, solution entries,
+   dependency assertions and affected documentation. Pass audit persistence, emitted telemetry
+   and package-consumption checks. Do not expand this into sample consolidation.
+3. **Separate optional worker hosting.** Move loops/options/registration together, update
+   consumers and assert that producer-only graphs omit Hosting. Pass worker startup,
+   supervision, cancellation and process-recovery checks through the new package.
+4. **Combine the continuation packages.** Remove friend-only assembly separation while
+   retaining the protocol and current public behavior unless separately reviewed. Pass
+   continuation transaction, duplicate outcome, competing turn and deployment-fixture checks.
+   Keep human workflow policy outside the library.
+5. **Validate the first Umbrine foundation.** Exercise trusted context, current admission,
+   module-owned persistence, explicit business permission and accepted-change audit. Select
+   one durable handoff from actual business requirements before extending Workflows or
+   tenant-aware worker machinery. Event sourcing remains per-aggregate.
+6. **Consolidate one sample family at a time, then Wholesale.** Include assertion transfer,
+   references, fixtures, migrations, documentation and affected CI in each reviewable change.
+   The retained sample has three modules and one useful journey; it need not showcase every
+   supported option.
+7. **Finish documentation and tooling cleanup.** Classify every tracked document as current
+   consumer contract, active convention/decision, useful evidence to distill, or retired
+   history to delete. Keep a short direction/pattern guide, family-local setup/limitations,
+   relevant ADR rationale and one active work queue. Retire superseded plans/reports through
+   Git history instead of building another archive. Remove generator-only dependencies and
+   CI; keep family/provider, package-consumer and retained-sample checks. Remove truly empty
+   local directories separately: Git does not publish empty directory trees.
+
+Each increment must leave the selected consumer runnable and the repository coherent.
+The first Umbrine foundation can proceed before package simplification is complete. Do not
+make completion of every cleanup item a prerequisite for using Gloaming in Umbrine.
+Skills should automate exercised tasks from the pattern guide; they should not duplicate
+the architecture rules or grow an untested matrix of topology/provider/authentication options.
+
+The local-feed proposal follows [NuGet local feeds](https://learn.microsoft.com/en-us/nuget/hosting-packages/local-feeds),
+[cache behavior](https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders)
+and [source mapping](https://learn.microsoft.com/en-us/nuget/consume-packages/package-source-mapping).
+Change the prerelease version for each snapshot and pack its Gloaming dependency closure.
+Third-party restore may still use nuget.org. This is development distribution, not another
+runtime mechanism or a remote package-release commitment.
+
+## Original assessment verification and remaining decisions
+
+This assessment inspected every package's declared dependencies and public entry points,
+selected implementation paths, independent consumer wiring, relevant test assertions and
+CI/package/template ownership. It is an architecture assessment, not an exhaustive correctness
+review of every implementation line or a completed audit of all existing documents/tests.
+
+The initial assessment included no implementation, sample, fixture, migration, package
+configuration or CI file changes. No runtime/provider/browser/package tests were rerun for
+that assessment. Subsequent implementation evidence is linked above. Remaining proposed code and
+removal changes require their listed fresh checks; previous passes do not validate them.
+
+Static verification checked all 488 local file-link targets in this report and the three
+updated entry documents, with no missing targets. Its 23 unique package-disposition rows
+match the inspected project inventory exactly. Whitespace checks passed; the initially
+empty staged snapshot remains empty. These checks validate the documentation/inventory,
+not execution of the proposed changes.
+
+Owner review should select the package simplifications and sample reductions, then review
+each concrete implementation. Exact naming of the combined continuation/hosting packages,
+the first Umbrine operation, authorization policy and any richer EF model support remain
+implementation decisions. No replacement public interface is approved by this assessment.
+
+**No new reusable mechanism was proven.** The proposed value is a clearer, smaller adoption
+interface around existing mechanisms. Library protocols stay technical; recipes and skills
+materialize consumer-owned setup; Wholesale and Umbrine retain their business policy.

@@ -115,8 +115,8 @@ use their own consumer meter and explicitly expose observation age.
 
 ## Native host and transport wiring
 
-Optionally reference [Gloaming.Messaging.OpenTelemetry](../Gloaming.Messaging.OpenTelemetry/README.md)
-in the host to subscribe without repeating instrumentation names:
+Subscribe in the host using the native OpenTelemetry builders. The activity source and meter
+are both named `Gloaming.Messaging`; no Gloaming subscription package is needed:
 
 ```csharp
 using OpenTelemetry.Metrics;
@@ -126,16 +126,14 @@ using OpenTelemetry.Trace;
 // HTTP/runtime/database instrumentation and configured OTLP export.
 builder.AddServiceDefaults();
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddGloamingMessaging()
+    .WithTracing(tracing => tracing.AddSource("Gloaming.Messaging")
         .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber"))
-    .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
 ```
 
-Both extensions return the native builder and can be selected independently. Their only
-dependency is OpenTelemetry.Api; null builders throw ArgumentNullException. They do not
-build providers, configure logging/export/resources/sampling or subscribe to other sources.
-The existing technical packages do not depend on this optional adapter. Native
-`AddSource("Gloaming.Messaging")` and `AddMeter("Gloaming.Messaging")` remain equivalent.
+Trace and metric collection can be selected independently. The technical packages emit
+native .NET diagnostics and have no OpenTelemetry dependency. Hosts own the SDK and
+subscription configuration; the documented source and meter names are supported contracts.
 
 Select SDK/exporter packages, resources, sampling and OTLP export in the host. A producer
 can add ASP.NET Core instrumentation; DB instrumentation stays independently selectable.

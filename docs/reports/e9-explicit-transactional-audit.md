@@ -1,5 +1,9 @@
 # E9 Explicit transactional audit
 
+Historical adapter setup: [the later retirement](../reports/thin-adapter-retirement.md)
+replaces the convenience package with native consumer configuration. The mechanism and
+evidence below retain their original scope.
+
 Date: 2026-10-09. Branch: `feat/explicit-transactional-audit`, based on merged `origin/main`
 at `0f4d8bf`. Public interface and bounded scope were owner-approved before implementation.
 Implementation is unstaged for line-by-line review; no commit is authorized or created.
@@ -219,8 +223,8 @@ mechanism is proven by this slice.
   [provided row](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditRecord.cs),
   [mapping/save guard](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditModelExtensions.cs)
   and [internal evidence registry](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/AuditStageRegistry.cs).
-- [PostgreSQL helper](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/PostgresAuditModelExtensions.cs),
-  its optional project/dependency declarations and [provider setup](../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md).
+- [PostgreSQL helper](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/PostgresAuditModelExtensions.cs),
+  its optional project/dependency declarations and [provider setup](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md).
 - [Sales wrapper](../../samples/Wholesale/modules/Sales/Sales/SalesAudit.cs) and
   [Inventory wrapper](../../samples/Wholesale/modules/Inventory/Inventory/InventoryAudit.cs);
   [Human consumer](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs) and

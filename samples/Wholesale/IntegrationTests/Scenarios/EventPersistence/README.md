@@ -308,7 +308,7 @@ The receiver establishes a separate ActorIdentity scope with its trusted System 
 `inventory.stock-issue-worker`. No human initiator is present in the current wire contract.
 The internal InventoryAudit wrapper gathers actor/tenant, clock and generated entry ID. The named StockIssuedDetailsV1 record keeps payload fields and its version constant together;
 the business call supplies stock ID/version/quantity only.
-ConfigurePostgresAudit maps JSONB; native module mapping owns tenant visibility and its
+Each owning DbContext selects JSONB through native EF mapping; native module mapping owns tenant visibility and its
 opt-in HasSubjectTimelineIndex helper and its native index customization.
 Audit retains stock identity, version and quantity without correlation, causation or trace
 IDs. The executable prints the committed action/actor and reply identity/cause.

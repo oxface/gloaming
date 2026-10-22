@@ -149,8 +149,8 @@ progresses after alarm removal. Missing confirms never establish rejection.
 
 The producer and each worker role call the existing editable
 [ServiceDefaults](../../../../samples/Wholesale/ServiceDefaults/README.md), then add role resources and
-Gloaming subscriptions through optional AddGloamingMessaging extensions on native trace
-and metric builders in Program.cs. RabbitMQ sources remain explicitly selected there. There
+Gloaming subscriptions through native `AddSource("Gloaming.Messaging")` and
+`AddMeter("Gloaming.Messaging")` calls in Program.cs. RabbitMQ sources remain explicitly selected there. There
 is no separate AddTelemetry helper or Gloaming host package. Set these for processes that
 should export to an existing Collector or Aspire dashboard OTLP endpoint:
 

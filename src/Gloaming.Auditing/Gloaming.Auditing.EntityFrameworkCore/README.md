@@ -23,9 +23,8 @@ services.AddScoped<IAudit<AppDbContext>, EfAudit<AppDbContext>>();
 ```
 
 Use `ConfigureAudit` in that context's `OnModelCreating`, with explicit schema/table choices.
-The returned native builder is editable; provide provider JSON mapping explicitly, or use
-[ConfigurePostgresAudit](../Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md)
-for PostgreSQL:
+The returned native builder is editable; provide provider JSON mapping explicitly.
+For PostgreSQL:
 
 ```csharp
 var audit = modelBuilder.ConfigureAudit("operations", "accepted_log");
@@ -33,7 +32,7 @@ audit.Property(row => row.Details).HasColumnType("jsonb"); // PostgreSQL consume
 audit.Property(row => row.Id).HasColumnName("audit_id"); // Optional native customization.
 ```
 
-The PostgreSQL helper performs the first two lines. ConfigureAudit includes the relational
+ConfigureAudit includes the relational
 index ix_audit_subject_timeline on TenantKey, SubjectType, SubjectKey, OccurredAt and Id.
 No additional setup call is required. Consumers can rename or replace the index through
 native EF model configuration. Ownership, query filters and additional indexes remain
@@ -122,7 +121,7 @@ no ambient context or automatic metadata fallback. Correlation, causation and tr
 omitted from audit until a concrete business use earns them. Diagnostic telemetry remains
 host-owned OTel setup; existing messaging metadata stays in inbox/outbox envelopes.
 
-Both modules receive the subject timeline index from ConfigurePostgresAudit, without a
+Both modules receive the subject timeline index from ConfigureAudit, without a
 separate indexing call. Consumers can query a tenant-visible item timeline using native EF:
 
 ```csharp

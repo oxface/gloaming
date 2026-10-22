@@ -1,5 +1,9 @@
 # OBS1: durable message observability
 
+Historical adapter setup: [the later retirement](../reports/thin-adapter-retirement.md)
+replaces the convenience package with native consumer configuration. The mechanism and
+evidence below retain their original scope.
+
 Follow-up, 2026-10-22: the [worker recovery/shutdown closure](w1-broker-recovery-shutdown.md)
 reuses the unavailable-collector scenario with a separate worker-stop budget and adds native
 stalled-publication evidence. The counts and executions below remain historical OBS1 results.
@@ -53,7 +57,7 @@ business workflow or telemetry framework was extracted.
   [ServiceDefaults](../../samples/Wholesale/ServiceDefaults/README.md), adding native role
   resources and source/meter subscriptions. No shared Gloaming host package or duplicate
   AddTelemetry helper. CI Messaging includes ServiceDefaults as a dependent source input.
-- [Optional trace/meter subscription adapter](../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/README.md):
+- [Optional trace/meter subscription adapter](https://github.com/oxface/modulith-foundry/blob/1582e77849088e243881c82a37c0a42b2a11a322/src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/README.md):
   two XML-documented extensions and one API-only dependency. The technical messaging packages
   retain their existing dependencies and need not adopt the adapter.
 - [Real process/export proof](../../src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ObservabilityTests.cs)

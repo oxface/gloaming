@@ -21,7 +21,6 @@ public sealed class AssemblyDependencyTests
 {
     private const string Actor = "Gloaming.ActorIdentity";
     private const string Audit = "Gloaming.Auditing.EntityFrameworkCore";
-    private const string AuditPostgres = "Gloaming.Auditing.EntityFrameworkCore.Postgres";
     private const string ActorHttp = "Gloaming.ActorIdentity.AspNetCore";
     private const string Tenancy = "Gloaming.Tenancy";
     private const string TenancyHttp = "Gloaming.Tenancy.AspNetCore";
@@ -42,7 +41,6 @@ public sealed class AssemblyDependencyTests
         .LoadAssemblies(
             typeof(ActorId).Assembly,
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
-            typeof(Gloaming.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
             typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
             typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly,
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
@@ -87,7 +85,6 @@ public sealed class AssemblyDependencyTests
                 ActorHttp,
                 TenancyHttp,
                 Audit,
-                AuditPostgres,
                 "Sales",
                 "Access",
                 "Gloaming.Messaging",
@@ -118,7 +115,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 Audit,
-                AuditPostgres,
                 ContextSample,
                 PersistenceSample,
                 HttpSample,
@@ -244,15 +240,12 @@ public sealed class AssemblyDependencyTests
         )
         {
             NoDependency(Audit, forbidden).Check(Architecture);
-            NoDependency(AuditPostgres, forbidden).Check(Architecture);
             if (forbidden.StartsWith("Gloaming.", StringComparison.Ordinal))
             {
                 NoDependency(forbidden, Audit).Check(Architecture);
-                NoDependency(forbidden, AuditPostgres).Check(Architecture);
             }
         }
 
-        NoDependency(Audit, AuditPostgres).Check(Architecture);
         Assert.DoesNotContain(
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly.GetReferencedAssemblies(),
             assembly =>

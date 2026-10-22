@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash } from "node:crypto";
 import {
   existsSync,
   mkdirSync,
@@ -21,6 +21,7 @@ import {
   sep,
 } from "node:path";
 import { XMLParser, XMLValidator } from "fast-xml-parser";
+import { libraryPackages } from "./packages.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
@@ -36,7 +37,6 @@ assert.equal(
 );
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-package-proof-"));
 const feed = join(scratch, "feed");
-const version = `1.0.0-local.${Date.now()}.${randomBytes(4).toString("hex")}`;
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "",
@@ -132,32 +132,12 @@ interface Assets {
   };
 }
 
-const packages = readdirSync(join(root, "src"), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory() && entry.name.startsWith("Gloaming."))
-  .flatMap((family) =>
-    readdirSync(join(root, "src", family.name), { withFileTypes: true })
-      .filter(
-        (entry) => entry.isDirectory() && entry.name.startsWith("Gloaming."),
-      )
-      .map((entry) => ({
-        id: entry.name,
-        project: join(
-          root,
-          "src",
-          family.name,
-          entry.name,
-          `${entry.name}.csproj`,
-        ),
-      })),
-  )
-  .sort((left, right) => left.id.localeCompare(right.id));
+const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  23,
+  21,
   "Review the package inventory when adding/removing libraries.",
 );
-for (const item of packages)
-  assert(existsSync(item.project), `Missing library project: ${item.project}`);
 
 function readmeFor(project: string): string {
   const local = join(dirname(project), "README.md");
@@ -203,7 +183,7 @@ function renderReadme(file: string): string {
 
 const indexBefore = run("git", ["diff", "--cached", "--binary"]);
 mkdirSync(feed);
-console.log(`Local package proof ${version}; artifacts and logs: ${scratch}`);
+console.log(`Local package proof; artifacts and logs: ${scratch}`);
 
 try {
   // Exercise the native SDK task against independent literal expectations, including
@@ -252,18 +232,30 @@ try {
   for (const item of packages) {
     const rendered = join(scratch, `${item.id}.README.md`);
     writeFileSync(rendered, renderReadme(readmeFor(item.project)));
-    run(dotnet, [
-      "pack",
-      item.project,
-      "--configuration",
-      "Release",
-      "--output",
-      feed,
-      `-p:PackageVersion=${version}`,
-      `-p:Version=${version}`,
-      "--nologo",
-    ]);
   }
+  run(process.execPath, [
+    join(import.meta.dirname, "pack.ts"),
+    "--output",
+    feed,
+  ]);
+  const snapshots = readdirSync(feed).filter((file) =>
+    /^gloaming\..+\.json$/.test(file),
+  );
+  assert.equal(snapshots.length, 1, "Expected one completed local snapshot.");
+  const snapshot = JSON.parse(
+    readFileSync(join(feed, snapshots[0]!), "utf8"),
+  ) as {
+    version: string;
+    feed: string;
+    packages: string[];
+  };
+  const version = snapshot.version;
+  assert.match(version, /^\d+\.\d+\.\d+-local\.\d+\.g[0-9a-f]{8}$/);
+  assert.equal(snapshot.feed, feed);
+  assert.deepEqual(
+    snapshot.packages,
+    packages.map((item) => item.id),
+  );
   const archives = readdirSync(feed).filter((file) => file.endsWith(".nupkg"));
   assert.equal(archives.length, packages.length);
   const unzip = join(scratch, "unzip.proj");
@@ -370,7 +362,7 @@ try {
       ids: [
         "Gloaming.Persistence.EntityFrameworkCore",
         "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
+        "Gloaming.Auditing.EntityFrameworkCore",
       ],
       external: true,
     },
@@ -391,7 +383,7 @@ try {
             join(import.meta.dirname, "consumers", profile.source),
             "utf8",
           )
-        : 'Console.WriteLine("PASS all 23 package references compile together");',
+        : 'Console.WriteLine("PASS all 21 package references compile together");',
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),

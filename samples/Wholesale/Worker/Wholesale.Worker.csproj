@@ -9,7 +9,6 @@
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
     <ProjectReference Include="../ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
     <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
-    <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="RabbitMQ.Client" />
   </ItemGroup>

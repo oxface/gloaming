@@ -40,7 +40,7 @@ classification, visibility and retention remain Sales policy; no denial auditing
 The internal SalesAudit wrapper captures established actor/tenant, clock and generated entry
 ID. Its named ProfileChangedDetailsV1 record keeps the payload fields and version constant
 together; business code supplies only the profile/version change. Audit stores no correlation,
-causation or trace IDs; native HTTP telemetry remains separate. ConfigurePostgresAudit maps JSONB; native module
+causation or trace IDs; native HTTP telemetry remains separate. Each owning DbContext selects JSONB through native EF mapping; native module
 mapping owns tenant visibility and
 the opt-in HasSubjectTimelineIndex helper and its native index customization.
 
