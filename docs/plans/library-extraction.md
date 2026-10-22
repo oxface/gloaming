@@ -1519,3 +1519,18 @@ references, passing capability-specific proofs, tested independent adoption, and
 template creation. Candidate inventory and matching archived results alone do not complete
 that goal. Only guarantees exercised by the active implementation and documented in its
 report count as new reusable proofs; later increments remain proposals.
+
+
+### B2 canonical adoption: outbox route claim selection
+
+Implemented under the current owner preapproval after canonical Wholesale exposed real duplicate
+claim-routing burden. `OutboxDispatchOptions.RouteKeys` is an optional init-only
+`IReadOnlyCollection<string>?`; null preserves all-route behavior. The PostgreSQL dispatcher
+copies it at construction and uses exact C-collated parameterized route selection before native
+locking. Empty/blank/null entries fail validation before I/O. There are no new dependencies,
+transport interfaces or sample policy in the library. Route assignment remains consumer-owned;
+this does not authorize tenants or bypass RLS. See the self-contained
+[family contract](../../src/Gloaming.Messaging/docs/route-selection.md) and
+[product adoption evidence](../reports/b2-directory-product-adoption.md). Existing S1/B2 reports'
+initial no-extraction findings describe their earlier checkpoints; this later composition supplied
+the first concrete need and new provider/consumer proofs.

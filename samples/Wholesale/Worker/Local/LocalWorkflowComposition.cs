@@ -37,7 +37,12 @@ public static class LocalWorkflowComposition
             leaseDuration ?? TimeSpan.FromSeconds(10),
             TimeSpan.FromMilliseconds(100)
         );
-        services.AddPostgresOutboxDispatcher<SalesDbContext, ReservationCommandPublisher>(options);
+        services.AddPostgresOutboxDispatcher<SalesDbContext, ReservationCommandPublisher>(
+            options with
+            {
+                RouteKeys = ["inventory.reserve-stock", "inventory.release-reservation"],
+            }
+        );
         services.AddPostgresOutboxDispatcher<InventoryDbContext, ReservationOutcomePublisher>(
             options
         );

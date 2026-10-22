@@ -116,11 +116,20 @@ public sealed partial class CompositionTests
                 .ReadAsync(profile.CustomerId, Token);
             Assert.Equal(profile, persisted);
             Assert.Empty(await sales.Set<AuditRecord>().AsNoTracking().ToArrayAsync(Token));
+            // The permitted Beta edit publishes B2 state; suspended Alpha work publishes nothing.
+            Assert.Equal(
+                1,
+                await sales
+                    .Database.SqlQueryRaw<long>(
+                        "SELECT count(*) AS \"Value\" FROM sales.outbox_messages WHERE owner_key = 'wholesale-beta' AND destination = 'dispatch.customer-directory'"
+                    )
+                    .SingleAsync(Token)
+            );
             Assert.Equal(
                 0,
                 await sales
                     .Database.SqlQueryRaw<long>(
-                        "SELECT count(*) AS \"Value\" FROM sales.outbox_messages"
+                        "SELECT count(*) AS \"Value\" FROM sales.outbox_messages WHERE owner_key = 'wholesale-alpha'"
                     )
                     .SingleAsync(Token)
             );

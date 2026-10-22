@@ -154,9 +154,9 @@ post-review proofs, distinct from the earlier 12-test and 13-test HTTP results a
 Commands from the repository root:
 
 ```sh
-dotnet build samples/Wholesale/DirectoryDemo.Tests/DirectoryDemo.Tests.csproj --no-restore --disable-build-servers -m:1 -v minimal
-DOCKER_HOST=unix:///run/user/1000/podman/podman.sock TESTCONTAINERS_RYUK_DISABLED=true dotnet test --project samples/Wholesale/DirectoryDemo.Tests/DirectoryDemo.Tests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-dotnet csharpier check samples/Wholesale/DirectoryDemo.Tests samples/Wholesale/DirectoryDemo/Program.cs samples/Wholesale/modules/Dispatch/Dispatch samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerDeliveryDirectory.cs samples/Wholesale/modules/Sales/Sales/CustomerDeliveryDirectory.cs
+dotnet build samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-restore --disable-build-servers -m:1 -v minimal
+DOCKER_HOST=unix:///run/user/1000/podman/podman.sock TESTCONTAINERS_RYUK_DISABLED=true dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+dotnet csharpier check samples/Wholesale/IntegrationTests/Directory samples/Wholesale/Worker/Directory/DirectoryHost.cs samples/Wholesale/modules/Dispatch/Dispatch samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerDeliveryDirectory.cs samples/Wholesale/modules/Sales/Sales/CustomerDeliveryDirectory.cs
 git diff --check
 ```
 
@@ -185,7 +185,7 @@ module-owned projects, suitable for that consolidation. No library references sa
 
 Review-worthy files are Sales.Contracts/ICustomerDeliveryDirectory.cs; Sales's public-state
 publication and existing profile transaction; Sales listing migration/model; Dispatch.Contracts;
-Dispatch merge/population/intake; native Dispatch migration; DirectoryDemo relay/composition;
+Dispatch merge/population/intake; native Dispatch migration; Worker Directory relay/composition;
 14 PostgreSQL tests; and the finite HTTP source RLS/migration compatibility changes.
 
 Remaining gaps: source-head/catch-up barriers and monitoring, externally authenticated
@@ -194,3 +194,5 @@ read replicas, physical deletion/ID reuse, throughput benchmarks, in-place reset
 shipping/authorization policy. No broker proof is needed for the selected local transport.
 Product consolidation, complete solution/CI registration and mandatory two-axis review remain
 root integration work; this isolated branch intentionally avoids shared root metadata.
+
+Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.

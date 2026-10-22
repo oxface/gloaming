@@ -16,7 +16,7 @@ The profile version explicitly orders this complete public directory state. Hist
 are listed by the migration; source tombstones and immutable keys are retained permanently.
 The [Dispatch guide](../Dispatch/README.md) defines disclosure, population, eventual readiness,
 writer participation and unsupported deletion/ID-reuse policies. The
-[composition](../../DirectoryDemo/README.md) demonstrates separate source/receiver databases.
+[composition](../../Worker/Directory/README.md) demonstrates separate source/receiver databases.
 
 ## Private draft access
 

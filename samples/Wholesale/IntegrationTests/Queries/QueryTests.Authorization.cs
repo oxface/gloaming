@@ -322,8 +322,16 @@ public sealed partial class QueryTests
         await database
             .GetService<IMigrator>()
             .MigrateAsync("20261014194424_AddRequiredDraftSubmission", Token);
-        SalesDemoSeed.Stage(database);
-        await database.SaveChangesAsync(Token);
+        // Write the literal pre-B2 schema; the current EF model includes later delivery columns.
+        await database.Database.ExecuteSqlRawAsync(
+            """
+            INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)
+            VALUES ('10000000-0000-0000-0000-000000000001', 'wholesale-alpha', 'DEMO-CUSTOMER', 'Alpha Customer', 1);
+            INSERT INTO sales.customer_addresses (id, organization_key, customer_id, address_line)
+            VALUES ('20000000-0000-0000-0000-000000000001', 'wholesale-alpha', '10000000-0000-0000-0000-000000000001', 'Alpha Street');
+            """,
+            Token
+        );
         Guid oldOrder = Id(20);
         Guid oldLine = Id(1);
         await database.Database.ExecuteSqlInterpolatedAsync(

@@ -8,7 +8,7 @@ This capability neither approves a shipment nor guarantees the current address a
 The [Contracts](Dispatch.Contracts/ICustomerDirectory.cs) expose durable population progress,
 page application, search and trusted Sales intake. Dispatch references Sales.Contracts, never
 Sales implementation or its DbContext. Each module owns its own PostgreSQL database in the
-[executable composition](../../DirectoryDemo/README.md).
+[executable composition](../../Worker/Directory/README.md).
 
 ## Ownership and source contract
 
@@ -73,7 +73,7 @@ before resuming its relay. There is no in-place reset/receipt deletion API.
 `AddDispatchDirectory(connection)` registers module persistence, public APIs, durable intake
 and one inbox handler/processor. The host provides the immutable tenant accessor for operations.
 `DirectoryComposition` demonstrates source/receiver wiring, a typed public-boundary relay and
-bounded copy; it is orchestration suitable for the product Worker, not a library dependency.
+bounded copy; it lives in the canonical product Worker, not a library dependency.
 The relay binds Sales identity by trusted in-process composition. External transport would
 need authenticated producer binding; payload tenant metadata itself grants no authority.
 
@@ -86,5 +86,8 @@ Default identity/authorization hosting and independent workflows are not wired b
 
 Technical outbox/intake/receipt mechanisms reuse Gloaming. Key ordering, public revision meaning,
 disclosure, listing lifecycle, merge conflicts, tenant admission, progress and readiness are
-consumer-owned policies. No new reusable library mechanism was proven. See the
+consumer-owned policies. The original B2 checkpoint proved no new reusable mechanism.
+Canonical adoption subsequently proved a narrow outbox route claim selector; see the
+[adoption report](../../../../docs/reports/b2-directory-product-adoption.md) and
+[family contract](../../../../src/Gloaming.Messaging/docs/route-selection.md). See the
 [B2 report](../../../../docs/reports/b2-dispatch-directory-population.md) for fresh proof evidence.

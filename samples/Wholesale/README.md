@@ -46,3 +46,5 @@ Aspire/Keycloak/Chromium lifetimes rather than in-process composition.
 Independent technical examples live beside their Gloaming families under `src/`; they do not
 use Wholesale. See the [consolidation proof map](../../docs/reports/s1-wholesale-consolidation.md)
 for precise ownership, retained assertions and fresh verification.
+
+Dispatch owns the independently searchable customer directory. Use the canonical [Worker Directory operations](Worker/Directory/README.md) to admit, populate, relay/process and search it; protected API profile edits publish ongoing changes.

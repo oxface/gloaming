@@ -6,9 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Dispatch;
 using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
+using ModulithFoundry.Samples.Wholesale.Worker.Directory;
 using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.DirectoryDemo.Tests;
+namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Directory;
 
 public sealed class WireContractTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {
