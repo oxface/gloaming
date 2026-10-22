@@ -116,36 +116,36 @@ and passing protocol tests do not settle that interface concern.
 
 ### What the archived implementation actually does
 
-- [IssuePurchaseOrderHandler](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/IssuePurchaseOrder/IssuePurchaseOrderHandler.cs)
+- [IssuePurchaseOrderHandler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/IssuePurchaseOrder/IssuePurchaseOrderHandler.cs)
   opens a native transaction, loads an aggregate through the store with the command's expected
   version, calls Issue(), stages the aggregate, then explicitly saves and commits. Neither
   event arrays nor JSON envelopes appear in the business operation. The handler still supplies
   actor/Organization and a TimeProvider timestamp; reducing those append arguments would be
   a deliberate change from the archive, not a behavior inherited from it. Archived audit
   participation is excluded from this ES1 revision.
-- [PurchaseOrderAggregate](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderAggregate.cs)
+- [PurchaseOrderAggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderAggregate.cs)
   captures Id and ExpectedVersion on loading. Its methods invoke the module's decider, evolve
   the whole candidate, validate the final candidate, then update State, Version and Pending.
   A failed candidate is not accepted. Purchasing captures ExpectedVersion as a fixed value;
   Inventory derives it from Version minus pending count. A shared mechanism should capture
   the observed version once and use checked arithmetic before changing any accepted field.
-- [PurchaseOrderStore](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
+- [PurchaseOrderStore](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
   checks the stream against the command expectation and required write-state version. It
   constructs the aggregate from that state, encodes pending events, fills envelope positions
   and invokes explicit required inline participants. It is a concrete module-local store.
   The inspected snapshot contains no shared generic event store or generic aggregate base.
   A reusable typed store would be a new extraction of those repeated obligations.
-- [Inventory's aggregate](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
+- [Inventory's aggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
   makes the distinction between AcceptDecision and ApplyHistorical explicit. Historical
   application advances reconstructed state/version but never collects pending facts or runs
-  current candidate policy. Purchasing's [event reader](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs)
+  current candidate policy. Purchasing's [event reader](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderEventReader.cs)
   instead folds its reducer directly and returns reconstructed state/version/time. Both
   loading paths are legitimate; sharing aggregate bookkeeping does not require replacing them.
-- [Purchasing's inline projector](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderInlineProjection.cs)
+- [Purchasing's inline projector](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderInlineProjection.cs)
   advances an aggregate-shaped write model and an independently reduced summary. The aggregate
   candidate cannot become the mutable baseline of both projectors. Required-view selection,
   reduction and native staging remain explicit consumer responsibilities.
-- [Purchasing's existing persistence tests](../../archive/proof-sample/tests/PersistenceTests/PurchaseOrderPersistenceTests.cs)
+- [Purchasing's existing persistence tests](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/PersistenceTests/PurchaseOrderPersistenceTests.cs)
   include literal historical facts above current command limits, editing without event SELECT,
   competing writers, participant faults and clock regression. These are inspected historical
   tests, not new results for a revised interface. The archive's handler Clear() recovery and
@@ -573,13 +573,13 @@ executions; no runtime guarantee follows from the document review alone.
 
 ### Reference inspection and implementation choices
 
-The archived [Inventory store](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
+The archived [Inventory store](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
 checks a write-gate transaction, validates view/header versions, stages stream advancement,
 serializes pending facts into positions and invokes its projector. The archived
-[aggregate](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
+[aggregate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs)
 evolves and validates a complete candidate before retaining uncommitted facts; historical
 evolution does not collect new pending events. The archived
-[Purchasing store](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
+[Purchasing store](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
 uses the same append shape, but treats an empty pending batch as a no-op and classifies
 concurrency more broadly. These are inspected historical source, not ES1 test results.
 

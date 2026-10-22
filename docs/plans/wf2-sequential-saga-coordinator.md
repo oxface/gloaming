@@ -27,7 +27,7 @@ This is narrower than a general saga state machine. The existing WF1 deadline wo
 stays consumer-owned: its overdue status and detailed outcome comparison do not become a
 generic timeout policy merely to demonstrate another adoption.
 
-The [archived fulfilment process](../../archive/proof-sample/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
+The [archived fulfilment process](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
 also tracks versions, line outcomes and release progress, but has cancellation, replenishment
 and overlapping pending lines. It supplies historical obligation evidence, not a consumer
 that this sequential interface claims to replace. No archived code changes or test runs.

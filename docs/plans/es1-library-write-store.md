@@ -241,10 +241,10 @@ is still required, including the existing index and all subsequent unstaged chan
 
 ## Reference and evidence boundary
 
-The archived [CorrectStockQuantityHandler](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/CorrectStockQuantity/CorrectStockQuantityHandler.cs)
-and [StockPositionStore](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
+The archived [CorrectStockQuantityHandler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/CorrectStockQuantity/CorrectStockQuantityHandler.cs)
+and [StockPositionStore](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionStore.cs)
 show the desired workflow but keep technical orchestration local. Its cooperative repair gate
-is not extracted. The archived [PurchaseOrderStore](../../archive/proof-sample/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
+is not extracted. The archived [PurchaseOrderStore](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Persistence/PurchaseOrderStore.cs)
 likewise coordinates native streams and explicit projections. These are inspected source,
 not fresh runtime proofs or implementation authorization.
 

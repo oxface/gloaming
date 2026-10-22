@@ -44,17 +44,17 @@ helpers. Ordinary ungated/raw adoption remains valid; a new general save bypass 
 
 ## Archived reference, not a new execution
 
-[StockPositionWriteGate](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionWriteGate.cs)
+[StockPositionWriteGate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Persistence/StockPositionWriteGate.cs)
 opens a native transaction and obtains a shared or exclusive advisory transaction lock using
 an Organization-derived key. Normal writers obtain shared admission before looking up state;
-[StockPositionProjectionRebuilder](../../archive/proof-sample/modules/Inventory/Inventory/StockPositions/Rebuild/StockPositionProjectionRebuilder.cs)
+[StockPositionProjectionRebuilder](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/StockPositions/Rebuild/StockPositionProjectionRebuilder.cs)
 obtains exclusive admission before head capture. It replays retained events, replaces the
 write model and saves/commits with consumer-owned authorization/audit/metrics.
 
-The [archived rebuild tests](../../archive/proof-sample/tests/PersistenceTests/StockPositionPersistenceTests.Rebuilds.cs)
+The [archived rebuild tests](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/PersistenceTests/StockPositionPersistenceTests.Rebuilds.cs)
 cover already-loaded writers, later writers, deleted/corrupt views, unreadable history,
 replacement failure, cancellation and permission/context denial. The
-[correctness-gate tests](../../archive/proof-sample/tests/PersistenceTests/StockPositionPersistenceTests.CorrectnessGate.cs)
+[correctness-gate tests](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/PersistenceTests/StockPositionPersistenceTests.CorrectnessGate.cs)
 explicitly show Organization-wide exclusion, including other positions and creation, while
 readers/another Organization continue. These files were inspected, not rerun in this proposal.
 Purchasing has replay/read support but no analogous archived repair implementation.

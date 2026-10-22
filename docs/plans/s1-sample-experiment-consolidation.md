@@ -1,9 +1,10 @@
 # S1: sample, experiment and archive consolidation
 
-Status: owner-authorized pre-v1 implementation, 2026-10-22. Independent examples were first
-relocated beside their families. The selected Wholesale consolidation map below is now implemented;
-the [fresh report](../reports/s1-wholesale-consolidation.md) records verification and remaining
-integrated follow-ups. Archive retirement still follows the separate gate below. The
+Status: implemented for final integrated review, 2026-10-22. Independent examples live beside
+their families; canonical Wholesale functional transfer and selected T2 generated-template
+prerequisites have passed. The [Wholesale report](../reports/s1-wholesale-consolidation.md) and
+[archive retirement record](../reports/s1-archive-retirement.md) retain proof ownership and
+verification. Final independent code/P2 reviews and release verification remain required. The
 [closure audit](../reports/v1-slice-closure-audit.md) records the source inventory and important
 operational obligations that must survive consolidation.
 
@@ -26,8 +27,9 @@ folders, one linked copy of each neutral fixture/process helper and unchanged hi
 bytes. Five finite slice executables become test-owned scenario support; no product references it.
 Stock regeneration moves to the real Worker, rather than disappearing into tests. No new Gloaming
 interface/framework is selected. B2's concurrent Directory host/test work is integrated into these
-canonical owners after its independent checkpoint; archive retirement and generated-template
-integration remain coordinated root work after functional proof transfer.
+canonical owners after its independent checkpoint. Selected generated-template integration
+and the functional retirement gate have passed; the retirement record documents removal
+and immutable historical provenance.
 
 ## Target and timing
 
@@ -92,9 +94,12 @@ is explicit in the reviewed scope, with its own meaningful verification.
 
 ## Archive retirement after the selected slices
 
-The owner explicitly permits removal of `archive` after the slices are done. This future
-removal supersedes the earlier freeze only for the exact reviewed retirement scope; preserve
-the archive until then. Do not create another frozen copy or reconstruction patch by default.
+The owner explicitly permitted removal of `archive` after the selected slices. The functional
+and selected-template prerequisites have passed, and the
+[retirement record](../reports/s1-archive-retirement.md) documents the implemented exact scope.
+The original source and manifest remain available at immutable Git revisions. This retirement
+supersedes the earlier checkout-preservation rule; no replacement frozen copy or reconstruction
+patch is created.
 
 Before removal, map every still-needed fixture, literal payload, migration comparison and
 behavioral finding to current owned evidence. Retain needed material with its active owner;

@@ -217,10 +217,6 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: npm ci --prefix tools/repository --ignore-scripts
 
-      - name: Verify archive snapshot
-        working-directory: ${{ github.workspace }}
-        run: python3 tools/repository/verify-archive.py
-
       - name: Restore active formatter
         if: needs.changes.outputs.repository_dotnet == 'true'
         run: dotnet tool restore

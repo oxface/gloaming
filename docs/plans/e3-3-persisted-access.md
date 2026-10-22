@@ -24,22 +24,22 @@ sample/template code. No new reusable mechanism has been proven by preparing thi
 
 ## Evidence and deliberate changes
 
-The archived [external-identity model](../../archive/proof-sample/modules/Access/Access/Persistence/ExternalIdentityRecordConfiguration.cs)
+The archived [external-identity model](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Persistence/ExternalIdentityRecordConfiguration.cs)
 uniquely keys identities by issuer and subject and relates them to global users. The
-[linking handler](../../archive/proof-sample/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
+[linking handler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
 also automatically creates users, updates profiles and resolves concurrent linking. Retain
 the identity key and global user relationship; defer those write workflows. Do not link
 accounts by email or create a user during ordinary request mapping.
 
-Archived [Organization queries](../../archive/proof-sample/modules/Access/Access/Organizations/Queries/OrganizationQueries.cs)
+Archived [Organization queries](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Organizations/Queries/OrganizationQueries.cs)
 admit active members using an explicitly selected slug, before Organization scope exists.
 They bypass a scope filter and build a combined identity/membership/role context. Retain
 current-membership admission and multiple Organizations per user; replace filter bypass
 and the combined context with explicit Access queries and the independent existing contexts.
 Roles are not needed to prove membership admission.
 
-The archive's [membership statuses](../../archive/proof-sample/modules/Access/Access.Contracts/Organizations/MembershipStatus.cs)
-and [configuration](../../archive/proof-sample/modules/Access/Access/Organizations/Persistence/MembershipConfiguration.cs)
+The archive's [membership statuses](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Organizations/MembershipStatus.cs)
+and [configuration](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Organizations/Persistence/MembershipConfiguration.cs)
 distinguish active/suspended membership from ended membership, preserving removed history.
 Use that minimal distinction without importing invitations, role assignments, last-admin
 rules or membership-management endpoints.

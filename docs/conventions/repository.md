@@ -15,8 +15,9 @@ template file is needed only when the increment establishes a reusable setup pat
 
 Use TypeScript for new durable repository scripts and proof harnesses, and when actively
 reworking such tooling. Document the runtime and invocation, and verify types and formatting.
-Preserve archived tooling and unrelated existing scripts; this convention does not authorize
-a repository-wide migration.
+Preserve unrelated existing scripts; this convention does not authorize a repository-wide
+migration. Retired tooling remains historical Git evidence through the
+[archive retirement record](../reports/s1-archive-retirement.md).
 
 ## Handoff
 

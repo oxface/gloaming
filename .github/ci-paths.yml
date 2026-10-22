@@ -10,14 +10,12 @@ shared:
   - 'global.json'
   - 'NuGet.Config'
   - '!**/*.md'
-  - '!archive/**'
   - '!templates/**'
 
 # New inputs outside the mapped roots conservatively request full coverage.
 unmapped:
   - '**'
   - '!**/*.md'
-  - '!archive/**'
   - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/Wholesale/**'
   - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'

@@ -83,20 +83,20 @@ its lease remains valid. Delivery can repeat; this does not promise exactly-once
 
 The archive supplies three genuinely repeated implementations:
 
-- [Inventory relay](../../archive/proof-sample/modules/Inventory/Inventory/Messaging/InventoryOutboxRelay.cs)
+- [Inventory relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/Messaging/InventoryOutboxRelay.cs)
   publishes typed outcome/reference topics.
-- [Sales relay](../../archive/proof-sample/modules/Sales/Sales/Messaging/SalesOutboxRelay.cs)
+- [Sales relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Messaging/SalesOutboxRelay.cs)
   sends directed reservation, release and replenishment commands.
-- [Purchasing relay](../../archive/proof-sample/modules/Purchasing/Purchasing/Messaging/PurchasingOutboxRelay.cs)
+- [Purchasing relay](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/Messaging/PurchasingOutboxRelay.cs)
   publishes created/rejected replenishment outcomes.
 
 Each repeats the same row lifecycle, JSONB storage, PostgreSQL candidate claim, lease token,
 attempt increment and guarded completion/backoff. Their row factories and publisher switches
 encode business contracts, correlation and routing; those differences remain consumer-owned.
-[ReserveStockHandler](../../archive/proof-sample/modules/Inventory/Inventory/Reservations/ReserveStockHandler.cs)
+[ReserveStockHandler](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Inventory/Inventory/Reservations/ReserveStockHandler.cs)
 commits its state/history, operation, inbox, audit and outbox together. Its application protocol
 is historical evidence, not authorization to extract all those participants in O1.
-See [the archived comparison](../../archive/proof-sample/docs/plans/messaging-reuse.md).
+See [the archived comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/messaging-reuse.md).
 
 Deleting the proposed library would restore claim/lease/fencing/recovery SQL and technical
 envelope/transaction validation in every adopter. Enqueue alone would remove much less

@@ -983,13 +983,14 @@ reviewed strategy change can reorder later increments; neither is silently assum
 - `tests/`: repository-wide architecture checks and shared test support; library-interface
   and independence tests live in the owning family's `tests/` directory.
 - `templates/`: exercised consumer setup, consolidated after working sample usage.
-- `archive/proof-sample/`: frozen original source, tests, fixtures, and historical documents.
+- [Historical Git source](../reports/s1-archive-retirement.md): original source, tests, fixtures
+  and dated documents, retired from the active checkout after selected S1 proof transfer.
 - `docs/`: current decisions, development commands, reviewed slice designs and proof reports.
 
-Create an active root solution with the first active projects. It must exclude the archive;
-the archive retains its own solution, build policy and test lanes. Active references never
-point into the archive. Library naming and exact package splits are reviewed within the
-first increment that needs them; no empty projects are added to reserve names.
+The active root solution contains current projects; original solution/build/test policy remains
+historical Git evidence. Active references use current owned sources. Library naming and exact
+package splits are reviewed within the first increment that needs them; no empty projects are
+added to reserve names.
 
 ## Candidate inventory
 
@@ -1016,11 +1017,11 @@ interfaces. Links below deliberately point to the historical evidence.
 
 Evidence entry points:
 
-- [Tenant context and module collaboration](../../archive/proof-sample/docs/modules/README.md).
-- [Second aggregate comparison](../../archive/proof-sample/docs/plans/second-event-sourced-aggregate.md).
-- [Event-sourcing gate](../../archive/proof-sample/docs/plans/event-sourcing-correctness-gate.md).
-- [Messaging reuse comparison](../../archive/proof-sample/docs/plans/messaging-reuse.md).
-- [Durability closure](../../archive/proof-sample/docs/plans/durability-closure-checklist.md).
+- [Tenant context and module collaboration](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/modules/README.md).
+- [Second aggregate comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/second-event-sourced-aggregate.md).
+- [Event-sourcing gate](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/event-sourcing-correctness-gate.md).
+- [Messaging reuse comparison](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/messaging-reuse.md).
+- [Durability closure](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/docs/plans/durability-closure-checklist.md).
 
 ## Dependency and interface review
 
@@ -1146,13 +1147,13 @@ or sample Access.Contracts. Add active solution, Fast lane and hook coverage.
 Template output: explicit context establishment and lifetime recipe if this is a new setup
 pattern. Domain policy stays in the sample.
 
-Historical comparison: Access uses [GUID-based tenant IDs](../../archive/proof-sample/modules/Access/Access.Contracts/Organizations/OrganizationId.cs)
-and [user IDs](../../archive/proof-sample/modules/Access/Access.Contracts/Identity/UserId.cs),
-while [external identity](../../archive/proof-sample/modules/Access/Access.Contracts/Identity/ExternalIdentity.cs)
-uses issuer/subject strings and [Sales workflow identity](../../archive/proof-sample/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
+Historical comparison: Access uses [GUID-based tenant IDs](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Organizations/OrganizationId.cs)
+and [user IDs](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Identity/UserId.cs),
+while [external identity](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access.Contracts/Identity/ExternalIdentity.cs)
+uses issuer/subject strings and [Sales workflow identity](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Fulfilment/OrderFulfilmentProcess.cs)
 is a name. This does not prove that a reusable context must prescribe GUIDs. Archived
-[HTTP admission](../../archive/proof-sample/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
-and [module authorization](../../archive/proof-sample/modules/Sales/Sales/Authorization/SalesRequestAuthorization.cs)
+[HTTP admission](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/apps/Api/Modules/Access/Middleware/OrganizationScopeMiddleware.cs)
+and [module authorization](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Sales/Sales/Authorization/SalesRequestAuthorization.cs)
 are explicit consumer checks; they do not prove a universal library authorization mechanism.
 
 The owner agreed to start the sample/template with a stable, globally unique application
@@ -1160,7 +1161,7 @@ UserId, with consumer-owned external-identity resolution feeding the human actor
 Authentication-provider details stay outside both foundation libraries; neither requires
 provider fields nor an application User entity. Human/system actor kind distinguishes
 otherwise equal key text.
-In the archive, [identity resolution](../../archive/proof-sample/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
+In the archive, [identity resolution](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Access/Access/Identity/LinkExternalIdentityHandler.cs)
 matches issuer and subject; an unrecognized pair creates a new user. It does not automatically
 merge users with matching email addresses. For OIDC, [claim stability rules](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability)
 identify issuer/subject as the stable pair and do not guarantee email stability or uniqueness.

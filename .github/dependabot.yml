@@ -7,8 +7,6 @@ updates:
     directories:
       - /
       - /templates/state-stored
-    exclude-paths:
-      - archive/**
     schedule:
       interval: weekly
       day: monday

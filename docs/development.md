@@ -4,8 +4,9 @@ Independent library packages, contract tests and adoption examples live under
 `src/Gloaming.{Family}/`. [Wholesale](../samples/Wholesale/README.md) is one reference product:
 `Api`, `Worker`, `IntegrationTests`, `RuntimeComposition.Tests`, AppHost/ServiceDefaults and
 module Contracts/implementations. Historical slice journeys are test-owned scenario support,
-not separate products. The archived solution remains independent until its separately reviewed
-retirement; S1's current Wholesale checkpoint does not remove it.
+not separate products. The original solution and its historical commands remain available
+through [immutable Git provenance](reports/s1-archive-retirement.md); active builds and proofs
+use current owned sources.
 
 ## Local .NET SDK
 
@@ -120,10 +121,9 @@ Wholesale scenarios. Template choices evolve separately from S1's product consol
 dotnet csharpier check . --include-generated
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
-python3 tools/repository/verify-archive.py
 ```
 
-Root formatting excludes archived source; the checksum verifier still protects archive evidence.
+Historical archive source and its manifest remain available through the provenance record above.
 The [main workflow](../.github/workflows/ci.yml) runs family contract/adoption jobs separately,
 then Wholesale integration once in its owning lane. Runtime/browser and template rehearsals
 remain separate deployment/adoption obligations. Repository integrity validates the complete

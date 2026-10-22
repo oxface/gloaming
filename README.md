@@ -55,9 +55,11 @@ domain rules, view definitions and native save/commit. Existing event experiment
 remain intact. See [the store slice report](docs/reports/es1-library-write-store.md) and
 [the current plan](docs/plans/library-extraction.md).
 
-The original wholesale sample and its documentation are preserved under
-[`archive/proof-sample`](archive/proof-sample). They supply behavioral evidence and known
-limits for deliberate reimplementation, rather than prescribing the new library design.
+The original wholesale sample and its documentation remain available at
+[their immutable source revision](https://github.com/oxface/modulith-foundry/tree/15d1ec6ce85f872e4547b37c33658dea76b25d03).
+The [retirement record](docs/reports/s1-archive-retirement.md) maps retained proof ownership
+and provenance. Historical findings supply behavioral comparisons and known limits for
+deliberate reimplementation; current library contracts describe supported behavior.
 The first active segments are independent [actor identity](src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/README.md)
 and [tenancy](src/Gloaming.Tenancy/Gloaming.Tenancy/README.md), exercised by [the finite wholesale context sample](src/Gloaming.Tenancy/samples/ContextDemo/README.md).
 The first [EF ownership utility](src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md)
@@ -142,7 +144,7 @@ records atomic view updates and editing without history replay; no new library m
 - [Active test value audit](docs/reports/test-audit.md)
 - [Development and verification](docs/development.md)
 - [Repository workflow](docs/conventions/repository.md)
-- [Archive provenance and commands](archive/README.md)
+- [Archive retirement and immutable provenance](docs/reports/s1-archive-retirement.md)
 
 ## Development
 
