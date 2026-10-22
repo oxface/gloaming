@@ -117,7 +117,6 @@ jobs:
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-not-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   messaging:
@@ -138,9 +137,6 @@ jobs:
         dotnet test --project src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Messaging/samples/WorkflowDeploymentDemo.Tests/WorkflowDeploymentDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj --filter-class '*DispatchTests' --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   wholesale:
@@ -164,16 +160,8 @@ jobs:
         run: dotnet run --project src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj --no-build --no-restore
       - name: Test module migrations and persistence ownership
         run: dotnet test --project src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-      - name: Test state-stored and event-sourced domain decisions
-        run: dotnet test --project samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-      - name: Test required local domain reactions
-        run: dotnet test --project samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-      - name: Test CQRS joined filtering and explicit transaction ownership
-        run: dotnet test --project samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-      - name: Test relational aggregate children and root concurrency
-        run: dotnet test --project samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-      - name: Test persisted admission, isolated business operations and native telemetry through HTTP
-        run: dotnet test --project samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Test Wholesale API, domain, provider and worker process integration
+        run: dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
 
   repository:
     needs: changes

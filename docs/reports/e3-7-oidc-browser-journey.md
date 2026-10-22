@@ -153,14 +153,14 @@ the current token binding and endpoint integration stay local.
 
 Start with [AppHost Program](../../samples/Wholesale/AppHost/Program.cs) and
 [realm configuration](../../samples/Wholesale/AppHost/Keycloak/wholesale-realm.json), then
-[native authentication](../../samples/Wholesale/HttpIdentityDemo/NativeAuthentication.cs),
-[typed profile read](../../samples/Wholesale/HttpIdentityDemo/Endpoints/CustomerProfileEndpoints.cs)
-and [antiforgery endpoint](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs),
-[finite setup inputs](../../samples/Wholesale/HttpIdentityDemo/DemoIdentitySetup.cs),
-[setup orchestration](../../samples/Wholesale/HttpIdentityDemo/DemoSetup.cs) and
+[native authentication](../../samples/Wholesale/Api/NativeAuthentication.cs),
+[typed profile read](../../samples/Wholesale/Api/Endpoints/CustomerProfileEndpoints.cs)
+and [antiforgery endpoint](../../samples/Wholesale/Api/DemoComposition.cs),
+[finite setup inputs](../../samples/Wholesale/Api/DemoIdentitySetup.cs),
+[setup orchestration](../../samples/Wholesale/Api/DemoSetup.cs) and
 [Access seed](../../samples/Wholesale/modules/Access/Access/AccessDemoSeed.cs).
 Review [browser journeys](../../samples/Wholesale/RuntimeComposition.Tests/BrowserTests.cs),
-[setup failure proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/SetupInputTests.cs),
+[setup failure proofs](../../samples/Wholesale/IntegrationTests/Api/SetupInputTests.cs),
 the removed HTTP fixture override, package pins, [CI](../../.github/workflows/ci.yml) and
 the local instructions alongside those files.
 

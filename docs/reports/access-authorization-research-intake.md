@@ -22,11 +22,11 @@ not rerun for this assessment. These are current code observations, not new proo
 - [TenantContext](../../src/Gloaming.Tenancy/Gloaming.Tenancy/TenantContext.cs) is immutable;
   [TenantContextAccessor](../../src/Gloaming.Tenancy/Gloaming.Tenancy/TenantContextAccessor.cs)
   rejects a second initialization. Context establishment does not grant authorization.
-- [HTTP composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs) calls
+- [HTTP composition](../../samples/Wholesale/Api/DemoComposition.cs) calls
   `UseAuthorization`, `UseHttpActorContext`, then `UseHttpTenantContext`.
   [Tenant middleware](../../src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/TenantContextMiddleware.cs)
   invokes the consumer resolver before initializing tenant context.
-- [OrganizationTenantResolver](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs)
+- [OrganizationTenantResolver](../../samples/Wholesale/Api/HttpIntegration/OrganizationTenantResolver.cs)
   delegates active-membership admission to
   [ApplicationAccess.ResolveMemberOrganizationAsync](../../samples/Wholesale/modules/Access/Access/ApplicationAccess.cs),
   with an explicit public-Organization exception. This is consumer admission policy.
@@ -140,7 +140,7 @@ ApplicationAccess admits only active members and resolves global user identity i
 AccessRegistration/IApplicationAccess expose queries, not administrative lifecycle commands.
 OrganizationTenantResolver remains consumer admission policy.
 
-[AdmissionTests](../../samples/Wholesale/HttpIdentityDemo.Tests/AdmissionTests.cs) contains
+[AdmissionTests](../../samples/Wholesale/IntegrationTests/Api/AdmissionTests.cs) contains
 MissingSuspendedAndRemovedMembershipDenyWithoutPublishingTenant and
 RevocationBlocksNextAdmissionWithSameCookieButKeepsGlobalIdentity for both Suspended and
 Removed. AlreadyAdmittedOperationRetainsContextWhenMembershipIsRemoved uses Removed

@@ -1,7 +1,7 @@
 # WF2 follow-up: bounded sequential saga coordinator
 
 Historical experiment, superseded before checkpoint by the owner-approved
-[continuation replacement](../plans/wf2-durable-continuations.md). Old test counts are dated
+[continuation replacement](wf2-durable-continuations.md). Old test counts are dated
 evidence, not results for the replacement. The staged review snapshot is retained.
 
 
@@ -228,7 +228,7 @@ outbox/inbox registration and hosted workers remain in use.
 | `samples/Wholesale/modules/Sales/Sales/ReservationOrders/{StockReservationOrder.cs,StockReservationOrders.cs,StockReservationReplyHandler.cs,StockReservationOrderMapping.cs}` | Replace technical status/command/attempt bookkeeping with Progress; retain request validation, business IDs and explicit typed message mapping. Remove StockReleaseAttempt and ReservationOrderAction when their roles are replaced. |
 | `samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs`; same project's `Sales.csproj` | Update mapping and opt into the two optional packages. Inventory and Sales Contracts remain unchanged. |
 | New, uncommitted WF2 Sales migration `20261010164619_AddCompensatingReservationOrders.cs`, its designer, and current `SalesDbContextModelSnapshot.cs` | Owner-approved replacement of this slice's draft schema: one Progress JSONB column replaces technical root fields and the draft release-attempt table. Keep business fields. No earlier/checkpointed migration or Inventory migration is rewritten. |
-| `samples/Wholesale/WorkflowDemo.Tests/{ReservationTests.cs,ReservationFailureTests.cs,ReservationRecoveryTests.cs,ReservationProof.cs}` | Preserve external behavior/assertions; update implementation-specific probes/barriers for the new Sales progress column. All existing WF1 cases remain. |
+| `samples/Wholesale/IntegrationTests/Reservations/Broker/{ReservationTests.cs,ReservationFailureTests.cs,ReservationRecoveryTests.cs,ReservationProof.cs}` | Preserve external behavior/assertions; update implementation-specific probes/barriers for the new Sales progress column. All existing WF1 cases remain. |
 | New `src/Gloaming.Messaging/tests/SagaTests/{SagaTests.csproj,SequentialSagaTests.cs}` | Core contract: rejection leaves state unchanged, duplicate/conflict behavior, reverse compensation, unsupported undo, explicit retry, state round-trip and plan retention. |
 | New `src/Gloaming.Messaging/tests/SagaPostgresTests/{SagaPostgresTests.csproj,SagaConsumer.cs,ProgressTests.cs}` | Standalone typed-context adopter without Inventory, EventSourcing, tenancy or RabbitMQ: refusal of a third resource operation requires two acknowledged reverse undos; a separate variant skips an explicitly NotRequired step. Real PostgreSQL proves converter tracking, competing replies, rollback, fresh-context resume and atomic next outbox work. It is a contract adopter, not another full product workflow. |
 | `ModulithFoundry.slnx`; `tests/ArchitectureTests/{ArchitectureTests.csproj,AssemblyDependencyTests.cs,AdoptionDependencyTests.cs,SampleModuleBoundaryTests.cs}` | Include used projects; prove package dependencies, module isolation and independent adoption. |

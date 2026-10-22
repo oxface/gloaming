@@ -46,7 +46,7 @@ Proposal edits remain unstaged. Commit approval is separate from interface revie
   [business handler](../../src/Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs) uses a unique RenderJob
   identity, so that sample alone cannot prove absence of repeated handler execution after expiry.
   An independent local-effect proof is needed alongside the consumer business-idempotency proof.
-- [Restricted Sales](../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) already separates
+- [Restricted Sales](../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) already separates
   admitted tenant processing and optional retry grants from intake/global outbox dispatch.
   Receipt generation must migrate without granting DELETE to any of those roles. Native
   SELECT/DELETE policies, not EF filters, govern retention authority.

@@ -116,10 +116,10 @@ optional human-actor requirement; the current HTTP/native token integration rema
 
 Start with [AppHost Program](../../samples/Wholesale/AppHost/Program.cs),
 [ServiceDefaults](../../samples/Wholesale/ServiceDefaults/Extensions.cs),
-[readiness check](../../samples/Wholesale/HttpIdentityDemo/WholesaleDatabaseHealthCheck.cs)
-and [health mapping](../../samples/Wholesale/HttpIdentityDemo/RuntimeHealthEndpoints.cs).
+[readiness check](../../samples/Wholesale/Api/WholesaleDatabaseHealthCheck.cs)
+and [health mapping](../../samples/Wholesale/Api/RuntimeHealthEndpoints.cs).
 Then review [runtime usage/proof](../../samples/Wholesale/RuntimeComposition.Tests/RuntimeTests.cs),
-[telemetry proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/TelemetryTests.cs), native
+[telemetry proofs](../../samples/Wholesale/IntegrationTests/Api/TelemetryTests.cs), native
 package/solution changes, [CI](../../.github/workflows/ci.yml) and the runtime instructions.
 
 E3.6 public requests use inert OIDC settings and no authentication substitute; they never

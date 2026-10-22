@@ -17,7 +17,7 @@ services.AddInboxFailurePolicy<RenderDbContext, RenderInboxFailurePolicy>("rende
 
 Implement `IInboxFailurePolicy<TDbContext>.Decide(InboxFailure)`. Return either
 `new InboxFailureDecision.RetryAfter(positiveDelay, safeCode)` or
-`new InboxFailureDecision.DeadLetter(safeCode)`. The [rendering policy](../src/Gloaming.Messaging/samples/InboxDemo/RenderInboxFailurePolicy.cs)
+`new InboxFailureDecision.DeadLetter(safeCode)`. The [rendering policy](../samples/InboxDemo/RenderInboxFailurePolicy.cs)
 classifies PostgreSQL serialization/deadlock failures and command conflicts. Its three-failure
 budget, delay and codes are consumer choices, not library defaults.
 
@@ -198,8 +198,8 @@ Review application authority and RLS explicitly.
 
 Forward Rendering/Inventory/Sales migrations demonstrate storage changes. Existing restricted
 Sales roles need an explicit grant update; finite provisioning is not a role reconciler and startup
-performs no DDL. [Sales setup](../../../samples/Wholesale/WorkflowDemo/sales-inbox-rls.md) documents
-that consumer. [InboxDemo](../src/Gloaming.Messaging/samples/InboxDemo/README.md) shows optional operator usage;
+performs no DDL. [Sales setup](../../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) documents
+that consumer. [InboxDemo](../samples/InboxDemo/README.md) shows optional operator usage;
 [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md) records current evidence
 separately from the original M2 recovery/supervision results. Processed cleanup has its own
 [contract and evidence](inbox-retention.md); unprocessed/dead-lettered work is preserved.

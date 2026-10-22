@@ -114,7 +114,7 @@ dotnet build ModulithFoundry.slnx --no-restore
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj --no-build --no-restore
 dotnet test --project src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/MessagingWorkerDemo.Tests.csproj --no-build --no-restore
-dotnet test --project samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
+dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-build --no-restore -- --filter-class '*SalesDispatchTests'
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
 dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
@@ -149,9 +149,9 @@ business effect remain asserted. The targeted test failed before this correction
 Running every command in the [Messaging CI job](../../.github/workflows/ci.yml) exposed a second
 failure in LocalWorkflowDemo process recovery: the observer read a stream, a real worker committed,
 then the observer read newer inline state under ReadCommitted. Its fresh context ruled out retained
-tracking. The [test observer](../../samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowProof.cs)
+tracking. The [test observer](../../samples/Wholesale/IntegrationTests/Reservations/Local/LocalWorkflowProof.cs)
 now selects a short RepeatableRead transaction for each stock observation. A new
-[PostgreSQL barrier proof](../../samples/Wholesale/LocalWorkflowDemo.Tests/StockObservationTests.cs)
+[PostgreSQL barrier proof](../../samples/Wholesale/IntegrationTests/Reservations/Local/StockObservationTests.cs)
 forces the worker commit between those reads. It reproduced the same concurrency exception
 before the fix; afterward it observes the old consistent snapshot, while a fresh observation
 sees the committed reservation. The worker commits while the observer is paused.

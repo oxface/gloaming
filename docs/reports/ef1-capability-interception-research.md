@@ -1,6 +1,6 @@
 # EF1: model-declared capabilities and ordered EF integration
 
-Historical record: the owner subsequently authorized [EF1.1](../reports/ef1-1-capability-composition.md)
+Historical record: the owner subsequently authorized [EF1.1](ef1-1-capability-composition.md)
 common capability composition and clear-before-handling dispatch. That implementation supersedes
 retained sessions, Stage, owned transactions and completion enforcement described below. Source
 links now lead to replacements; test counts below remain dated evidence.

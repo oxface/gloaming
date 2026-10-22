@@ -5,6 +5,10 @@ This repository develops them against an executable modular-monolith sample and 
 a consumer-owned application template. Consumers own their application composition, module
 policy, transactions, transport routing, and worker deployment.
 
+Wholesale is now [one reference product](samples/Wholesale/README.md): an API, one worker/maintenance
+executable, module-owned persistence and one integration-test suite plus real runtime/browser proofs.
+Independent adoption examples live beside their owning library families.
+
 The reusable libraries use `Gloaming.*` namespaces, project names and assembly names.
 The repository, sample applications and template retain their existing identities.
 See [the rename report](docs/reports/gloaming-library-renaming.md) for the scope and verification.
@@ -35,11 +39,11 @@ dispatch, broker intake and local processing using existing Messaging APIs. Expl
 setup applies module migrations and declares the queue; real process proofs cover competing
 workers, graceful stopping, abrupt death and fresh-process recovery.
 
-The [local reservation workflow](samples/Wholesale/LocalWorkflowDemo/README.md) delivers through
+The [local reservation workflow](samples/Wholesale/Worker/Local/README.md) delivers through
 public module intake Contracts without a broker. Existing inbox/outbox workers retain independently
 committed decisions and Sales-owned compensation; PostgreSQL/process-death proofs cover the handoff.
 
-The [CQRS consumer journey](samples/Wholesale/CqrsDemo/README.md) composes typed Sales
+The [test-owned CQRS scenarios](samples/Wholesale/IntegrationTests/Scenarios/Cqrs/README.md) composes typed Sales
 commands, joined read filters and deterministic pagination with Inventory Contract reads.
 Native EF owns storage and explicit transactions; no CQRS runtime or new library is added.
 
@@ -64,7 +68,7 @@ Same-tenant customer/address relationships were checkpointed as `d67c7fc`.
 Versioned profile changes with caller-owned transactions were checkpointed as `6069c05`,
 completing the initial E2 persistence scope. The optional
 [actor HTTP adapter](src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
-[HTTP identity sample](samples/Wholesale/HttpIdentityDemo/README.md) were reviewed and
+[HTTP identity sample](samples/Wholesale/Api/README.md) were reviewed and
 checkpointed as `faefc0b`. The independently adoptable
 [tenancy HTTP adapter](src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/README.md) and Organization-scoped
 catalog sample were reviewed and checkpointed as `cfbac9a`, including explicit selection
@@ -89,7 +93,7 @@ used by a [two-family consumer](src/Gloaming.Events/samples/EventCodecDemo/READM
 hydration, owner-reviewed and checkpointed as `4cc12a1`. [Its report](docs/reports/e5-1-event-history.md)
 separates memory-only proofs from database guarantees.
 [E5.2.1 native EF reads](docs/plans/e5-2-1-native-event-history.md) adds owning Inventory/Purchasing
-modules and an [executable database consumer](samples/Wholesale/EventPersistenceDemo/README.md),
+modules and [retained database integration scenarios](samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
 owner-reviewed and checkpointed as `4f4d5b2`. [Its report](docs/reports/e5-2-1-native-event-history.md)
 records PostgreSQL selection/isolation/capture proofs. The owner-reviewed
 [E5.2.2 append slice](docs/plans/e5-2-2-native-event-append.md) adds explicit command staging

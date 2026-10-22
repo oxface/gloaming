@@ -112,17 +112,17 @@ catalog and Contract. Folders establish ownership within one host, not assembly 
 
 - [Access Contract](../../samples/Wholesale/modules/Access/Access.Contracts/IApplicationAccess.cs)
   and its user/Organization/external-identity value types; [actual reads](../../samples/Wholesale/modules/Access/Access/ApplicationAccess.cs).
-- [Actor mapping](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/ApplicationActorResolver.cs),
-  [tenant admission](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationTenantResolver.cs),
-  [public exception](../../samples/Wholesale/HttpIdentityDemo/HttpIntegration/OrganizationAccessExtensions.cs)
-  and [consumer composition](../../samples/Wholesale/HttpIdentityDemo/DemoComposition.cs).
+- [Actor mapping](../../samples/Wholesale/Api/HttpIntegration/ApplicationActorResolver.cs),
+  [tenant admission](../../samples/Wholesale/Api/HttpIntegration/OrganizationTenantResolver.cs),
+  [public exception](../../samples/Wholesale/Api/HttpIntegration/OrganizationAccessExtensions.cs)
+  and [consumer composition](../../samples/Wholesale/Api/DemoComposition.cs).
 - [DbContext/model](../../samples/Wholesale/modules/Access/Access/Persistence/AccessDbContext.cs),
   [native migration](../../samples/Wholesale/modules/Access/Access/Persistence/Migrations/20261005204257_InitialAccess.cs),
-  [finite setup entry point](../../samples/Wholesale/HttpIdentityDemo/Program.cs) and
+  [finite setup entry point](../../samples/Wholesale/Api/Program.cs) and
   [staged demonstration rows](../../samples/Wholesale/modules/Access/Access/AccessDemoSeed.cs).
-- [HTTP/admission proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/AdmissionTests.cs),
-  [database/setup proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/PersistenceTests.cs)
-  and the [updated original composition proofs](../../samples/Wholesale/HttpIdentityDemo.Tests/CompositionTests.cs).
+- [HTTP/admission proofs](../../samples/Wholesale/IntegrationTests/Api/AdmissionTests.cs),
+  [database/setup proofs](../../samples/Wholesale/IntegrationTests/Api/PersistenceTests.cs)
+  and the [updated original composition proofs](../../samples/Wholesale/IntegrationTests/Api/CompositionTests.cs).
 
 Setup supports fresh disposable demonstration databases, not repeated seed reconciliation
 or account provisioning. The public marker is an endpoint-level sample exception, not a

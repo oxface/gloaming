@@ -28,7 +28,7 @@ consumer-code obligations, not a sandbox against database misuse.
 
 Omission retains indefinite retry by the existing nonnegative OutboxDispatchOptions.RetryDelay,
 with code `publication-failed` and durable observations. There is no library poison threshold.
-[Exports' policy](../src/Gloaming.Messaging/samples/OutboxDemo/ExportOutboxFailurePolicy.cs) illustrates consumer
+[Exports' policy](../samples/OutboxDemo/ExportOutboxFailurePolicy.cs) illustrates consumer
 HTTP classification and a three-observation cycle budget; it does not govern RabbitMQ.
 Direct construction can append the named `failurePolicy:` argument; existing three/four-argument
 calls remain valid.
@@ -203,7 +203,7 @@ Mixed versions or rollback to binaries that ignore it are unsupported. Workers p
 Dispatch needs SELECT plus UPDATE on lease_token, lease_until, attempts, available_at,
 dispatched_at, revision, failure_count, failures_since_redrive, last_failed_at,
 last_failure_code and dead_lettered_at. It does not need operator-only redrive_count or
-last_redriven_at UPDATE. [Restricted Sales setup](../../../samples/Wholesale/WorkflowDemo/sales-outbox-dispatch.md)
+last_redriven_at UPDATE. [Restricted Sales setup](../../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md)
 verifies the actual effective grants, including PUBLIC/inherited privileges. Existing roles
 need an explicit owner-reviewed grant update; finite provisioning does not reconcile roles.
 
@@ -220,7 +220,7 @@ can use these column grants without payload SELECT. Column privileges do not enf
 legal lifecycle protocol: a credential able to set dead_lettered_at can issue arbitrary SQL
 to clear it. Database grants/RLS and trusted application authority remain separate obligations.
 
-[OutboxDemo](../src/Gloaming.Messaging/samples/OutboxDemo/README.md) provides executable fixed-route operator
+[OutboxDemo](../samples/OutboxDemo/README.md) provides executable fixed-route operator
 endpoints and HTTP policy. [The slice report](../../../docs/reports/m2-outbox-dead-letters.md)
 separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 results.
 The [completion supervision report](../../../docs/reports/m2-outbox-completion-supervision.md)

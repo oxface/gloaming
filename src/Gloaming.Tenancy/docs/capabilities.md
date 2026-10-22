@@ -56,7 +56,7 @@ recommended first composition. Database RLS is a separate optional proof, not te
 or within-tenant permission. No middleware reordering, Access/FGA dependency, new supported
 capability or approved interface follows from this assessment.
 
-The later [A2.2 sample proof](../../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md)
+The later [A2.2 sample proof](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 uses native PostgreSQL policies and explicit transaction-local setup with separate runtime
 credentials. Its [matrix](../../../docs/reports/a2-2-sales-postgres-rls.md) bounds database
 tenant isolation, setting forgery and paths not adopted. That original proof kept setup local.

@@ -268,7 +268,7 @@ src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.
 | src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs | Delegate captured history loading to provided implementation; retain domain evolution and local error classification. |
 | src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildConsumer.cs | Adopt shared reader in tenant-free ledger; preserve independent maintenance composition. |
 | Same tests/EventHistoryReaderTests.cs; RegistrationTests.cs; RebuildTests.cs | Add actual reader proof coverage and update consumer constructor composition. |
-| samples/Wholesale/EventPersistenceDemo.Tests/HistoryReadTests.cs; src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs | Extend adoption checks only where existing cases do not cover the extracted behavior. |
+| samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs; src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs | Extend adoption checks only where existing cases do not cover the extracted behavior. |
 | tests/ArchitectureTests/AdoptionDependencyTests.cs; AssemblyDependencyTests.cs | Update both project and assembly dependency assertions for the approved Events.History dependency and consumer error translation; retain other independent consumer/T1 exclusions. |
 | EF/README.md; EF/docs/capabilities.md; EventSourcing/docs/capabilities.md; docs/plans/library-extraction.md; new docs/reports/event-history-reader-extraction.md | Document supported setup/limits and separate fresh proof results from prior evidence. |
 

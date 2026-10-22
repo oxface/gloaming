@@ -29,10 +29,10 @@ public sealed class AssemblyDependencyTests
     private const string Persistence = "Gloaming.Persistence.EntityFrameworkCore";
     private const string ContextSample = "ContextDemo";
     private const string PersistenceSample = "PersistenceDemo";
-    private const string HttpSample = "HttpIdentityDemo";
+    private const string HttpSample = "Wholesale.Api";
     private const string EventSerialization = "Gloaming.Events.Serialization";
     private const string History = "Gloaming.Events.History";
-    private const string EventPersistenceSample = "EventPersistenceDemo";
+    private const string EventPersistenceSample = "Wholesale.Worker";
     private const string AggregateCore = "Gloaming.EventSourcing";
     private const string Storage = "Gloaming.EventSourcing.EntityFrameworkCore";
     private const string StorageSample = "EventStorageDemo";
@@ -69,10 +69,10 @@ public sealed class AssemblyDependencyTests
             typeof(IEventSourcedAggregate<>).Assembly,
             typeof(Samples.EventStorageDemo.DemoJourneys).Assembly,
             typeof(Samples.Wholesale.EventCodecDemo.DemoJourneys).Assembly,
-            typeof(Samples.Wholesale.EventPersistenceDemo.DemoJourneys).Assembly,
+            typeof(Samples.Wholesale.Worker.Maintenance.StockRegeneration).Assembly,
             typeof(Samples.Wholesale.ContextDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.PersistenceDemo.DemoComposition).Assembly,
-            typeof(Samples.Wholesale.HttpIdentityDemo.DemoComposition).Assembly
+            typeof(Samples.Wholesale.Api.DemoComposition).Assembly
         )
         .Build();
 

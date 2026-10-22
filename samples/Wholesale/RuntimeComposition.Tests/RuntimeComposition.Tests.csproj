@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Playwright" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../AppHost/Wholesale.AppHost.csproj" />
-    <ProjectReference Include="../HttpIdentityDemo/HttpIdentityDemo.csproj" />
+    <ProjectReference Include="../Api/Wholesale.Api.csproj" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

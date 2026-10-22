@@ -28,7 +28,7 @@ uses the same registration without an AppHost. This is a proven template recipe 
 [native ServiceDefaults](https://aspire.dev/get-started/csharp-service-defaults/), not a new
 Foundry library segment.
 
-The [telemetry proofs](../HttpIdentityDemo.Tests/TelemetryTests.cs) use native in-memory
+The [telemetry proofs](../IntegrationTests/Api/TelemetryTests.cs) use native in-memory
 exporters around real HTTP/PostgreSQL operations. The
 [runtime report](../../../docs/reports/e3-6-runtime-composition.md) separately records actual
 OTLP delivery into the Aspire dashboard and remaining limits.

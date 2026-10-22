@@ -6,7 +6,7 @@ No library promotion, commit or push is inferred from implementation authorizati
 
 ## Outcome
 
-The [DddDemo executable](../../samples/Wholesale/DddDemo/README.md) exercises two existing
+The [DddDemo executable](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/README.md) exercises two existing
 sample models. Sales creates its one-address customer profile through finite setup, commits
 a valid edit and rejects an invalid address. Purchasing drafts an order, rejects an overflowing
 line total without tracking a partial proposal, then commits a valid line with total 37.50 EUR.
@@ -97,11 +97,11 @@ topology or template composition proof.
 - [Profile service](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs) and
   [finite creation](../../samples/Wholesale/modules/Sales/Sales/SalesDemoSeed.cs): domain/persistence
   adaptation, early version conflict and preserved native save/audit ownership.
-- [Consumer journey](../../samples/Wholesale/DddDemo/DddJourney.cs) and
-  [composition](../../samples/Wholesale/DddDemo/DddComposition.cs): distinct transaction recipes,
+- [Consumer journey](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/DddJourney.cs) and
+  [composition](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/DddComposition.cs): distinct transaction recipes,
   explicit finite identities and rejected-candidate recovery.
-- [Domain proofs](../../samples/Wholesale/DddDemo.Tests/DomainDecisionTests.cs) and
-  [PostgreSQL proofs](../../samples/Wholesale/DddDemo.Tests/ConsumerTests.cs): independent expectations
+- [Domain proofs](../../samples/Wholesale/IntegrationTests/Domain/DomainDecisionTests.cs) and
+  [PostgreSQL proofs](../../samples/Wholesale/IntegrationTests/Domain/ConsumerTests.cs): independent expectations
   and rejection/rollback evidence.
 
 Production profile creation, a richer customer/address lifecycle and business-key admission are

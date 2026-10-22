@@ -83,10 +83,8 @@
     <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
   </Folder>
   <Folder Name="/Samples/">
-    <Project Path="samples/Wholesale/WorkflowDemo/WorkflowDemo.csproj" />
-    <Project Path="samples/Wholesale/WorkflowDemo.Tests/WorkflowDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/LocalWorkflowDemo/LocalWorkflowDemo.csproj" />
-    <Project Path="samples/Wholesale/LocalWorkflowDemo.Tests/LocalWorkflowDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/Worker/Wholesale.Worker.csproj" />
+    <Project Path="samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj" />
     <Project Path="src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj" />
     <Project Path="src/Gloaming.Messaging/samples/InboxDemo.Tests/InboxDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj" />
@@ -97,23 +95,12 @@
     <Project Path="src/Gloaming.Messaging/samples/OutboxDemo.Tests/OutboxDemo.Tests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />
     <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/EventPersistenceDemo/EventPersistenceDemo.csproj" />
-    <Project Path="samples/Wholesale/EventPersistenceDemo.Tests/EventPersistenceDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/DddDemo/DddDemo.csproj" />
-    <Project Path="samples/Wholesale/DddDemo.Tests/DddDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/DomainEventsDemo/DomainEventsDemo.csproj" />
-    <Project Path="samples/Wholesale/DomainEventsDemo.Tests/DomainEventsDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/CqrsDemo/CqrsDemo.csproj" />
-    <Project Path="samples/Wholesale/CqrsDemo.Tests/CqrsDemo.Tests.csproj" />
-    <Project Path="samples/Wholesale/RichAggregateDemo/RichAggregateDemo.csproj" />
-    <Project Path="samples/Wholesale/RichAggregateDemo.Tests/RichAggregateDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
     <Project Path="src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj" />
     <Project Path="samples/Wholesale/AppHost/Wholesale.AppHost.csproj" />
     <Project Path="samples/Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
-    <Project Path="samples/Wholesale/HttpIdentityDemo/HttpIdentityDemo.csproj" />
-    <Project Path="samples/Wholesale/HttpIdentityDemo.Tests/HttpIdentityDemo.Tests.csproj" />
+    <Project Path="samples/Wholesale/Api/Wholesale.Api.csproj" />
     <Project Path="src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
     <Project Path="src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />

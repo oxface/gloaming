@@ -125,7 +125,7 @@ final-policy rejection, null event/candidate or version overflow preserves previ
 state/version/pending. Historical state above today's ceiling initializes without validation
 or pending facts; an empty decision leaves it unchanged. Invalid state/version pairing fails.
 
-[Wholesale Contract tests](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.StateDependent.cs)
+[Wholesale Contract tests](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.StateDependent.cs)
 prove whole-batch issue rejection and later acceptance, committed inline/live agreement,
 competing eligible writers and fresh-context redecision against the winner. Missing/behind/
 mistimed views cannot supply decision state; a deterministic commit between header and view

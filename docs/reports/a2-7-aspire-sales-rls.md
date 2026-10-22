@@ -118,13 +118,13 @@ Review-worthy files:
 
 - [AppHost graph](../../samples/Wholesale/AppHost/Program.cs) and
   [operator workflow](../../samples/Wholesale/AppHost/README.md#optional-sales-rls-graph).
-- [Finite setup](../../samples/Wholesale/HttpIdentityDemo/RlsDemoSetup.cs),
-  [password assembly](../../samples/Wholesale/HttpIdentityDemo/DemoDatabasePasswords.cs),
-  [program/credential guard](../../samples/Wholesale/HttpIdentityDemo/Program.cs) and
-  [catalog readiness](../../samples/Wholesale/HttpIdentityDemo/WholesaleDatabaseHealthCheck.cs).
+- [Finite setup](../../samples/Wholesale/Api/RlsDemoSetup.cs),
+  [password assembly](../../samples/Wholesale/Api/DemoDatabasePasswords.cs),
+  [program/credential guard](../../samples/Wholesale/Api/Program.cs) and
+  [catalog readiness](../../samples/Wholesale/Api/WholesaleDatabaseHealthCheck.cs).
 - [Native graph proof](../../samples/Wholesale/RuntimeComposition.Tests/RowSecurityRuntimeTests.cs),
   [browser journey](../../samples/Wholesale/RuntimeComposition.Tests/BrowserTests.cs) and
-  [startup rejection cases](../../samples/Wholesale/HttpIdentityDemo.Tests/SetupInputTests.cs).
+  [startup rejection cases](../../samples/Wholesale/IntegrationTests/Api/SetupInputTests.cs).
 
 The remaining work is worker/transport role composition, default rollout if selected,
 production provisioning/upgrade/rotation, automatic policy scaffolding, creation/submission/

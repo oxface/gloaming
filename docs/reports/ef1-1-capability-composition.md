@@ -1,6 +1,6 @@
 # EF1.1: shared EF capability composition and simpler local dispatch
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 

@@ -159,7 +159,7 @@ Paths below are repository-relative; review public interfaces and implementation
    only each inbox's new columns/checks/index. Native scaffolding also refreshes existing model
    annotations; Inventory snapshot entity ordering is retained to reduce unrelated diff noise.
    Old migrations were not changed.
-5. `samples/Wholesale/WorkflowDemo/SalesReplyDatabase.cs`: processor-only new column grants
+5. `samples/Wholesale/Worker/Broker/SalesReplyDatabase.cs`: processor-only new column grants
    and the shared exact effective-grant inventory. No redrive count/time rights are added.
 6. Proofs: library FailureRecoveryTests, Rendering FailureRecoveryTests/RecoveryMigrationTests,
    InboxRecoveryProcessTests and SalesReplyRecoveryTests. Existing broker/OTLP proofs now call

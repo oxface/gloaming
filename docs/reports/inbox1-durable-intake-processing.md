@@ -36,7 +36,7 @@ mapping, both save guards, typed/keyed registration and transaction ownership.
   admits its configured Organization and invokes existing state-dependent commands. Accepted
   work commits facts, inline aggregate, reply and completion together. Not-found/conflict/shortage
   complete with a consumer-owned decline reply; technical/admission failures remain pending.
-  [The --inbox journey](../../samples/Wholesale/EventPersistenceDemo/InboxJourney.cs) uses native RabbitMQ.
+  [The --inbox journey](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InboxJourney.cs) uses native RabbitMQ.
 - [InboxDemo](../../src/Gloaming.Messaging/samples/InboxDemo/README.md) is an ordinary EF/HTTP receiver with no outbox,
   publisher, Events, EventSourcing, context-family or peer implementation dependency. It records
   a RenderJob, not an external rendering effect. Its business job identity handles semantic
@@ -188,12 +188,12 @@ src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261008213949_AddMessageMe
 src/Gloaming.Messaging/samples/OutboxDemo/Migrations/20261008213949_AddMessageMetadata.cs
 src/Gloaming.Messaging/samples/OutboxDemo/Migrations/ExportDbContextModelSnapshot.cs
 src/Gloaming.Messaging/samples/OutboxDemo/README.md
-samples/Wholesale/EventPersistenceDemo.Tests/InboxDispatchTests.cs
-samples/Wholesale/EventPersistenceDemo/InboxJourney.cs
-samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqPublisher.cs
-samples/Wholesale/EventPersistenceDemo/InventoryRabbitMqReceiver.cs
-samples/Wholesale/EventPersistenceDemo/Program.cs
-samples/Wholesale/EventPersistenceDemo/README.md
+samples/Wholesale/IntegrationTests/EventPersistence/InboxDispatchTests.cs
+samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InboxJourney.cs
+samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InventoryRabbitMqPublisher.cs
+samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/InventoryRabbitMqReceiver.cs
+samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/Program.cs
+samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md
 samples/Wholesale/modules/Inventory/Inventory.Contracts/IssueStockV1.cs
 samples/Wholesale/modules/Inventory/Inventory.Contracts/StockIssueDeclinedV1.cs
 samples/Wholesale/modules/Inventory/Inventory/InventoryDbContext.cs

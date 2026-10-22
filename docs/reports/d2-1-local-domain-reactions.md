@@ -1,6 +1,6 @@
 # D2.1: required local domain reactions
 
-Current review entry: [EventReactions consolidation](../reports/event-reactions-consolidation.md)
+Current review entry: [EventReactions consolidation](event-reactions-consolidation.md)
 supersedes the earlier package names, aggregate base and marker requirements. Descriptions and
 test counts below retain their dated scope; source links lead to current replacements.
 
@@ -10,7 +10,7 @@ mirroring. Results below describe that earlier implementation, not today's addit
 
 Date: 2026-10-14. Prepared for owner review on `feat/ddd-sample-patterns`, after D1.1
 checkpoint `f55d803`. [Selected scope](../plans/d2-1-local-domain-reactions.md) and
-[executable usage](../../samples/Wholesale/DomainEventsDemo/README.md) define this increment.
+[executable usage](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) define this increment.
 
 ## Outcome and consumer ownership
 
@@ -143,8 +143,8 @@ require their own concrete scopes.
 - [Allowance aggregate](../../samples/Wholesale/modules/Sales/Sales/OrderAllowances/OrderAllowanceAggregate.cs),
   [mapping](../../samples/Wholesale/modules/Sales/Sales/OrderAllowances/OrderAllowanceRow.cs) and
   [consumer Contracts](../../samples/Wholesale/modules/Sales/Sales.Contracts/ICustomerOrderAllowances.cs).
-- [Concurrency/fault proofs](../../samples/Wholesale/DomainEventsDemo.Tests/ReactionTests.Faults.cs)
-  and [write-boundary proofs](../../samples/Wholesale/DomainEventsDemo.Tests/ReactionTests.Boundaries.cs).
+- [Concurrency/fault proofs](../../samples/Wholesale/IntegrationTests/Reactions/ReactionTests.Faults.cs)
+  and [write-boundary proofs](../../samples/Wholesale/IntegrationTests/Reactions/ReactionTests.Boundaries.cs).
 
 All D2.1 changes remain unstaged and uncommitted for owner review. The index remains the D1.1
 checkpoint snapshot; its earlier approval does not authorize committing these changes.

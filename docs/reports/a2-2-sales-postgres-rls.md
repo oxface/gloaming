@@ -13,7 +13,7 @@ consumer-only proof and its handoff checks; current executable/tests use that pu
 ## Outcome and recommendation
 
 The CQRS executable now has an explicit `--tenant-isolation` mode with executable
-[consumer setup](../../samples/Wholesale/CqrsDemo/TenantIsolation/README.md).
+[consumer setup](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md).
 It uses separate migration-owner and restricted runtime credentials, enables/forces RLS on
 five Sales tables and sets a parameterized transaction-local tenant on the exact native
 connection before each protected operation. It contrasts one raw database row in each
@@ -85,11 +85,11 @@ remain separately dated evidence; no HTTP/worker RLS guarantee is inferred from 
 
 | File | Review concern |
 | --- | --- |
-| [SalesRowSecurity](../../samples/Wholesale/CqrsDemo/TenantIsolation/SalesRowSecurity.cs) | Finite table inventory, explicit policy clauses, ENABLE/FORCE, role-membership/owner/bypass checks and read-only grant privileges. |
+| [SalesRowSecurity](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/SalesRowSecurity.cs) | Finite table inventory, explicit policy clauses, ENABLE/FORCE, role-membership/owner/bypass checks and read-only grant privileges. |
 | [Extracted tenant setup](../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/TenantDatabaseContextExtensions.cs) | A2.3 replaces the original private helper; exact open native connection/transaction, required selected immutable tenant and parameterized local setup remain. |
-| [TenantIsolationJourney](../../samples/Wholesale/CqrsDemo/TenantIsolation/TenantIsolationJourney.cs), [Program](../../samples/Wholesale/CqrsDemo/Program.cs) | Explicit opt-in mode, separate credentials, finite setup/admission, native read transaction and independent Sales permissions. |
-| [Boundary proofs](../../samples/Wholesale/CqrsDemo.Tests/TenantIsolationTests.cs) | Actual logins, raw/bulk/Contract paths, bypass controls, missing contexts, forged setting and constraint disclosure. |
-| [Lifecycle proofs](../../samples/Wholesale/CqrsDemo.Tests/TenantIsolationTests.Lifecycle.cs), [fixture](../../samples/Wholesale/CqrsDemo.Tests/TenantIsolationTests.Support.cs) | Physical backend reuse, rollback/cancellation/savepoints, whole-attempt retry, reconnect, concurrency and independently provisioned disposable roles. |
+| [TenantIsolationJourney](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/TenantIsolationJourney.cs), [Program](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/TenantIsolationJourney.cs) | Explicit opt-in mode, separate credentials, finite setup/admission, native read transaction and independent Sales permissions. |
+| [Boundary proofs](../../samples/Wholesale/IntegrationTests/Queries/TenantIsolationTests.cs) | Actual logins, raw/bulk/Contract paths, bypass controls, missing contexts, forged setting and constraint disclosure. |
+| [Lifecycle proofs](../../samples/Wholesale/IntegrationTests/Queries/TenantIsolationTests.Lifecycle.cs), [fixture](../../samples/Wholesale/IntegrationTests/Queries/TenantIsolationTests.Support.cs) | Physical backend reuse, rollback/cancellation/savepoints, whole-attempt retry, reconnect, concurrency and independently provisioned disposable roles. |
 
 ## Extraction findings and smallest next proofs
 

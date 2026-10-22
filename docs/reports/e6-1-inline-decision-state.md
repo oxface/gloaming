@@ -174,9 +174,9 @@ Read the domain state/evolution, detached preparation and required-view protocol
   and [migration](../../samples/Wholesale/modules/Inventory/Inventory/Migrations/20261006135521_AddStockPositionCurrent.cs),
   [Purchasing mapping](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/InlineStateMapping.cs)
   and [migration](../../samples/Wholesale/modules/Purchasing/Purchasing/Migrations/20261006135521_AddPurchaseOrderViews.cs).
-- [Focused proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.InlineViews.cs),
-  [extended append proofs](../../samples/Wholesale/EventPersistenceDemo.Tests/AppendTests.cs),
-  [executable journeys](../../samples/Wholesale/EventPersistenceDemo/AppendJourneys.cs)
+- [Focused proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.InlineViews.cs),
+  [extended append proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs),
+  [executable journeys](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/AppendJourneys.cs)
   and [shared disposable-database fixture](../../tests/Support/PostgreSqlFixture.cs).
 
 ## Remaining gaps

@@ -300,7 +300,7 @@ Paths below are repository-relative. No new solution/project is needed.
 | Library proofs | `src/Gloaming.Messaging/tests/InboxPostgresTests/{FailureRecoveryTests.cs,InboxConsumer.cs,ProcessingTests.cs,RegistrationTests.cs,TelemetryTests.cs}`; existing intake/hosting coverage rerun. |
 | Executable adoption | `src/Gloaming.Messaging/samples/InboxDemo/{RenderInboxFailurePolicy.cs,RenderOperatorAuthenticationHandler.cs,RenderInboxOperations.cs,InboxDemoHost.cs,Program.cs,README.md}` |
 | Consumer proofs | `src/Gloaming.Messaging/samples/InboxDemo.Tests/{FailureRecoveryTests.cs,RecoveryMigrationTests.cs,TraceMigrationTests.cs}`; `src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/{WorkerProcessTests.cs,WorkerTopology.cs}` for new process restart/death evidence. |
-| Required compatibility | Rendering/Inventory/Sales `Migrations/*AddInboxFailureRecovery*` and snapshots; `samples/Wholesale/WorkflowDemo/{SalesReplyDatabase.cs,sales-inbox-rls.md}`; restricted `SalesReplyTests.cs` assertions. |
+| Required compatibility | Rendering/Inventory/Sales `Migrations/*AddInboxFailureRecovery*` and snapshots; `samples/Wholesale/Worker/Broker/{SalesReplyDatabase.cs,sales-inbox-rls.md}`; restricted `SalesReplyTests.cs` assertions. |
 | Family documentation | Messaging family README, EF/Postgres READMEs, `docs/{inbox.md,capabilities.md,observability.md}`; link supported recovery and retain excluded work as deferred. |
 | Repository records | This plan, extraction-plan link/status, bounded roadmap status, `docs/reports/m2-inbox-failure-recovery.md`; after owner acceptance, a focused ADR and design link supersede ADR 0010's separate retry-write description. |
 
