@@ -24,6 +24,15 @@ save validation binds those tracked proposals to their originating transaction. 
 own save/commit; existing inbox processing owns reply save/completion/commit. Existing outbox
 workers deliver requests. No workflow worker or transport dependency is introduced.
 
+Save validation verifies any unchanged process/request proposal against native stored values
+in that same transaction. Matching tracked values alone cannot distinguish completed writes
+from premature acceptance or savepoint rollback. JSON comparison remains semantic; generated
+request delivery fields are excluded. Repeated saves require native SELECT access to all mapped
+process/request columns. Native key lookup ignores EF filters while database permissions/RLS
+remain effective. Explicit validation stays synchronous; registered async validation awaits
+the native reads with cancellation. No new public lifecycle hook, schema or execution protocol
+is introduced.
+
 ## Consequences
 
 The library removes repeated operation bookkeeping and request enqueue mechanics while leaving

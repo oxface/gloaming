@@ -135,7 +135,9 @@ Seven clean executable consumers are created outside the repository:
 - Optional hosting: independently select the worker package, supply callable roles and run
   inbox/outbox workers in fresh scopes without a database provider.
 - Continuations: select the combined EF package and PostgreSQL storage, roll back and restart
-  a process, commit a saved reply, recover in a fresh context and deduplicate its outcome.
+  a process, commit a saved reply, recover in a fresh context and deduplicate its outcome;
+  preserve repeated saves after false-acceptance saving and reject either suppressed
+  process/request proposal through both native save forms.
 - Command receipts: independently select native EF/PostgreSQL receipts, use consumer save
   overrides without DI/hosting, commit an effect/result and replay it from a fresh context;
   retain valid repeated saves after false-acceptance saving and reject suppressed unsaved

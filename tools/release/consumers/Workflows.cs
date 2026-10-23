@@ -102,7 +102,10 @@ try
     await using (var transaction = await started.Database.BeginTransactionAsync())
     {
         pending = await Runner(started).StartAsync(key, input);
-        await started.SaveChangesAsync();
+        await started.SaveChangesAsync(acceptAllChangesOnSuccess: false);
+        started.ChangeTracker.AcceptAllChanges();
+        Check(started.SaveChanges() == 0, "A later sync save must preserve the committed proposal.");
+        Check(await started.SaveChangesAsync() == 0, "A later async save must preserve the proposal.");
         await transaction.CommitAsync();
     }
 
@@ -160,6 +163,38 @@ try
         starts == 2 && continuations == 1,
         "Only the rolled-back start is repeated; a retained outcome does not rerun its continuation."
     );
+
+    foreach (bool asynchronous in new[] { false, true })
+    foreach (bool suppressProcess in new[] { false, true })
+    {
+        await using var blocked = Open();
+        await using var transaction = await blocked.Database.BeginTransactionAsync();
+        await Runner(blocked).StartAsync(new(Guid.NewGuid()), input);
+        if (suppressProcess)
+            blocked.ChangeTracker.Entries<WorkflowInstanceRecord>().Single().State = EntityState.Unchanged;
+        else
+            blocked.ChangeTracker.Entries<OutboxMessageRecord>().Single().State = EntityState.Unchanged;
+
+        bool rejected = false;
+        try
+        {
+            if (asynchronous) await blocked.SaveChangesAsync();
+            else blocked.SaveChanges();
+        }
+        catch (InvalidOperationException)
+        {
+            rejected = true;
+        }
+
+        Check(rejected, "Both native save forms must reject either suppressed proposal.");
+        await transaction.RollbackAsync();
+    }
+
+    await using (var final = Open())
+    {
+        Check(await final.Set<WorkflowInstanceRecord>().CountAsync() == 1, "Suppression must retain no process.");
+        Check(await final.Set<OutboxMessageRecord>().CountAsync() == 1, "Suppression must retain no request.");
+    }
     Console.WriteLine(
         "PASS combined continuations: native rollback/commit, fresh recovery and duplicate outcomes"
     );

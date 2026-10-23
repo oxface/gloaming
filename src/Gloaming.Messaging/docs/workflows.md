@@ -151,6 +151,23 @@ portable CLR LINQ queries over the typed JSON state are not supplied.
 - EF only tracks changes. The caller's save/commit or existing inbox processor provides atomic
   persistence. There is no distributed transaction or exactly-once external effect claim.
 
+An `Unchanged` tracked process or request is not proof that its write participated in the
+transaction. Save validation reads its native stored values in the originating transaction
+and compares the captured proposal; JSON comparison is semantic, including JSONB round trips.
+Missing or different stored values reject premature acceptance and detect a turn undone by
+savepoint rollback. Request comparison excludes database-generated delivery fields. Ordinary
+first saves of an `Added`/`Modified` process with an `Added` request need no verification reads.
+
+These complete-primary-key reads use native EF mappings and ignore EF query filters; database
+permissions/RLS still apply. Repeated saves require SELECT access to all mapped columns in
+the process/request records, including the request payload. This is integrity verification,
+not tenant/resource admission. Consumers retain credentials, policies and transaction setup.
+The explicit `ValidateWorkflowChanges` guard is synchronous, including when called from an
+async override. The optional `AddWorkflowValidation<TContext>` integration uses async reads
+and the save cancellation token during native async saving. Valid repeated saves are supported;
+after `SaveChanges(false)` or its async form, call native `AcceptAllChanges` before another save.
+Dispose failed scopes rather than restoring tracked proposals for another attempt.
+
 Consumer JSON options are copied/frozen and bindings are copied at construction/build. Use
 explicit `[JsonRequired]` fields and consumer validation where missing fields would otherwise
 become a valid-looking default. No payload/state upcasting or automatic definition migration is
