@@ -65,6 +65,10 @@ InlineStateReader<TStreamRecord,TInlineStateRecord>.ReadAsync supports filtered 
 already fetched row without another query. Consumers build Queries/Filters with native LINQ,
 including mapped predicates and joins. Read queries never repair stored state.
 
+Inline and history readers bind complete mapped key values as SQL parameters, as in native
+captured-variable predicates. This lets EF reuse a query shape as key values change. Both
+readers retain native query filters and no-tracking behavior.
+
 ## Bounded event history
 
 EventHistoryReader<TEvent,TStreamRecord,TStoredEventRecord> implements

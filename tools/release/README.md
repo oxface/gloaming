@@ -90,7 +90,7 @@ and [version normalization](https://learn.microsoft.com/en-us/nuget/concepts/pac
 
 Requires .NET SDK 10, Node 24.21 or later in the 24.x line, and a PostgreSQL
 connection whose role can create and drop databases. The supplied database is
-used only to create/drop a randomly named `gloaming_package_*` database; its
+used only to create/drop each profile's randomly named scratch database; its
 existing tables are not changed. Use a disposable PostgreSQL server.
 
 ```sh
@@ -122,12 +122,18 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Seven clean executable consumers are created outside the repository:
+Eight clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
 - Events serialization and history: retained literal JSON, durable identity,
   native JSON configuration, unknown schema rejection and ordered-range validation.
+- Event storage: select EventSourcing.EntityFrameworkCore and Npgsql with consumer-owned
+  composite keys, filters, direct JSON and manual save overrides. Prove append visibility,
+  sync/async saves, rollback, required inline participation, bounded history, explicit repair,
+  retained-fact preservation, a stale-writer conflict and a fresh post-repair append. The
+  resolved Gloaming graph contains only EventSourcing, its EF adapter, Events.History and
+  Gloaming.EntityFrameworkCore.
 - PostgreSQL ownership, outbox and audit: consumer-owned mapping and wiring,
   unsaved/uncommitted invisibility, native commit and rollback, failed later save
   after earlier business SQL, fresh-context recovery, tenant filters and foreign
@@ -144,8 +150,9 @@ Seven clean executable consumers are created outside the repository:
   receipt proposals in both native save forms.
 - All packages: restore, compile and execute with all 22 packages selected.
 
-Each generated project references exact package versions, restores Gloaming only
-from the temporary local feed and uses a fresh package cache. Assets must contain
+Each generated project references exact package versions and restores Gloaming only
+from the temporary local feed. The profiles share one fresh isolated package cache for
+the verification run. Assets must contain
 package dependencies and zero project references. The resolved Gloaming graph must
 match only the selected roots and their declared dependency closure. Consumers
 contain their own small application code, not copied library implementations.

@@ -340,18 +340,30 @@ try {
   );
   const packageCache = join(scratch, "nuget-packages");
   const consumerEnv = { ...process.env, NUGET_PACKAGES: packageCache };
+  const dependencyInjection = {
+    id: "Microsoft.Extensions.DependencyInjection",
+    version: "10.0.12",
+  };
   const profiles = [
     {
       name: "core",
       source: "Core.cs",
       ids: ["Gloaming.ActorIdentity", "Gloaming.Tenancy"],
-      external: false,
+      external: [],
     },
     {
       name: "events",
       source: "Events.cs",
       ids: ["Gloaming.Events.Serialization", "Gloaming.Events.History"],
-      external: false,
+      external: [],
+    },
+    {
+      name: "event-storage",
+      source: "EventStorage.cs",
+      ids: ["Gloaming.EventSourcing.EntityFrameworkCore"],
+      external: [
+        { id: "Npgsql.EntityFrameworkCore.PostgreSQL", version: "10.0.3" },
+      ],
     },
     {
       name: "postgres",
@@ -361,13 +373,13 @@ try {
         "Gloaming.Messaging.EntityFrameworkCore.Postgres",
         "Gloaming.Auditing.EntityFrameworkCore",
       ],
-      external: true,
+      external: [dependencyInjection],
     },
     {
       name: "hosting",
       source: "Hosting.cs",
       ids: ["Gloaming.Messaging.EntityFrameworkCore.Hosting"],
-      external: true,
+      external: [dependencyInjection],
     },
     {
       name: "workflows",
@@ -376,19 +388,19 @@ try {
         "Gloaming.Messaging.Workflows.EntityFrameworkCore",
         "Gloaming.Messaging.EntityFrameworkCore.Postgres",
       ],
-      external: true,
+      external: [dependencyInjection],
     },
     {
       name: "all-packages",
       source: undefined,
       ids: packages.map((item) => item.id),
-      external: false,
+      external: [],
     },
     {
       name: "command-receipts",
       source: "CommandReceipts.cs",
       ids: ["Gloaming.CommandReceipts.EntityFrameworkCore.Postgres"],
-      external: true,
+      external: [dependencyInjection],
     },
   ];
   for (const profile of profiles) {
@@ -405,7 +417,7 @@ try {
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),
-      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external ? '<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12"/>' : ""}</ItemGroup></Project>`,
+      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external.map(({ id, version }) => `<PackageReference Include="${id}" Version="${version}"/>`).join("")}</ItemGroup></Project>`,
     );
     run(
       dotnet,
@@ -472,6 +484,17 @@ try {
           name.startsWith("RabbitMQ.Client/"),
         ),
         "Continuation execution must not select a transport client.",
+      );
+    if (profile.name === "event-storage")
+      assert.deepEqual(
+        gloaming.map(([name]) => name.split("/")[0]!).sort(),
+        [
+          "Gloaming.EntityFrameworkCore",
+          "Gloaming.Events.History",
+          "Gloaming.EventSourcing",
+          "Gloaming.EventSourcing.EntityFrameworkCore",
+        ].sort(),
+        "Event storage must remain independently adoptable without other Gloaming families.",
       );
     for (const [name, library] of gloaming) {
       assert.equal(name.split("/")[1], version);

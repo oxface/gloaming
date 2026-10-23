@@ -33,7 +33,7 @@ npm --prefix tools/release run pack
 The command reports the completed version and folder feed. Follow the
 [consumer source-mapping setup](tools/release/README.md#consume-from-another-repository) and
 [development guide](docs/development.md); no remote package service is required.
-The heavier release verifier checks all archives and seven isolated package-only consumers.
+The heavier release verifier checks all archives and eight isolated package-only consumers.
 
 [Modular monolith patterns](modular-monolith-patterns/README.md) describe how to initialize
 or adapt an application and add named modules, state-stored or event-sourced aggregates,
