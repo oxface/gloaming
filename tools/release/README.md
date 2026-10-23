@@ -122,7 +122,7 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Eight clean executable consumers are created outside the repository:
+Nine clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -134,6 +134,11 @@ Eight clean executable consumers are created outside the repository:
   retained-fact preservation, a stale-writer conflict and a fresh post-repair append. The
   resolved Gloaming graph contains only EventSourcing, its EF adapter, Events.History and
   Gloaming.EntityFrameworkCore.
+- Event reactions: select the EF reaction adapter, native DI and Npgsql; collect tracked,
+  scoped request and operation-sink facts. Prove ordered downstream waves before validation,
+  sync/async and false-acceptance saves, caller commit/rollback, handler/candidate/SQL failure
+  recovery, the invocation ceiling and async-only reaction lane selection. The Gloaming
+  dependency closure contains only EventReactions, its EF adapter and Gloaming.EntityFrameworkCore.
 - PostgreSQL ownership, outbox and audit: consumer-owned mapping and wiring,
   unsaved/uncommitted invisibility, native commit and rollback, failed later save
   after earlier business SQL, fresh-context recovery, tenant filters and foreign

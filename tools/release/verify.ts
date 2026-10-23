@@ -97,6 +97,14 @@ interface Project {
       | { ProjectReference?: { Include: string } | { Include: string }[] }[];
   };
 }
+
+interface ConsumerProfile {
+  name: string;
+  source: string | undefined;
+  ids: string[];
+  external: { id: string; version: string }[];
+  gloamingClosure?: string[];
+}
 interface Dependency {
   id: string;
   version: string;
@@ -344,7 +352,11 @@ try {
     id: "Microsoft.Extensions.DependencyInjection",
     version: "10.0.12",
   };
-  const profiles = [
+  const postgresProvider = {
+    id: "Npgsql.EntityFrameworkCore.PostgreSQL",
+    version: "10.0.3",
+  };
+  const profiles: ConsumerProfile[] = [
     {
       name: "core",
       source: "Core.cs",
@@ -361,8 +373,23 @@ try {
       name: "event-storage",
       source: "EventStorage.cs",
       ids: ["Gloaming.EventSourcing.EntityFrameworkCore"],
-      external: [
-        { id: "Npgsql.EntityFrameworkCore.PostgreSQL", version: "10.0.3" },
+      external: [postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Events.History",
+        "Gloaming.EventSourcing",
+        "Gloaming.EventSourcing.EntityFrameworkCore",
+      ],
+    },
+    {
+      name: "event-reactions",
+      source: "EventReactions.cs",
+      ids: ["Gloaming.EventReactions.EntityFrameworkCore"],
+      external: [dependencyInjection, postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.EventReactions",
+        "Gloaming.EventReactions.EntityFrameworkCore",
       ],
     },
     {
@@ -485,16 +512,11 @@ try {
         ),
         "Continuation execution must not select a transport client.",
       );
-    if (profile.name === "event-storage")
+    if (profile.gloamingClosure)
       assert.deepEqual(
         gloaming.map(([name]) => name.split("/")[0]!).sort(),
-        [
-          "Gloaming.EntityFrameworkCore",
-          "Gloaming.Events.History",
-          "Gloaming.EventSourcing",
-          "Gloaming.EventSourcing.EntityFrameworkCore",
-        ].sort(),
-        "Event storage must remain independently adoptable without other Gloaming families.",
+        [...profile.gloamingClosure].sort(),
+        `${profile.name} must remain independently adoptable without other Gloaming families.`,
       );
     for (const [name, library] of gloaming) {
       assert.equal(name.split("/")[1], version);
