@@ -73,11 +73,8 @@ constraints. Apply consumer migrations explicitly with `--setup` before cleanup.
 sample-owned rather than mandatory library mapping; other contexts choose their own index and
 deployment plan. Its ordinary transactional index build is not an online/concurrent-index
 rollout guarantee. Batch row limits do not bound scan cost, lock time, WAL, disk reclamation or
-vacuum behavior; this slice supplies no capacity benchmark or automatic maintenance service.
+vacuum behavior; this capability supplies no capacity benchmark or automatic maintenance service.
 
-See [the scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox-completed-retention.md) and
-[new proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-completed-retention.md) for actual PostgreSQL,
-credential, migration and child-process evidence. [Dead-letter retry](outbox-recovery.md) and
-[backlog/worker health](outbox-observability.md) retain their separate contracts. Inbox [processed-receipt expiry](inbox-retention.md),
-payload editing, completed-message replay, lease renewal, global execution caps and durable
-cleanup scheduling/accounting remain separate capabilities.
+[Dead-letter retry](outbox-recovery.md), [backlog/health](outbox-observability.md) and
+[inbox expiry](inbox-retention.md) retain separate contracts. Payload editing, completed-message
+replay, lease renewal and durable cleanup scheduling/accounting remain outside this capability.

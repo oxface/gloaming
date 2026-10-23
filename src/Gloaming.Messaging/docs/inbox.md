@@ -61,7 +61,7 @@ ReceiveAsync executes parameterized native SQL immediately, not a tracked Add re
 later SaveChanges. It neither saves business changes nor commits. If intake includes other
 tracked local changes, the caller explicitly saves those before commit. Both Queued and
 AlreadyReceived are provisional until that transaction commits. Native/enlisted/ambient shared
-transaction protocols and other isolation levels are rejected in this slice.
+transaction protocols and other isolation levels are rejected in this capability.
 
 The primary key is (SubscriptionKey, ProducerKey, MessageId). Subscription is a stable receiving
 registration, selected from trusted configuration rather than the wire body. Multiple subscriptions
@@ -160,11 +160,9 @@ operator authority remain consumer-owned. Counters record confirmed failures rat
 execution/crash. No automatic pruning, permanent duplicate registry, second dead-letter queue, batch/parallel worker, global
 ordering, automatic upcasting or other-provider guarantee is supplied.
 
-Executable references: [HTTP inbox-only receiver](../tests/Fixtures/InboxHost/README.md),
-[separate-context RabbitMQ round trip](../tests/Fixtures/BrokerJourney/README.md),
-[Inventory integration handler](../../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs).
-[New proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md) distinguishes
-fresh results from O1 and archived receipt-only evidence.
+Executable references: [HTTP inbox receiver](../tests/Fixtures/InboxHost/README.md),
+[separate-context broker round trip](../tests/Fixtures/BrokerJourney/README.md) and
+[Inventory handler](../../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs).
 
 TraceParent/TraceState are optional diagnostic fields, excluded from duplicate comparison.
 The first committed intake retains its context even when equivalent retries carry different

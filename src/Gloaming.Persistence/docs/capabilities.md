@@ -1,8 +1,6 @@
 # Persistence composition and capabilities
 
-Foundational scope, 2026-10-07; save wiring and A2 research reconciled 2026-10-16.
-This family guide and the package-local contracts travel with
-the source. Root plans/reports retain cross-cutting review and dated execution evidence.
+This family guide and package-local contracts describe supported ownership mappings, save integration and optional RLS.
 
 ## Supported composition
 
@@ -49,12 +47,9 @@ runtime credentials and deployed policies. An interceptor alone does not provide
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Consumer research
+## Consumer composition
 
-[Authorization and tenant-isolation research](../../../docs/research/authorization-and-isolation.md)
-explains the authority, credential and query-completeness boundaries behind this composition.
-The supported optional RLS contract above supersedes the old assessment's unimplemented
-proposals. Actual [Sales isolation proofs](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+[Sales isolation tests](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 and [HTTP setup](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
-retain their finite deployment/setting-forgery limits. Tenant equality is not within-tenant
-permission; no default application rollout or authorization-engine dependency is selected.
+exercise finite native policy deployment and setting-forgery limits. Tenant equality is not
+within-tenant permission; application authorization and default rollout remain consumer-owned.

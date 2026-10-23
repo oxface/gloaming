@@ -28,7 +28,5 @@ dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/Even
 dotnet test --project src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj
 ```
 
-Read the [execution contract](docs/local-dispatch.md) and
-[consolidation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-reactions-consolidation.md). This package supplies
-neither event sourcing nor durable delivery, business history, a mediator or a DDD foundation.
-Durable delivery and application workflow policy remain separately selected capabilities.
+Read the [execution contract](docs/local-dispatch.md). Event sourcing, durable delivery,
+business history and application workflow policy are separately selected capabilities.

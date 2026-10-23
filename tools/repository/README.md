@@ -69,6 +69,3 @@ sample/shared-input and manual selection rather than running for every library-o
 Expensive jobs keep stable check names and use job conditions. The reusable selection workflow
 still has lightweight setup overhead for documentation-only changes. Host CI remains the
 authority for scheduling; local checks do not establish runner timings.
-
-Retired source and tooling remain available through the
-[immutable provenance record](../../docs/reports/s1-archive-retirement.md).

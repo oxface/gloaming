@@ -98,7 +98,7 @@ the coherent count partition. Exporters can retain a prior value after an instru
 absent, so interpret eligible count and observation age together. Multiple host replicas may
 observe the same backlog: summing their gauges double-counts that work. Select an observer or
 use an appropriate per-instance/max policy. Sampling frequency and aggregate-query cost need
-consumer workload assessment; this slice supplies no capacity benchmark.
+consumer workload assessment; this capability supplies no capacity benchmark.
 
 Subscribe through a native MeterListener or the host's selected OpenTelemetry SDK:
 
@@ -118,10 +118,6 @@ alone need not indicate an outage. Health responses, alert delivery, dashboards 
 restart policy are consumer responsibilities.
 
 [Restricted Sales inspection](../../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md#backlog-inspection)
-uses the same callable read for three fixed command routes without opening a broker. The
-[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-operational-visibility.md) distinguishes new
-PostgreSQL/native-metrics/HTTP/process evidence from earlier attempt telemetry and recovery
-proofs. Inbox backlog, automatic alert delivery, durable telemetry, payload editing, replay,
-inbox retention and lease renewal remain separate capabilities. Separately authorized
-[completed-outbox retention](outbox-retention.md) is now available; it does not change these
-backlog/worker observations or grant maintenance authority to this reader.
+uses the callable read for fixed routes without a broker. PostgreSQL, MeterListener, HTTP and
+process tests exercise the native composition. [Completed-outbox retention](outbox-retention.md)
+does not change these observations or grant maintenance authority to a metadata reader.

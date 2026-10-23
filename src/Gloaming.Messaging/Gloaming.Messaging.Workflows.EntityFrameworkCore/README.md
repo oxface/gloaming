@@ -8,8 +8,7 @@ There is no Npgsql, transport or Hosting dependency.
 
 Import `Gloaming.Messaging.Workflows` for definition/turn/snapshot types and
 `Gloaming.Messaging.Workflows.EntityFrameworkCore` for native EF setup and execution. Both
-namespaces are supplied by this assembly. The former standalone definition package is retired;
-no friend assembly or public execution/inspection abstraction is required.
+namespaces are supplied by this assembly.
 
 Use `WorkflowBuilder<TStart,TState>` to bind ordinary start/reply/signal methods and stable
 wire names. Return `WorkflowTurn<TState>.Request`, `.Complete` or `.WaitForInput`. Business
@@ -44,7 +43,6 @@ consumers replace `Gloaming.Messaging.Workflows` with this package. Definition t
 assembly while their CLR namespaces, persisted wire names, process rows and mappings remain
 unchanged. No type-forwarding compatibility package is supplied.
 
-The [consolidation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/continuation-package-consolidation.md)
-records the package-only PostgreSQL adopter and fresh definition, persistence, composition
-and separately compiled deployment-fixture results. No new reusable runtime mechanism is
-introduced by this package consolidation.
+The [package-only adopter](../../../tools/release/consumers/Workflows.cs) and
+[compiled deployment tests](../tests/WorkflowDeploymentTests/DeploymentTests.cs) exercise
+independent adoption and consumer reader compatibility.

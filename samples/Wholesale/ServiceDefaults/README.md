@@ -28,7 +28,6 @@ uses the same registration without an AppHost. This consumer-owned setup follows
 [native ServiceDefaults](https://aspire.dev/get-started/csharp-service-defaults/); Gloaming
 does not require this project.
 
-The [telemetry proofs](../IntegrationTests/Api/TelemetryTests.cs) use native in-memory
-exporters around real HTTP/PostgreSQL operations. The
-[runtime report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-6-runtime-composition.md) separately records actual
-OTLP delivery into the Aspire dashboard and remaining limits.
+The [telemetry tests](../IntegrationTests/Api/TelemetryTests.cs) use native in-memory exporters
+around actual HTTP/PostgreSQL operations. [Runtime tests](../RuntimeComposition.Tests)
+exercise AppHost composition; they have separate infrastructure requirements.

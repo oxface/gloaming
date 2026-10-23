@@ -67,12 +67,7 @@ feature validators remain supported for consumers choosing their own save integr
 interception is installed by the owning optional package, outside this save coordinator. No template
 preset is added.
 
-See the [implementation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-1-capability-composition.md),
-[research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-capability-interception-research.md) and
-[MassTransit comparison](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-masstransit-applicable-patterns.md).
 The optional [PostgreSQL ownership adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
-uses `.UseRls<TContext>(provider)` to install its own native transaction/command interceptor
-and this existing save coordinator. No general native-interceptor registry is supplied here;
-this package retains only EF Core and DI Abstractions dependencies. The
-[transaction refinement report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-5-transaction-rls-simplification.md)
-records the replacement of the earlier session/registry experiment.
+installs its own native transaction/command interceptor through UseRls and composes this save
+coordinator. This package supplies no general native-interceptor registry and retains only
+EF Core and DI abstractions dependencies.

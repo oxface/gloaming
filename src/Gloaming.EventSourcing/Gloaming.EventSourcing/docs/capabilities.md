@@ -1,7 +1,6 @@
 # Aggregate capability and deferred context
 
-Status: current interface and ownership, 2026-10-07. This document and the package README
-are the consumer contract; repository plans/reports contain dated review and proof evidence.
+This document and the package README define current interfaces, ownership and supported limits.
 
 ## Supported now
 

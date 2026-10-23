@@ -108,9 +108,7 @@ publisher/handler code or promises a process wall-clock bound. Publisher-confirm
 native handshake/socket settings, protocol continuations and connection close are different
 policies. External supervision still owns restart/backoff, grace and forced termination.
 
-Cancellation, timeout or close does not establish transport rejection. Publication stays outside
-the outbox transaction; identity, lease expiry/fencing and committed claim/failure accounting
-stay with the existing store. No claim is released early or message replayed by this package.
-Intake still commits before ack; retained receipts suppress duplicates until receipt deletion.
-See [recovery/shutdown obligations](../docs/worker-recovery.md) and the
-[extraction proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/rabbitmq-session-lifecycle.md).
+Cancellation, timeout or close does not establish transport rejection. Publication stays
+outside the outbox transaction; identity, lease fencing and claim/failure accounting stay with
+the store. This package does not release claims or replay messages. Intake commits before ack;
+receipt retention controls duplicate suppression. See [recovery/shutdown](../docs/worker-recovery.md).

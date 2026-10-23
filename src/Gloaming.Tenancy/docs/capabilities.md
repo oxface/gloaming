@@ -1,8 +1,6 @@
 # Tenancy composition and capabilities
 
-Foundational scope, 2026-10-07; A2 composition research reconciled 2026-10-16.
-This family guide and the package-local contracts travel with
-the source. Root plans/reports retain cross-cutting review and dated execution evidence.
+This family guide and package-local contracts describe supported context establishment and selected adapters.
 
 ## Supported composition
 
@@ -44,12 +42,10 @@ execution never grants unrestricted access.
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Consumer research
+## Consumer composition
 
-[Authorization and tenant-isolation research](../../../docs/research/authorization-and-isolation.md)
-explains native policy ordering, late resource checks and the separate database-enforcement
-obligation. The [optional Persistence RLS adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
-can establish this immutable tenant automatically when the caller begins a protected native
-transaction. This family's transaction-local utility remains an independent explicit option.
-Roles/policies, membership admission, resource permission and transport trust remain consumer-owned;
-core Tenancy gains no Access/FGA or Persistence dependency.
+The [Persistence RLS adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+can establish immutable tenant context when a protected native transaction begins.
+This family's utility remains an independent explicit option. Roles, policies, admission,
+resource permission and transport trust remain consumer-owned; core Tenancy has no
+Access, authorization-engine or Persistence dependency.

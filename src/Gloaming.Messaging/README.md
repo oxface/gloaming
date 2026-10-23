@@ -40,6 +40,8 @@ and the explicit possibility of delivery re-execution once duplicate evidence is
 See [retained-message schema compatibility](docs/schema-compatibility.md) for an optional existing
 JSON codec, original-envelope deduplication and a concrete reader-before-writer consumer rollout.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
+The test-owned [native due-time experiment](tests/Fixtures/DueTimeIntent/README.md) explores
+finite occurrence release and stale-generation rejection. It is not a supported scheduling API.
 
 Tests run from the repository root:
 
@@ -54,14 +56,10 @@ dotnet test --project src/Gloaming.Messaging/tests/WorkflowDeploymentTests/Workf
 dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj
 ```
 
-PostgreSQL tests require a Docker-compatible runtime; Podman works via DOCKER_HOST pointing
-to its user socket. Focused Inventory broker proofs additionally require RabbitMQ containers.
-The inbox PostgreSQL suite shares one assembly-level container, creates a fresh database
-for each test and runs at most two tests concurrently. The outbox suite retains its sequential
-collection fixture; its measured parallel candidates did not show a reliable speed improvement.
-Architecture tests remain repository-owned. [The O1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox1-transactional-dispatch.md)
-separates its results from archived evidence; [I1's report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md)
-records the new inbox/adoption proofs separately.
+Provider tests require a reachable Docker-compatible runtime. The inbox suite uses a
+shared container with separate databases and bounded parallelism; the outbox suite uses a
+sequential collection. Broker tests also require RabbitMQ. Architecture tests remain
+repository-owned.
 
 See [durable message observability](docs/observability.md) for optional W3C context, schema upgrades, native
 activity/meter names, failure logs and host-owned exporter configuration.

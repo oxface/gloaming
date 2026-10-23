@@ -5,13 +5,11 @@ and workers. Consumers retain application composition and business authority. Th
 records cross-family ownership; each family's README and capability records define its
 current public contracts, setup, limitations and deferred work.
 
-Use the [library audit](reports/gloaming-library-audit.md#remaining-cleanup-slices) for the
-active work queue, the [extraction gate](plans/library-extraction.md) before proposing a
-mechanism, and [application patterns](application-patterns.md) for exercised consumer setup.
-The [research briefs](research/README.md), [decision index](adr/README.md) and
-[proof ownership map](../tests/README.md) explain the retained evidence and current owners.
-Earlier extraction sequences and execution authorizations are
-[historical evidence](reports/s1-archive-retirement.md), not current instructions.
+See [library design conventions](conventions/library-design.md) for new capabilities,
+[architecture decisions](adr/README.md) for accepted trade-offs, and the
+[test map](../tests/README.md) for executable proof owners.
+[Modular monolith patterns](../modular-monolith-patterns/README.md) describe how a consuming
+application applies these boundaries.
 
 ## Library boundaries
 
@@ -95,17 +93,13 @@ See [ADR 0003](adr/0003-access-registry-and-operation-admission.md) and
 [ADR 0004](adr/0004-module-contracts-and-native-composition.md).
 
 Family examples demonstrate focused public-interface adoption. Fault-injection hosts and
-separately compiled Earlier/Current consumers belong to tests. Preserve owned historical
-payloads and migrations where compatibility guarantees still depend on them; retired sample
-schemas need no external compatibility because no external consumers exist.
+separately compiled compatibility consumers are test-owned. Preserve literal payloads and
+migrations where a supported compatibility guarantee depends on them.
 
-The generator and configurable template are retired. Short application patterns describe
-exercised setup; future skills should follow repeated real work. Umbrine is the next real
-ERP consumer, with isolated module persistence, multitenancy and durable business processes.
-Its implementation and business workflow extensions are outside this cleanup.
+[Modular monolith patterns](../modular-monolith-patterns/README.md) provide document-driven
+application initialization and module tasks. They define a preferred consumer layout without
+adding a mandatory library runtime or configurable source generator.
 
-The [local package command and verifier](../tools/release/README.md) prove ordinary NuGet
-adoption separately from ProjectReference builds. Use unique local snapshot versions; remote
-publication is a separate owner action. Current source/provider, package-only adoption and
-retained runtime/browser proofs must pass against the final tree. Historical counts do not
-replace fresh verification or the still-required independent code and architecture reviews.
+The [local package workflow](../tools/release/README.md) supports ordinary NuGet consumption
+during development. Package-only, provider, process and runtime tests verify different
+boundaries; see the owning test commands and contracts.

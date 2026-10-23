@@ -63,6 +63,10 @@
     <Project Path="src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj" />
     <Project Path="src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj" />
   </Folder>
+  <Folder Name="/Libraries/Messaging/Tests/Fixtures/">
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Current/DueTimeIntent.Current.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Earlier/DueTimeIntent.Earlier.csproj" />
+  </Folder>
   <Folder Name="/Libraries/Persistence/">
     <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
     <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />

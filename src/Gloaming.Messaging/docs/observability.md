@@ -150,7 +150,7 @@ parent/state pair, falling back to retained context when no activity exists. The
 native instrumentation can replace the parent with its child send context. The send span is a child of
 dispatch; incoming retention therefore points to that send span. The original envelope remains unchanged. This is why duplicate
 business delivery must tolerate changing tracing. No process-global propagator override is
-needed. Other transports are consumer-owned adapters, not guarantees of this slice.
+needed. Other transports are consumer-owned adapters, not guarantees of this capability.
 
 ## Using an OpenTelemetry sink
 
@@ -176,20 +176,14 @@ It does not create a separate inbox intake span; the sample enables native trans
 database instrumentation around that lane. Dashboard navigation is documented behavior;
 the automated process proof verifies actual OTLP data with a Collector, not dashboard UI.
 
-See [the separate host example](../samples/Delivery/README.md) for executable
-OTLP configuration. Its tests use real PostgreSQL/RabbitMQ and an official test Collector,
-including process exit, completion/handler failure, new send spans, duplicate intake and
-unavailable collection. [The OBS1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/obs1-durable-message-observability.md)
-separates fresh results from earlier worker/recovery evidence.
+The [host example](../samples/Delivery/README.md) supplies native OTLP configuration.
+Its tests use PostgreSQL/RabbitMQ and a test Collector, including process exit, handler/completion
+failure, send spans, duplicate intake and unavailable collection.
 
-The [worker recovery/shutdown continuation](worker-recovery.md) adds consumer publication-start
-diagnostics and optional RabbitMQ integration diagnostics for native blocked/unblocked state
-and terminal session loss. These
-do not infer transport rejection or introduce metrics/accounting for every disconnect.
-The existing unreachable-collector process scenario now separately budgets all three worker
-stops at fifteen seconds with its existing one-second exporter timeout. That selected result
-is distinct from a promise to flush arbitrary exporters or bound arbitrary publisher code;
-see the [closure report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-broker-recovery-shutdown.md).
+The [recovery contract](worker-recovery.md) describes publication-start diagnostics and
+native RabbitMQ blocked/unblocked/terminal-session events. They do not establish transport
+rejection or durable disconnect accounting. Selected process-stop/exporter budgets do not
+promise flushing or deadlines for arbitrary consumer code.
 
 Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
 Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic

@@ -1,8 +1,7 @@
 # Current architecture decisions
 
-These records explain accepted trade-offs; family-local contracts define the current public
-surface and supported limits. Status reconciliations reflect implemented source and later
-owner decisions, without approving new interfaces or certifying fresh runtime results.
+These records explain accepted architecture choices and their consequences. Family-local
+contracts define current public interfaces, setup and supported limits.
 
 | Decision | Owning boundary |
 | --- | --- |
@@ -24,9 +23,7 @@ owner decisions, without approving new interfaces or certifying fresh runtime re
 | [0019 Outbox dead letters](0019-lease-fenced-outbox-dead-letters.md) | Lease-fenced accounting/completion and operator retry. |
 | [0020 Receipt generations](0020-inbox-expiry-and-receipt-generations.md) | Explicit expiry ends evidence; old operator authority cannot match a new receipt. |
 | [0021 Native RabbitMQ session](0021-optional-rabbitmq-session-lifecycle.md) | Optional resource/setup/cleanup ownership; consumer transport/restart policy. |
+| [0023 Logical command receipts](0023-logical-command-receipts.md) | Explicit full-key serialization/retained results; native save/commit and module-lifetime evidence. |
 
-Superseded pre-read admission (0007) and fixed sequential progress (0013), rejected retained
-profile feed (0015), and retired Dispatch population (0022) remain in
-[Git provenance](../reports/s1-archive-retirement.md). Numbers are stable and are not reused.
-Their relevant alternatives are distilled in the [research briefs](../research/README.md).
-Earlier record text can be read at the pinned revision when reconstructing a past decision.
+ADR numbers are stable and are not reused. Gaps preserve earlier decision identities.
+Current records explain accepted choices; package-local contracts define supported setup and limits.

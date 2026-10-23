@@ -1,8 +1,6 @@
 # 0002: Establish HTTP actors after effective native authentication
 
-Status: accepted design direction in the owner-approved E3.1 plan, 2026-10-04.
-Implementation and registration helpers were owner-reviewed and checkpointed as `faefc0b`
-on 2026-10-05.
+Status: accepted and implemented, 2026-10-05.
 
 ## Context
 
@@ -46,6 +44,4 @@ One request has one immutable actor context. Principal replacement after publica
 rejected; mutation in place and identity-changing re-execution are outside this composition.
 Full remote OIDC/session topology and tenant admission need separate evidence.
 
-See [the approved interface plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-1-http-actor-identity.md),
-[the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
-[the execution report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-1-http-actor-identity.md).
+See [the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) for setup and executable request proofs.

@@ -1,9 +1,8 @@
 # ADR 0008: Native optimistic aggregate rebuilding
 
-Status: owner-approved replacement, 2026-10-07. Supersedes
-[ADR 0007](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/adr/0007-pre-read-admission-for-inline-rebuilding.md) and the public two-phase append
-mechanism described in ADR 0005; the aggregate contract and transactional required-state
-choice remain. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
+Status: accepted and implemented, 2026-10-07. Replaces cooperative pre-read admission
+and the earlier two-phase append surface. The aggregate bookkeeping contract and required
+transactional inline state remain.
 
 Add an application-managed Guid ConcurrencyStamp on the stream header alongside the native
 Version concurrency token. Every append and full rebuild changes the stamp. Repair preserves
@@ -30,6 +29,4 @@ PostgreSQL is the tested runtime. A future concrete pessimistic-locking obligati
 policy, upcasting, catch-up, secondary/multi-stream projections and a maintenance worker remain
 separate capabilities with their own proof obligations. State-stored adopters need no event-sourcing dependency.
 
-[Current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
-and [dated executions](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es2-single-stream-rebuilding.md) distinguish this contract from
-historical gate/SQL diagnostics.
+See the [current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md) and its native provider tests.

@@ -79,11 +79,9 @@ producer and Organization before business access; inbox identity supplies dedupl
 authorization. [Reservation workers](../../../Worker/README.md) compose independent Sales and
 Inventory commits through public Contracts over local or broker transport.
 
-## Scope and retirement
+## Scope
 
-Purchasing and its duplicate storage variant are retired from Wholesale. Its line replacement,
-price/total rules and query-derived summary were consumer policy. Existing Inventory tests and
-independent library ledger/raw-storage proofs retain technical obligations; this cleanup proves
-no new reusable mechanism and changes no library interface. Retained module migrations and
-literal payloads are unchanged. Full historical replay remains unbounded in stream length;
+Inventory tests cover sample business decisions; independent library ledger/raw-storage tests
+cover reusable persistence guarantees. Retained module migrations and literal payloads are owned
+compatibility inputs. Full historical replay remains unbounded in stream length;
 these proofs make no production capacity, snapshot or external-pooler guarantee.

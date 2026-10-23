@@ -61,12 +61,10 @@ Selection by version/time stays in consumer queries. For a time read, the sample
 the highest qualifying version within the supplied head, then reads the complete prefix through
 that version. Filtering rows by time alone could omit intermediate positions.
 
-Successful validation certifies only the supplied range. Full-stream integrity checks are
-explicit maintenance work; selected-range reads do not certify corruption elsewhere, correct
-tenant scoping, stream creation/update metadata or a committed captured head. The utility does
-not append, save, transact, retry or publish. Wholesale consumer suites exercise actual native EF queries, captured-head races and
-persistence on PostgreSQL; these are composition proofs beyond this utility alone. See [the plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-1-event-history.md)
-and [report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e5-1-event-history.md).
+Successful validation certifies only the supplied range. Selected reads do not certify
+corruption elsewhere, tenant scoping, stream metadata or a committed captured head. The utility
+does not append, save, transact, retry or publish. Wholesale's native PostgreSQL suites exercise
+queries, captured-head races and persistence beyond this range validator.
 
 ## Deferred direction and event-store composition
 

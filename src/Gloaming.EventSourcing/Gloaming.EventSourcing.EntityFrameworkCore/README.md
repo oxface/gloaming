@@ -263,9 +263,7 @@ writes can exhaust retries. Admission, retry values, logs, reducer rollout, any 
 window and scheduling remain consumer-owned. Bad retained facts and previously committed bad
 business decisions are not repaired by regenerating derived state.
 
-The [ES3 CLI guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
-documents the finite operator journey, and the [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es3-aggregate-regeneration-operations.md)
-separates new execution evidence from earlier research and consumer-only proofs.
+The [operator guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md) demonstrates finite regeneration with explicit admission and execution options.
 
 ## Registration, errors and recovery
 
@@ -292,9 +290,7 @@ context use, automatic ambiguous-commit reconciliation or fencing of uncooperati
 Complete key/tenant admission remains consumer-owned. PostgreSQL tests exercise actual native
 SQL, rollback and fresh recovery.
 
-See [current capabilities and deferred directions](../docs/capabilities.md),
+See [capabilities and supported limits](../docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
-[standalone raw adoption](../samples/EventStorageDemo/README.md),
-[tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
-[reviewed replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) and
-[dated ES2 evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es2-rebuild-design.md).
+[standalone adoption](../samples/EventStorageDemo/README.md) and
+[tenant-owned composition](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md).

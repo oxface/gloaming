@@ -123,10 +123,9 @@ is never read. Native filtering may reject a host before candidate extraction; t
 host-options utility supplies both terminal-dot variants. There is no route/host/claim
 fallback chain. A user-to-tenant resolver can use neither helper.
 
-[Standalone HTTP proofs](../tests/TenancyAspNetCoreTests/HttpTenantTests.cs) exercise the
-adapter without an actor dependency. [The sample](../../../samples/Wholesale/Api/README.md)
-composes both adapters with consumer-owned Organization lookup and guarded Inventory reads.
-[The E3.2 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-2-http-tenancy.md) records executed guarantees and limits.
+[Standalone HTTP tests](../tests/TenancyAspNetCoreTests/HttpTenantTests.cs) exercise the
+adapter without an actor dependency. [Wholesale HTTP](../../../samples/Wholesale/Api/README.md)
+composes both adapters with Organization admission and guarded Inventory reads.
 
 ## Deferred direction
 

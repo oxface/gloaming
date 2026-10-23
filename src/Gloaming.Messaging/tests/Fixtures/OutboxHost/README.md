@@ -167,12 +167,9 @@ success gauges are absent. Callbacks perform no database I/O. Exporter/resource 
 alert thresholds are consumer choices. Multiple replicas can observe the same backlog, so
 their counts must not be summed as independent work.
 
-The [complete contract](../../../docs/outbox-observability.md) lists
-instrument names, six-column SELECT-only grants, staleness/aggregation rules and native OTel
-subscription. Tests exercise actual PostgreSQL/Kestrel, native MeterListener callbacks while
-the table is locked, storage faults/repair and worker readiness under Ignore. The
-[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-operational-visibility.md) separates these proofs
-from the earlier transport/attempt telemetry evidence.
+The [visibility contract](../../../docs/outbox-observability.md) lists instruments,
+metadata-only grants, staleness and native OTel subscription. Tests exercise PostgreSQL/Kestrel,
+MeterListener callbacks, storage faults/repair and worker readiness.
 
 ## Completed-outbox cleanup
 
@@ -216,12 +213,10 @@ exhaustion. After commit-response loss, deletion may already have happened. Repe
 command may remove the next batch; scheduling, reconciliation and totals remain owner policy.
 Dispatch credentials and HTTP operator authority gain no DELETE permission.
 
-Deletion removes sender identity/envelope/failure history and permits the database to accept
-that MessageId again. Keep identities unique and choose the evidence window deliberately.
-Obsolete publishers may still accept externally after completion/deletion. Inbox deduplication
-retention remains independent. The [current contract](../../../docs/outbox-retention.md)
-and [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-completed-retention.md) record concurrency, authority,
-index/deployment limits and actual PostgreSQL/process proofs.
+Deletion removes sender identity/envelope/failure history and permits accepting that
+MessageId again. Choose an evidence window and keep identities unique. Obsolete publishers
+may still accept externally after completion/deletion; inbox retention is independent.
+See the [retention contract](../../../docs/outbox-retention.md).
 
 See [the family contract](../../../docs/capabilities.md) for setup/errors
 and independent inbox composition, workers and deferred ordering policy. PostgreSQL is currently the supported provider.

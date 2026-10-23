@@ -72,7 +72,6 @@ Suppression, SQL/bulk writes, arbitrary tracker changes, options omitting shared
 automatic same-context retry are outside this contract. No tracker mirror, repository, durable queue,
 event log, serializer, integration-message mapping or aggregate base is provided.
 
-[Compiled registration](../tests/AdoptionTests/Fixtures/Direct/DirectOrdersRegistration.cs),
-[scoped request proof](../tests/AdoptionTests/AdHocSourceTests.cs),
-[execution contract](../docs/local-dispatch.md) and
-[current report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-reactions-consolidation.md).
+See [compiled registration](../tests/AdoptionTests/Fixtures/Direct/DirectOrdersRegistration.cs),
+[scoped source tests](../tests/AdoptionTests/AdHocSourceTests.cs) and the
+[execution contract](../docs/local-dispatch.md).

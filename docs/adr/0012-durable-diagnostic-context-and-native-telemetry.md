@@ -1,11 +1,10 @@
 # ADR 0012: durable diagnostic context and native telemetry
 
-Status: accepted, 2026-10-10; implementation owner-approved at `b44b5d5`,
-merged into `origin/main` at `4c0e0c5`.
+Status: accepted and implemented, 2026-10-10.
 
 ## Context
 
-Separate producer/intake/processing lifetimes proved by W1 cannot share ambient process
+Separate producer/intake/processing lifetimes cannot share ambient process
 context. Business delivery/conversation/cause IDs survive persistence, but cannot reconstruct
 a trace relationship. Native RabbitMQ instrumentation can inject a different send context
 on each publication, including repeated delivery of the same retained message.
@@ -35,8 +34,7 @@ attempt boundaries. ILogger dependencies stay with those operations/hosted worke
 than the core. Operation failures and native Npgsql/EF database diagnostics are distinct.
 
 Consumers subscribe with native AddSource("Gloaming.Messaging") and AddMeter("Gloaming.Messaging")
-calls. The thin OpenTelemetry subscription adapter retired at `d63f567`; no parallel
-registration facade is maintained. SDKs, exporters and sampling remain host configuration.
+calls. SDKs, exporters and sampling remain host configuration.
 
 ## Consequences
 
@@ -47,6 +45,5 @@ constructor additions, and existing databases migrate before using the updated m
 
 [Outbox backlog observation](../../src/Gloaming.Messaging/docs/outbox-observability.md) is a
 separate callable capability. Alert policy/dashboard UX, baggage, automatic tenant/actor
-propagation and durable telemetry remain outside this diagnostic-context contract. [Local setup/limits](../../src/Gloaming.Messaging/docs/observability.md)
-and [the OBS1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/obs1-durable-message-observability.md) distinguish mechanism,
-consumer policy and fresh results from prior worker/archive evidence.
+propagation and durable telemetry remain outside this diagnostic-context contract.
+See [local setup and limits](../../src/Gloaming.Messaging/docs/observability.md).

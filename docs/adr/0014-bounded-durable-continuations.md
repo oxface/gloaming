@@ -1,11 +1,8 @@
 # ADR 0014: bounded explicit durable continuations
 
-Status: accepted and implemented. Original replacement scope, 2026-10-12; package
-consolidation owner-approved at `56a8b12`. Supersedes the discarded sequential experiment
-before it was checkpointed; its rationale remains in Git history.
+Status: accepted and implemented, 2026-10-12.
 
-The owner approved the final reply/signal/input-pause names on 2026-10-13. Persisted numeric
-status values and continuation identities are retained.
+Persisted numeric status values and continuation identities are compatibility contracts.
 
 ## Decision
 
@@ -39,6 +36,4 @@ operations retain history indefinitely and have no throughput/pruning claim. Pos
 first proven database. Parallel joins, scheduling, deadlines, cancellation, durable operator
 signal receipts, replay/graph engines and generic compensation selection remain deferred.
 
-[Approved scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-durable-continuations.md),
-[current package-local contract](../../src/Gloaming.Messaging/docs/workflows.md), and
-[dated evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-durable-continuations.md).
+See the [package-local contract](../../src/Gloaming.Messaging/docs/workflows.md) and [deployment guidance](../../src/Gloaming.Messaging/docs/workflow-deployments.md).

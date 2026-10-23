@@ -12,7 +12,7 @@ ReactivateAsync. The caller establishes trusted human actor and selected Organiz
 context; the implementation rechecks the caller's current Active membership and
 `CanAdministerMemberships` grant on every call. The narrow persisted grant applies only
 to this Access capability. It does not define any Sales, Inventory or private Personnel
-permission, and this slice adds no general role editor or grant-management API.
+permission, and this capability adds no general role editor or grant-management API.
 
 The owner selected these sample policies:
 
@@ -104,7 +104,7 @@ Reminder recipient/content checks and manual responsibility reassignment remain 
 
 ## HTTP adoption and migrations
 
-[HttpIdentityDemo](../../Api/README.md#membership-administration) exposes native
+[Wholesale HTTP](../../Api/README.md#membership-administration) exposes native
 authenticated point-read and antiforgery-protected POST intents after existing admission.
 The forward MembershipAdministration migration adds revision=1, grant=false and audit storage.
 It preserves populated pre-administration identities/memberships and grants no existing user
@@ -112,7 +112,5 @@ administration authority. Explicit finite demo seeding grants Alpha administrati
 and Beta administration in South; Alpha's South membership demonstrates a separate target.
 Normal startup never migrates/seeds. Real provisioning remains explicitly consumer-owned.
 
-No Personnel, general business permissions, license/Organization-availability model or
-permission-aware exports/AI queries are implemented here. Reactivation is not a bypass for
-those future gates. See the [implementation scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-1-membership-suspension.md)
-and [fresh proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a1-1-membership-suspension.md).
+Personnel policy, a general resource-permission engine, licensing and Organization
+availability are outside this module. Reactivation does not grant authority over those decisions.

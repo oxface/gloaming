@@ -88,6 +88,7 @@ EventSourcing:
   - '!**/*.md'
 
 Messaging:
+  - 'src/Gloaming.CommandReceipts/Gloaming.*/**'
   - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.EventReactions/Gloaming.*/**'
   - 'src/Gloaming.Messaging/**'

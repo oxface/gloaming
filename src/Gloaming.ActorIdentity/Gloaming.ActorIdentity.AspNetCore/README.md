@@ -87,14 +87,12 @@ Worker and message operations continue using their own core initialization direc
 
 ## Consumer and evidence
 
-[HttpIdentityDemo](../../../samples/Wholesale/Api/README.md) demonstrates editable
-native cookie/OIDC configuration, explicit directory mapping and a consumer-owned 403 response.
-E3.2 extends that consumer with an optional, independent tenancy adapter and Organization
-catalog reads; actor-only adoption remains exercised by the standalone suite.
-[Standalone HTTP proofs](../tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) use native
-protected cookies and a test-only secondary scheme without sample/EF/tenancy dependencies.
-[The E3.1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-1-http-actor-identity.md) records current executions
-and limits. Live OIDC provider callbacks and session topology remain later evidence.
+[Wholesale HTTP](../../../samples/Wholesale/Api/README.md) demonstrates native cookie/OIDC
+configuration, explicit directory mapping and a consumer-owned mapping-failure response.
+[Standalone HTTP tests](../tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) use native
+protected cookies and a secondary scheme without sample, EF or tenancy dependencies.
+The sample's [browser tests](../../../samples/Wholesale/RuntimeComposition.Tests/BrowserTests.cs)
+exercise live OIDC callbacks with their own topology and trust requirements.
 
 ## Deferred direction
 

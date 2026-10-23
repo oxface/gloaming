@@ -11,7 +11,7 @@ under test fixtures are intentional consumers, not additional public sample appl
 From the repository root, restore/build the solution, then select a project from the table below:
 
 ```sh
-dotnet build ModulithFoundry.slnx
+dotnet build Gloaming.slnx
 dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-build --no-restore
 ```
 
@@ -46,6 +46,10 @@ not proof of scheduling or passing results; manual full selection remains the in
 The [development guide](../docs/development.md) documents native local/container prerequisites.
 
 ## What each kind of test establishes
+
+The outbox suite also owns a [native due-time consumer experiment](../src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/README.md).
+Its clock/cancellation/generation/process proofs establish consumer behavior using existing
+outbox and command-receipt contracts, not a new supported scheduler capability.
 
 Direct library-contract tests use public APIs with independent expected outcomes, such as
 [immutable actor establishment](../src/Gloaming.ActorIdentity/tests/ActorIdentityTests/AccessorTests.cs),

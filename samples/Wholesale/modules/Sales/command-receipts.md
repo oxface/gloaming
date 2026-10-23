@@ -94,6 +94,4 @@ invalid retained states. The [restricted-role proof](../../IntegrationTests/Quer
 uses actual PostgreSQL RLS. The HTTP lifecycle case exercises request selection and 409 mapping.
 
 These are Sales integration proofs. The [independent family suite](../../../../src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj)
-and package-only adopter directly protect Gloaming's public contract. See the
-[extraction report](../../../../docs/reports/command-receipts-extraction.md) for fresh execution,
-review scope and remaining supported limits.
+and package-only adopter protect the public [receipt contract](../../../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/README.md).

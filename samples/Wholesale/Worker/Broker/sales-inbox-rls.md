@@ -1,6 +1,6 @@
 # Admitted Sales reservation replies under RLS
 
-The optional `process-sales-replies` role processes retained WF2 reservation outcomes using
+The optional `process-sales-replies` role processes retained reservation outcomes using
 the existing PostgreSQL inbox processor and worker. Each process serves one explicitly
 admitted Organization (`wholesale-alpha` or `wholesale-beta`); replicas may compete for that
 Organization. Every attempt gets its own immutable tenant and `sales.reservation-worker`
@@ -19,14 +19,14 @@ each next attempt. See [inbox recovery](../../../../src/Gloaming.Messaging/docs/
 
 ## Explicit setup and execution
 
-M2 adds native inbox recovery columns in the Sales forward migration. Apply it before deploying
+Native inbox recovery requires its columns in the Sales forward migration. Apply it before deploying
 the updated processor, with old processors stopped. Existing restricted reply roles also need
 UPDATE on `revision`, `failure_count`, `failures_since_redrive`, `last_failed_at`,
 `last_failure_code` and `quarantined_at`; redrive count/time rights are not granted. Fresh finite
 setup includes these columns and startup validates the exact grant inventory. Updating an already
 provisioned role remains an explicit owner action; setup is not a grant reconciler.
 
-The outbox M2 upgrade also requires SELECT on generated insertion defaults `revision`,
+The outbox recovery upgrade also requires SELECT on generated insertion defaults `revision`,
 `failure_count`, `failures_since_redrive` and `redrive_count`, alongside the existing
 queued/available timestamps. EF reads these through INSERT RETURNING. Fresh provisioning
 and effective-grant checks include the exact inventory. Apply an explicitly reviewed
@@ -88,7 +88,7 @@ rows are denied by the policies, and this selected model requires a tenant.
 | `workflow_instances` | SELECT and UPDATE. | ENABLE/FORCE with tenant equality in USING/WITH CHECK; raw/bulk/filter bypass stays tenant-scoped. No INSERT/DELETE or within-tenant workflow-type/field permission policy. |
 | `inbox_messages` | SELECT; UPDATE completion, availability, revision, failure counts/code/time and dead-letter state. | ENABLE/FORCE restricts selection, completion and accounting to the admitted tenant. No intake INSERT, redrive count/time UPDATE, envelope mutation or DELETE. Same-tenant subscriptions are not a separate database permission boundary. |
 | `outbox_messages` append | INSERT; SELECT generated timestamps and initial recovery counters. | ENABLE/FORCE with tenant equality specifically for INSERT WITH CHECK. Missing/foreign context rejects native writes. Tracked outgoing ownership/save validation remains. The six generated-default columns are readable across queued tenants; payloads are not. |
-| Outbox delivery | Processor has no lifecycle UPDATE or payload SELECT. | Read and delivery UPDATE policies remain global. A2.8's separately granted dispatcher scans every queued tenant, with no INSERT rights and no RLS bypass flag. |
+| Outbox delivery | Processor has no lifecycle UPDATE or payload SELECT. | Read and delivery UPDATE policies remain global. The separately granted dispatcher scans every queued tenant, with no INSERT rights and no RLS bypass flag. |
 | Other application relations | No table/column/sequence access. | Startup checks effective grants and ownership, including PUBLIC and role memberships. Other databases, routines/SECURITY DEFINER paths, extension/trigger bodies and later privilege changes need separate review. |
 | Operation identity | Trusted host configuration establishes tenant and receiver-owned system actor once per scope. | Envelope checks and original continuation/correlation rules remain consumer authorization. RLS does not authenticate tenants or recheck an initiating human's current membership. A credential holder can forge the mutable GUC. |
 
@@ -105,14 +105,13 @@ Owners must review the deployed tenant expressions. Native
 
 ## Evidence and remaining scope
 
-Run the existing WorkflowDemo test project. New tests cover both tenants, retained real RabbitMQ
-replies, the restricted dispatcher/processor together, exact context matching, raw/bulk and native
-outbox write checks, failure of every atomic participant, competing processes and in-flight SIGTERM/
-hard-death recovery. Transaction-local context is checked after commit and rollback while the same
-connection remains open. The [report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-9-sales-inbox-rls.md) records fresh totals.
+Run the Wholesale integration suite. It covers both tenants, retained RabbitMQ replies,
+restricted dispatcher/processor composition, exact context matching, raw/bulk writes,
+atomic-participant failure, competing processes and shutdown/death recovery. Transaction-local
+context is checked after commit/rollback while the same connection remains open.
 
-This is an optional WF2 adoption. Other module/workflow/table coverage, tenant scheduling, production
-role lifecycle, restricted broker intake, external poolers/failover, default rollout and templates
+This is an optional reservation-processor adoption. Other module/workflow/table coverage, tenant scheduling, production
+role lifecycle, restricted broker intake, external poolers/failover, default rollout
 remain separately selectable. **No new reusable library mechanism was introduced.** Existing
 transaction interception, persistence/messaging capabilities and native DI/EF/PostgreSQL suffice.
 

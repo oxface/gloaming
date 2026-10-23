@@ -30,14 +30,11 @@ console. Their database comes from `WHOLESALE_SCENARIO_CONNECTION`; they have a 
 Normal tests never route to these branches accidentally. Canonical product commands have separate
 real-process coverage in `ProductOperationsTests`, and regeneration launches the real Worker.
 
-The Access SQL fixture stays byte-for-byte intact. Event fixture JSON remains owned by the
-independent Events consumer and is linked read-only into the output directory. Retained module migrations
-remain in their owning modules. Purchasing and Dispatch with their owned migration chains are retired; the
-[current audit](../../../docs/reports/gloaming-library-audit.md) records replacement proof coverage. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/s1-wholesale-consolidation.md)
-maps the old projects and records fresh results separately from earlier slice evidence.
+The Access SQL fixture and literal event JSON are owned compatibility inputs. Event fixtures
+are linked read-only from the independent Events consumer. Module migrations remain in their
+owning modules. See the [test map](../../../tests/README.md) for current proof ownership.
 
-Directory population/disclosure/wire policy and its API/worker adoption are retired. The two
-actual local/broker route-exclusion proofs remain with `Reservations/Local` and
+Local/broker route-exclusion proofs live in `Reservations/Local` and
 `Reservations/Broker`, using a synthetic unselected route. `Api/ProfileMigrationTests` proves
 the Sales retirement upgrade preserves profiles, audit and queued envelopes, removes listing
 storage and stops profile publication; native HTTP RLS proofs reject and revoke old outbox grants.

@@ -220,14 +220,10 @@ can use these column grants without payload SELECT. Column privileges do not enf
 legal lifecycle protocol: a credential able to set dead_lettered_at can issue arbitrary SQL
 to clear it. Database grants/RLS and trusted application authority remain separate obligations.
 
-[OutboxDemo](../tests/Fixtures/OutboxHost/README.md) provides executable fixed-route operator
-endpoints and HTTP policy. [The slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-dead-letters.md)
-separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 results.
-The [completion supervision report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-completion-supervision.md)
-records the subsequent native-host, cancellation, backend-death and restart proofs; this
-follow-up requires no schema, grant or registration changes.
-Payload editing, completed-message replay, lease renewal, a generic administration
-framework and a template preset are excluded.
+The [outbox host fixture](../tests/Fixtures/OutboxHost/README.md) supplies fixed-route
+operator endpoints and HTTP policy. Provider/process tests cover native completion/accounting
+supervision, cancellation, backend loss and fresh-process recovery. Payload editing,
+completed-message replay, lease renewal and a generic administration framework remain unsupported.
 
 Read-only [backlog snapshots and consumer worker health](outbox-observability.md) are separately
 available without acquiring claims or retry authority. Counts are observations; their age and

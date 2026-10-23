@@ -25,7 +25,6 @@ The [adoption suite](../../tests/AdoptionTests/Consumer.Tests.csproj) owns the a
 consumer-owned base, registration and migrations. Both source shapes retain native save,
 staging, deletion, ordering, bounded-cascade, cancellation and failed-save recovery proofs.
 Actual shared EF preparation/validation composition is tested with ownership and outbox roles.
-The old prototype EF research probes are retired; current tests exercise Gloaming directly.
 
 ```bash
 dotnet test --project src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj

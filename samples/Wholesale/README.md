@@ -34,16 +34,11 @@ transaction-local setup remain explicit. This is a supported alternative composi
 full Sales lifecycle deployment. Broker dispatch and reply processing retain their separate
 restricted credentials and startup rejection checks.
 
-Eight former product test projects are now one
-[Wholesale.IntegrationTests](IntegrationTests/README.md) executable test project with capability
-folders. Historical fixture-import/journey helpers live under `IntegrationTests/Scenarios`, and
-two finite child scenarios preserve earlier real-process assertions. They are test support;
-the product never references them. Retained modules keep their prior migration chains and literal payloads; Sales adds a forward
-migration removing directory listing. Purchasing, Dispatch and their owned migration chains
-are explicitly retired, with the proof disposition in the
-[current audit](../../docs/reports/gloaming-library-audit.md). Runtime/browser proofs remain in `RuntimeComposition.Tests` because they own real
-Aspire/Keycloak/Chromium lifetimes rather than in-process composition.
+[Wholesale.IntegrationTests](IntegrationTests/README.md) owns application integration and
+capability scenarios. Finite child processes preserve crash/recovery assertions; the product
+does not reference this support code. Modules retain their owned migrations and literal payloads.
+Runtime/browser proofs stay in RuntimeComposition.Tests because they own actual
+Aspire/Keycloak/Chromium lifetimes.
 
-Independent technical examples live beside their Gloaming families under `src/`; they do not
-use Wholesale. See the [consolidation proof map](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/s1-wholesale-consolidation.md)
-for precise ownership, retained assertions and fresh verification.
+Independent technical examples live beside their Gloaming families under src/ and do not
+depend on Wholesale. See the [test map](../../tests/README.md) for proof ownership.

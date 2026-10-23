@@ -11,10 +11,10 @@ pre-commit:
       run: dotnet csharpier check . --include-generated
     - name: active-dotnet-style
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
+      run: dotnet format style Gloaming.slnx --verify-no-changes --no-restore
     - name: active-dotnet-analyzers
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
+      run: dotnet format analyzers Gloaming.slnx --verify-no-changes --no-restore
     - name: actor-identity-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-restore

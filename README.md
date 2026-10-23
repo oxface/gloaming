@@ -1,6 +1,6 @@
-# Modulith Foundry
+# Gloaming
 
-Gloaming is the primary product of this repository: independently selectable .NET libraries
+Gloaming provides independently selectable .NET libraries
 for native APIs and workers. Consumers own application composition, domain rules, identity
 admission, persistence setup, transport routing and deployment. Explicitly selected library
 operations may own a bounded transaction and invoke consumer handlers under their documented
@@ -35,9 +35,10 @@ The command reports the completed version and folder feed. Follow the
 [development guide](docs/development.md); no remote package service is required.
 The heavier release verifier checks all archives and seven isolated package-only consumers.
 
-[Application patterns](docs/application-patterns.md) describe module ownership, native scopes,
-per-module persistence and durable handoff using existing code. The source-copying template
-generator is retired. Future task skills should follow repeated real consumer work.
+[Modular monolith patterns](modular-monolith-patterns/README.md) describe how to initialize
+or adapt an application and add named modules, state-stored or event-sourced aggregates,
+identity setup and durable handoff. Give an agent that folder and the requested module map;
+the documents supply the workflow and completion checks.
 
 ## Examples and proofs
 
@@ -63,7 +64,7 @@ Wholesale owns its application integration/runtime suites. The solution includes
 
 ```bash
 dotnet tool restore
-dotnet build ModulithFoundry.slnx
+dotnet build Gloaming.slnx
 dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-build --no-restore
 dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj
@@ -73,8 +74,6 @@ Family-local READMEs list their own suites. See the [development commands](docs/
 [repository workflow](docs/conventions/repository.md) and [.NET conventions](docs/conventions/dotnet.md).
 CI selects affected families, package adopters and dependent consumers through an explicit path map.
 
-The [library audit](docs/reports/gloaming-library-audit.md) tracks implemented cleanup, fresh
-verification and remaining work. The [glossary](CONTEXT.md) records resolved terminology;
-current capability contracts remain beside their libraries. Historical source is available
-through [retirement provenance](docs/reports/s1-archive-retirement.md) and pinned Git links.
-Umbrine is the planned ERP consumer of selected Gloaming libraries and application patterns.
+See the [public documentation](docs/README.md), [glossary](CONTEXT.md) and
+[test guide](tests/README.md). Current capabilities, setup and supported limits remain beside
+their owning libraries.

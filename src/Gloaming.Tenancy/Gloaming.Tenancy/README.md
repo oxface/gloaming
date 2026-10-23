@@ -42,11 +42,10 @@ and access after disposal fail. Concurrent reads of the established value are su
 disposal is idempotent. No ambient state, rebinding, permission check or automatic selection
 is introduced. Separate operations use separate scopes.
 
-See [tenancy-only and combined native operation composition](../docs/composition.md)
-and [the split report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e1-identity-split.md). Optional [HTTP selection/admission utilities](../Gloaming.Tenancy.AspNetCore/README.md)
-and [EF ownership validation](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md) are
-implemented as separate opt-in packages. No stable wire or persistence format is
-established by this library.
+See [native operation composition](../docs/composition.md), optional
+[HTTP admission utilities](../Gloaming.Tenancy.AspNetCore/README.md) and
+[ownership validation](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/README.md).
+The core establishes no stable wire or persistence format.
 
 ## Deferred direction
 

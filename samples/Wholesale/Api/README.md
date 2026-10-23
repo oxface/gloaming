@@ -283,8 +283,8 @@ whether a transaction committed; no durable receipt or idempotency contract is p
 
 The executable setup, module/Contracts projects, native registration, public exception,
 HTTP resolvers, owned schemas/histories and response policy are consumer-owned examples.
-The template generator and bootstrap CLI are retired. Neither technical core nor HTTP adapter
-depends on Access. See the current [application patterns](../../../docs/application-patterns.md).
+Neither technical core nor HTTP adapter
+depends on Access. See the current [application patterns](../../../modular-monolith-patterns/README.md).
 
 [Composition proofs](../IntegrationTests/Api/CompositionTests.cs),
 [admission proofs](../IntegrationTests/Api/AdmissionTests.cs) and
@@ -301,28 +301,24 @@ proves Kestrel graph startup/manual setup and readiness during a database outage
 The compatibility proof starts from retained checkpoint SQL and preserves existing Access
 rows/history through module relocation and Inventory migration.
 
-Run the suite in the active PostgreSQL lane; it is no longer a container-free hook.
-Standalone actor/tenancy HTTP suites remain container-free. See
-[development commands](../../../docs/development.md) and
-[the E3.3 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-3-persisted-access.md) and
-[the E3.4 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-4-persisted-business-ingress.md) and
-[the E3.5 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-5-profile-mutation.md).
+The suite requires PostgreSQL; standalone actor/tenancy HTTP suites remain container-free.
+See [development commands](../../../docs/development.md).
 [Mutation proofs](../IntegrationTests/Api/ProfileTests.cs) and
-[Sales persistence proofs](../IntegrationTests/Api/ProfilePersistenceTests.cs) add real native
-antiforgery, exact application-actor rebinding, tenant/pair isolation, stale/competing edits,
-second-save database failure and cancellation at a blocked address UPDATE.
+[Sales persistence proofs](../IntegrationTests/Api/ProfilePersistenceTests.cs) exercise native
+antiforgery, actor rebinding, tenant/pair isolation, stale/competing edits, database failure
+and cancellation at a blocked address update.
 
-The [real browser journeys](../RuntimeComposition.Tests/BrowserTests.cs) exercise local
-Keycloak login/callback and native session cookies against HTTPS Kestrel, with no injected
-authentication cookie or OIDC form replay. Their scope/limits are recorded in
-[E3.7](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-7-oidc-browser-journey.md).
+The [browser journeys](../RuntimeComposition.Tests/BrowserTests.cs) exercise local
+Keycloak login/callback and native session cookies against HTTPS Kestrel without injected
+authentication cookies or OIDC form replay. See [runtime setup](../AppHost/README.md).
 
 Focused membership administration and private draft grants are supported as documented here.
 User creation/linking, invitations, general grant administration and configurable roles,
 logout/provider end-session, session invalidation, external provider/proxy topology, tenant-aware
 native authorization handlers and shared module transactions remain separate increments.
 The catalog read alone establishes no reservation/workflow guarantee; those have separate
-consumer proofs. E3.7's dated browser-provider evidence does not prove later permission features.
+consumer proofs. Browser tests cover provider login; focused integration tests cover resource
+permissions and membership changes.
 
 ## Private draft permissions
 
@@ -352,12 +348,10 @@ the creator's Edit grant in its existing transaction. System read requires its o
 and a human initiator contributes no authority. Sales commands retain their human requirement.
 The response's lines/customer display fields share draft visibility in this bounded sample.
 
-Count and page use separate native statements; choose RepeatableRead for one snapshot when
-required. Grant changes can affect a later statement while the actor/tenant stay fixed.
-This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
-or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
-[scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) and
-[proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-1-sales-resource-permissions.md).
+Count and page use separate native statements; choose RepeatableRead for one snapshot
+when required. Grant changes can affect a later statement while actor/tenant stay fixed.
+This capability supplies no permission-at-commit fence, grant editor, export/AI selection
+or role/group engine. See the [Sales guide](../modules/Sales/README.md).
 
 ## Optional Sales HTTP row security
 
@@ -441,6 +435,5 @@ not proved by this composition. Direct module callers in this selected mode must
 own native Sales transaction around reads, resource checks and writes.
 
 [HTTP/PostgreSQL proofs](../IntegrationTests/Api/RowSecurityTests.cs) exercise native HTTP
-admission, actual restricted roles, Alpha/Beta/Alpha backend reuse, deliberately unfiltered SQL,
-exact varchar keys, read/list/edit permissions, raw write rejection and profile/audit rollback.
-The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-6-sales-http-rls.md) records verification and limits.
+admission, restricted roles, backend reuse, unfiltered SQL, exact varchar keys, resource
+permissions, raw write rejection and profile/audit rollback.

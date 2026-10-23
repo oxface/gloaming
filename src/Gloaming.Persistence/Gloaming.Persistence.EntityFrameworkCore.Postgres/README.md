@@ -143,13 +143,8 @@ Access or HTTP dependencies. Run from the repository root:
 dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj
 ```
 
-Use the container environment in the [development guide](../../../docs/development.md).
-The [transaction refinement report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-5-transaction-rls-simplification.md)
-records fresh evidence. The [earlier session implementation](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-ownership-rls-capability.md)
-and [reference research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-rls-capability-reference-research.md) retain history.
-The [optional Sales HTTP composition](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
-adopts this capability for six finite tables under separate restricted credentials. Its
-[report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-6-sales-http-rls.md) records native varchar adoption and proofs.
-Default Wholesale HTTP/AppHost/worker rollout remains separate. The retained
-[CQRS isolation scenario](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
-owns its explicit local setup; the template generator is retired.
+Use the [development guide](../../../docs/development.md) for containers.
+[Optional Sales HTTP composition](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
+adopts this capability for its finite table set with restricted credentials.
+The [CQRS isolation fixture](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+owns separate explicit setup. Neither example installs RLS by default in every application host.

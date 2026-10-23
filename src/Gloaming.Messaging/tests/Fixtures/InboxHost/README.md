@@ -174,8 +174,7 @@ DELETE locking can wait; repeated calls can delete another batch, and zero durin
 is not global exhaustion. A lost commit response can leave deletion committed. Retention
 duration, repetition, scheduling, logs and business idempotency stay consumer-owned.
 
-The sample's minimal table DELETE grant cannot prevent arbitrary SQL by its credential holder
-from deleting active rows. Trusted invocation is required; install consumer-native row-security
-policies when database-enforced tenant/lane/lifecycle restrictions are needed. The library
-respects those policies and bypasses no RLS. See [the full retention/expiry/authority contract](../../../docs/inbox-retention.md)
-and [new PostgreSQL/process evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-retention.md).
+The fixture's DELETE grant cannot prevent its credential holder deleting active rows
+through arbitrary SQL. Trusted invocation is required; install native policies for
+database-enforced tenant/lane/lifecycle restrictions. The library bypasses no RLS.
+See the [retention/authority contract](../../../docs/inbox-retention.md).

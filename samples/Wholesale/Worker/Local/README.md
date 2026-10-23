@@ -91,8 +91,6 @@ mapping, not a transparent general transport. Delivery and processing remain sep
 and in-process placement does not create cross-module atomicity. Existing inbox retention/retry,
 outbox lease, workflow version and operator-signal limitations still apply. Poison work requires
 consumer intervention policy. Parallel workflow branches, expiry, cancellation and shared native
-transactions are outside this slice. No migrations or template presets are added.
+transactions are outside this example.
 
-See the [D2.3 research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3-module-consistency-and-coordination.md),
-[D2.3a proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3a-local-durable-module-delivery.md) and
-[workflow library contract](../../../../src/Gloaming.Messaging/docs/workflows.md).
+See the [workflow contract](../../../../src/Gloaming.Messaging/docs/workflows.md) for transaction ownership and supported local delivery composition.

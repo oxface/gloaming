@@ -47,12 +47,9 @@ optional attribution and authorization; there is no implicit initiator populatio
 propagation. For OIDC, the sample will map validated issuer/subject to a globally unique
 application user in consumer-owned Access code. The core performs no provider lookup.
 
-See [actor-only and combined native operation composition](../../Gloaming.Tenancy/docs/composition.md),
-[the split interfaces for review](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e1-tenant-actor.md) and
-[the split report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e1-identity-split.md). Optional
-[ASP.NET Core integration](../Gloaming.ActorIdentity.AspNetCore/README.md) and its native
-request proofs are implemented for review in E3.1. The core acquires no new dependencies.
-No stable wire or persistence format is established here.
+See [native operation composition](../../Gloaming.Tenancy/docs/composition.md) and optional
+[ASP.NET Core integration](../Gloaming.ActorIdentity.AspNetCore/README.md). The core remains
+independent; it establishes no stable wire or persistence format.
 
 ## Deferred direction
 

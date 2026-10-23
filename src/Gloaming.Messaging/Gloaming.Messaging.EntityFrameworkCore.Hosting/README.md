@@ -64,11 +64,8 @@ package reference and namespace import. Native logger categories follow the move
 namespace; adjust category-specific host filters if needed. Polling and supervision behavior
 is retained. Database mappings, fixtures, schemas and migrations are unchanged.
 
-Executable hosts include [the independent worker example](../samples/Delivery/README.md)
-and [Wholesale](../../../samples/Wholesale/Worker/README.md). Existing provider and process
-tests exercise startup validation, fresh scopes, cancellation and fatal supervision. The
-package-only [hosting consumer](../../../tools/release/consumers/Hosting.cs) adopts both
-workers with supplied callable roles and no database provider. The separate PostgreSQL
-package consumer verifies its persistence/producer graph restores no Hosting abstractions.
-The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/messaging-worker-hosting.md) records fresh results
-and remaining sample consolidation work.
+Executable hosts include [the worker example](../samples/Delivery/README.md) and
+[Wholesale](../../../samples/Wholesale/Worker/README.md). Provider/process tests exercise startup
+validation, fresh scopes, cancellation and fatal supervision. The package-only
+[hosting consumer](../../../tools/release/consumers/Hosting.cs) supplies callable roles without a
+database provider. Persistence-only adoption does not require Hosting abstractions.

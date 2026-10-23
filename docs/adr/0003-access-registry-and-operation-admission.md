@@ -1,8 +1,6 @@
 # 0003: Resolve Access identities and admit Organizations before tenant publication
 
-Status: accepted design direction in the owner-approved E3.3 plan, 2026-10-05.
-Implementation was owner-reviewed and checkpointed as `20a02be`; this is consumer
-sample policy.
+Status: accepted and implemented, 2026-10-05. This is application policy.
 
 ## Context
 
@@ -41,10 +39,8 @@ Access reads use native request-scoped persistence and propagate cancellation/da
 The host explicitly runs setup; startup never migrates, seeds, saves or retries requests.
 This schema is a consumer registry, not unrestricted access to tenant business data.
 
-Membership management, invitations, roles, session invalidation and stronger mutation-time
-authorization need separate review. Assembly-level module isolation and persisted Inventory
-ingress remain E3.4 work. No reusable Access library is justified by this consumer alone.
+Membership management, invitations, roles and resource permissions remain application policy.
+This decision covers admission and context publication. No reusable Access library is
+justified by this consumer alone.
 
-See [the approved plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-3-persisted-access.md),
-[consumer setup](../../samples/Wholesale/Api/README.md) and
-[execution report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-3-persisted-access.md).
+See [consumer setup](../../samples/Wholesale/Api/README.md) and [Access ownership](../../samples/Wholesale/modules/Access/README.md).

@@ -1,78 +1,51 @@
 # Repository workflow
 
-## Reviewable increments
+## Reviewable changes
 
-Deliver one coherent outcome per increment, including its implementation, consumer usage,
-tests, and documentation. Keep the repository valid and the outcome understandable in one
-owner review. Split independent outcomes rather than introducing empty layers or broken
-intermediate states.
+Deliver one coherent outcome with implementation, consumer usage, relevant tests and
+documentation. Keep the repository valid and the change understandable in one review.
+Public library interfaces and implementations receive owner review line by line.
+Use [library design conventions](library-design.md) when changing a capability boundary.
 
-Library interfaces and implementations receive line-by-line review. Sample usage and proof
-changes accompany the library so the consumer obligations can be assessed together. Update
-application setup guidance when the increment establishes a reusable pattern.
+Preserve a user's staged review snapshot. Agent edits stay in the working tree until staging
+is explicitly authorized. Work on topic branches and integrate through pull requests;
+publish a topic branch to its own remote branch.
+
+## Validation and compatibility
+
+Run checks appropriate to the change and complete required repository checks. Explain what
+was actually executed and its limits. Tests for native providers, package-only adoption and
+process recovery protect different boundaries; test presence or a matching count proves
+no execution.
+
+Preserve owned payloads, schemas and migrations where a supported compatibility guarantee
+depends on them. Moving or removing projects must account for linked inputs, CI selection,
+documentation and unique proof obligations. Assess required gaps before declaring a
+capability complete; successful substeps do not close its remaining adoption or deployment work.
 
 ## Repository scripts
 
-Use TypeScript for new durable repository scripts and proof harnesses, and when actively
-reworking such tooling. Document the runtime and invocation, and verify types and formatting.
-Preserve unrelated existing scripts; this convention does not authorize a repository-wide
-migration. Retired tooling remains historical Git evidence through the
-[archive retirement record](../reports/s1-archive-retirement.md).
+Use TypeScript for new durable repository scripts and proof harnesses. Document their runtime
+and invocation, and verify types and formatting. Preserve unrelated existing scripts.
 
-## Handoff
+## Documentation
 
-Present the coherent outcome, important choices, review-worthy files, verification, risks,
-and remaining gaps. Each slice report also distinguishes library mechanisms from template
-setup and sample policy, and states which guarantees were tested, rejected, proposed, or
-inherited only as historical evidence. State explicitly when no new reusable mechanism
-was proven.
+Public documentation covers current setup, accepted decisions, architecture, conventions,
+guarantees and limitations. Library contracts live beside their source. The
+[application patterns](../../modular-monolith-patterns/README.md) describe consumer structure
+and implementation tasks. Link to current source and proof owners when examples help.
 
-## V1 scope and remaining gaps
+Store research, comparisons, proposals, plans, execution logs and local work queues in ignored
+docs/internal/. Public guides and package READMEs must work in a clean checkout without that
+directory. Keep essential supported limitations in the public contract even when their
+discussion is internal.
 
-Assess known gaps before declaring a slice or capability block complete. Important gaps
-needed for the selected v1 outcome remain open in that block and must be resolved there,
-even if implementation spans several reviewable PRs. Merged sub-slices are not evidence that
-the whole block is complete. Do not close a block and then present its known remaining work
-as an unrelated new slice.
+## Handoff and commits
 
-Each report records which gaps are resolved, which remain required before closure, and which
-have an explicit owner-approved deferral until after v1. Record the supported behavior and
-limitation beside the owning library. Do not automatically defer important gaps or silently
-add unrelated enhancements to v1. A defect that breaks a supported guarantee must be fixed
-before claiming completion, or the contract narrowed with owner review. Interface and commit
-review requirements still apply.
-
-The [library audit](../reports/gloaming-library-audit.md#remaining-cleanup-slices)
-records the current queue and required closure evidence. Owning family contracts record
-supported behavior and explicit deferrals. Reconcile older gaps against later
-implementation/evidence before reopening work. Distinguish functional defects, missing
-operational proofs, consumer responsibilities and deliberately unsupported capabilities.
-A closed sub-slice does not close its owning block's deployment or adoption obligations.
-
-Before publication sign-off, finish consolidation, integrated package/adoption/runtime
-verification and separate independent code and architecture reviews against the cleaned tree.
-Earlier reviews certify their dated scopes. Relocation/removal must preserve unique proof
-obligations and update CI, documentation and active project/fixture references.
-
-## Commit approval
+Report the outcome, relevant verification, review-worthy files, limitations and remaining gaps.
+Distinguish reusable mechanisms from consumer policy, and fresh results from historical evidence.
 
 The repository owner must explicitly approve the exact complete change set before every
-commit. Task authorization, plan approval, successful checks, silence, and earlier commit
-approval do not authorize `git commit`.
-
-Present the implementation and documentation changes, verification, and known limitations
-before requesting commit approval. If the proposed files change after approval, obtain
-approval for the updated change set. Include staged and unstaged work in the handoff.
-
-## Library documentation
-
-Keep each library's consumer setup, current capabilities, limitations and deferred-feature
-context beside its source, in its README and local docs directory where useful. A consumer
-should not need the repository's root plans to discover an essential guarantee or integration
-obligation. Keep related package composition and optional dependencies explicit.
-
-Root design decisions, ADRs, interface proposals and slice reports retain cross-cutting review
-and dated evidence; link them to the owning library's current capability record. Mark future
-features as deferred rather than supported, including their known proof obligations. Moving
-project/test folders is a separately reviewed relocation with references, owned fixture/migration inputs
-and checks accounted for; documentation locality does not require moving everything at once.
+commit. Task authorization, successful checks, silence and earlier commit approval do not
+authorize a later commit. If the proposed files change after approval, obtain approval for
+the updated set. Include staged and unstaged work in the handoff.

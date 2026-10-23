@@ -6,10 +6,8 @@ services for the [domain decisions](../../Domain/DomainDecisionTests.cs) and
 candidates remain Sales policy. The module service owns its native save/commit and accepted-change
 audit; attribution alone grants no authority.
 
-The former mixed Sales/Purchasing demonstration is retired. Purchasing's price, line-replacement
-and final-total policies are no longer maintained. Inventory exercises the event-sourced
+Inventory exercises the event-sourced
 candidate/append path in [EventPersistence](../EventPersistence/README.md); the API's
 [profile tests](../../Api/ProfileTests.cs) exercise actual Sales consumer behavior.
 
-Run through the [Wholesale integration project](../../README.md). No new reusable mechanism
-was proven by this cleanup.
+Run through the [Wholesale integration project](../../README.md).

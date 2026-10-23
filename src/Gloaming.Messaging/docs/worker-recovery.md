@@ -94,15 +94,11 @@ eventual force termination; forced death can lose diagnostics and leave acceptan
 
 ## Evidence boundary
 
-The [closure report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-broker-recovery-shutdown.md) records real
-PostgreSQL/RabbitMQ process evidence for live broker application outage, durable queue
-preservation, producer commits during outage and fresh-session progress. Native resource
-blocking establishes an actual stalled publication before SIGTERM, with a separate fifteen-
-second process-stop verification budget. This is evidence for the pinned native composition,
-not every network blackhole, cluster failover or arbitrary cancellation implementation.
-The subsequent [extraction report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/rabbitmq-session-lifecycle.md) records
-fresh public-session proofs and reruns of actual consumers through the optional package;
-earlier consumer-only results are not substituted for those new library/adoption executions.
+Process tests exercise PostgreSQL/RabbitMQ outage, retained queues, producer commits
+during outage and fresh-session progress. Native resource blocking establishes stalled publication
+before shutdown. These are bounded tests of the selected composition, not certification of
+every network blackhole, cluster failover or arbitrary cancellation implementation.
+The [session package](../Gloaming.Messaging.RabbitMQ/README.md) defines its own public lifecycle contract.
 
 The existing unavailable-collector scenario is reused with its one-second OTLP timeout and
 a separate fifteen-second budget for stopping the three worker roles. Its business-progress

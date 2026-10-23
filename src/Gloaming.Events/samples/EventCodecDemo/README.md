@@ -21,8 +21,8 @@ stock/purchasing folds, bounded history readers, chained/nested schema changes a
 replacement recipes. Those provide compatibility variants without becoming more advertised
 applications. Historic schemas and numeric expected outcomes remain independently authored.
 The original literal paths/provenance remain in [Fixtures](Fixtures/README.md), including
-payloads linked into Wholesale tests. The old `--schema-evolution` CLI is retired; its
-[explicit recipe](../../tests/CodecAdoptionTests/Fixtures/SchemaEvolutionJourneys.cs) is still tested.
+payloads linked into Wholesale tests. The
+[explicit schema-evolution recipe](../../tests/CodecAdoptionTests/Fixtures/SchemaEvolutionJourneys.cs) is still tested.
 
 ```bash
 dotnet test --project src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj

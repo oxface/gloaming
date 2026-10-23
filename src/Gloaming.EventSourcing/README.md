@@ -13,7 +13,7 @@ public contract and dependencies; the family is not an umbrella runtime package.
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.
 The [executable consumer](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md) demonstrates adoption.
-Its separate [ES3 regeneration command](../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
+Its separate [regeneration command](../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 demonstrates finite consumer maintenance, native conflicts, cancellation and restart.
 
 Library tests:

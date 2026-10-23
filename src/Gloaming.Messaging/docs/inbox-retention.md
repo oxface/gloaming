@@ -133,10 +133,8 @@ Its role check rejects owner/superuser/BYPASSRLS and expanded effective privileg
 sample policy, not universal database-security certification. Consumers may invoke it manually
 or schedule it using their existing infrastructure; no additional permanent worker is required.
 
-Dead letters remain retained for repair and authorized retry. Discard/purge, permanent duplicate
-registries, supplied scheduling, durable cumulative cleanup accounting and console/dashboard
-features are not implemented by this contract. The owner explicitly approved these five
-supplied-feature deferrals with checkpoint `6510f9e`, merged as `2e1ffac`;
-the [dated M2 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-retention.md) records the original proposal.
-Those deferrals do not grant permanent delivery suppression or terminal-deletion support.
-See [completed-outbox cleanup](outbox-retention.md) for its different sender-history contract.
+Dead letters remain for repair and authorized retry. Discard/purge, permanent duplicate
+registries, supplied scheduling, durable cumulative cleanup accounting and operator consoles
+are not implemented. These supported limits grant neither permanent delivery suppression nor
+terminal-deletion support. [Completed-outbox cleanup](outbox-retention.md) has a different
+sender-history contract.

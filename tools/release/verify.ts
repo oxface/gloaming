@@ -176,7 +176,7 @@ function renderReadme(file: string): string {
         !repoPath.startsWith("../"),
         `README link escapes repository: ${target}`,
       );
-      return `](https://github.com/oxface/modulith-foundry/blob/main/${repoPath}${fragment ? `#${fragment}` : ""})`;
+      return `](https://github.com/oxface/gloaming/blob/main/${repoPath}${fragment ? `#${fragment}` : ""})`;
     },
   );
 }
@@ -289,10 +289,7 @@ try {
     assert.equal(metadata.license.type, "expression");
     assert.equal(metadata.license["#text"], "Apache-2.0");
     assert.equal(metadata.repository.type, "git");
-    assert.equal(
-      metadata.repository.url,
-      "https://github.com/oxface/modulith-foundry",
-    );
+    assert.equal(metadata.repository.url, "https://github.com/oxface/gloaming");
     assert.equal(metadata.readme, "README.md");
     assert.equal(
       readFileSync(join(extracted, "README.md"), "utf8"),

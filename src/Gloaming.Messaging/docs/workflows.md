@@ -29,13 +29,10 @@ by this package. Shared native transactions through Contracts are a separate ato
 an automatic consequence of workflow persistence. Compensation itself is consumer-owned business
 behavior and may fail or require an operator; durable state does not guarantee eventual success.
 
-The [D2.3 comparison](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3-module-consistency-and-coordination.md) separates
-process state, delivery and transaction ownership. The
-[local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md) now demonstrates
-broker-free delivery through public module intake Contracts using existing inbox/outbox seams.
-Its [proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3a-local-durable-module-delivery.md) records adoption
-and process-death evidence without adding a general transport or extending this package to arbitrary
-direct calls. Shared native transaction adoption remains a separate proof.
+The [local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md)
+demonstrates broker-free delivery through public module intake Contracts and existing inbox/outbox
+roles. It does not extend workflow execution to arbitrary independently committing direct calls.
+Shared native transaction composition has its own atomicity obligations.
 
 ## Setup and execution
 
@@ -190,14 +187,7 @@ separate consumer decisions and proofs before runtime expansion.
 
 ## Executable references
 
-- [Sales bindings](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs)
-  perform two stock reservations and explicitly release the first after second-line refusal.
-- [Sales application](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOrders.cs)
-  shows explicit start/read/operator save/commit. Its [reply handler](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs)
-  retains producer/tenant/actor admission.
-- [Standalone workspace consumer](../tests/WorkflowPostgresTests/WorkspaceConsumer.cs) owns a different
-  schema, tenantless metadata, JSON and contracts. Existing-resource inspection branches differently
-  and refuses activation without releasing a resource it did not create.
-- [Protocol/transaction/inbox proofs](../tests/WorkflowPostgresTests) exercise real PostgreSQL.
-  [The dated slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-durable-continuations.md) separates these results
-  from historical sequential-policy evidence.
+- [Sales bindings](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs) reserve two stock lines and compensate explicitly after refusal.
+- [Sales application](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOrders.cs) owns start/read/operator save/commit; its [reply handler](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs) retains admission.
+- [Workspace consumer](../tests/WorkflowPostgresTests/WorkspaceConsumer.cs) owns a different schema, JSON, contracts and business branches.
+- [Native protocol tests](../tests/WorkflowPostgresTests) and [compiled deployments](../tests/WorkflowDeploymentTests) exercise PostgreSQL composition and compatible consumer replacement.

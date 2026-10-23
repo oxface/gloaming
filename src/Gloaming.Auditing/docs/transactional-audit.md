@@ -1,8 +1,6 @@
 # Transactional audit contract
 
-[Package setup and usage](../Gloaming.Auditing.EntityFrameworkCore/README.md) is independently
-adoptable. [The reviewed E9 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e9-explicit-transactional-audit.md)
-records the comparison that earned this extraction.
+[Package setup and usage](../Gloaming.Auditing.EntityFrameworkCore/README.md) describes independent adoption.
 
 ## Native lifecycle
 
@@ -22,7 +20,7 @@ EF supplies atomicity within one owning transaction. Validation strengthens the 
 tracked-write protocol; it does not authorize arbitrary SQL or enforce all product policy.
 Do not use a DbContext concurrently, rebind actor/tenant within an operation, or nest/replace
 the transaction around staged entries. Sharing a connection across modules needs separate
-proof and is not supported by this slice.
+proof and is not supported by this capability.
 
 ## Consumer-owned selection and policy
 
@@ -49,8 +47,8 @@ ConfigureAudit supplies the native tenant/type/item/time/ID index by default as
 ix_audit_subject_timeline. Consumers can rename or
 replace it with native EF configuration.
 Read permission and tenant visibility remain consumer policy; there is no timeline service.
-PostgreSQL consumers select Details JSONB with native HasColumnType("jsonb"); the thin provider
-package is retired. Relational mapping returns editable native builders and requires explicit
+PostgreSQL consumers select Details JSONB with native HasColumnType("jsonb").
+Relational mapping returns editable native builders and requires explicit
 provider configuration. Named V1 payload records keep schema
 version selection in each wrapper, beside the payload fields; callers provide business values.
 
@@ -76,6 +74,3 @@ untrusted persisted data must check enum/key consistency before using it as appl
 | Tamper evidence | Defined threat model, database roles, integrity format/key management and independent verification. Tracked immutability is narrower. |
 | Other database providers | Actual provider JSON/time mapping, transaction/completion semantics, migrations and fault tests. |
 | Cross-module atomicity | Named workflow with shared native connection/enlistment/commit/failure proofs. |
-
-Historical archive proofs inform test intent; only current public-interface/consumer executions
-in [the report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-explicit-transactional-audit.md) establish new guarantees.

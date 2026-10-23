@@ -1,7 +1,6 @@
-> This is retained integration-test scenario documentation. The former standalone product
-> executable was retired by S1. Use the [Wholesale product](../../../README.md) and its
-> canonical API/worker/maintenance roles; this directory owns fixture/journey support only.
-> Run proofs with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
+> This directory owns fixtures and journeys for [Wholesale integration tests](../../README.md).
+> Use the [Wholesale application](../../../README.md) for API, worker and maintenance commands.
+> Run tests with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
 
 # Native CQRS consumer journey
 
@@ -125,19 +124,12 @@ cross-module technical duplication that warrants a library. Persisted projection
 generic repositories, mediator/pipeline abstractions and generic paging/filter
 helpers remain unselected.
 
-The [A2.1 permission slice](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) adds
-direct human/system grants and native HTTP adoption; its query tests cover sparse grants,
-revocation, tenant-colliding IDs and count/page grant-snapshot changes. This supplies no
-grant editor, role/group engine, export/AI endpoint or strict permission-at-commit fence.
-RLS is exercised separately by the opt-in mode linked above, with its own credentials,
-table inventory, native transaction setup and limitations.
+Direct human/system grants and HTTP adoption cover sparse grants, revocation,
+tenant-colliding IDs and count/page snapshot changes. This supplies no grant editor, role/group
+engine, export/AI endpoint or strict permission-at-commit fence. The opt-in RLS mode has its own
+credentials, table inventory, transaction setup and limits.
 
 Registrations, operation scopes, explicit transaction ownership and native queries remain
-consumer-owned examples. The template generator is retired. Additional query/authorization
+consumer-owned examples. Additional query/authorization
 compositions, indexes/benchmarks, alternate sorting and provider semantics need concrete
 consumer requirements. An upper page-size limit does not bound offset scan or aggregate-query cost.
-
-The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/c1-cqrs-consumer-patterns.md) records the pre-implementation
-consumer proposal. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/c1-cqrs-consumer-patterns.md)
-records the original scope, dated checks and limitations; the
-[active audit](../../../../../docs/reports/gloaming-library-audit.md) owns current cleanup.

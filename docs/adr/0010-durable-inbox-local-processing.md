@@ -35,8 +35,5 @@ Optional sequential hosting uses fresh scopes and cooperative cancellation. Tran
 acknowledgements, setup/migrations, poison policy, retention, redrive, scaling and cross-module
 coordination remain explicit or deferred. Native RabbitMQ and HTTP consumers demonstrate acceptance
 boundaries; optional native session ownership is separate from transport routing/acknowledgement.
-The generator and frozen source archive are retired through Git provenance.
 
-[Library-local contract](../../src/Gloaming.Messaging/docs/inbox.md) and
-[dated execution evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md) distinguish supported
-mechanisms, consumer policy and remaining proof gaps from archived receipt-only evidence.
+See the [library-local contract](../../src/Gloaming.Messaging/docs/inbox.md) for setup, guarantees and native provider/process proofs.

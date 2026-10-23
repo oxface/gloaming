@@ -1,6 +1,6 @@
 # Explicit stock-position regeneration
 
-This is ES3's finite maintenance journey for one existing Inventory aggregate. It uses
+This finite maintenance operation repairs one existing Inventory aggregate. It uses
 the provided `AggregateRegenerator` through Inventory's technical `StockPositionMaintenance`
 entry and the current full-prefix rebuilder. The existing `IStockPositionRebuilding` remains
 a caller-saves staging Contract. Ordinary reads and commands
@@ -84,7 +84,7 @@ writers. Continuous writes can exhaust this finite budget. The operator owns any
 window and consistent reducer deployment. This command does not exclude all writers before
 read, fence raw SQL, repair bad retained events, undo previously committed bad decisions or
 make mixed reducer versions safe. No scheduler, queue, lease, aggregate discovery, async view
-engine, new-service bootstrap or template runtime is supplied.
+engine or new-service bootstrap is supplied.
 
 ## Executable proofs
 
@@ -92,7 +92,7 @@ engine, new-service bootstrap or template runtime is supplied.
 PostgreSQL 18.6 Testcontainers, consumer Contracts for reads/writes and native interceptors/SQL
 barriers for faults. Linux child-process cases exercise SIGINT, hard kill and explicit restart.
 The commit-acknowledgment case injects an exception after a real commit; it is not a network
-partition test. Existing ES2 evidence is distinct from these new ES3 executions.
+partition test.
 The independent [ledger executor proofs](../../../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegenerationTests.cs)
 exercise initialization order, narrow classification, native completion and cleanup without
 Inventory, tenancy or codec assumptions. See the [package contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations).
@@ -106,7 +106,6 @@ DOTNET_PROCESSOR_COUNT=4 \
   --no-build --no-restore --filter-class '*StockRegenerationTests'
 ```
 
-Use your reachable Docker-compatible socket on other hosts. See the
-[scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es3-aggregate-regeneration-operations.md),
-[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es3-aggregate-regeneration-operations.md) and
-[current rebuilder contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).
+Use a reachable Docker-compatible socket. See the
+[current regeneration contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
+for progress, retry and uncertain-commit limits.

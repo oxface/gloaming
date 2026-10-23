@@ -23,17 +23,16 @@ Queries/Filters can filter and join stored aggregate state without persisting se
 Secondary inline and multi-stream projections are deferred until a concrete query/storage need
 justifies them. Main aggregate state must remain current within every successful append transaction.
 
-Optional Events.Serialization now provides explicit forward JSON upcasting and PassThrough
-for compatible schema changes. Inventory composes it during historical decoding and full replay;
-ordinary inline loading still reads saved state without replay or repair. Event rows are never
-rewritten. Shape-only changes need not rebuild correct state; projection-meaning changes and
-reader-before-writer rollout remain consumer decisions. See the [codec contract](../../Gloaming.Events/Gloaming.Events.Serialization/README.md)
-and [upcasting evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-payload-upcasting.md). This EF package gains
-no serialization dependency.
+Optional Events.Serialization supplies forward JSON upcasting and PassThrough for
+compatible changes. Inventory composes it during historical decoding/full replay; ordinary
+inline loading reads saved state without replay or repair. Stored facts are not rewritten.
+Projection-meaning changes and reader-before-writer rollout remain consumer decisions.
+See the [codec contract](../../Gloaming.Events/Gloaming.Events.Serialization/README.md).
+The EF store gains no serialization dependency.
 
 ## Explicit consumer operations
 
-The [ES3 stock-position command](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
+The [stock-position command](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 demonstrates one finite operation with progress, bounded native-conflict retries, cancellation
 and process restart. The optional `AggregateRegenerator<TAggregate,TContext>` now owns fresh
 attempt scopes/read-committed transactions, replay/save/commit, cleanup and typed outcomes over
@@ -50,29 +49,13 @@ per-call initialization hook is needed. Optional IProgress receives ordered Repo
 while delivery belongs to the reporter. The CLI uses inline reporting; standard Progress<T>
 can deliver after completion, with asynchronous handler errors outside the returned outcome.
 
-## Planned capabilities and their proof obligations
+## Unsupported capabilities
 
-- Async projections and durable checkpoints: prove ordering, duplicate handling, rollback,
-  restart and fault recovery. Not just an implementation exercise.
-- Multi-stream projections and extra inline views: reassess native EF joins/filter translation
-  first. Shared-row updates require real cross-stream concurrency and deadlock proofs; these
-  belong before a general projection maintenance engine.
-- Snapshot plus delta catch-up: deferred. Current inline state is required at the exact head;
-  ordinary fetch does not repair or apply missing events. Full replay repairs data explicitly.
-- New-service repopulation: unsupported; revisit only for a concrete receiver requirement.
-  The [historical roadmap](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/remaining-capability-roadmap.md) records earlier proposals. A public export
-  snapshot plus retained integration changes needs a consistent boundary and safe progress
-  cursor; timestamps or allocated global sequences alone do not establish it. The existing
-  bounded per-stream reader/full rebuilder does not supply this cross-service protocol.
-- Projection backfill/rebuild orchestration: new views need an explicit population step, not
-  automatic read repair. Prove serving behavior, cutover and concurrency before adding workers.
-- Stream lifecycle/deletion, branching, global ordering, pessimistic write modes, subscriptions,
-  event metadata/correlation/causation, retention/archiving, import/export and ambiguous-commit
-  reconciliation: unsupported. Add bounded concrete obligations before introducing machinery.
-- Messaging/outbox, audit integration and cross-module transaction composition remain
-  separately selected consumer integrations, outside this event-store contract.
-- Provider-specific locking (for example SELECT FOR UPDATE): if a real future obligation needs
-  it, consider a separate *.Postgres package and discover the abstraction then. The earlier
-  advisory-gate package was removed; its proof document is retained as historical evidence.
+- Async projections/checkpoints and multi-stream views are unsupported. A future mechanism must establish ordering, concurrency, rollback, restart and safe progress.
+- Snapshot/delta catch-up is unsupported. Current inline state must match the exact head; full replay is separate explicit maintenance.
+- New-service repopulation is unsupported. It needs a consistent snapshot boundary and safe progress cursor; timestamps or allocated global sequences alone do not establish either.
+- Backfill/cutover orchestration, stream deletion/branching, global ordering, subscriptions, event metadata, retention, import/export and ambiguous-commit reconciliation are outside this contract.
+- Messaging, audit and cross-module transaction composition remain separately selected consumer integrations.
+- Provider-specific pessimistic locking requires a concrete obligation and its own supported contract.
 
 [EF setup, public API, errors and limitations](../Gloaming.EventSourcing.EntityFrameworkCore/README.md) is the consumer contract.

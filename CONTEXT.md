@@ -1,4 +1,4 @@
-# Modulith Foundry
+# Gloaming
 
 The project's vocabulary for reusable capabilities, the applications that adopt them,
 and the identity of work performed in those applications.
@@ -6,20 +6,16 @@ and the identity of work performed in those applications.
 ## Language
 
 **Gloaming**:
-The independently adoptable .NET libraries developed in this repository. Modulith Foundry
-remains the repository and reference-sample identity.
-
-**Umbrine**:
-The ERP product to be built using Gloaming libraries and consumer-owned application patterns.
-Its name derives from Umbral; Umbrine and Gloaming share a darkness theme.
+The independently adoptable .NET libraries and the repository that develops them.
+Wholesale is the reference application.
 
 **Library segment**:
 A selected reusable capability presented to a consumer through its documented contract.
-_Avoid_: Foundry framework
+_Avoid_: Application framework
 
-**Template**:
-A customizable starting point for a consumer-owned application, assembled from exercised
-sample setup.
+**Application patterns**:
+Documents describing a preferred consumer-owned application structure and implementation
+tasks, adapted to the target repository and selected capabilities.
 _Avoid_: Application runtime
 
 **Reference sample**:
@@ -28,7 +24,7 @@ compose together.
 _Avoid_: Complete product
 
 **Consumer**:
-An application adopting a library segment or the template.
+An application adopting selected library capabilities and its own application structure.
 _Avoid_: Sample, business customer
 
 **EventReactions**:

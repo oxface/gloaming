@@ -10,6 +10,7 @@ Gloaming package or a required application architecture.
 | [InboxHost](InboxHost/README.md) | HTTP intake, authorized receipt-generation retry and separately credentialed cleanup. | [Rendering](../DeliveryTests/Rendering), [processes](../DeliveryTests/Processes/InboxRetentionProcessTests.cs). |
 | [BrokerJourney](BrokerJourney/README.md) | Finite real-broker round trip and mixed-schema executable proof. Reuses the actual worker's transport adapters. | [Broker tests](../DeliveryTests/Rendering/BrokerTests.cs), [schema processes](../DeliveryTests/Processes/SchemaCompatibilityProcessTests.cs). |
 | [WorkflowDeployment](WorkflowDeployment/README.md) | Separately compiled Earlier/Current executables and independently authored literal v1 JSON. | [Deployment tests](../WorkflowDeploymentTests/DeploymentTests.cs). |
+| [DueTimeIntent](DueTimeIntent/README.md) | Native one-off occurrence experiment with distinct business policies, atomic outbox release, stale-generation rejection and compiled recovery/readers. No scheduling library API is selected. | [Provider/composition](../OutboxPostgresTests/DueTimeIntentTests.cs), [races](../OutboxPostgresTests/DueTimeIntentTests.Races.cs), [processes](../OutboxPostgresTests/DueTimeIntentTests.Deployments.cs). |
 
 Schemas, migration IDs and wire data are preserved. The Exports/Rendering CLR namespaces
 and sample assemblies were renamed during consolidation; there are no external consumers.

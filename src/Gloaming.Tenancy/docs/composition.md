@@ -59,4 +59,4 @@ dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.cspr
 
 For native HTTP authentication/admission, use the selected family's HTTP adapter and its
 documented ordering. For application boundaries and persistence, see
-[application patterns](../../../docs/application-patterns.md).
+[application patterns](../../../modular-monolith-patterns/README.md).

@@ -135,10 +135,9 @@ This assumes the consumer's tenant query filter and read authorization. Global e
 queried separately with SubjectKey == null. Time/ID supplies deterministic display ordering,
 not database commit order; no timeline endpoint, authorization or query service is added.
 
-Keep provided EF rows as classes with reference identity. A C# record would not give
-JsonElement content equality. The pending-envelope guard deliberately compares exact
-GetRawText values, including formatting; .NET's DeepEquals instead accepts equivalent JSON
-values. See [primary-source research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-audit-context-research.md).
+Keep provided EF rows as classes with reference identity. The pending-envelope guard
+compares exact GetRawText values, including formatting. Structural JSON value equality is a
+different comparison contract.
 
 Source/action/outcome/reason/schema and detail disclosure have no library taxonomy.
 Audit IDs are unique per table and Stage is not idempotent. Delivery/business semantic
@@ -166,7 +165,7 @@ introduce V2 and its matching version. Preserve the V1 definition for readers of
 entries. A renderer can dispatch by source/action/SchemaVersion using consumer-owned native
 JSON deserialization. Additive compatibility is also a consumer decision. The library cannot
 infer a semantic breaking change from property names, CLR type names or a JSON hash. No
-audit codec, upcasting registry or automatic payload rewrite is added by this slice.
+audit codec, upcasting registry or automatic payload rewrite is added by this capability.
 
 ## Staging evidence and lifetime
 
@@ -203,10 +202,8 @@ be ambiguous. An unchanged already-saved tracked record is not evidence that a r
 operation can safely reuse its context.
 
 PostgreSQL proofs cover no implicit save, cross-connection visibility, explicit commit,
-rollback/disposal, participant faults, cancellation and fresh recovery; exact transaction/
-context association, native duplicate IDs, attribution and guarded tracked writes. See the
-[family contract](../docs/transactional-audit.md) and
-[dated report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-explicit-transactional-audit.md).
+rollback, participant faults, cancellation, fresh recovery, context/transaction association,
+duplicate IDs and guarded tracked writes. See the [family contract](../docs/transactional-audit.md).
 
 The guard cannot detect a business change that omitted Stage, prove detail truth, prevent
 privileged SQL, grant permission or make records tamper-evident. Consumer-specific commit

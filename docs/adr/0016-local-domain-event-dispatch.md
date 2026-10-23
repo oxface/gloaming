@@ -26,7 +26,6 @@ Those need separate consumer evidence. Durable saga state remains module-owned; 
 [local module delivery consumer](../../samples/Wholesale/Worker/Local/README.md) separately
 exercises retained intake and recovery across module commits.
 
-No Stage, acknowledgment, owned transaction, aggregate save guard, universal tracker protocol or
-late-event completion enforcement is added. Native false acceptance and callback/bulk-write bypasses
-remain visible limits. See the [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md)
-and [consolidated evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-reactions-consolidation.md).
+The caller retains transaction and native save ownership. Callback/bulk-write bypasses
+remain explicit limits. See the [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md)
+for ordering and save integration.

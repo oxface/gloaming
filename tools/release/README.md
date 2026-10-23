@@ -35,7 +35,7 @@ not make a clean restore fully offline.
 ### Consume from another repository
 
 Add a `NuGet.Config` to the consuming repository. This example assumes sibling
-`umbrine` and `modulith-foundry` checkouts; replace the local source with the feed
+application and `gloaming` checkouts; replace the local source with the feed
 path printed by the command when your layout differs. Relative source paths are
 resolved from the configuration file. Retain any other feeds that application
 actually requires.
@@ -45,7 +45,7 @@ actually requires.
 <configuration>
   <packageSources>
     <clear />
-    <add key="gloaming-local" value="../modulith-foundry/.artifacts/local-feed" />
+    <add key="gloaming-local" value="../gloaming/.artifacts/local-feed" />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
   <packageSourceMapping>

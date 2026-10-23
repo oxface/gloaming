@@ -55,6 +55,4 @@ On the local Podman setup, set `DOCKER_HOST=unix:///run/user/1000/podman/podman.
 save and before inbox completion/commit, then recover in another process. The controlled cut uses
 `WORKFLOW_DEPLOYMENT_PAUSE_AFTER_SAVE=true`; keep this test setting unset for ordinary commands.
 
-See [family deployment guidance](../../../docs/workflow-deployments.md),
-[bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-deployment-continuity.md) and
-[fresh evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-deployment-continuity.md).
+See [family deployment guidance](../../../docs/workflow-deployments.md) for compatible readers, draining and migration obligations.

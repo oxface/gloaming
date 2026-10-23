@@ -25,13 +25,10 @@ rows; the caller establishes tenancy and saves/commits. Runtime never migrates o
 ## DDD sample patterns
 
 Sales owns immutable profile details and complete replacement candidates. Invalid edits,
-stale versions and persistence failure leave accepted data intact; profile rows and explicit
-audit commit together in the existing service-owned transaction. Inventory uses the optional
-[aggregate base](../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/README.md) for its
+stale versions and persistence failure leave accepted data intact; profile rows and selected
+audit commit together in the owning transaction. Inventory uses the optional
+[aggregate base](../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/README.md) for
 immutable accepted state and pending facts. Quantity/stock rules remain Inventory policy.
-The former Purchasing comparison and Dispatch directory are retired. Their business policies
-are not library capabilities; the [active audit](../../../docs/reports/gloaming-library-audit.md)
-records retained proofs and source provenance.
 
 ## Required local submission reactions
 

@@ -103,16 +103,14 @@ receiver deduplication remains necessary. See [outbox recovery](outbox-recovery.
 
 ## Proof scope and remaining limits
 
-The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/queued-message-schema-compatibility.md) records new
-literal-fixture, PostgreSQL, HTTP, RabbitMQ and actual child-process evidence, including retained
-v1 work, v2 writes, old-reader rejection, retry after reader replacement, killed workers and
-completion uncertainty. The finite CLI requires empty disposable module storage and rejects
-reuse; it supplies no completed-message replay or maintenance worker.
+[Schema process tests](../tests/DeliveryTests/Processes/SchemaCompatibilityProcessTests.cs)
+exercise retained V1 work, V2 writes, old-reader rejection, compatible replacement, killed workers
+and completion uncertainty. The finite fixture requires empty disposable module storage and
+rejects reuse; it supplies no completed-message replay or maintenance worker.
 
 This is one consumer contract's compatibility proof using existing libraries. Other payload
 meaning changes, CLR/native-JSON policies, transports, mixed deployment topologies and rollout
-automation require their own proofs. No new reusable mechanism, database migration, queue
-framework or template setup pattern was established by that slice. The later
+automation require their own proofs. The
 [processed-inbox retention contract](inbox-retention.md) makes receipt expiry explicit:
 original-envelope duplicate/content checks last only while the receipt remains; old delivery
 can execute again after deletion. Cleanup does not establish a safe historical-schema removal

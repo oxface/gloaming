@@ -6,11 +6,10 @@ the current EF store stages writes directly.
 
 ## Context
 
-The initial technical append concentrated EF obligations but exposed repeated header/version/
-timestamp/factory assembly in commands. Owner review requested an aggregate/store journey and
-library ownership of append metadata. The archive supplies aggregate/store behavioral evidence;
-Marten supplies a behavioral reference. Neither is a selected replacement engine or runtime
-dependency. Existing inline/history loading already demonstrates different consumer needs.
+Aggregate append repeats technical header, version, timestamp and payload-lifetime work.
+A configured store can own those mechanics while the module retains domain state, facts,
+evolution and decision policy. Inline loading and explicit historical reconstruction have
+different consistency and operational requirements.
 
 ## Decision
 
@@ -43,6 +42,3 @@ failure or rollback requires disposal and fresh loading/redecision; no pending r
 ambiguous-commit recovery or arbitrary side-effect rollback is supplied. PostgreSQL is the
 proved provider. State-stored adopters need no event-sourcing dependency. Future engine/reader/
 projector capabilities need separate evidence and owner review.
-
-[Reviewed interfaces and exact scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md#concrete-aggregate-based-replacement-for-interface-review),
-[implementation and verification](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es1-bounded-event-append.md).
