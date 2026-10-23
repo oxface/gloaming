@@ -2,8 +2,11 @@
 
 Updated: 2026-10-23. Audit started at `1582e77849088e243881c82a37c0a42b2a11a322`.
 Current branch: `docs/gloaming-library-audit`, in the primary repository checkout.
-Guidance/reference checks are checkpointed as `bd2adb7`. The current uncommitted batch is
-[evidence and proof-ownership consolidation](evidence-and-proof-consolidation.md).
+Guidance/reference checks are checkpointed as `bd2adb7`; evidence/proof consolidation as
+`3c4f9a9`. [Integrated verification and independent reviews](integrated-verification-and-reviews.md)
+passed locally against that checkpoint. The current uncommitted batch completes the extra
+[documentation/test pass](documentation-and-test-cleanup.md), including the pending verification
+report and status updates. All changes await owner review.
 This is the only active cleanup queue; dated plans/reports do not authorize new work or commits.
 
 ## Confirmed direction and review criteria
@@ -67,6 +70,7 @@ or treated as fresh verification of the final tree.
 | `8601204` | Wholesale Purchasing retired; unique event-store assertions transferred. | [Retirement](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/gloaming-library-audit.md#wholesale-purchasing-retirement--2026-10-23). |
 | `0d43d3c` | Dispatch/directory policy retired; populated Sales upgrade and route-exclusion/grant proofs retained. | [Retirement](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/gloaming-library-audit.md#wholesale-dispatch-retirement--2026-10-23). |
 | `bd2adb7` | 80 dated plans retired; current design/gate; tested reference checks in CI/hooks. | [Guidance and checks](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/repository-guidance-consolidation.md). |
+| `3c4f9a9` | Dated reports/retired decisions consolidated; four research briefs, current ADR/proof maps and 84 retained architecture cases. | [Evidence and proof ownership](evidence-and-proof-consolidation.md). |
 
 Wholesale now contains Access, Sales and Inventory with native API/Worker composition and
 one order/reservation journey. Focused family examples are public adopters; compatibility,
@@ -79,16 +83,29 @@ passed six repository-tool cases and all 21 archives/six isolated NuGet consumer
 source/project/fixture paths were unchanged. Exact commands, attempts and limits are in the
 pinned reports. These are historical checkpoint results, not new executions by this document.
 
-The current batch reduces architecture to 84 cases by removing five provider-test package-list
+Checkpoint `3c4f9a9` reduces architecture to 84 cases by removing five provider-test package-list
 snapshots, keeps the actual library declaration rules, and removes duplicate Worker references.
 It distills research, reconciles ADRs/current family wording and retires 129 dated reports plus
 four superseded/rejected/retired ADRs. Its [slice report](evidence-and-proof-consolidation.md)
 records fresh results, preservation checks and the precise retirement/proof map.
 **No new reusable Gloaming mechanism is proven by this consolidation.**
 
+Fresh integrated verification of `3c4f9a9` passed all **30 native projects / 1,671 cases**, with
+zero failures/skips, plus **21 archives / six isolated package consumers**. Separate Standards,
+Spec and architecture reviews found no actionable issues in the fixed audit diff. The
+[integrated report](integrated-verification-and-reviews.md) records scope, evidence and limits;
+these checks do not replace the extra documentation/test pass or publication sign-off.
+
+The extra [documentation/test pass](documentation-and-test-cleanup.md) gives the existing EF
+save coordinator independent tests, retains real cross-family saving proofs and family-local
+placement, improves test discovery and repairs duplicated/stale guidance. Fresh checks pass
+184 affected native cases, solution/style/analyzers/references and all 21 archives/six package
+consumers. Runtime library/sample code and owned migrations/literals are unchanged. No new
+runtime mechanism or deferral is introduced; the combined uncommitted batch awaits owner review.
+
 ## Current proof owners
 
-Use [the test map](../../tests/README.md) for all 30 native projects and their distinct
+Use [the test map](../../tests/README.md) for all 31 native projects and their distinct
 unit/provider/adoption/process obligations. [Retirement provenance](s1-archive-retirement.md)
 records historical origins. Family-local limitations and explicit deferrals remain authoritative.
 Current owned migrations/literals stay with their consumers; retired consumer policy needs no
@@ -103,14 +120,11 @@ profiles; remote publication is a separate owner action.
 
 | Required work | Completion evidence |
 | --- | --- |
-| Complete this consolidation batch | Review current research/ADR/contracts and proof map; preserve owned fixtures/migrations and required failures; pass affected architecture/tooling/package checks. No checkpoint until the exact complete batch is approved. |
-| Integrated verification and independent reviews | Run the complete retained family/sample/runtime and package-only adoption gates against the cleaned tree. Perform separate independent code and architecture reviews against a fixed base, fix actionable findings and rerun affected proofs. Earlier integration reviews do not certify this audit. |
-| Additional documentation/test pass | Owner-selected pass after the above: inspect the final implementation/review outcomes for remaining stale, redundant or missing documentation/tests. This current consolidation is not that extra pass. |
 | Fresh-context sweep | Separate session planned by the owner. Do not count its conclusions as evidence already supplied here. |
 
-After this batch, estimate **1–2 verification/review increments plus at least one extra
-documentation/test pass**, with no fixed cap. Important defects remain required until fixed or
-explicitly disposed of by the owner. The five approved inbox-retention supplied-feature deferrals
+After owner review/checkpoint of this batch, the only planned cleanup is the **separate-session
+fresh-context sweep**; further increments depend on its findings, with no fixed cap. Important
+defects remain required until fixed or explicitly disposed of by the owner. The five approved inbox-retention supplied-feature deferrals
 remain in [the owning contract](../../src/Gloaming.Messaging/docs/inbox-retention.md); no new
 deferral is introduced. Production capacity, Umbrine implementation, push and publication are
 separate from this cleanup and are not claimed by successful local proofs.

@@ -292,7 +292,7 @@ context use, automatic ambiguous-commit reconciliation or fencing of uncooperati
 Complete key/tenant admission remains consumer-owned. PostgreSQL tests exercise actual native
 SQL, rollback and fresh recovery.
 
-See [current capabilities and deferred directions](docs/capabilities.md),
+See [current capabilities and deferred directions](../docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
 [standalone raw adoption](../samples/EventStorageDemo/README.md),
 [tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),

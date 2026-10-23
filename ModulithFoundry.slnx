@@ -2,6 +2,9 @@
   <Folder Name="/Libraries/EntityFrameworkCore/">
     <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
   </Folder>
+  <Folder Name="/Libraries/EntityFrameworkCore/Tests/">
+    <Project Path="src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj" />
+  </Folder>
   <Folder Name="/Libraries/EventReactions/">
     <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions/Gloaming.EventReactions.csproj" />
     <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj" />

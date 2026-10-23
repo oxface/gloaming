@@ -3,6 +3,17 @@
 Opt-in, model-selected integration for existing Gloaming save capabilities. Dependencies are EF Core
 and DI Abstractions; this package depends on no feature family or provider.
 
+The independent [coordinator contract suite](tests/CapabilityTests/CapabilityTests.csproj) uses
+only this library, native EF/Npgsql and DI, with no database connection or sample dependency:
+
+```sh
+dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj
+```
+
+[Reaction/ownership/outbox adoption](../Gloaming.EventReactions/tests/AdoptionTests/CapabilityCompositionTests.cs)
+separately proves real PostgreSQL saving and rollback. The [test guide](../../tests/README.md)
+distinguishes library contracts, adopter wiring and Wholesale business assertions.
+
 ## Module composition
 
 ```csharp
@@ -59,8 +70,6 @@ preset is added.
 See the [implementation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-1-capability-composition.md),
 [research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-capability-interception-research.md) and
 [MassTransit comparison](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-masstransit-applicable-patterns.md).
-
-
 The optional [PostgreSQL ownership adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
 uses `.UseRls<TContext>(provider)` to install its own native transaction/command interceptor
 and this existing save coordinator. No general native-interceptor registry is supplied here;

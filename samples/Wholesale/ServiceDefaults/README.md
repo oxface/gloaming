@@ -24,9 +24,9 @@ register these checks without creating an HTTP health endpoint of their own.
 
 There is no global HTTP resilience/retry handler, automatic transaction/save/dispatch,
 custom telemetry framework or mandatory Aspire runtime dependency. Standalone HTTP startup
-uses the same registration without an AppHost. This is a proven template recipe based on
-[native ServiceDefaults](https://aspire.dev/get-started/csharp-service-defaults/), not a new
-Foundry library segment.
+uses the same registration without an AppHost. This consumer-owned setup follows
+[native ServiceDefaults](https://aspire.dev/get-started/csharp-service-defaults/); Gloaming
+does not require this project.
 
 The [telemetry proofs](../IntegrationTests/Api/TelemetryTests.cs) use native in-memory
 exporters around real HTTP/PostgreSQL operations. The

@@ -77,5 +77,5 @@ depend on this package; its independent counter has a local history validator/re
 A generic history reader, snapshot-plus-tail loading, projection rebuild/catch-up and a safe
 global event feed remain deferred. Range success cannot establish excluded history or committed
 global progress. Any selected extension needs captured-head/tail, corruption and concurrent
-writer/progress proofs. See the [event-store capability record](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+writer/progress proofs. See the [event-store capability record](../../Gloaming.EventSourcing/docs/capabilities.md)
 for those pending contracts. Current metadata validation remains independently adoptable.

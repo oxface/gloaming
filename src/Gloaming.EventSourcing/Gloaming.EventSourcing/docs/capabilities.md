@@ -29,16 +29,16 @@ until the consumer's actual persistence commit. No automatic clearing/retry or d
 | Package | Selected responsibility |
 | --- | --- |
 | EventSourcing | Aggregate proposal/bookkeeping; no EF, JSON, HTTP, tenancy or host dependency. |
-| EventSourcing.EntityFrameworkCore | Optional native write store, ordered append, stream/envelope mappings and explicitly required inline projection participation. References this core and EF Relational. |
+| EventSourcing.EntityFrameworkCore | Optional native write store, bounded history reader, append/rebuild/regeneration and required inline aggregate participation. References this core, Events.History, EF Relational and DI abstractions. |
 | Events.Serialization | Optional explicit durable name/schema registry and native JSON codec. Used by Wholesale; not required by either EventSourcing package. |
-| Events.History | Optional ordered-range metadata validation. Used by Wholesale replay; not required by either EventSourcing package. |
+| Events.History | Package-free ordered-range metadata validation. Required by the EF adapter's bounded reader; independent of the aggregate core and JSON serialization. |
 
 The independent counter adopts core plus EF storage with direct JSON and its existing reader.
 Wholesale combines all four packages. The core itself does not fetch/replay events or validate
 a database observation. Native EF stores validate loaded state against a captured header; other
 consumers must supply their own corresponding guarantee. See the
 [optional EF setup](../../Gloaming.EventSourcing.EntityFrameworkCore/README.md) and
-[its capability record](../../Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
+[the family capability record](../../docs/capabilities.md).
 
 ## Deferred directions and limits
 
@@ -51,7 +51,7 @@ The optional EF package implements independent full replay into its one inline a
 Catch-up, snapshot-plus-tail, async/subscription processing, secondary/multi-stream
 projections, upcasting, command idempotency and ambiguous-commit recovery remain deferred.
 They concern persisted versions, compatibility and progress guarantees beyond this in-memory
-contract; their current context is in the EF capability record. A projected summary and the
+contract; their current context is in the family capability record. A projected summary and the
 aggregate's persisted state are views of the same stream, not additional command aggregates.
 
 Provider-specific locks and a possible EventSourcing.Postgres package are recorded candidates,

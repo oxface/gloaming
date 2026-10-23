@@ -22,6 +22,10 @@ unmapped:
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
   - '!tools/release/**'
 
+EntityFrameworkCore:
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - '!**/*.md'
+
 Auditing:
   - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.Auditing/**'

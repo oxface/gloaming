@@ -150,5 +150,6 @@ and [reference research](https://github.com/oxface/modulith-foundry/blob/bd2adb7
 The [optional Sales HTTP composition](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 adopts this capability for six finite tables under separate restricted credentials. Its
 [report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-6-sales-http-rls.md) records native varchar adoption and proofs.
-Default Wholesale HTTP/AppHost/worker/template rollout remains separate; the earlier opt-in
-CQRS executable retains explicit local setup.
+Default Wholesale HTTP/AppHost/worker rollout remains separate. The retained
+[CQRS isolation scenario](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+owns its explicit local setup; the template generator is retired.

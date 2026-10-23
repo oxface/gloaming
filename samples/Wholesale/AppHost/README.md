@@ -219,5 +219,6 @@ production deployment, external providers and proxy/subdomain sessions remain se
 
 See [runtime evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-6-runtime-composition.md),
 [OIDC/browser evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-7-oidc-browser-journey.md) and
-[test commands](../../../docs/development.md). The AppHost/health/ServiceDefaults source is
-editable template material; generated template output and the bootstrap CLI remain E10.
+[test commands](../../../docs/development.md). AppHost, health and ServiceDefaults are
+consumer-owned setup examples. The template generator and bootstrap CLI are retired;
+[application patterns](../../../docs/application-patterns.md) describe the exercised composition.

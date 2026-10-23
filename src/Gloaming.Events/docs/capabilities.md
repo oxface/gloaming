@@ -48,4 +48,4 @@ additions. [Package-local capabilities](../Gloaming.Events.Serialization/docs/ca
 record routing, ownership and rollout limitations. No stored event migration or projector
 maintenance follows from decoding compatibility.
 
-[Related event-store capability catalog](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md) records the persisted-stream and projection directions.
+[Related event-store capability catalog](../../Gloaming.EventSourcing/docs/capabilities.md) records the persisted-stream and projection directions.

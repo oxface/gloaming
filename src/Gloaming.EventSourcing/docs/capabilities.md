@@ -69,8 +69,8 @@ can deliver after completion, with asynchronous handler errors outside the retur
 - Stream lifecycle/deletion, branching, global ordering, pessimistic write modes, subscriptions,
   event metadata/correlation/causation, retention/archiving, import/export and ambiguous-commit
   reconciliation: unsupported. Add bounded concrete obligations before introducing machinery.
-- Messaging/outbox, audit integration, cross-module transactions and template event presets:
-  excluded from this capability. T1 remains event-free.
+- Messaging/outbox, audit integration and cross-module transaction composition remain
+  separately selected consumer integrations, outside this event-store contract.
 - Provider-specific locking (for example SELECT FOR UPDATE): if a real future obligation needs
   it, consider a separate *.Postgres package and discover the abstraction then. The earlier
   advisory-gate package was removed; its proof document is retained as historical evidence.

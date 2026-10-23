@@ -166,7 +166,7 @@ or automatic acceptance of historical schemas.
 
 Generated registration, alternative serializers and AOT remain deferred. See the
 [package capability record](docs/capabilities.md) for the supported boundary and proof links.
-See the [event-store capability context](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+See the [event-store capability context](../../Gloaming.EventSourcing/docs/capabilities.md)
 for related persisted-history/projection obligations and separately deferred maintenance work.
 
 The focused [receipt executable](../samples/EventCodecDemo/README.md) reads literal v1/v2

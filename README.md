@@ -56,15 +56,19 @@ Use the .NET SDK pinned by `global.json`, Node 24 for repository/release tools, 
 Docker-compatible runtime for provider/process tests. Rootless Podman works through its
 user socket.
 
+**[Find and run tests](tests/README.md):** library suites live under each
+`src/Gloaming.*/tests` directory. Root `tests` covers cross-family composition and architecture;
+Wholesale owns its application integration/runtime suites. The solution includes all of them.
+
 ```bash
 dotnet tool restore
 dotnet build ModulithFoundry.slnx
+dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-build --no-restore
 dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj
 ```
 
-Family-local READMEs list their own test projects; the [proof map](tests/README.md) explains their
-responsibilities. See the [development commands](docs/development.md),
+Family-local READMEs list their own suites. See the [development commands](docs/development.md),
 [repository workflow](docs/conventions/repository.md) and [.NET conventions](docs/conventions/dotnet.md).
 CI selects affected families, package adopters and dependent consumers through an explicit path map.
 

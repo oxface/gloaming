@@ -30,6 +30,9 @@ pre-commit:
     - name: context-composition-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj --no-restore
+    - name: ef-capability-tests
+      glob: "*.{cs,csproj,props,targets,slnx}"
+      run: dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-restore
     - name: ef-model-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-restore

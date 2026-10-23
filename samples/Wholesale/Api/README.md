@@ -279,11 +279,12 @@ customer version, and returns success after commit. Database failure or controll
 before commit rolls back both rows. A cancelled/lost HTTP response alone cannot establish
 whether a transaction committed; no durable receipt or idempotency contract is provided.
 
-## Template material, proofs and limits
+## Application composition, proofs and limits
 
 The executable setup, module/Contracts projects, native registration, public exception,
-HTTP resolvers, owned schemas/histories and response policy are editable template recipes. Generated template
-files and bootstrap CLI remain E10. Neither technical core nor HTTP adapter depends on Access.
+HTTP resolvers, owned schemas/histories and response policy are consumer-owned examples.
+The template generator and bootstrap CLI are retired. Neither technical core nor HTTP adapter
+depends on Access. See the current [application patterns](../../../docs/application-patterns.md).
 
 [Composition proofs](../IntegrationTests/Api/CompositionTests.cs),
 [admission proofs](../IntegrationTests/Api/AdmissionTests.cs) and

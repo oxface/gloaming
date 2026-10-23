@@ -117,7 +117,11 @@ command, then checks archives and clean external consumers, including PostgreSQL
 ## Library and consumer proofs
 
 Each family's README/docs give current guarantees, optional composition and commands for its
-unit/provider and independent adoption suites. Events owns historical literal JSON linked
+unit/provider and independent adoption suites. Use the [root test guide](../tests/README.md)
+to find all suites: family tests stay under `src/Gloaming.*/tests`, cross-family tests under
+`tests`, and Wholesale integration/runtime tests with the sample. The standalone
+[EF coordinator suite](../src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj)
+requires no running database. Events owns historical literal JSON linked
 into Wholesale; neutral process support lives in `tests/Support`. A family change may also
 require product integration according to the CI input map.
 

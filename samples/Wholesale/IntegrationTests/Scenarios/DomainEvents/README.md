@@ -49,7 +49,8 @@ Domain methods enforce invariants and native version predicates arbitrate legiti
 Arbitrary row changes, child-only writes and direct SQL bypass decisions; no automatic root-version
 advancement or fact/row mirror is inferred. Existing tenant validation still checks handler-created
 writes. Late persistence facts, external effects, same-context retries and uncertain commit recovery
-are outside local dispatch. D2.2 and template adoption remain separate.
+are outside local dispatch. Durable delivery is separately selected through Messaging;
+the template generator is retired.
 
 See the [package contract](../../../../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md)
 and [current report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-1-capability-composition.md). Earlier reports retain

@@ -1,9 +1,10 @@
 # Evidence and proof-ownership consolidation
 
 Date: 2026-10-23. Base: `bd2adb7dea58de304aa2eb3df3c587c6fe348320`.
-Status: uncommitted review batch on `docs/gloaming-library-audit`. The approved guidance slice
+Status: owner-approved checkpoint `3c4f9a9` on `docs/gloaming-library-audit`, after normal hooks passed.
+The approved guidance slice
 was checkpointed as `bd2adb7`; its complete reviewed snapshot and checkpoint checks matched.
-All new work remains unstaged; no push or publication is performed.
+The results below describe that reviewed batch; no push or publication is performed.
 
 ## Outcome and dispositions
 

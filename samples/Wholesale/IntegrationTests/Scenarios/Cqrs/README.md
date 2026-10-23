@@ -132,13 +132,12 @@ grant editor, role/group engine, export/AI endpoint or strict permission-at-comm
 RLS is exercised separately by the opt-in mode linked above, with its own credentials,
 table inventory, native transaction setup and limitations.
 
-Template candidates are editable registrations, the operation scope, explicit
-transaction ownership and native query/filter examples. T1's generated Catalog
-composition is unchanged; richer CQRS generation, additional HTTP query/authorization compositions,
-query indexes/benchmarks, alternate sorting and provider semantics need separate
-consumer requirements. An upper page-size limit does not bound offset scan cost
-or aggregate-query cost.
+Registrations, operation scopes, explicit transaction ownership and native queries remain
+consumer-owned examples. The template generator is retired. Additional query/authorization
+compositions, indexes/benchmarks, alternate sorting and provider semantics need concrete
+consumer requirements. An upper page-size limit does not bound offset scan or aggregate-query cost.
 
 The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/c1-cqrs-consumer-patterns.md) records the pre-implementation
 consumer proposal. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/c1-cqrs-consumer-patterns.md)
-separates new checks, historical evidence and remaining template work.
+records the original scope, dated checks and limitations; the
+[active audit](../../../../../docs/reports/gloaming-library-audit.md) owns current cleanup.
