@@ -106,7 +106,7 @@ dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPos
 
 This suite runs in the Tenancy CI lane using PostgreSQL 18.6 Testcontainers. On the repository's
 rootless Podman workstation, use the socket environment in the
-[development guide](../../../docs/development.md#postgresql-tenant-context-utility).
+[development guide](../../../docs/development.md#tooling-and-infrastructure).
 
 The later [A2.4 capability research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-rls-capability-reference-research.md)
 compares Bytefish's connection hook and Marten's fluent/schema/runtime split with an optional

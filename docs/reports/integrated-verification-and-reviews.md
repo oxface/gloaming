@@ -2,8 +2,9 @@
 
 Date: 2026-10-23. Audit base: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Reviewed checkpoint: `3c4f9a9a09565be936d0b4c05caf9a1a75298de3`.
-Status: local verification and independent reviews passed. This report and queue updates remain
-unstaged for owner review; no new checkpoint, push or publication is performed.
+Status: local verification and independent reviews passed; report recorded in owner-approved
+checkpoint `c5acb8e`. The reviewed implementation remains `3c4f9a9`; later changes have their
+own evidence. No push or publication is performed.
 
 The owner approved evidence/proof consolidation, then requested continuing in this branch.
 The next test cleanup pass must distinguish Gloaming public-contract proofs from adopter

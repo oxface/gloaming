@@ -1,9 +1,9 @@
 # Wholesale native ServiceDefaults
 
 `builder.AddServiceDefaults()` is editable sample host composition, explicitly invoked by
-the Wholesale HTTP startup branch and the independent Messaging producer/worker hosts.
-The latter reuse this project without importing Wholesale business modules and add their
-own messaging source/meter subscriptions and role resources in their Program files.
+the Wholesale HTTP startup branch and Worker. The independent Messaging producer/worker
+hosts own their [separate native composition](../../../src/Gloaming.Messaging/samples/Delivery/ServiceDefaults/Extensions.cs),
+with messaging source/meter subscriptions and role resources in their Program files.
 It registers native OpenTelemetry logging (retaining console
 providers), ASP.NET Core/outgoing HTTP/runtime metrics and request/outgoing HTTP/Npgsql
 traces, including Npgsql metrics. Health request traces are filtered to reduce probe noise;

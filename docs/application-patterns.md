@@ -5,6 +5,18 @@ identity admission, module boundaries, transactions, transport routing and deplo
 These patterns describe existing executable usage; there is no repository generator or
 mandatory application layout. Task skills can follow repeated real consumer work later.
 
+## Start with one application behavior
+
+Record the first module/use case, its persistence/history needs, the tenant admission rule,
+the authentication issuer and any boundary that needs durable delivery. A monolith does not
+need messaging merely because it has modules. Add another process when its lifecycle or
+credentials justify it; API style is a host choice rather than a library mode.
+
+Consume Gloaming through [local packages](../tools/release/README.md#consume-from-another-repository).
+Use the sections below as an implementation recipe, then prove one real end-to-end behavior
+before adding shared automation. A reusable task skill can eventually drive this recipe;
+another topology/options generator is not needed to start.
+
 ## Compose the application
 
 Start with the native .NET host the application needs. A server can compose several modules
@@ -45,6 +57,30 @@ history needs it. Explicit serialization/history utilities and local reactions r
 selectable. Keep native transaction, save and commit ownership visible; select a library-owned
 bounded execution operation only under its documented guarantees. There is no repository-wide
 persistence mode or required CQRS dispatcher.
+
+## Add a module
+
+1. Give the module its implementation and, where another module calls it, a separate Contracts
+   project. Keep domain rules and EF types in the implementation. See
+   [Sales Contracts](../samples/Wholesale/modules/Sales/Sales.Contracts/Sales.Contracts.csproj)
+   and [Sales implementation](../samples/Wholesale/modules/Sales/Sales/Sales.csproj).
+2. Give it a native scoped DbContext, owned schema and migration history. Bind its selected
+   Gloaming capabilities to that context, including every required sync/async save integration.
+   [SalesDbContext](../samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs) and
+   [InventoryDbContext](../samples/Wholesale/modules/Inventory/Inventory/InventoryDbContext.cs)
+   show state-stored and event-sourced compositions; their sample rules are not prerequisites.
+3. Expose the selected operations through an explicit registration extension. The host supplies
+   its connection/options and invokes the module's registration. Keep scope establishment,
+   transaction/save/commit and failure disposal visible at the owning operation boundary.
+   [Sales registration](../samples/Wholesale/modules/Sales/Sales/SalesRegistration.cs) does not
+   start workers or choose a transport.
+4. Invoke migration/provisioning explicitly before serving work, using the appropriate setup
+   credential. The current sample has finite branches in the
+   [API executable](../samples/Wholesale/Api/Program.cs); a consuming application's dedicated
+   migrator is its own composition choice. Do not copy setup credentials into runtime hosts.
+5. Prove the new module's accepted/rejected decisions, isolated reads/writes and rollback, plus
+   migration over retained data where compatibility matters. Add message/process proofs when
+   the behavior actually crosses that boundary. Keep those business assertions in the consumer.
 
 ## Add durable handoff when needed
 

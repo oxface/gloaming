@@ -1,6 +1,7 @@
 # Documentation and test cleanup
 
-Date: 2026-10-23. Base checkpoint: `3c4f9a9`. Status: local checks passed; uncommitted review batch.
+Date: 2026-10-23. Base checkpoint: `3c4f9a9`. Status: owner-approved checkpoint `c5acb8e`,
+after normal repository hooks passed. The text below records that batch at review time.
 The previous integrated-verification report and two status
 updates were already unstaged when this pass began. They remain in this review batch;
 the existing index is preserved. No commit, push or publication is performed.
