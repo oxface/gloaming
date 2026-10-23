@@ -1,7 +1,7 @@
 using Gloaming.Events.Serialization;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 // Finite demonstration setup only. The caller establishes tenancy and saves/commits.
 // This is not an expected-version append implementation.

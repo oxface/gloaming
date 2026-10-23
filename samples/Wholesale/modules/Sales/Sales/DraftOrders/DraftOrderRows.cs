@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
 internal sealed class DraftOrderRow
 {

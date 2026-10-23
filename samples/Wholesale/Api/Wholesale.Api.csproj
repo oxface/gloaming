@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.Api</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />

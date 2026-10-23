@@ -1,7 +1,7 @@
 using Gloaming.Auditing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
+namespace Gloaming.Samples.Wholesale.Access.Persistence;
 
 // Global registry queried before tenant establishment, not a tenant business-data context.
 public sealed class AccessDbContext(DbContextOptions<AccessDbContext> options) : DbContext(options)

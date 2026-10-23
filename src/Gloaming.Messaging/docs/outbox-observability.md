@@ -71,7 +71,7 @@ than copying that topology assumption. Native StopHost usually shuts down on a w
 under Ignore the process can stay live while readiness reports the stopped worker. Neither
 health checks nor sampling restart workers or retry messages.
 
-The sample's IMeterFactory-owned meter is **ModulithFoundry.OutboxDemo.Outbox**:
+The sample's IMeterFactory-owned meter is **Gloaming.OutboxDemo.Outbox**:
 
 | Instrument | Unit |
 | --- | --- |
@@ -104,7 +104,7 @@ Subscribe through a native MeterListener or the host's selected OpenTelemetry SD
 
 ```csharp
 services.AddOpenTelemetry().WithMetrics(metrics =>
-    metrics.AddMeter("ModulithFoundry.OutboxDemo.Outbox"));
+    metrics.AddMeter("Gloaming.OutboxDemo.Outbox"));
 ```
 
 Host SDK/exporter dependencies and resource identity stay explicit. These consumer instruments

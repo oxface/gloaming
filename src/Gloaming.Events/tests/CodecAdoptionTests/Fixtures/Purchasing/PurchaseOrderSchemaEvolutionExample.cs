@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
 // This independent adopter changes a flat event into a nested fact through two declared steps.
 internal static class PurchaseOrderSchemaEvolutionExample

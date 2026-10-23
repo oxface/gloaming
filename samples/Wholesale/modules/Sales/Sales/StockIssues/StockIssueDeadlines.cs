@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 /// <summary>Separate Sales maintenance lane; expiry flags uncertainty and never reverses Inventory effects.</summary>
 public sealed class StockIssueDeadlines(SalesDbContext database, TimeProvider clock)

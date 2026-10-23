@@ -4,7 +4,7 @@ using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 public sealed class RenderExportHandler(RenderDbContext database) : IInboxHandler<RenderDbContext>
 {

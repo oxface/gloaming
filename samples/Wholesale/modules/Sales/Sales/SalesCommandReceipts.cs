@@ -1,9 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Sales owns its payload meanings/readers and translates the technical conflict at its Contract boundary.
 internal static class SalesCommandReceipts

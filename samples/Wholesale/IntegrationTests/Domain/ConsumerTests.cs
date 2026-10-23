@@ -1,12 +1,12 @@
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Domain;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Domain;
 
 public sealed class ConsumerTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

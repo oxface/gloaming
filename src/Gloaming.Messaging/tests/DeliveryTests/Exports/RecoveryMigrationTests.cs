@@ -1,11 +1,11 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class RecoveryMigrationTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Testcontainers.RabbitMq;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 // Dedicated to this sequential test class: native outages/alarms must not affect other proofs.
 public sealed class BrokerRecoveryFixture : IAsyncLifetime

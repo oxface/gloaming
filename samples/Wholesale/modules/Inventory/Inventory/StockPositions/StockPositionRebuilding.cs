@@ -1,7 +1,7 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 // Maintenance authorization belongs to the host; admitted Organization and native transaction are required here.
 internal sealed class StockPositionRebuilding(

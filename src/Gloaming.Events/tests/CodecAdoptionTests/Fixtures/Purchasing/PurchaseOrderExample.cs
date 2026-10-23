@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
 internal static class PurchaseOrderExample
 {

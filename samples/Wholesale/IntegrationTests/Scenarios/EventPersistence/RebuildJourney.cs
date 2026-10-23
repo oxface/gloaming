@@ -1,10 +1,10 @@
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 // Trusted local maintenance harness. Admission/authorization and final save/commit remain host-owned.
 public static class RebuildJourney

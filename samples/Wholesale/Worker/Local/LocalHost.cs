@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Local;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Local;
+namespace Gloaming.Samples.Wholesale.Worker.Local;
 
 internal static class LocalHost
 {

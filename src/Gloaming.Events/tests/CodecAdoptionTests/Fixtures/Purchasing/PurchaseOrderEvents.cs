@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
 internal interface IPurchaseOrderEvent;
 

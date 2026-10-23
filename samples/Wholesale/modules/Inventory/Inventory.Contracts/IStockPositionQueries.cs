@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+namespace Gloaming.Samples.Wholesale.Inventory.Contracts;
 
 public interface IStockPositionQueries
 {

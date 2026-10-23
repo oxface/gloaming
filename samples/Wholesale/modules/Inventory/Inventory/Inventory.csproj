@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.Inventory</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.Inventory</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../../../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />

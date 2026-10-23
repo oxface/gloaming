@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 /// <summary>Finite sample wire/Organization policy. The host binds Inventory identity; headers alone are not authentication.</summary>
 public static class StockIssueReplyAdmission

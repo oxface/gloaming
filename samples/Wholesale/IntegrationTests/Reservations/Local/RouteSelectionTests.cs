@@ -1,8 +1,8 @@
 using Gloaming.Messaging.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 public sealed class RouteSelectionTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

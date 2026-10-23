@@ -2,8 +2,8 @@ using System.Globalization;
 using System.Reflection;
 using Gloaming.Messaging.DueTimeProof.Current;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using CurrentApplication = Gloaming.Messaging.DueTimeProof.Current.Application;
 using EarlierApplication = Gloaming.Messaging.DueTimeProof.Earlier.Application;
 

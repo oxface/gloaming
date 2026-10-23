@@ -1,9 +1,9 @@
 using System.Text.Json;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Worker.Maintenance;
+using Gloaming.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests;
+namespace Gloaming.Samples.Wholesale.IntegrationTests;
 
 public sealed class ProductOperationsTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

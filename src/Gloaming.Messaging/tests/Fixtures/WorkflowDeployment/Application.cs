@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 #if EARLIER_BUILD
-namespace ModulithFoundry.Samples.WorkflowDeploymentDemo.Earlier;
+namespace Gloaming.Samples.WorkflowDeploymentDemo.Earlier;
 
 #else
-namespace ModulithFoundry.Samples.WorkflowDeploymentDemo.Current;
+namespace Gloaming.Samples.WorkflowDeploymentDemo.Current;
 
 #endif
 

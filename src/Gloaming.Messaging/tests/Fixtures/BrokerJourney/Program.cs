@@ -1,5 +1,5 @@
-using ModulithFoundry.Samples.Messaging.Tests.Fixtures.Broker;
-using ModulithFoundry.Samples.Messaging.Worker.Transport;
+using Gloaming.Samples.Messaging.Tests.Fixtures.Broker;
+using Gloaming.Samples.Messaging.Worker.Transport;
 
 if (args.Length > 1 || args.Length == 1 && args[0] != "--schema-compatibility")
     throw new ArgumentException("Use --schema-compatibility or the default journey.");

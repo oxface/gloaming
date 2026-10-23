@@ -1,7 +1,7 @@
 using Gloaming.ActorIdentity;
 using Microsoft.AspNetCore.Antiforgery;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 // Native antiforgery services are singleton; resolve the established actor per request.
 public sealed class ActorAntiforgeryData : IAntiforgeryAdditionalDataProvider

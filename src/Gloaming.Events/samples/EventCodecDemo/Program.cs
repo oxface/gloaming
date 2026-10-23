@@ -1,4 +1,4 @@
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo;
+using Gloaming.Samples.Wholesale.EventCodecDemo;
 
 if (args.Length != 0)
     throw new ArgumentException("This example takes no arguments.");

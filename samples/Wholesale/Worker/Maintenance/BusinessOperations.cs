@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
+namespace Gloaming.Samples.Wholesale.Worker.Maintenance;
 
 // Trusted local operator entry. OS/database access is its admission boundary; it does not impersonate a human.
 public static class BusinessOperations

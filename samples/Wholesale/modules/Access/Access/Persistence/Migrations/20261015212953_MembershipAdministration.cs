@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.Access.Persistence.Migrations;
+namespace Gloaming.Samples.Wholesale.Access.Persistence.Migrations;
 
 /// <inheritdoc />
 public partial class MembershipAdministration : Migration

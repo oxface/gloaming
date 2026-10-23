@@ -1,7 +1,7 @@
 using Gloaming.EventReactions;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventReactions;
+namespace Gloaming.Samples.EventReactions;
 
 public sealed class MappedQuoteCommands(
     MappedQuotesContext database,

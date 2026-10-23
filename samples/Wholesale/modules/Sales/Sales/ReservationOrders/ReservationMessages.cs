@@ -2,9 +2,9 @@ using System.Diagnostics;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.Workflows;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
+namespace Gloaming.Samples.Wholesale.Sales.ReservationOrders;
 
 // Wire aliases, transport routes, tracing and business payloads stay with the module.
 internal static class ReservationMessages

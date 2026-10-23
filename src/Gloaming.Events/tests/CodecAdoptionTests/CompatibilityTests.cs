@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo.Inventory;
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+using Gloaming.Samples.Wholesale.EventCodecDemo.Inventory;
+using Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Tests;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Tests;
 
 public sealed class CompatibilityTests
 {
@@ -17,7 +17,7 @@ public sealed class CompatibilityTests
             TestContext.Current.CancellationToken
         );
         deadline.CancelAfter(TimeSpan.FromSeconds(60));
-        await using var child = new ModulithFoundry.Tests.Infrastructure.ChildHost(
+        await using var child = new Gloaming.Tests.Infrastructure.ChildHost(
             typeof(CodecExample).Assembly,
             new()
         );

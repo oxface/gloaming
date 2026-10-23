@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations;
+namespace Gloaming.Samples.Wholesale.Inventory.Migrations;
 
 /// <inheritdoc />
 public partial class AddMessageTraceContext : Migration

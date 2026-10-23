@@ -16,7 +16,7 @@ using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class AssemblyDependencyTests
 {

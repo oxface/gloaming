@@ -3,7 +3,7 @@ using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Tenancy;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 // Inventory owns accepted-issue classification and its minimal version/quantity payload.
 internal sealed class InventoryAudit(

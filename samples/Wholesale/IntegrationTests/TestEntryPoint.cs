@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests;
+namespace Gloaming.Samples.Wholesale.IntegrationTests;
 
 // Finite fixture journeys and crash cuts are executable proofs owned exclusively by this test project.
 internal static class TestEntryPoint

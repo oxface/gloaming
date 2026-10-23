@@ -1,7 +1,7 @@
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo.Inventory;
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+using Gloaming.Samples.Wholesale.EventCodecDemo.Inventory;
+using Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo;
 
 public static class DemoJourneys
 {

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.EventReactions.Consumer.Tests;
+namespace Gloaming.Samples.EventReactions.Consumer.Tests;
 
 // A test harness over two independently composed consumers, not a proposed runtime interface.
 internal sealed class Scenario : IAsyncDisposable

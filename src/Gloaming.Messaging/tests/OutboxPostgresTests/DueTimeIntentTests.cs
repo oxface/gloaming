@@ -3,9 +3,9 @@ using System.Text.Json;
 using Gloaming.Messaging.DueTimeProof.Current;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Messaging.Tests;

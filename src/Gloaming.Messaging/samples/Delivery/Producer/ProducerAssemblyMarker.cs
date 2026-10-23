@@ -1,3 +1,3 @@
-namespace ModulithFoundry.Samples.Messaging.Producer;
+namespace Gloaming.Samples.Messaging.Producer;
 
 public sealed class ProducerAssemblyMarker;

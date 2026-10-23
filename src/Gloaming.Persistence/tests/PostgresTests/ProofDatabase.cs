@@ -1,9 +1,9 @@
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Persistence.Postgres.Tests;

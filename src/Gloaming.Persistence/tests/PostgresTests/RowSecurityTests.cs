@@ -2,11 +2,11 @@ using System.Data.Common;
 using System.Transactions;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Persistence.Postgres.Tests;

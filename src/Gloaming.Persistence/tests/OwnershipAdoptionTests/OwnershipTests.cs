@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Tests;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Tests;
 
 public sealed class OwnershipTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

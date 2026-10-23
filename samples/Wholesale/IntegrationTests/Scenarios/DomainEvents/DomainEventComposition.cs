@@ -1,11 +1,11 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
 
 public static class DomainEventComposition
 {

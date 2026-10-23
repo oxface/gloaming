@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace ModulithFoundry.Tests.Infrastructure;
+namespace Gloaming.Tests.Infrastructure;
 
 // Launch the built executable, rather than an in-process approximation of its DI graph.
 // This Linux CI harness only signals/kills processes it created itself.

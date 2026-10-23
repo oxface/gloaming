@@ -2,7 +2,7 @@ using Gloaming.ActorIdentity;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.ContextCompositionTests;
+namespace Gloaming.ContextCompositionTests;
 
 public sealed class CompositionTests
 {

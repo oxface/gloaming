@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class EventStream : IEventStreamRecord
 {

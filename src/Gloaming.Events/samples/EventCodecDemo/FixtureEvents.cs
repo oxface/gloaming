@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo;
 
 // The caller owns parsing and envelope extraction; the codec sees only identity and payload.
 internal static class FixtureEvents

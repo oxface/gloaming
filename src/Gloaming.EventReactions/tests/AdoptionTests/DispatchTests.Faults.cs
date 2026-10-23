@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.EventReactions.Consumer.Tests;
+namespace Gloaming.Samples.EventReactions.Consumer.Tests;
 
 public sealed partial class DispatchTests
 {

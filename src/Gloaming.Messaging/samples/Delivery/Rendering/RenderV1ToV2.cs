@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 // Receiver-owned interpretation of the original wire contract; retained envelopes stay unchanged.
 internal sealed class RenderV1ToV2() : JsonEventUpcaster("exports.render", 1, 2)

@@ -1,19 +1,19 @@
 using System.Data;
 using System.Data.Common;
 using System.Text.Json;
+using Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reactions;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reactions;
 
 public sealed partial class ReactionTests
 {

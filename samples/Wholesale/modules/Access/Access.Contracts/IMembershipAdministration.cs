@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Access.Contracts;
+namespace Gloaming.Samples.Wholesale.Access.Contracts;
 
 // The host establishes trusted actor/Organization context. Access reauthorizes each call.
 public interface IMembershipAdministration

@@ -2,12 +2,12 @@ using System.Text;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Rendering;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Messaging.Worker.Transport;
+namespace Gloaming.Samples.Messaging.Worker.Transport;
 
 public sealed class RabbitMqRenderReceiver(IChannel channel, IServiceScopeFactory scopes)
 {

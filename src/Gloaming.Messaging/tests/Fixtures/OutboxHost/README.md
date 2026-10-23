@@ -158,7 +158,7 @@ unready. The configured StopHost normally shuts the host down instead. Idle or d
 does not itself fail readiness; the task check does not establish transport availability or
 business progress. Health checks perform no recovery and do not restart workers.
 
-Native meter `ModulithFoundry.OutboxDemo.Outbox` supplies cached observable gauges for pending,
+Native meter `Gloaming.OutboxDemo.Outbox` supplies cached observable gauges for pending,
 eligible, delayed, leased and dead-letter counts, oldest eligible age and observation age.
 The sampler uses a five-second interval after each read and requests a three-second query
 deadline. Positive OUTBOX_DEMO_OBSERVATION_SECONDS customizes the interval within Task.Delay

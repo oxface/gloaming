@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 // Durable literals remain in the codec family’s owned fixtures. Metadata is authored here.
 public static class FixtureHistories

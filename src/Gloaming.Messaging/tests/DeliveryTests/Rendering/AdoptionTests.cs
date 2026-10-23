@@ -3,14 +3,14 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Rendering;
+namespace Gloaming.Samples.Messaging.Tests.Rendering;
 
 [CollectionDefinition("Rendering PostgreSQL")]
 public sealed class RenderingPostgresProofs : ICollectionFixture<PostgreSqlFixture>;

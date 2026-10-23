@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 internal sealed record DraftOrderRequirement(DraftOrderAction Permission)
     : IAuthorizationRequirement;

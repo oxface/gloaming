@@ -1,5 +1,5 @@
 using System.Reflection;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
 using Current = Gloaming.CommandReceipts.Deployment.Current.Application;
 using Earlier = Gloaming.CommandReceipts.Deployment.Earlier.Application;

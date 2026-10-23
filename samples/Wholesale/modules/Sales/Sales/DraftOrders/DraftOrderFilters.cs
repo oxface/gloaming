@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
 internal static class DraftOrderFilters
 {

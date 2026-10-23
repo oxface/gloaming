@@ -3,7 +3,7 @@ using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 public static class RenderServices
 {

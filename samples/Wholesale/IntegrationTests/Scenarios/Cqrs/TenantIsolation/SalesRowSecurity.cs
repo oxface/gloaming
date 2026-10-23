@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
 
 // Explicit consumer setup on an already migrated disposable database, never HTTP startup.
 internal static class SalesRowSecurity

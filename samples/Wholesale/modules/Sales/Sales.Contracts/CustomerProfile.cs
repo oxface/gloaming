@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 public sealed record CustomerProfile(
     Guid CustomerId,

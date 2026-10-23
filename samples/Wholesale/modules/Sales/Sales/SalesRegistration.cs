@@ -3,11 +3,11 @@ using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 public static class SalesRegistration
 {

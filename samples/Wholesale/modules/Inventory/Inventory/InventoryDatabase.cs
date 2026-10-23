@@ -6,7 +6,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 public static class InventoryDatabase
 {

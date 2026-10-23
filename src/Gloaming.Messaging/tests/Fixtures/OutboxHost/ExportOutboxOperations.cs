@@ -2,12 +2,12 @@ using System.Data.Common;
 using System.Security.Claims;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 internal static partial class ExportOutboxOperations
 {

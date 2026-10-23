@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 
 namespace Gloaming.Auditing.Tests;
 

@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
-using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api.HttpIntegration;
+using Gloaming.Samples.Wholesale.ServiceDefaults;
 
 bool initializeAccess = args is ["--initialize-access"];
 bool initializeDemo = args is ["--initialize-demo"];
@@ -86,15 +86,15 @@ DemoComposition.MapOrganizationEndpoints(
     "/organizations/{organization}/identity",
     "/organizations/{organization}/stock/{sku}"
 );
-ModulithFoundry.Samples.Wholesale.Api.Endpoints.CustomerProfileEndpoints.Map(
+Gloaming.Samples.Wholesale.Api.Endpoints.CustomerProfileEndpoints.Map(
     app,
     "/organizations/{organization}/customers/{customerId:guid}/profile"
 );
-ModulithFoundry.Samples.Wholesale.Api.Endpoints.MembershipEndpoints.Map(
+Gloaming.Samples.Wholesale.Api.Endpoints.MembershipEndpoints.Map(
     app,
     "/organizations/{organization}/memberships/{membershipId:guid}"
 );
-ModulithFoundry.Samples.Wholesale.Api.Endpoints.DraftOrderEndpoints.Map(
+Gloaming.Samples.Wholesale.Api.Endpoints.DraftOrderEndpoints.Map(
     app,
     "/organizations/{organization}/draft-orders",
     allowLifecycle: builder.Configuration.GetConnectionString("Sales") is null

@@ -1,19 +1,19 @@
 using System.Data.Common;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {

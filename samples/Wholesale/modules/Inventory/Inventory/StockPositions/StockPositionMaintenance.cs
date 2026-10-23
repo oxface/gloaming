@@ -2,7 +2,7 @@ using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 /// <summary>Trusted host entry for committed maintenance; Organization admission is caller-owned.</summary>
 public static class StockPositionMaintenance

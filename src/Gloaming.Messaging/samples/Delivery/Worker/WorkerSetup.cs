@@ -1,10 +1,10 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Rendering;
 
-namespace ModulithFoundry.Samples.Messaging.Worker;
+namespace Gloaming.Samples.Messaging.Worker;
 
 internal static class WorkerSetup
 {

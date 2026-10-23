@@ -5,12 +5,12 @@ using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
-using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 public sealed class SalesDbContext(
     DbContextOptions<SalesDbContext> options,

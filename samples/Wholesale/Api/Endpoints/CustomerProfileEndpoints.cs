@@ -1,8 +1,8 @@
+using Gloaming.Samples.Wholesale.Api.HttpIntegration;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.Endpoints;
+namespace Gloaming.Samples.Wholesale.Api.Endpoints;
 
 public static class CustomerProfileEndpoints
 {

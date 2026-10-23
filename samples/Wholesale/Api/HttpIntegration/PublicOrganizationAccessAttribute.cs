@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 // Sample policy: public Organization lookup, separately from native authentication metadata.
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]

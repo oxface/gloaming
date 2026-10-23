@@ -3,7 +3,7 @@ using System.Text;
 using Gloaming.Messaging;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Messaging.Worker.Transport;
+namespace Gloaming.Samples.Messaging.Worker.Transport;
 
 // Logical routing is consumer policy; the physical queue is explicitly configured.
 public sealed class RabbitMqExportPublisher(IChannel channel, string queue) : IMessagePublisher

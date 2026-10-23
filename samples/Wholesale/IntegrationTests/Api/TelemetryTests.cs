@@ -1,16 +1,16 @@
 using System.Diagnostics;
 using System.Net;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.ServiceDefaults;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {

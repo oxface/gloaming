@@ -1,10 +1,10 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Rendering;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Rendering;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 public sealed class BrokerRecoveryTests(PostgreSqlFixture postgres, BrokerRecoveryFixture rabbit)
     : IClassFixture<PostgreSqlFixture>,

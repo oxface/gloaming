@@ -3,12 +3,12 @@ using System.Net.Http.Json;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.AppHost;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.AppHost;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.RuntimeComposition.Tests;
+namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
 public sealed class RuntimeTests
 {

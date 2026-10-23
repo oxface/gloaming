@@ -1,10 +1,10 @@
 using System.Xml.Linq;
 using Gloaming.EventReactions;
 using Gloaming.EventReactions.EntityFrameworkCore;
-using ModulithFoundry.Samples.EventReactions;
-using ModulithFoundry.Samples.EventReactions.Model;
+using Gloaming.Samples.EventReactions;
+using Gloaming.Samples.EventReactions.Model;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class EventReactionBoundaryTests
 {

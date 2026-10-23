@@ -1,2 +1,2 @@
 [assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
-[assembly: AssemblyFixture(typeof(ModulithFoundry.Tests.Infrastructure.PostgreSqlFixture))]
+[assembly: AssemblyFixture(typeof(Gloaming.Tests.Infrastructure.PostgreSqlFixture))]

@@ -4,20 +4,20 @@ using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 [Collection("Native telemetry")]
 public sealed class InboxDispatchTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)

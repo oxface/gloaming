@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal static class StockPositionFilters
 {

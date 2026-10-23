@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 // Queue authority differs by command: enqueue belongs to an operation tenant; delivery scans all tenants.
 internal static class SalesOutboxPolicies

@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Aspire supplies endpoint/username references and separate secret password parameters.
 // Normalize once before service registration/setup; Npgsql owns connection-string escaping.

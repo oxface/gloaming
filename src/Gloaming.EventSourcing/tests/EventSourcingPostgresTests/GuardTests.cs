@@ -1,6 +1,6 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using static Gloaming.EventSourcing.Postgres.Tests.RebuildConsumer;
 
 namespace Gloaming.EventSourcing.Postgres.Tests;

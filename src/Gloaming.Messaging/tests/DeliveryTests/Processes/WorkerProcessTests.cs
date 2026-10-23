@@ -1,9 +1,9 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 // Sequential process proofs share only the infrastructure fixtures. Each uses new module
 // databases and a private durable queue; there is no shared module state or global DbContext.

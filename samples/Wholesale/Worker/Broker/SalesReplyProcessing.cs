@@ -1,9 +1,9 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 // A finite consumer admission policy, not tenant discovery or a global message bootstrap protocol.
 public static class SalesReplyProcessing

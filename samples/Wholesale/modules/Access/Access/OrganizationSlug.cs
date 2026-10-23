@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Access;
+namespace Gloaming.Samples.Wholesale.Access;
 
 internal static class OrganizationSlug
 {

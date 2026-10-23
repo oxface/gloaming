@@ -2,12 +2,12 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 // Consumer-owned sampling cadence and instruments. Observable callbacks only read cached data.
 internal sealed partial class ExportOutboxMetrics : IHostedService, IAsyncDisposable
@@ -33,7 +33,7 @@ internal sealed partial class ExportOutboxMetrics : IHostedService, IAsyncDispos
         this.scopes = scopes;
         this.logger = logger;
         this.interval = interval;
-        var meter = meters.Create("ModulithFoundry.OutboxDemo.Outbox");
+        var meter = meters.Create("Gloaming.OutboxDemo.Outbox");
         meter.CreateObservableGauge(
             "exports.outbox.pending",
             () => Observe(s => s.Pending),

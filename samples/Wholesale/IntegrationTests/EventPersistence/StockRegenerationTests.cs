@@ -2,19 +2,19 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
+using Gloaming.Samples.Wholesale.Worker.Maintenance;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
-using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed class StockRegenerationTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

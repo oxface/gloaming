@@ -5,12 +5,12 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

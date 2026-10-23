@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 
 public static class CustomerProfileChanges
 {

@@ -2,14 +2,14 @@ using System.Text;
 using System.Text.Json;
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 public static class InboxJourney
 {

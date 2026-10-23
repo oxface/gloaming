@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Gloaming.Messaging.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Rendering;
+using Gloaming.Samples.Messaging.Rendering;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Inbox;
 
 internal static partial class RenderInboxOperations
 {

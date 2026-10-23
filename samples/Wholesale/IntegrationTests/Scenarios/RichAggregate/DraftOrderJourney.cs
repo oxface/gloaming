@@ -1,9 +1,9 @@
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
 
 public static class DraftOrderJourney
 {

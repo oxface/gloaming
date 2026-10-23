@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventReactions;
+namespace Gloaming.Samples.EventReactions;
 
 // Consumer-owned inheritance is independent of event collection.
 public abstract class OwnedEntity

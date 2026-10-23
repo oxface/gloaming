@@ -11,7 +11,7 @@ import { randomUUID } from "node:crypto";
 import { createInterface } from "node:readline";
 import { setTimeout as delay } from "node:timers/promises";
 
-const container = `foundry-es2-review-${randomUUID().slice(0, 10)}`;
+const container = `gloaming-es2-review-${randomUUID().slice(0, 10)}`;
 const sessions: Session[] = [];
 const psql = ["psql", "-X", "-qAt", "-v", "ON_ERROR_STOP=1", "-U", "postgres"];
 

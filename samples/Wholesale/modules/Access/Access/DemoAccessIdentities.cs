@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Access;
+namespace Gloaming.Samples.Wholesale.Access;
 
 // Explicit demo setup inputs, not runtime account provisioning policy.
 public sealed record DemoAccessIdentities(ExternalIdentity Alpha, ExternalIdentity Beta);

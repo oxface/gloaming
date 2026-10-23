@@ -1,7 +1,7 @@
 using Gloaming.Messaging.EntityFrameworkCore;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 // Rendering owns this classification, budget, delay and safe reason vocabulary.
 public sealed class RenderInboxFailurePolicy : IInboxFailurePolicy<RenderDbContext>

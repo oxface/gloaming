@@ -1,10 +1,10 @@
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesDispatchTests
 {

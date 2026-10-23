@@ -3,15 +3,15 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.AppHost;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.AppHost;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.RuntimeComposition.Tests;
+namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
 public sealed class BrowserTests
 {

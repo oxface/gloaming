@@ -1,9 +1,9 @@
 using System.Text.Json;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
+namespace Gloaming.Samples.EventStorageDemo.Tests;
 
 public sealed class StorageTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

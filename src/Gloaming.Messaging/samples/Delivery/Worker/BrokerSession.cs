@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Messaging.Worker;
+namespace Gloaming.Samples.Messaging.Worker;
 
 // Queue/role selection stays in the consumer; the optional integration owns native lifetime.
 internal sealed class BrokerSession(RabbitMqSession session, IChannel channel, string queue)

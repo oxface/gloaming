@@ -3,7 +3,7 @@ using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 public sealed class RenderDbContext(DbContextOptions<RenderDbContext> options) : DbContext(options)
 {

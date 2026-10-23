@@ -5,15 +5,15 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 public sealed class OutboxRecoveryProcessTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

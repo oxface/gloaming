@@ -1,6 +1,6 @@
 using Testcontainers.RabbitMq;
 
-namespace ModulithFoundry.Tests.Infrastructure;
+namespace Gloaming.Tests.Infrastructure;
 
 public sealed class RabbitMqFixture : IAsyncLifetime
 {

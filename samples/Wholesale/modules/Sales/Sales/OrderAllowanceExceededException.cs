@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // A required local reaction rejected the proposal; roll back and dispose the operation scope.
 public sealed class OrderAllowanceExceededException(

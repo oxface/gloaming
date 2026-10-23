@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 // Finite sample provisioning against existing module storage. No worker-startup DDL.
 internal static class SalesReplyDatabase

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Migrations;
+namespace Gloaming.Samples.Wholesale.Inventory.Migrations;
 
 /// <inheritdoc />
 public partial class AddInboxDeadLetterLookup : Migration

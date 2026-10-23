@@ -1,7 +1,7 @@
 using Gloaming.ActorIdentity;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 public sealed record TenantIdentityResponse(ActorKind Kind, string? ActorId, string TenantId);
 

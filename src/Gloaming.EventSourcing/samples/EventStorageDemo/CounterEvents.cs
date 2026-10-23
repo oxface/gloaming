@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 internal abstract record CounterEvent;
 

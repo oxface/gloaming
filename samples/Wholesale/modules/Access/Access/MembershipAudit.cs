@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
 
-namespace ModulithFoundry.Samples.Wholesale.Access;
+namespace Gloaming.Samples.Wholesale.Access;
 
 internal sealed class MembershipAudit(
     IAudit<AccessDbContext> audit,

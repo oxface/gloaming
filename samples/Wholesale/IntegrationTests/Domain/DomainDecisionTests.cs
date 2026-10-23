@@ -1,8 +1,8 @@
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Domain;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Domain;
 
 public sealed class DomainDecisionTests
 {

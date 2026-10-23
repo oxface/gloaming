@@ -1,7 +1,7 @@
 using System.Globalization;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
 
 if (args.Contains("--cleanup", StringComparer.Ordinal))
 {

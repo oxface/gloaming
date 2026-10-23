@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery;
+namespace Gloaming.Samples.Wholesale.Worker.Local.Delivery;
 
 // Relay code depends only on public Contracts. It never executes a business decision or opens a receiver context.
 public sealed class ReservationCommandPublisher(IStockReservationIntake intake) : IMessagePublisher

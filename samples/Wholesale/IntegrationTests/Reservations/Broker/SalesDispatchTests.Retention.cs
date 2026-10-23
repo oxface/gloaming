@@ -1,9 +1,9 @@
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Worker.Broker;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesDispatchTests
 {

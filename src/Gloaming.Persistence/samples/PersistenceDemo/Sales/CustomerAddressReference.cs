@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 
 public sealed class CustomerAddressReference
 {

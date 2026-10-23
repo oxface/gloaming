@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using ModulithFoundry.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {

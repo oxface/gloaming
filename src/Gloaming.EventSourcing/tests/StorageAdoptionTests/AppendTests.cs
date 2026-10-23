@@ -2,12 +2,12 @@ using System.Data.Common;
 using System.Text.Json;
 using Gloaming.EventSourcing;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
+namespace Gloaming.Samples.EventStorageDemo.Tests;
 
 public sealed partial class AppendTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

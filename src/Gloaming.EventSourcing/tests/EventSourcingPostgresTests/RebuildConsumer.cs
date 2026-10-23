@@ -1,9 +1,9 @@
 using System.Data.Common;
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.EventSourcing.Postgres.Tests;

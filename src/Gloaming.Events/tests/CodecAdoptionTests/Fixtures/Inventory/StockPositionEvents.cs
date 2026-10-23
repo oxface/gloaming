@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Inventory;
 
 internal interface IStockPositionEvent;
 

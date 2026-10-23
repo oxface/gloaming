@@ -1,12 +1,12 @@
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class TraceMigrationTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

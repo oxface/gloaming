@@ -1,10 +1,10 @@
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // A finite consumer composition. EF caches this model separately from ordinary Sales options;
 // this singleton captures no tenant or scoped service. Existing mappings/filters stay intact.

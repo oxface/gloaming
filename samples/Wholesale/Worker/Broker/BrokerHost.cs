@@ -2,21 +2,21 @@ using Gloaming.ActorIdentity;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.ServiceDefaults;
+using Gloaming.Samples.Wholesale.Worker.Broker;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 internal static class BrokerHost
 {

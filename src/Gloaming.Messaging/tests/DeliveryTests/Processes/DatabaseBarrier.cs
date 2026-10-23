@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 // Hold an uncommitted intake/job INSERT, or completion after confirmed publication.
 // These disposable-database triggers replace timing guesses and production fault switches.

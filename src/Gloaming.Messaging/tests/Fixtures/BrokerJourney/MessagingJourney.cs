@@ -1,14 +1,14 @@
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.RabbitMQ;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Rendering;
+using Gloaming.Samples.Messaging.Worker.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Rendering;
-using ModulithFoundry.Samples.Messaging.Worker.Transport;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Broker;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Broker;
 
 public static class MessagingJourney
 {

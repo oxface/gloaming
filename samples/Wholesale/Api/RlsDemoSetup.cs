@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Explicit, one-shot disposable-demo provisioning. Ordinary API startup never calls this.
 internal static class RlsDemoSetup

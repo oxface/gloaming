@@ -1,8 +1,8 @@
 using Gloaming.Messaging;
+using Gloaming.Samples.Messaging.Worker.Transport;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Samples.Messaging.Worker.Transport;
 
-namespace ModulithFoundry.Samples.Messaging.Worker;
+namespace Gloaming.Samples.Messaging.Worker;
 
 internal sealed partial class WorkerPublisher(BrokerSession broker, ILogger<WorkerPublisher> logger)
     : IMessagePublisher

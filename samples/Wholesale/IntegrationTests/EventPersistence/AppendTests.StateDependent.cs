@@ -1,9 +1,9 @@
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed partial class AppendTests
 {

@@ -1,5 +1,5 @@
+using Gloaming.Samples.EventStorageDemo;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.EventStorageDemo;
 
 string connection =
     Environment.GetEnvironmentVariable("EVENT_STORAGE_DEMO_CONNECTION_STRING")

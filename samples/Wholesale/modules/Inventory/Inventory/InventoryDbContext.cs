@@ -3,11 +3,11 @@ using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 public sealed class InventoryDbContext(
     DbContextOptions<InventoryDbContext> options,

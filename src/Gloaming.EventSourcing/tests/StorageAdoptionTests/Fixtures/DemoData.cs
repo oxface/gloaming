@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 // Finite authored setup, not an append or business-command API.
 public static class DemoData

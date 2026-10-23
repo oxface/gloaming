@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Messaging.Workflows;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
+namespace Gloaming.Samples.Wholesale.Sales.ReservationOrders;
 
 internal sealed record RetryReservationRelease;
 

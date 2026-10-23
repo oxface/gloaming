@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
 internal static class DraftOrderMapping
 {

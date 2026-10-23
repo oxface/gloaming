@@ -24,12 +24,12 @@
     />
     <Compile Include="../../../../tests/Support/ChildHost.cs" Link="Support/ChildHost.cs" />
     <Using Include="Xunit" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Exports" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Rendering" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Worker" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox" />
-    <Using Include="ModulithFoundry.Samples.Messaging.Tests.Fixtures.Broker" />
-    <Using Include="ModulithFoundry.Tests.Infrastructure" />
+    <Using Include="Gloaming.Samples.Messaging.Exports" />
+    <Using Include="Gloaming.Samples.Messaging.Rendering" />
+    <Using Include="Gloaming.Samples.Messaging.Worker" />
+    <Using Include="Gloaming.Samples.Messaging.Tests.Fixtures.Outbox" />
+    <Using Include="Gloaming.Samples.Messaging.Tests.Fixtures.Inbox" />
+    <Using Include="Gloaming.Samples.Messaging.Tests.Fixtures.Broker" />
+    <Using Include="Gloaming.Tests.Infrastructure" />
   </ItemGroup>
 </Project>

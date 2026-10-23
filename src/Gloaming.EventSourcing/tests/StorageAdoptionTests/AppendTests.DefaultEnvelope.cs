@@ -4,7 +4,7 @@ using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DefaultEnvelope = Gloaming.EventSourcing.EntityFrameworkCore.StoredEventRecord;
 
-namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
+namespace Gloaming.Samples.EventStorageDemo.Tests;
 
 public sealed partial class AppendTests
 {

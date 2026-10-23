@@ -1,8 +1,8 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo.Purchasing;
+using Gloaming.Samples.Wholesale.EventCodecDemo.Purchasing;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Tests;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Tests;
 
 public sealed class UpcastingCompatibilityTests
 {

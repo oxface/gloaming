@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 public static class OrganizationAccessExtensions
 {

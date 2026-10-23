@@ -2,7 +2,7 @@ using System.Text;
 using Gloaming.Messaging.RabbitMQ;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.RabbitMqTests;
+namespace Gloaming.RabbitMqTests;
 
 public sealed class NativeRecoveryTests(RecoveryBrokerFixture rabbit)
     : IClassFixture<RecoveryBrokerFixture>

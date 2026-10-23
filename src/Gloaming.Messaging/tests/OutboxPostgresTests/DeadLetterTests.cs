@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using static Gloaming.Messaging.Tests.OutboxProof;
 using static Gloaming.Messaging.Tests.OutboxRecoveryProof;

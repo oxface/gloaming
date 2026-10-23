@@ -4,11 +4,11 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Rendering;
+namespace Gloaming.Samples.Messaging.Tests.Rendering;
 
 [Collection("Rendering PostgreSQL")]
 public sealed class FailureRecoveryTests(PostgreSqlFixture postgres)

@@ -1,13 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {

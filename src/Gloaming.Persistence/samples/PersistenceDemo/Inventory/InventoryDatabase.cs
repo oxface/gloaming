@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 
 public static class InventoryDatabase
 {

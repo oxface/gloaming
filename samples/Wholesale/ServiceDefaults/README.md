@@ -11,7 +11,7 @@ health logs/metrics and database instrumentation are not globally disabled.
 
 OTLP export is enabled only when `OTEL_EXPORTER_OTLP_ENDPOINT` is configured. Aspire supplies
 it locally; standalone hosts may configure their own collector. The package carries no
-sample module or Foundry core dependency. No technical library references it. Consumers
+sample module or shared application runtime dependency. No technical library references it. Consumers
 choose sampling, log levels, exporter credentials, retention and production endpoints through
 native configuration/source. Native SQL instrumentation can include statement text; this
 sample does not enable EF sensitive-data logging or record query parameter values deliberately.

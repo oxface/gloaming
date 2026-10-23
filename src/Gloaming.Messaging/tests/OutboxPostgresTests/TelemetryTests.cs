@@ -3,8 +3,8 @@ using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.TestSupport;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 
 namespace Gloaming.Messaging.Tests;
 

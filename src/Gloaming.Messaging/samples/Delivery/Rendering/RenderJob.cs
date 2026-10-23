@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Messaging.Rendering;
+namespace Gloaming.Samples.Messaging.Rendering;
 
 // Recording a job is local durable work, not claiming that external rendering completed.
 public sealed class RenderJob

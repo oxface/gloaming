@@ -1,10 +1,10 @@
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 // This dedicated sample host has one dispatch BackgroundService when --worker is selected.
 // Native task state is enough here; a larger host must explicitly identify its expected workers.

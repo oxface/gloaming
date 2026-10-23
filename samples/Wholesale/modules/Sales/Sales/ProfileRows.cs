@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 internal sealed class CustomerRow
 {

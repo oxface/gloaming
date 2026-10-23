@@ -1,10 +1,10 @@
 using System.Data;
 using System.Data.Common;
 using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.CommandReceipts.Tests;

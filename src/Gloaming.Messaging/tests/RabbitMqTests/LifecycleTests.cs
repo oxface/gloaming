@@ -1,11 +1,11 @@
 using System.Text;
 using Gloaming.Messaging.RabbitMQ;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Tests.Infrastructure;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 
-namespace ModulithFoundry.RabbitMqTests;
+namespace Gloaming.RabbitMqTests;
 
 public sealed class LifecycleTests(RabbitMqFixture rabbit) : IClassFixture<RabbitMqFixture>
 {

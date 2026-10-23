@@ -1,13 +1,13 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesReplyTests
 {

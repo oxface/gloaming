@@ -8,21 +8,21 @@ using Gloaming.Events.Serialization;
 using Gloaming.EventSourcing;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class SampleModuleBoundaryTests
 {
@@ -128,7 +128,7 @@ public sealed class SampleModuleBoundaryTests
     {
         var endpoints = Types()
             .That()
-            .ResideInNamespace("ModulithFoundry.Samples.Wholesale.Api.Endpoints");
+            .ResideInNamespace("Gloaming.Samples.Wholesale.Api.Endpoints");
         Assert.NotEmpty(endpoints.GetObjects(Architecture));
         foreach (ReflectionAssembly forbidden in Modules)
             endpoints
@@ -142,7 +142,7 @@ public sealed class SampleModuleBoundaryTests
     {
         var relays = Types()
             .That()
-            .ResideInNamespace("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery");
+            .ResideInNamespace("Gloaming.Samples.Wholesale.Worker.Local.Delivery");
         Assert.NotEmpty(relays.GetObjects(Architecture));
         foreach (ReflectionAssembly forbidden in Modules.Append(typeof(DbContext).Assembly))
             relays
@@ -164,8 +164,8 @@ public sealed class SampleModuleBoundaryTests
     }
 
     [Theory]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local")]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery")]
+    [InlineData("Gloaming.Samples.Wholesale.Worker.Local")]
+    [InlineData("Gloaming.Samples.Wholesale.Worker.Local.Delivery")]
     public void EveryLocalTransportComponentRemainsIndependentOfBrokerApis(string namespaceName)
     {
         var components = Types().That().ResideInNamespace(namespaceName);

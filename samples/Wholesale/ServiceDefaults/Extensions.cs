@@ -7,7 +7,7 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace ModulithFoundry.Samples.Wholesale.ServiceDefaults;
+namespace Gloaming.Samples.Wholesale.ServiceDefaults;
 
 // Editable native host wiring; no technical library requires this project or an Aspire AppHost.
 public static class Extensions

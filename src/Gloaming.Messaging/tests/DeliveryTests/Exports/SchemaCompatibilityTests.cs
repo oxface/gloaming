@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class SchemaCompatibilityTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

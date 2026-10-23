@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 // Shape-only change: preserve the historical quantity and every unrelated field.
 internal sealed class ReceiptV1ToV2() : JsonEventUpcaster("inventory.stock-position.received", 1, 2)

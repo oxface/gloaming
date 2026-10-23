@@ -2,18 +2,18 @@ using System.Net;
 using System.Net.Http.Json;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Sales;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -112,7 +112,7 @@ public sealed partial class CompositionTests
         {
             var sales = inspect.ServiceProvider.GetRequiredService<SalesDbContext>();
             var persisted = await inspect
-                .ServiceProvider.GetRequiredService<ModulithFoundry.Samples.Wholesale.Sales.Contracts.ICustomerProfiles>()
+                .ServiceProvider.GetRequiredService<Gloaming.Samples.Wholesale.Sales.Contracts.ICustomerProfiles>()
                 .ReadAsync(profile.CustomerId, Token);
             Assert.Equal(profile, persisted);
             Assert.Empty(await sales.Set<AuditRecord>().AsNoTracking().ToArrayAsync(Token));

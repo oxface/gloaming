@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.EventCodecDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.EventCodecDemo.Inventory;
 
 internal static class StockPositionExample
 {

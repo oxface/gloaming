@@ -4,7 +4,7 @@ using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Messaging.Exports;
+namespace Gloaming.Samples.Messaging.Exports;
 
 public sealed class ExportRequest
 {

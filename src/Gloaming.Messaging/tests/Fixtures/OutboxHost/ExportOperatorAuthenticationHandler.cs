@@ -3,12 +3,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
+using Gloaming.Samples.Messaging.Exports;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ModulithFoundry.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 // Finite demo credential policy. Real hosts select their own native authentication scheme.
 internal sealed class ExportOperatorAuthenticationHandler(

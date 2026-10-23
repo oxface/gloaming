@@ -1,6 +1,6 @@
 using Gloaming.EntityFrameworkCoreTests;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 
 namespace Gloaming.PersistenceTests;
 

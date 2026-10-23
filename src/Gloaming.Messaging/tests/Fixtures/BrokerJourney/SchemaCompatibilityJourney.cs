@@ -2,14 +2,14 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Rendering;
+using Gloaming.Samples.Messaging.Worker.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Rendering;
-using ModulithFoundry.Samples.Messaging.Worker.Transport;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Broker;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Broker;
 
 // Finite consumer rollout rehearsal. Each module retains its own transactions and storage.
 public static class SchemaCompatibilityJourney

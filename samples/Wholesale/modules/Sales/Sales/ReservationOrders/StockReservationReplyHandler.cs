@@ -2,10 +2,10 @@ using Gloaming.ActorIdentity;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.Workflows;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
+namespace Gloaming.Samples.Wholesale.Sales.ReservationOrders;
 
 internal sealed class StockReservationReplyHandler(
     IWorkflow<StartStockReservationOrder, ReservationState> workflow,

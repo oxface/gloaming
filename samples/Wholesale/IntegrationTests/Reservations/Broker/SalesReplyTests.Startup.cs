@@ -1,8 +1,8 @@
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesReplyTests
 {

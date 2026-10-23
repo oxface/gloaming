@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 /// <summary>Durably reserves two distinct stock lines, compensating the first if the second is refused.</summary>
 public interface IStockReservationOrders

@@ -1,12 +1,12 @@
 using System.Data.Common;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Worker.Local;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 public sealed class StockObservationTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

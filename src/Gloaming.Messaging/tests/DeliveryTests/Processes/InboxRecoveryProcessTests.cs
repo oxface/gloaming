@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Rendering;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Rendering;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 public sealed class InboxRecoveryProcessTests(PostgreSqlFixture postgres, RabbitMqFixture rabbit)
     : IClassFixture<PostgreSqlFixture>,

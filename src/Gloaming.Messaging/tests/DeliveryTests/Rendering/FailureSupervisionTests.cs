@@ -2,12 +2,12 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Hosting;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Rendering;
+namespace Gloaming.Samples.Messaging.Tests.Rendering;
 
 [Collection("Rendering PostgreSQL")]
 public sealed class FailureSupervisionTests(PostgreSqlFixture postgres)

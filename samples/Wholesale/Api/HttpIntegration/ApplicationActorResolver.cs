@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using Gloaming.ActorIdentity;
 using Gloaming.ActorIdentity.AspNetCore;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 internal sealed class ApplicationActorResolver(IApplicationAccess access)
     : IHttpActorContextResolver

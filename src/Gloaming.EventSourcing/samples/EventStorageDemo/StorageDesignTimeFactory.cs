@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 public sealed class StorageDesignTimeFactory : IDesignTimeDbContextFactory<StorageDbContext>
 {

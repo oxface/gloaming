@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 public static class CounterAppendJourney
 {

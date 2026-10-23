@@ -2,6 +2,7 @@ using System.Diagnostics.Metrics;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -9,9 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 public static class OutboxTestHost
 {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.EventCodecDemo</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.EventCodecDemo</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />

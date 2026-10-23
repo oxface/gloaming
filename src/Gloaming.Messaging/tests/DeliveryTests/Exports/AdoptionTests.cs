@@ -2,16 +2,16 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class AdoptionTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

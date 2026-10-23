@@ -3,7 +3,7 @@ using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.Messaging.Exports;
+namespace Gloaming.Samples.Messaging.Exports;
 
 public sealed class ExportDbContext(DbContextOptions<ExportDbContext> options) : DbContext(options)
 {

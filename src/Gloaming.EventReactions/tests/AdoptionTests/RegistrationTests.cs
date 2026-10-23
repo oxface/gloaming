@@ -3,7 +3,7 @@ using Gloaming.EventReactions.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.EventReactions.Consumer.Tests;
+namespace Gloaming.Samples.EventReactions.Consumer.Tests;
 
 public sealed class RegistrationTests
 {

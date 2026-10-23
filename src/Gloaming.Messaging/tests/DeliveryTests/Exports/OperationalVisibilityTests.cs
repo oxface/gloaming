@@ -5,14 +5,14 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Exports;
+namespace Gloaming.Samples.Messaging.Tests.Exports;
 
 public sealed class OperationalVisibilityTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>
@@ -90,7 +90,7 @@ public sealed class OperationalVisibilityTests(PostgreSqlFixture postgres)
             InstrumentPublished = (instrument, native) =>
             {
                 if (
-                    instrument.Meter.Name == "ModulithFoundry.OutboxDemo.Outbox"
+                    instrument.Meter.Name == "Gloaming.OutboxDemo.Outbox"
                     && ReferenceEquals(instrument.Meter.Scope, factory)
                 )
                     native.EnableMeasurementEvents(instrument);
@@ -223,7 +223,7 @@ public sealed class OperationalVisibilityTests(PostgreSqlFixture postgres)
             InstrumentPublished = (instrument, native) =>
             {
                 if (
-                    instrument.Meter.Name == "ModulithFoundry.OutboxDemo.Outbox"
+                    instrument.Meter.Name == "Gloaming.OutboxDemo.Outbox"
                     && ReferenceEquals(instrument.Meter.Scope, factory)
                 )
                     native.EnableMeasurementEvents(instrument);

@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class AdoptionDependencyTests
 {

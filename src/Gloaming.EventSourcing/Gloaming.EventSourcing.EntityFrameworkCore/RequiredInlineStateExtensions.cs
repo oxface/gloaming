@@ -11,7 +11,7 @@ namespace Gloaming.EventSourcing.EntityFrameworkCore;
 /// <summary>Explicit model declaration and native save-boundary validation; no saving or transaction wrapper.</summary>
 public static class RequiredInlineStateExtensions
 {
-    private const string Prefix = "ModulithFoundry:RequiredInlineState:";
+    private const string Prefix = "Gloaming:RequiredInlineState:";
 
     /// <summary>Declares the required stream/event/inline-state save association for one stable stream discriminator.</summary>
     public static ModelBuilder ConfigureRequiredInlineState<TStream, TStoredEvent, TState>(

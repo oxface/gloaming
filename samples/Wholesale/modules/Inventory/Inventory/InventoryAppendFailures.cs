@@ -1,8 +1,8 @@
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 // Native composition policy: only these module stream constraints are version conflicts.
 public static class InventoryAppendFailures

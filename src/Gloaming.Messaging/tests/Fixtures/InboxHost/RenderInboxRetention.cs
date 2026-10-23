@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
-using ModulithFoundry.Samples.Messaging.Rendering;
+using Gloaming.Samples.Messaging.Rendering;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Inbox;
 
 // Finite consumer maintenance. Provisioning, scheduling and retention horizons stay with the owner.
 public static class RenderInboxRetention

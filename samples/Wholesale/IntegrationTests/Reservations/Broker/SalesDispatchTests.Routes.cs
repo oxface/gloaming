@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesDispatchTests
 {

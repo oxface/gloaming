@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
-using ModulithFoundry.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Exports;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 // Finite consumer maintenance. Provisioning, scheduling and retention horizons stay with the owner.
 public static class ExportOutboxRetention

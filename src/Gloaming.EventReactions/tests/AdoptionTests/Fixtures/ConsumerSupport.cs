@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventReactions;
+namespace Gloaming.Samples.EventReactions;
 
 public sealed record OrderState(Guid Id, decimal Amount, bool Submitted, long Version);
 

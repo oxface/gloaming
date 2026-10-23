@@ -1,14 +1,14 @@
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Tests;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Tests;
 
 public sealed class CustomerRelationshipTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

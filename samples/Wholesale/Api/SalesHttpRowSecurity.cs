@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Finite, explicit provisioning on an already migrated database. Never called by HTTP requests.
 public static class SalesHttpRowSecurity

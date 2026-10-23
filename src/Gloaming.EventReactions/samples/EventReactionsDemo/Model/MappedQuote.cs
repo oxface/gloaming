@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventReactions.Model;
+namespace Gloaming.Samples.EventReactions.Model;
 
 public sealed record QuoteAccepted(Guid Id, decimal Amount);
 

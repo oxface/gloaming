@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 /// <summary>This consumer maps logical destinations to configured endpoints and defines accepted HTTP status.</summary>
 public sealed class HttpCommandPublisher(HttpClient client, Uri receiver) : IMessagePublisher

@@ -1,6 +1,6 @@
 using Gloaming.Messaging;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
+namespace Gloaming.Samples.Wholesale.Inventory.Messaging;
 
 // Consumer-owned reply metadata. A fresh processing scope admits one incoming message;
 // ordinary native commands leave this unset and do not invent an incoming cause.

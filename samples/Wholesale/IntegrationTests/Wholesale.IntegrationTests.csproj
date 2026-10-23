@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <IsTestProject>true</IsTestProject>
     <IsPackable>false</IsPackable>
-    <StartupObject>ModulithFoundry.Samples.Wholesale.IntegrationTests.TestEntryPoint</StartupObject>
+    <StartupObject>Gloaming.Samples.Wholesale.IntegrationTests.TestEntryPoint</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />

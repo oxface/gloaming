@@ -4,10 +4,10 @@ using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Rendering;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Inbox;
 
 public static class InboxTestHost
 {

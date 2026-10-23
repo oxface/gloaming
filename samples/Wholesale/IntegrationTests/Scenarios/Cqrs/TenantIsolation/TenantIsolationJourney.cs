@@ -1,13 +1,13 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
 
 public static class TenantIsolationJourney
 {

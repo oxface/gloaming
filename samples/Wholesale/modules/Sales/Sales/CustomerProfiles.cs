@@ -1,8 +1,8 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 internal sealed class CustomerProfiles(
     SalesDbContext database,

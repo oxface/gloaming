@@ -1,11 +1,11 @@
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
+namespace Gloaming.Samples.Wholesale.Worker.Maintenance;
 
 // Trusted local host: selects policy and presentation; Gloaming executes regeneration.
 public static class StockRegeneration

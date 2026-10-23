@@ -1,4 +1,4 @@
-using ModulithFoundry.Samples.EventReactions;
+using Gloaming.Samples.EventReactions;
 
 string connection =
     Environment.GetEnvironmentVariable("DOMAIN_EVENTS_ASSESSMENT_CONNECTION_STRING")

@@ -1,4 +1,4 @@
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Tenancy.Postgres.Tests;

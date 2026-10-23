@@ -1,8 +1,8 @@
 using System.Net;
 using Gloaming.Messaging.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Exports;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Outbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Outbox;
 
 // HTTP classification, budget and safe reason vocabulary belong to this consumer.
 public sealed class ExportOutboxFailurePolicy : IOutboxFailurePolicy<ExportDbContext>

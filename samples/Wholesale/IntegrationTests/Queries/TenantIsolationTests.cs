@@ -1,16 +1,16 @@
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Queries;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Queries;
 
 public sealed partial class TenantIsolationTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

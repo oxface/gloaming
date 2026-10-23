@@ -2,18 +2,18 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Hosting;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Local;
+using Gloaming.Samples.Wholesale.Worker.Local.Delivery;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 public sealed class DeliveryTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

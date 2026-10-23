@@ -1,7 +1,7 @@
 using System.Data;
 using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Tenancy.Postgres.Tests;

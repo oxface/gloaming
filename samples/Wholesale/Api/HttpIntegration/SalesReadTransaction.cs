@@ -1,8 +1,8 @@
+using Gloaming.Samples.Wholesale.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 // The endpoint owns the returned read transaction; module persistence stays in this host bridge.
 internal sealed class SalesReadTransaction(SalesDbContext database)

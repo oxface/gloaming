@@ -1,19 +1,19 @@
 using Gloaming.ActorIdentity;
 using Gloaming.ActorIdentity.AspNetCore;
+using Gloaming.Samples.Wholesale.Access;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Api.HttpIntegration;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Access;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 public static class DemoComposition
 {

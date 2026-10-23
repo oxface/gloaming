@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 
 // Explicitly global reference data; application policy owns access to this table.
 public sealed class ReferenceCategory

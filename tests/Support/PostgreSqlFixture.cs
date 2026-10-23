@@ -1,7 +1,7 @@
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace ModulithFoundry.Tests.Infrastructure;
+namespace Gloaming.Tests.Infrastructure;
 
 public sealed class PostgreSqlFixture : IAsyncLifetime
 {

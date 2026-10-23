@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 internal sealed class DemoClock : TimeProvider
 {

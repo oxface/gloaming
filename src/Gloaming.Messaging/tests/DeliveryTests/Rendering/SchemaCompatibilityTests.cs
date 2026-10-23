@@ -4,13 +4,13 @@ using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Tests.Infrastructure;
-using static ModulithFoundry.Samples.Messaging.Tests.Rendering.AdoptionTests;
+using static Gloaming.Samples.Messaging.Tests.Rendering.AdoptionTests;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Rendering;
+namespace Gloaming.Samples.Messaging.Tests.Rendering;
 
 [Collection("Rendering PostgreSQL")]
 public sealed class SchemaCompatibilityTests(PostgreSqlFixture postgres)

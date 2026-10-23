@@ -1,8 +1,8 @@
 using Gloaming.EventReactions.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.EventReactions.Consumer.Tests;
+namespace Gloaming.Samples.EventReactions.Consumer.Tests;
 
 public sealed partial class DispatchTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

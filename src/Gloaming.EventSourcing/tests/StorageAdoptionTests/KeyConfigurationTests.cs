@@ -2,7 +2,7 @@ using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
+namespace Gloaming.Samples.EventStorageDemo.Tests;
 
 public sealed class KeyConfigurationTests
 {

@@ -1,15 +1,15 @@
 using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Queries;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Queries;
 
 public sealed partial class TenantIsolationTests
 {

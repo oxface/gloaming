@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
+namespace Gloaming.Samples.Wholesale.Access.Persistence;
 
 internal sealed class UserRow
 {

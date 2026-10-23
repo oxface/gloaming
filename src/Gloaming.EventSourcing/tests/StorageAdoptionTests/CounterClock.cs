@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventStorageDemo.Tests;
+namespace Gloaming.Samples.EventStorageDemo.Tests;
 
 internal sealed class CounterClock : TimeProvider
 {

@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Samples.Wholesale.Worker.Local;
+using Gloaming.Samples.Wholesale.Worker.Maintenance;
 using Microsoft.Extensions.Configuration;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
 
 if (args.FirstOrDefault() == "--regenerate-stock")
 {

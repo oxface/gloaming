@@ -1,9 +1,9 @@
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging.Workflows;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using OrderView = ModulithFoundry.Samples.Wholesale.Sales.Contracts.StockReservationOrder;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using OrderView = Gloaming.Samples.Wholesale.Sales.Contracts.StockReservationOrder;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
+namespace Gloaming.Samples.Wholesale.Sales.ReservationOrders;
 
 internal sealed class StockReservationOrders(
     SalesDbContext database,

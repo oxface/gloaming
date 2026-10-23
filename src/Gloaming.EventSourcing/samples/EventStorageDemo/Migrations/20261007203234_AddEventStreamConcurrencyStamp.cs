@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.EventStorageDemo.Migrations;
+namespace Gloaming.Samples.EventStorageDemo.Migrations;
 
 /// <inheritdoc />
 public partial class AddEventStreamConcurrencyStamp : Migration

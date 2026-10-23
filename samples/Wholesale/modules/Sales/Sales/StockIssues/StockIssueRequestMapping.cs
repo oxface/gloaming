@@ -3,7 +3,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.StockIssues;
+namespace Gloaming.Samples.Wholesale.Sales.StockIssues;
 
 internal static class StockIssueRequestMapping
 {

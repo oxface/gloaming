@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 // New Changed results are proposals; an equal receipted retry returns its original accepted result.
 // The caller owns the native Sales transaction, save and commit.

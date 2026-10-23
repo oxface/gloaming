@@ -3,11 +3,11 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
+using Gloaming.Samples.Messaging.Rendering;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
-using ModulithFoundry.Samples.Messaging.Rendering;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Fixtures.Inbox;
+namespace Gloaming.Samples.Messaging.Tests.Fixtures.Inbox;
 
 // Finite demo credential policy. Real hosts select their own native authentication scheme.
 internal sealed class RenderOperatorAuthenticationHandler(

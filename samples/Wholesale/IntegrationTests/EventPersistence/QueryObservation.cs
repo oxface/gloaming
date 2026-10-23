@@ -1,8 +1,8 @@
 using System.Data.Common;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 // Observe native EF commands; no production reader hook or SQL snapshot is needed.
 internal sealed class QueryObservation(string schema) : DbCommandInterceptor

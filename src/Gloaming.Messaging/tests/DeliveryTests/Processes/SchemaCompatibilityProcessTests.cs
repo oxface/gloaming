@@ -1,14 +1,14 @@
 using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Messaging.Exports;
+using Gloaming.Samples.Messaging.Rendering;
+using Gloaming.Samples.Messaging.Worker.Transport;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Messaging.Exports;
-using ModulithFoundry.Samples.Messaging.Rendering;
-using ModulithFoundry.Samples.Messaging.Worker.Transport;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 public sealed class SchemaCompatibilityProcessTests(
     PostgreSqlFixture postgres,

@@ -1,17 +1,17 @@
 using System.Net.Http.Json;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -122,7 +122,7 @@ public sealed partial class CompositionTests
         AccessDatabase.Configure(accessOptions, connection);
         await using var access = new AccessDbContext(accessOptions.Options);
         await access.Database.MigrateAsync(Token);
-        ModulithFoundry.Samples.Wholesale.Access.AccessDemoSeed.Stage(access);
+        Gloaming.Samples.Wholesale.Access.AccessDemoSeed.Stage(access);
         await access.SaveChangesAsync(Token);
         using var tenant = new TenantContextAccessor();
         tenant.Initialize(TenantContext.ForTenant(new TenantId("wholesale-alpha")));

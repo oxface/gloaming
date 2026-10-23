@@ -1,11 +1,11 @@
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {

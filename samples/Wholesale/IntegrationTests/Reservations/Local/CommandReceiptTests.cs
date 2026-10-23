@@ -2,16 +2,16 @@ using System.Data.Common;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.Workflows;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.ReservationOrders;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 public sealed class CommandReceiptTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

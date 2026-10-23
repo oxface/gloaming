@@ -1,7 +1,7 @@
-using ModulithFoundry.Samples.Wholesale.Access;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access;
+using Gloaming.Samples.Wholesale.Access.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Only finite setup reads these inputs. Runtime authentication never creates external links.
 internal static class DemoIdentitySetup

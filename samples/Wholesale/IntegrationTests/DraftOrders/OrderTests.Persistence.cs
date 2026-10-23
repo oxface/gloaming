@@ -1,13 +1,13 @@
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.DraftOrders;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.DraftOrders;
 
 public sealed partial class OrderTests
 {

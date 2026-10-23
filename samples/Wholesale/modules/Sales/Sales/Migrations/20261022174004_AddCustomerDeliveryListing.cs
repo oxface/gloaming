@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations;
+namespace Gloaming.Samples.Wholesale.Sales.Migrations;
 
 /// <inheritdoc />
 public partial class AddCustomerDeliveryListing : Migration

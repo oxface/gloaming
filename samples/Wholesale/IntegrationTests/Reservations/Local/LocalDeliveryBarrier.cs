@@ -1,8 +1,8 @@
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
+using Gloaming.Samples.Wholesale.Worker.Local;
 using Npgsql;
-using static ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local.ProcessRecoveryTests;
+using static Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local.ProcessRecoveryTests;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 // Disposable-database triggers expose real transaction cuts without production fault switches.
 internal sealed class LocalDeliveryBarrier(NpgsqlConnection owner, string database)

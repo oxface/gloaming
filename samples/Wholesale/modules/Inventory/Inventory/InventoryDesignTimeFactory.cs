@@ -2,7 +2,7 @@ using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 public sealed class InventoryDesignTimeFactory : IDesignTimeDbContextFactory<InventoryDbContext>
 {

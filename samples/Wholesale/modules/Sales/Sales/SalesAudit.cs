@@ -3,7 +3,7 @@ using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Tenancy;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Sales owns classification and disclosure; callers supply the accepted change only.
 internal sealed class SalesAudit(

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Messaging.Exports.Migrations;
+namespace Gloaming.Samples.Messaging.Exports.Migrations;
 
 /// <inheritdoc />
 public partial class AddOutboxDeadLetters : Migration

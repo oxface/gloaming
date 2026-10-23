@@ -3,7 +3,7 @@ using System.Text.Json;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 
-namespace ModulithFoundry.Samples.Messaging.Tests.Processes;
+namespace Gloaming.Samples.Messaging.Tests.Processes;
 
 // A real OTLP receiver/exporter, not a replacement SDK or an in-process child-host approximation.
 internal sealed class OtlpCollector : IAsyncDisposable

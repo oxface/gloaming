@@ -1,11 +1,11 @@
 using Gloaming.EntityFrameworkCore;
 using Gloaming.EventReactions;
 using Gloaming.EventReactions.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.EventReactions.Consumer.Tests;
+namespace Gloaming.Samples.EventReactions.Consumer.Tests;
 
 public sealed class EventOrderingTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

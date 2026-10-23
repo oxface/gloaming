@@ -1,11 +1,11 @@
 using System.Reflection;
 using System.Text.Json;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
-using CurrentApplication = ModulithFoundry.Samples.WorkflowDeploymentDemo.Current.Application;
-using EarlierApplication = ModulithFoundry.Samples.WorkflowDeploymentDemo.Earlier.Application;
+using CurrentApplication = Gloaming.Samples.WorkflowDeploymentDemo.Current.Application;
+using EarlierApplication = Gloaming.Samples.WorkflowDeploymentDemo.Earlier.Application;
 
-namespace ModulithFoundry.Samples.WorkflowDeploymentDemo.Tests;
+namespace Gloaming.Samples.WorkflowDeploymentDemo.Tests;
 
 public sealed class DeploymentTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

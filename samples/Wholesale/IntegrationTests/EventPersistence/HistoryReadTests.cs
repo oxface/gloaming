@@ -1,17 +1,17 @@
 using Gloaming.Events.History;
 using Gloaming.Events.Serialization;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed class HistoryReadTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {

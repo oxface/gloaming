@@ -1,6 +1,6 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 // No codec or tenant service is required: the shared reader owns only native prefix loading.
 internal sealed class CounterHistoryReader(StorageDbContext database)
