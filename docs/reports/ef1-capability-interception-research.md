@@ -8,7 +8,7 @@ links now lead to replacements; test counts below remain dated evidence.
 Date: 2026-10-15 (Europe/Kiev). Investigation requested during D2.1d owner review.
 This report completes the [research scope](../plans/ef1-capability-interception-research.md),
 with [external implementation comparisons](ef1-external-patterns.md) and retained
-[native EF probes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
+[native EF probes](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
 Production libraries and contexts are unchanged. Interfaces and package names below are proposals.
 
 ## Recommendation

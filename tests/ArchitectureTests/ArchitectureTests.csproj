@@ -207,4 +207,11 @@
       CopyToOutputDirectory="PreserveNewest"
     />
   </ItemGroup>
+  <ItemGroup>
+    <None
+      Include="../../src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj"
+      Link="ProjectDeclarations/EventCodecDemo.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
 </Project>

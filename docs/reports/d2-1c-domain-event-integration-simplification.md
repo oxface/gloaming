@@ -118,10 +118,10 @@ and full solution build/style/analyzer checks passed.
   [immutable submission](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderAggregate.cs),
   [command mapping](../../samples/Wholesale/modules/Sales/Sales/DraftOrders/DraftOrderCommands.cs) and
   [required handler](../../samples/Wholesale/modules/Sales/Sales/OrderAllowances/ReserveCustomerAllowance.cs).
-- [Standalone composition](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
-  [direct consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
+- [Standalone composition](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+  [direct consumer](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
   [mapped consumer](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs),
-  [DI isolation proof](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/RegistrationTests.cs) and
+  [DI isolation proof](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/RegistrationTests.cs) and
   [Sales cascade/tenant/concurrency proofs](../../samples/Wholesale/IntegrationTests/Reactions/ReactionTests.Faults.cs).
 
 The new reusable capability proven here is scoped registration and context-independent adapter

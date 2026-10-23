@@ -2,7 +2,7 @@
 
 Direction update, 2026-10-22: use the [library architecture audit](../reports/gloaming-library-audit.md)
 for the current implementation record and next increments. The generator and ContextDemo
-are retired in the current audit batch; [application patterns](../application-patterns.md) replace
+are retired as `dd6eb77`; [application patterns](../application-patterns.md) replace
 active creation instructions. The template/extraction sequence
 and dated authorizations below retain historical context; they do not select further template
 work or authorize the audit's proposed interface/removal changes. Current package contracts

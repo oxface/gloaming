@@ -11,7 +11,7 @@ or approval of a new public interface/package. D2.1d's runtime remains unchanged
 
 Investigation completed for review on 2026-10-15: [findings and recommendation](../reports/ef1-capability-interception-research.md),
 [pinned external-pattern comparison](../reports/ef1-external-patterns.md) and
-[18 retained native EF probes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
+[18 retained native EF probes](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
 Model-declared requirements can select scoped work; a common installation can own Gloaming's
 relative order. Recommended production composition and domain-lifecycle simplification remain
 proposals. No production package, interface or migration is implemented by this research.

@@ -82,7 +82,7 @@ public sealed class EventReactionBoundaryTests
     [Fact]
     public void IndependentConsumerUsesReactionsWithoutWholesaleOrOtherGloamingFamilies()
     {
-        var dependencies = typeof(ExtractionJourney).Assembly.GetReferencedAssemblies();
+        var dependencies = typeof(ReactionExample).Assembly.GetReferencedAssemblies();
         Assert.Contains(
             dependencies,
             reference =>
@@ -119,7 +119,6 @@ public sealed class EventReactionBoundaryTests
             typeof(QuoteAccepted).GetInterfaces(),
             contract => contract.Assembly == typeof(PendingEvents).Assembly
         );
-        Assert.Equal(typeof(OwnedEntity), typeof(DirectOrder).BaseType);
     }
 
     private static XDocument Declaration(string project) =>

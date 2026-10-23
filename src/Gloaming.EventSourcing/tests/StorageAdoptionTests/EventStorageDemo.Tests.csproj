@@ -7,8 +7,11 @@
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" />
     <PackageReference Include="Testcontainers.PostgreSql" />
-    <ProjectReference Include="../EventStorageDemo/EventStorageDemo.csproj" />
+    <ProjectReference Include="../../samples/EventStorageDemo/EventStorageDemo.csproj" />
     <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
     <Using Include="Xunit" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="ChildHost.cs" />
   </ItemGroup>
 </Project>

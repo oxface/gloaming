@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Tests.Infrastructure;
@@ -11,35 +10,21 @@ public sealed class StorageTests(PostgreSqlFixture postgres) : IClassFixture<Pos
     private static CancellationToken Token => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task NativeExecutableStoresTwoFamiliesInTheSameCustomTablePair()
+    public async Task RawMappingStoresIndependentFamiliesInTheSameCustomTablePair()
     {
         string connection = await postgres.CreateDatabaseAsync(Token);
-        var start = new ProcessStartInfo("dotnet")
-        {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
-        start.ArgumentList.Add(typeof(DemoJourneys).Assembly.Location);
-        start.Environment["EVENT_STORAGE_DEMO_CONNECTION_STRING"] = connection;
-        using var process = Process.Start(start)!;
-        Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-        Task<string> error = process.StandardError.ReadToEndAsync(Token);
-        await process.WaitForExitAsync(Token);
-        Assert.Equal(0, process.ExitCode);
-        Assert.Empty(await error);
+        using var output = new StringWriter();
+        await DemoJourneys.RunAsync(connection, output, Token);
         Assert.Equal(
             [
                 "journal proof.counter: version=2, value=17",
                 "journal proof.note: version=1, text=review",
-                "journal append: version=3, value=22, rejected=4",
             ],
-            (await output).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            output.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
         );
-
         await using var read = new StorageDbContext(StorageDbContext.Options(connection));
         Assert.Equal(
-            ["proof.counter", "proof.counter", "proof.note"],
+            ["proof.counter", "proof.note"],
             await read
                 .Streams.AsNoTracking()
                 .OrderBy(row => row.StreamType)
@@ -54,7 +39,7 @@ public sealed class StorageTests(PostgreSqlFixture postgres) : IClassFixture<Pos
                     .SingleAsync(row => row.Id == DemoData.CounterId, Token)
             ).Description
         );
-        Assert.Equal(6, await read.Events.CountAsync(Token));
+        Assert.Equal(3, await read.Events.CountAsync(Token));
         Assert.Equal(
             2,
             await read.Events.CountAsync(row => row.StreamId == DemoData.CounterId, Token)
@@ -67,6 +52,40 @@ public sealed class StorageTests(PostgreSqlFixture postgres) : IClassFixture<Pos
             native
         );
         Assert.Equal(["facts", "streams"], (string[])(await tables.ExecuteScalarAsync(Token))!);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task NativeCounterExecutableAppendsAndCanBeRepeated(bool existingFamilies)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(60));
+        string connection = await postgres.CreateDatabaseAsync(deadline.Token);
+        if (existingFamilies)
+            await DemoJourneys.RunAsync(connection, TextWriter.Null, Token);
+
+        for (int iteration = 0; iteration < 2; iteration++)
+        {
+            await using var child = new ChildHost(
+                typeof(CounterCommands).Assembly,
+                new() { ["EVENT_STORAGE_DEMO_CONNECTION_STRING"] = connection }
+            );
+            Assert.True(await child.WaitForExitAsync(deadline.Token) == 0, child.Output);
+            Assert.Contains(
+                "journal append: version=3, value=22, rejected=4",
+                child.Output,
+                StringComparison.Ordinal
+            );
+        }
+
+        await using var read = new StorageDbContext(StorageDbContext.Options(connection));
+        var stream = await read
+            .Streams.AsNoTracking()
+            .SingleAsync(row => row.Id == CounterAppendJourney.Id, Token);
+        Assert.Equal(3, stream.Version);
+        Assert.Equal(existingFamilies ? 3 : 1, await read.Streams.CountAsync(Token));
+        Assert.Equal(existingFamilies ? 6 : 3, await read.Events.CountAsync(Token));
     }
 
     [Theory]

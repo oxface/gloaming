@@ -97,7 +97,7 @@ Review [runtime composition](../../src/Gloaming.Persistence/samples/PersistenceD
 [its factory](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/SalesDesignTimeFactory.cs).
 Review the initial migrations, designers and snapshots under each module's `Migrations`
 folder, [schema policies](../../tests/ArchitectureTests/ModulePersistenceTests.cs),
-[database proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/ModuleMigrationTests.cs)
+[database proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo.Tests/ModuleMigrationTests.cs)
 and the [updated consumer recipe](../../src/Gloaming.Persistence/samples/PersistenceDemo/README.md).
 
 Schemas are ownership conventions, not hostile-code or credential isolation. This sample

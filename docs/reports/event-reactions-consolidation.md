@@ -174,8 +174,8 @@ Start with the [core contract](../../src/Gloaming.EventReactions/Gloaming.EventR
 [core implementation](../../src/Gloaming.EventReactions/Gloaming.EventReactions),
 [EF registration](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionRegistration.cs)
 and [shared save integration](../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/CapabilityConfiguration.cs).
-Then compare [DirectOrders registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+Then compare [DirectOrders registration](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
 [pure model](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Model),
-[ad-hoc source proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
-[ordering proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs) and
+[ad-hoc source proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/AdHocSourceTests.cs),
+[ordering proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EventOrderingTests.cs) and
 [architecture boundaries](../../tests/ArchitectureTests/EventReactionBoundaryTests.cs).

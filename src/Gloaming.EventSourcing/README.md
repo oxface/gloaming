@@ -21,7 +21,7 @@ Library tests:
 - [EventSourcingTests](tests/EventSourcingTests/EventSourcingTests.csproj)
 - [EventSourcingPostgresTests](tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj) (real PostgreSQL 18.6, standalone direct JSON consumer)
 
-PostgreSQL adoption proofs also live with [Wholesale](../../samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj) and the [independent raw counter](samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj).
+PostgreSQL adoption proofs also live with [Wholesale](../../samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj) and the [independent raw counter](tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj).
 
 Run commands from the repository root. Restore/build the active solution, then test a selected
 project under this family's tests directory with `dotnet test --project <path> --no-build --no-restore`.

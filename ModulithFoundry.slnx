@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/Libraries/EventReactions/Tests/">
     <Project Path="src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj" />
+    <Project Path="src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Auditing/">
     <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
@@ -57,6 +58,7 @@
     <Project Path="src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj" />
     <Project Path="src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj" />
     <Project Path="src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Events/">
     <Project Path="src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
@@ -65,6 +67,7 @@
   <Folder Name="/Libraries/Events/Tests/">
     <Project Path="src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj" />
     <Project Path="src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj" />
+    <Project Path="src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/">
     <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
@@ -73,20 +76,18 @@
   <Folder Name="/Libraries/EventSourcing/Tests/">
     <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Samples/">
     <Project Path="samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <Project Path="samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />
-    <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj" />
     <Project Path="src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
-    <Project Path="src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj" />
     <Project Path="samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj" />
     <Project Path="samples/Wholesale/AppHost/Wholesale.AppHost.csproj" />
     <Project Path="samples/Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
     <Project Path="samples/Wholesale/Api/Wholesale.Api.csproj" />
     <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
-    <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Sample modules/">
     <Project Path="samples/Wholesale/modules/Dispatch/Dispatch/Dispatch.csproj" />
@@ -107,7 +108,6 @@
   <Folder Name="/Samples/EventReactionsDemo/">
     <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj" />
     <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/EventReactionsDemo.csproj" />
-    <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj" />
   </Folder>
   <Folder Name="/Samples/Messaging/">
     <Project Path="src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj" />

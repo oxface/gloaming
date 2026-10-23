@@ -8,7 +8,7 @@ using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
 string connection =
     Environment.GetEnvironmentVariable("WHOLESALE_DEMO_CONNECTION_STRING")
     ?? throw new InvalidOperationException(
-        "Set WHOLESALE_DEMO_CONNECTION_STRING to a disposable demo database."
+        "Set WHOLESALE_DEMO_CONNECTION_STRING to a disposable database."
     );
 await using var provider = DemoComposition
     .CreateServices(connection)
@@ -16,7 +16,7 @@ await using var provider = DemoComposition
         new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
     );
 
-// Consumer-controlled module order and initialization; no transaction spans both modules.
+// The application explicitly owns migration order; each module has its own history.
 await using (var setup = provider.CreateAsyncScope())
 {
     await setup.ServiceProvider.GetRequiredService<InventoryDbContext>().Database.MigrateAsync();
@@ -30,82 +30,47 @@ foreach (var (organization, quantity) in new[] { ("wholesale-alpha", 42), ("whol
         .ServiceProvider.GetRequiredService<ITenantContextInitializer>()
         .Initialize(TenantContext.ForTenant(new TenantId(organization)));
     var inventory = scope.ServiceProvider.GetRequiredService<InventoryDbContext>();
-    StockReference? reference = await inventory.Stock.SingleOrDefaultAsync(row =>
-        row.Sku == "WIDGET"
-    );
-    if (reference is null)
+    await using (var transaction = await inventory.Database.BeginTransactionAsync())
     {
-        reference = new StockReference
-        {
-            Id = Guid.NewGuid(),
-            OrganizationKey = organization,
-            Sku = "WIDGET",
-            Quantity = quantity,
-        };
-        inventory.Stock.Add(reference);
-        await inventory.SaveChangesAsync();
-    }
-    Console.WriteLine($"{organization}: WIDGET availability={reference.Quantity}");
-
-    var sales = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
-    CustomerReference? customer = await sales.Customers.SingleOrDefaultAsync(row =>
-        row.Code == "BUYER"
-    );
-    if (customer is null)
-    {
-        customer = new CustomerReference
-        {
-            Id = Guid.NewGuid(),
-            OrganizationKey = organization,
-            Code = "BUYER",
-            DisplayName = organization == "wholesale-alpha" ? "Alpha Draft" : "Beta Draft",
-            Version = 1,
-        };
-        sales.Customers.Add(customer);
-        await sales.SaveChangesAsync();
-    }
-
-    CustomerAddressReference? address = await sales.CustomerAddresses.SingleOrDefaultAsync(row =>
-        row.CustomerId == customer.Id
-    );
-    if (address is null)
-    {
-        address = new CustomerAddressReference
-        {
-            Id = Guid.NewGuid(),
-            OrganizationKey = organization,
-            CustomerId = customer.Id,
-            AddressLine = "Draft address",
-        };
-        sales.CustomerAddresses.Add(address);
-        await sales.SaveChangesAsync();
-    }
-    string desiredName = organization == "wholesale-alpha" ? "Alpha Retail" : "Beta Retail";
-    string desiredAddress = organization == "wholesale-alpha" ? "42 Market Street" : "7 Dock Road";
-    if (customer.DisplayName != desiredName || address.AddressLine != desiredAddress)
-    {
-        await using var transaction = await sales.Database.BeginTransactionAsync();
-        try
-        {
-            await CustomerProfileChanges.ApplyAsync(
-                sales,
-                new CustomerProfileChange(
-                    customer.Id,
-                    address.Id,
-                    customer.Version,
-                    desiredName,
-                    desiredAddress
-                )
+        if (!await inventory.Stock.AnyAsync(row => row.Sku == "WIDGET"))
+            inventory.Stock.Add(
+                new StockReference
+                {
+                    Id = Guid.NewGuid(),
+                    OrganizationKey = organization,
+                    Sku = "WIDGET",
+                    Quantity = quantity,
+                }
             );
-            await transaction.CommitAsync();
-        }
-        catch
-        {
-            await transaction.RollbackAsync(CancellationToken.None);
-            throw;
-        }
+
+        await inventory.SaveChangesAsync();
+        await transaction.CommitAsync();
     }
+
+    var stock = await inventory.Stock.AsNoTracking().SingleAsync(row => row.Sku == "WIDGET");
+    Console.WriteLine($"{organization}: WIDGET availability={stock.Quantity}");
+
+    // This second transaction belongs to Sales; no transaction spans the two contexts.
+    var sales = scope.ServiceProvider.GetRequiredService<SalesDbContext>();
+    await using (var transaction = await sales.Database.BeginTransactionAsync())
+    {
+        if (!await sales.Customers.AnyAsync(row => row.Code == "BUYER"))
+            sales.Customers.Add(
+                new CustomerReference
+                {
+                    Id = Guid.NewGuid(),
+                    OrganizationKey = organization,
+                    Code = "BUYER",
+                    DisplayName =
+                        organization == "wholesale-alpha" ? "Alpha Retail" : "Beta Retail",
+                    Version = 1,
+                }
+            );
+
+        await sales.SaveChangesAsync();
+        await transaction.CommitAsync();
+    }
+
+    var customer = await sales.Customers.AsNoTracking().SingleAsync(row => row.Code == "BUYER");
     Console.WriteLine($"{organization}: BUYER customer={customer.DisplayName}");
-    Console.WriteLine($"{organization}: BUYER address={address.AddressLine}");
-    Console.WriteLine($"{organization}: BUYER profile-version={customer.Version}");
 }

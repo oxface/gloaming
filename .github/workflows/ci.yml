@@ -63,7 +63,7 @@ jobs:
     env:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   tenancy:
@@ -91,7 +91,7 @@ jobs:
         dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Persistence/samples/PersistenceDemo.Tests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   events:
@@ -104,7 +104,7 @@ jobs:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
     steps: *family-steps
 
@@ -118,7 +118,7 @@ jobs:
       FAMILY_TEST_COMMANDS: |
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
         dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        dotnet test --project src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
   messaging:

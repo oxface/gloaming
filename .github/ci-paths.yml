@@ -17,7 +17,6 @@ unmapped:
   - '!**/*.md'
   - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/Wholesale/**'
-  - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
   - '!tests/ContextCompositionTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
@@ -39,8 +38,8 @@ EventReactions:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging{,.EntityFrameworkCore,.EntityFrameworkCore.Postgres}/**'
   - 'src/Gloaming.EventReactions/**'
-  - 'src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - 'tests/Support/PostgreSqlFixture.cs'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 Tenancy:
@@ -59,7 +58,7 @@ Persistence:
 
 Events:
   - 'src/Gloaming.Events/**'
-  - 'src/Gloaming.Events/samples/EventCodecDemo{,.Tests}/**'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 # Wholesale composes event sourcing, messaging and accepted-change audit.
@@ -73,7 +72,6 @@ EventSourcing:
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.EventSourcing/samples/EventStorageDemo{,.Tests}/**'
   - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - 'tests/Support/ChildHost.cs'

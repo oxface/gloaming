@@ -110,12 +110,12 @@ No staging, unstaging, commit or push was performed.
   [registration](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionServiceCollectionExtensions.cs)
   and [session lifecycle](../../src/Gloaming.EventReactions/Gloaming.EventReactions/EventReactionDispatcher.cs): public surface,
   transaction ownership, busy/failure state and event acknowledgment.
-- [Direct module registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
+- [Direct module registration](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrdersRegistration.cs),
   [mapped module registration](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotesRegistration.cs),
-  [typed reactions](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrderReactions.cs) and
+  [typed reactions](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrderReactions.cs) and
   [mapped commands](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuoteCommands.cs): consumer ownership.
 - [Sales context](../../samples/Wholesale/modules/Sales/Sales/SalesDbContext.cs): existing validation order.
-- [Native failure proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs),
+- [Native failure proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs),
   [core lifecycle proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs) and
   [current package contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md).
 

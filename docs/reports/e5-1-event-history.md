@@ -135,11 +135,11 @@ Review [the validator](../../src/Gloaming.Events/Gloaming.Events.History/EventHi
 [exception](../../src/Gloaming.Events/Gloaming.Events.History/EventHistoryException.cs) with
 [the usage guide](../../src/Gloaming.Events/Gloaming.Events.History/README.md).
 
-Review [Inventory selection](../../src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
-and [Purchasing selection](../../src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
+Review [Inventory selection](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
+and [Purchasing selection](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
 with [range proofs](../../src/Gloaming.Events/tests/EventHistoryTests/HistoryTests.cs) and
-[consumer proofs](../../src/Gloaming.Events/samples/EventCodecDemo.Tests/HistoryCompatibilityTests.cs).
-The shared [row shape](../../src/Gloaming.Events/samples/EventCodecDemo/RecordedEvent.cs) remains sample code.
+[consumer proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo.Tests/HistoryCompatibilityTests.cs).
+The shared [row shape](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo/RecordedEvent.cs) remains sample code.
 
 The implemented [E5.2.1 native EF readers](e5-2-1-native-event-history.md) now exercise both
 libraries through actual tenant-scoped queries, captured-head boundaries and header/event

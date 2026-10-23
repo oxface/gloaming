@@ -5,4 +5,4 @@ string connection =
     ?? throw new InvalidOperationException(
         "Set DOMAIN_EVENTS_ASSESSMENT_CONNECTION_STRING to a fresh disposable database."
     );
-await ExtractionJourney.RunAsync(connection, Console.Out, CancellationToken.None);
+await ReactionExample.RunAsync(connection, Console.Out, CancellationToken.None);

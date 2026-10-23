@@ -6,7 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" />
-    <ProjectReference Include="../EventCodecDemo/EventCodecDemo.csproj" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <ProjectReference Include="../../samples/PersistenceDemo/PersistenceDemo.csproj" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

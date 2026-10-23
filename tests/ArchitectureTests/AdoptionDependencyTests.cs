@@ -5,6 +5,24 @@ namespace ModulithFoundry.ArchitectureTests;
 public sealed class AdoptionDependencyTests
 {
     [Fact]
+    public void CodecExampleDeclaresOnlySerializationWithoutHistoryOrInfrastructure()
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(AppContext.BaseDirectory, "ProjectDeclarations", "EventCodecDemo.csproj")
+        );
+        Assert.Equal(
+            ["Gloaming.Events.Serialization"],
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Empty(declaration.Descendants("PackageReference"));
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
+    [Fact]
     public void ContextCompositionUsesOnlyTheTwoIndependentCoresAndNativeDi()
     {
         var declaration = XDocument.Load(

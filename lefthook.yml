@@ -38,7 +38,7 @@ pre-commit:
       run: dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-restore
     - name: event-codec-consumer-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj --no-restore
     - name: event-history-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-restore

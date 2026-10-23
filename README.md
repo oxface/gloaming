@@ -42,7 +42,7 @@ generator is retired. Future task skills should follow repeated real consumer wo
 
 - [Native actor/tenant composition](src/Gloaming.Tenancy/docs/composition.md): explicit DI scopes and independent context establishment, without a business sample.
 - [Ownership](src/Gloaming.Persistence/samples/PersistenceDemo/README.md): module-owned contexts/migrations, protected writes and ordinary native transactions.
-- [Payload codec](src/Gloaming.Events/samples/EventCodecDemo/README.md), [event storage](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) and [local reactions](src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md): focused family adopters.
+- [Receipt codec/upcasting](src/Gloaming.Events/samples/EventCodecDemo/README.md), [counter append](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) and [immutable-model reactions](src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md): focused family adopters.
 - [Durable delivery](src/Gloaming.Messaging/samples/Delivery/README.md): independent module libraries, producer API and separately selected worker roles.
 - [Wholesale](samples/Wholesale/README.md): the larger cross-family reference application, with consumer-owned business policy and real runtime/browser proofs. Further module reduction remains in the audit queue.
 

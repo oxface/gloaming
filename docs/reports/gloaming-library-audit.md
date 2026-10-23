@@ -4,8 +4,8 @@ Date: 2026-10-22. Inspected source: `1582e77849088e243881c82a37c0a42b2a11a322`.
 Status: active audit and implementation record. The local package command and two thin
 adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
 Continuation package consolidation is committed as `56a8b12`; Messaging example/fixture
-consolidation as `5d86b20`. Application scaffolding retirement is the current uncommitted
-batch; other family examples and Wholesale cleanup remain open.
+consolidation as `5d86b20`; application scaffolding retirement as `dd6eb77`. Remaining family
+example consolidation is the current uncommitted batch; Wholesale and final cleanup remain open.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -121,7 +121,7 @@ durable human workflows remain separate.
 
 ## Application scaffolding retirement
 
-Current batch, uncommitted. Retire **58 tracked files**: the native template skeleton,
+Committed as `dd6eb77`. Retired **58 tracked files**: the native template skeleton,
 TypeScript creator/proof/presets and their lockfile, generated-only CI workflow, and the
 ContextDemo application/test graph. Generator-specific `jsonc-parser`/`koffi` dependencies
 and Dependabot roots disappear with that workspace. Removed projects no longer enter the
@@ -167,14 +167,78 @@ Package evidence: `/home/oxface/.cache/tmp/gloaming-package-proof-kJvaXl/manifes
 version `1.0.0-local.1792710381178.g2f905b8e`, SHA-256
 `ee402029c99d6182a58107655667c0460c078bd22ed591d2f83203544773547d`.
 Logs: `/tmp/gloaming-scaffolding-{composition,actor,tenant,architecture,persistence,packages}.log`.
-The package-proof PostgreSQL container was stopped and auto-removed. The original empty index
-is preserved; all batch edits remain unstaged.
+The package-proof PostgreSQL container was stopped and auto-removed. The owner approved this
+complete batch, committed as `dd6eb77` after all hooks passed.
 
 **No new reusable mechanism was proven.** Native registration and scope ownership are editable
 consumer setup; admission, Catalog/SKU rules and worker mandates remain consumer policy.
 No extraction candidate earns a new API in this batch. Remaining work is the persistence/event
 example reduction, Wholesale reduction and integrated publication cleanup below. Umbrine human
 workflows and implementation remain outside this cleanup.
+
+## Remaining family example consolidation
+
+Current batch, uncommitted. Four focused executable paths replace the older multi-journey
+entry points; their four adoption projects now live under family `tests/` directories.
+Current guides, solution groups, CI and hooks follow that ownership in the same batch.
+No Gloaming library interface or implementation changes.
+
+| Family | Public example | Retained test-owned coverage |
+| --- | --- | --- |
+| Persistence | Two module-owned contexts with direct owned reads/writes and separate native commits. The CLI no longer runs the address/profile update journey. | All 36 adoption cases, including two-save profile atomicity, stale reload, cancellation, stored-owner forgery, relationships and independent migration order. The profile operation/DTO are fixtures. |
+| EventSourcing | One counter append/rejection path using the caller's native transaction and `TimeProvider.System`; the old fixed sample clock is removed. | Raw counter/note mapping, alternate keys, bounded history, encoding faults, concurrency and default-envelope adoption. Native counter processes run twice both on an empty database and alongside the old stream families. |
+| Events | One small receipt codec/upcaster reads unchanged v1/v2 literals and writes schema 2. The executable references only Serialization. | Stock/purchasing folds, historical ranges, nested/chained upgrades and alias replacement remain explicit fixture recipes. The old multi-journey output and `--schema-evolution` CLI are retired. |
+| EventReactions | One package-free immutable quote model, explicit sink and mapped native EF reaction cascade. | Direct-source entities, consumer-owned base, registrations and migrations move into the adopter. Both shapes retain save/stage/delete/order/failure/cancellation proofs and real shared EF composition with ownership/outbox roles. The focused application is also launched as a process. |
+
+The native-only `EfInterceptionResearchTests` prototype is retired: 11 methods/18 cases
+exercised custom probes rather than Gloaming. Its dated findings/source remain pinned in Git.
+Actual [capability composition](../../src/Gloaming.EventReactions/tests/AdoptionTests/CapabilityCompositionTests.cs)
+and native save/fault adoption tests now own the supported library protocol; generic EF
+characterization is no longer an advertised product regression suite. The previous dual-flow
+reaction output assertion becomes an actual focused-process proof rather than a second shell
+for the same helper. Its consumer-base assertion moves into the existing direct save cases.
+
+All **125 migration source/literal JSON files** retain their original bytes, including the
+relocated Direct migration chain and payloads linked into Wholesale. Public sample project/
+assembly and context names remain stable for their model metadata. Direct-source types and
+profile helpers are deliberately test-owned now; Direct migrations are discovered from that
+context's new test assembly. No persisted schema, migration ID or payload repair was required.
+There are no external consumers requiring compatibility with the retired sample APIs/CLIs.
+Retained test/helper methods were mapped across owners; changed entry-point assertions are
+identified above rather than treated as byte-identical tests.
+
+Fresh verification:
+
+| Check | Result |
+| --- | --- |
+| Ownership adoption | 36 passed. |
+| Storage adoption | 37 passed. |
+| Codec/history adoption | 25 passed. |
+| Reactions/shared EF adoption | 86 passed after retiring the 18 prototype cases. |
+| Architecture | 110 passed, including serialization-only sample dependency declaration. |
+| Solution and code quality | Full solution builds with zero warnings/errors; formatting, style and analyzers pass. |
+| Package adoption | All 21 archives and six isolated package-only consumers pass. |
+| Fixtures/references/review state | 125 migration/literal hashes match; current local links/project references resolve; original empty index unchanged. |
+
+These are **294 fresh test cases**, not the retired research count or prior-slice runs.
+Other family-only runtime suites were not rerun: their implementations/contracts are unchanged.
+The earlier native research findings remain dated evidence, not new executions.
+Local native-glob comparison of 1,298 active paths and 14 filters changes selection only for
+`tests/Support/ChildHost.cs`, adding its new Events/EventReactions adopters. YAML parses;
+this does not execute GitHub scheduling.
+
+Package evidence: `/home/oxface/.cache/tmp/gloaming-package-proof-IFnEvc/manifest.json`,
+version `1.0.0-local.1792712551632.g53f9bb95`, SHA-256
+`382efb13fc2290e10e619ee0ec74bb797df793e5cedfa56da53cbe7e4a2e851e`.
+Logs: `/tmp/gloaming-family-{ownership,storage,codec,reactions,architecture}-tests.log` and
+`/tmp/gloaming-family-packages.log`. The disposable package-proof PostgreSQL container was
+stopped and auto-removed. Changes remain unstaged for owner review.
+
+**No new reusable mechanism was proven.** The receipt field rename, counter ceiling,
+customer/profile policy and quote rules remain consumer code. Test-owned shape and fault
+variants retain useful evidence without becoming more public applications; no new library,
+framework host or extraction candidate is added. Next is Wholesale reduction, followed by
+integrated documentation/test/tooling cleanup and publication review. Umbrine remains separate.
 
 ## Confirmed direction and review criteria
 
@@ -397,10 +461,10 @@ fixture or literal payload need not remain a separately advertised application.
 | Example | Current disposition | Evidence condition |
 | --- | --- | --- |
 | ContextDemo | Retired in the current batch; direct native-DI composition tests and the operation recipe replace the fixture application. | Independent cores and 12 composition cases retain lifecycle/requirement/isolation obligations; SKU/preview policy is explicitly retired. |
-| PersistenceDemo | Replace with a small ownership example, using the existing independent RLS consumer for optional provider setup. | Retain stored-owner forgery, GUID/string ownership, same-tenant relationships and independent migration ownership where still promised. |
-| EventCodecDemo | Keep a small literal-payload codec/upcasting example. | Literal historic schemas and independent expected outcomes stay useful even without external legacy consumers. Remove incidental wholesale vocabulary when it obscures setup. |
-| EventStorageDemo | Keep one concise raw counter/ledger adoption path; trim older mapping demonstrations. | Preserve event-sourcing adoption without Tenancy, Messaging or the optional codec; maintain append/rebuild/concurrency proof coverage. |
-| EventReactionsDemo | Keep consumer-owned inheritance and the package-free model examples; simplify unrelated hosting. | Source selection, ordering, bounded waves, failed-save recovery and absence of required domain markers remain distinct obligations. |
+| PersistenceDemo | Narrowed in the current batch to owned reads/writes and native commits; profile mutation is test-owned. | All 36 adopter cases remain, including stored-owner, relationship, migration and profile transaction proofs; independent GUID/RLS consumers remain untouched. |
+| EventCodecDemo | Narrowed to a receipt field rename/read/write example with only Serialization; larger stock/purchasing/history recipes are test-owned. | All historic JSON remains unchanged; 25 adoption cases include the actual new executable. |
+| EventStorageDemo | Public executable is the counter append path; raw multi-family mapping moves to test fixtures. | 37 adoption cases retain raw/custom/default mapping, metadata, append and fault/concurrency behavior; actual processes cover fresh and populated storage. |
+| EventReactionsDemo | Package-free immutable model is the public path; direct-source inheritance and extra variants are test-owned. Pure EF prototype probes are retired. | 86 current adopter cases retain actual Gloaming composition, selection, order, save/recovery and marker-free model proofs. |
 | Messaging Delivery (formerly six separate demo/defaults projects) | Implemented in the current batch: two plain module libraries, producer/worker entry points and test-owned policy/fault fixtures. | All retained adoption, migration, broker, operational and process cases run in DeliveryTests; architecture checks include the complete producer runtime graph. |
 | WorkflowDeployment Earlier/Current | Moved to test-owned fixtures in the current batch. | Seven separately compiled deployment tests and four byte-identical literal JSON files remain. |
 | Wholesale | Reduce to Access, Sales and Inventory with one order/reservation journey. | Retain the chosen HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition. Keep focused failure scenarios with their library owners. |
@@ -429,7 +493,7 @@ execution is claimed by this table; the final-tree executions in
 | Actor lifecycle, scheme-selected identity and independent tenancy | ActorIdentity/Tenancy family tests. Keep policy evaluation, anonymous/tenantless exceptions and fresh operation scopes when shortening examples. |
 | Stored-owner checks and actual RLS | Persistence family tests, especially [RowSecurityTests](../../src/Gloaming.Persistence/tests/PostgresTests/RowSecurityTests.cs), plus selected restricted HTTP/worker tests. Keep restricted roles, same-backend reset/rollback and raw/bulk enforcement cases. |
 | Explicit audit atomicity | [Audit transaction tests](../../src/Gloaming.Auditing/tests/AuditPostgresTests/TransactionTests.cs) and guard tests. Rerun after replacing JSONB helper calls; verify business/audit rollback and fresh recovery. |
-| Preparation and validation ordering | [CapabilityCompositionTests](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/CapabilityCompositionTests.cs), registration, event ordering and dispatch fault tests. Rehome shared-coordinator assertions when simplifying the demo. |
+| Preparation and validation ordering | [CapabilityCompositionTests](../../src/Gloaming.EventReactions/tests/AdoptionTests/CapabilityCompositionTests.cs), registration, event ordering and dispatch fault tests. Rehome shared-coordinator assertions when simplifying the demo. |
 | Codec and history integrity | Events family tests and independently authored literal payload fixtures. Keep incompatible/unknown schema, upcast and range failures; no current serializer may manufacture the historic expectation. |
 | Append, required state and repair | EventSourcing Guard, Concurrency, Rebuild, Regeneration and history-reader tests, plus the raw adoption consumer. Keep rollback, stale observations, disposal and ambiguous commit cases. |
 | Outbox claims and completion | [DispatchTests](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/DispatchTests.cs), RouteSelectionTests, failure recovery and CompletionSupervisionTests. Keep expiry/takeover, stale completion, acceptance followed by storage failure and worker containment. |
@@ -448,12 +512,11 @@ different purposes; neither requires retaining every experimental migration chai
 The owner requested larger, closely related code-led batches, with relevant documentation,
 tests, CI and pruning completed alongside the implementation. Separate documentation-only
 increments are no longer part of this queue. Messaging examples and deployment fixtures are
-committed as `5d86b20`. Scaffolding retirement is the current batch; estimate
-**3–4 further batches** after it:
+committed as `5d86b20`; scaffolding retirement as `dd6eb77`. Family examples are the
+current batch; estimate **2–3 further batches** after it:
 
 | Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Remaining family examples | 1 | Simplify persistence/event-sourcing/reaction examples and codec vocabulary; transfer unique proofs before retiring incidental applications or scenarios. Context/template retirement is already in the current batch. |
 | Wholesale reduction | 1–2 | Three or four modules and one coherent journey; preserve useful persistence/authorization/audit/continuation evidence, rehoming unique proofs before removing experiments. |
 | Integrated publication cleanup and review | 1 | Remaining document/test relevance, CI/hooks/tooling and empty directories; integrated package/adoption/sample checks, independent code/architecture review and explicit gaps. |
 

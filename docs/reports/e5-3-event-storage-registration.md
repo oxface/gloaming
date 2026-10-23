@@ -156,8 +156,8 @@ and [registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.Entit
 Compare [Inventory configuration](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/HistoryMapping.cs)
 and [Purchasing configuration](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/HistoryMapping.cs)
 with their concrete rows and unchanged snapshots. Then inspect [the independent context](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/StorageDbContext.cs),
-[caller transaction recipe](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs), new native migration
-and [database proofs](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/StorageTests.cs).
+[caller transaction recipe](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs), new native migration
+and [database proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/StorageTests.cs).
 
 GUID/JsonElement ordinary rows and the documented key shape are the initial surface. Inheritance,
 owned/shared entities, converted or arbitrary identities/payloads, type-scoped keys and other

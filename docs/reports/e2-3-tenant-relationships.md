@@ -103,7 +103,7 @@ Start with [Sales mapping](../../src/Gloaming.Persistence/samples/PersistenceDem
 [the child fixture](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerAddressReference.cs)
 and [explicit console usage](../../src/Gloaming.Persistence/samples/PersistenceDemo/Program.cs). Then review
 [the incremental migration](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/Migrations/20261004162310_CustomerAddresses.cs),
-its designer and updated Sales snapshot, [relationship proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/CustomerRelationshipTests.cs)
+its designer and updated Sales snapshot, [relationship proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo.Tests/CustomerRelationshipTests.cs)
 and [sample schema policies](../../tests/ArchitectureTests/ModulePersistenceTests.cs).
 [The consumer recipe](../../src/Gloaming.Persistence/samples/PersistenceDemo/README.md) describes mapping
 and lifecycle obligations. Existing migration/console proofs now include the address table/output.

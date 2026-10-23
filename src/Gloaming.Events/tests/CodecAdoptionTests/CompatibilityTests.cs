@@ -11,6 +11,25 @@ public sealed class CompatibilityTests
         Path.Combine(AppContext.BaseDirectory, "Fixtures", family, name);
 
     [Fact]
+    public async Task NativeCodecExecutableReadsBothLiteralSchemasAndWritesTheCurrentShape()
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(
+            TestContext.Current.CancellationToken
+        );
+        deadline.CancelAfter(TimeSpan.FromSeconds(60));
+        await using var child = new ModulithFoundry.Tests.Infrastructure.ChildHost(
+            typeof(CodecExample).Assembly,
+            new()
+        );
+        Assert.True(await child.WaitForExitAsync(deadline.Token) == 0, child.Output);
+        Assert.Contains(
+            "receipt: v1=10.125, v2=10.125, write-schema=2",
+            child.Output,
+            StringComparison.Ordinal
+        );
+    }
+
+    [Fact]
     public void RetainedStockLiteralsDecodeRenamedReceiptAndProduceExpectedQuantity()
     {
         var codec = StockPositionExample.CreateCodec();
@@ -55,7 +74,7 @@ public sealed class CompatibilityTests
     }
 
     [Fact]
-    public void ActualConsumerRunsBothFamiliesWithOnlyExplicitFixturesAndRegistration()
+    public void FixtureRecipesRunBothFamiliesWithExplicitRegistration()
     {
         using var output = new StringWriter();
         DemoJourneys.Run(Path.Combine(AppContext.BaseDirectory, "Fixtures"), output);

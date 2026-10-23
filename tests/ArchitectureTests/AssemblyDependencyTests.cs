@@ -64,8 +64,8 @@ public sealed class AssemblyDependencyTests
             typeof(EventHistory).Assembly,
             typeof(IEventStreamRecord).Assembly,
             typeof(IEventSourcedAggregate<>).Assembly,
-            typeof(Samples.EventStorageDemo.DemoJourneys).Assembly,
-            typeof(Samples.Wholesale.EventCodecDemo.DemoJourneys).Assembly,
+            typeof(Samples.EventStorageDemo.CounterCommands).Assembly,
+            typeof(Samples.Wholesale.EventCodecDemo.CodecExample).Assembly,
             typeof(Samples.Wholesale.Worker.Maintenance.StockRegeneration).Assembly,
             typeof(Samples.Wholesale.PersistenceDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.Api.DemoComposition).Assembly

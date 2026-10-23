@@ -30,7 +30,7 @@ can roll back a successfully saved change.
 | --- | --- | --- |
 | Container-free EF model and validation | 25 passed | [Model/write tests](../../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/OwnershipTests.cs), [unsupported mappings](../../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/UnsupportedMappingTests.cs). |
 | Independent GUID consumer, PostgreSQL 18.6 | 6 passed | [GUID proofs](../../src/Gloaming.Persistence/tests/PersistenceTests/GuidOwnershipTests.cs), with no context-library dependency. |
-| Inventory composition, PostgreSQL 18.6 | 30 passed | [Sample proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs), including first/repeat finite console runs. |
+| Inventory composition, PostgreSQL 18.6 | 30 passed | [Sample proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs), including first/repeat finite console runs. |
 | Active solution | Build succeeded, zero warnings/errors | All 11 active projects, audited restore, EF 10.0.12 and Npgsql 10.0.3. |
 | Formatting and semantics | Passed | CSharpier, active native style and analyzer checks. |
 | Dependency boundaries | Passed | Both restored-graph dependency verifiers. |

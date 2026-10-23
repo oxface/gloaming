@@ -102,12 +102,12 @@ Podman/Testcontainers setup. No checks were disabled to obtain these results.
   [EF setup](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md) and the
   [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md) document current consumer
   guarantees, options and obligations beside the packages.
-- [DirectOrders](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs) and
+- [DirectOrders](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs) and
   [MappedQuotes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs) consume the actual
   library namespaces. Their native migrations and finite business outcomes are unchanged.
 - [Core proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs),
-  [database proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs),
-  [fault proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs) and
+  [database proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs),
+  [fault proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs) and
   [boundary proofs](../../tests/ArchitectureTests/EventReactionBoundaryTests.cs) establish the
   current evidence and supported limits.
 

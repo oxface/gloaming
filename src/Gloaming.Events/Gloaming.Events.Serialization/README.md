@@ -28,8 +28,8 @@ IStockPositionEvent decoded = codec.Deserialize(
     stored.EventName, stored.SchemaVersion, stored.Payload);
 ```
 
-See the actual [Inventory](../samples/EventCodecDemo/Inventory/StockPositionExample.cs)
-and [Purchasing](../samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
+See the actual [Inventory](../tests/CodecAdoptionTests/Fixtures/Inventory/StockPositionExample.cs)
+and [Purchasing](../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderExample.cs)
 registration and [standalone consumer](../samples/EventCodecDemo/README.md).
 
 ## Guarantees and errors
@@ -104,7 +104,7 @@ Derive from `JsonEventUpcaster`, passing the durable name and source/target sche
 to its protected constructor, and override `JsonElement Upcast(JsonElement payload)`.
 The Inventory [receipt transformation](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs)
 renames `quantity` to `receivedQuantity` without changing domain facts. The standalone
-[Purchasing example](../samples/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
+[Purchasing example](../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
 chains a flat v1 through renamed v2 fields into a nested v3 shape. These transformations belong
 to their consumers; the codec owns route selection, ordered execution and terminal CLR dispatch.
 
@@ -168,3 +168,7 @@ Generated registration, alternative serializers and AOT remain deferred. See the
 [package capability record](docs/capabilities.md) for the supported boundary and proof links.
 See the [event-store capability context](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
 for related persisted-history/projection obligations and separately deferred maintenance work.
+
+The focused [receipt executable](../samples/EventCodecDemo/README.md) reads literal v1/v2
+payloads, performs an explicit field rename and writes the current schema. Additional nested
+and history recipes are test-owned consumers, not required codec dependencies.

@@ -92,7 +92,7 @@ Review [StoredEventRecord](../../src/Gloaming.EventSourcing/Gloaming.EventSourci
 [InlineProjectionStorage](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateReader.cs),
 [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
 [save validation](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
-and [default-envelope adoption](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.DefaultEnvelope.cs).
+and [default-envelope adoption](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.DefaultEnvelope.cs).
 The existing append test class becomes partial to host that proof. Inventory/Purchasing inline
 loaders and Inventory's native query use the renamed storage type. No runtime dependency change.
 

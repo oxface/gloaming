@@ -135,7 +135,7 @@ Then review [Inventory binding](../../samples/Wholesale/modules/Inventory/Invent
 [raw counter](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), native model/save integration,
 creation/command changes and fixture-seed adaptations. The
 [required-state proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.RequiredInlineState.cs)
-and [independent proofs](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) exercise the
+and [independent proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) exercise the
 supported seam. [The brief](../plans/es1-library-write-store.md) lists exact public types,
 errors/dependencies and every file/behavior group beyond the prior ES1 surface.
 

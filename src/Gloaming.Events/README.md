@@ -16,6 +16,8 @@ The [executable consumer](samples/EventCodecDemo/README.md) demonstrates adoptio
 
 Library tests:
 
+- [Focused consumer adoption proofs](tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj)
+
 - [EventSerializationTests](tests/EventSerializationTests/EventSerializationTests.csproj)
 - [EventHistoryTests](tests/EventHistoryTests/EventHistoryTests.csproj)
 

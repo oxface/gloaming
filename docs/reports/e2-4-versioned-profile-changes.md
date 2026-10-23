@@ -85,13 +85,13 @@ No archived runtime suites were rerun for E2.4.
 
 ## Review-worthy files and extraction findings
 
-Start with [the operation](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerProfileChanges.cs),
-[its request](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerProfileChange.cs),
+Start with [the operation](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerProfileChanges.cs),
+[its request](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerProfileChange.cs),
 [the caller](../../src/Gloaming.Persistence/samples/PersistenceDemo/Program.cs),
 [the customer](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/CustomerReference.cs) and
 [the mapping](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/SalesDbContext.cs).
 Then review [the incremental migration](../../src/Gloaming.Persistence/samples/PersistenceDemo/Sales/Migrations/20261004170258_CustomerVersions.cs),
-its generated designer/snapshot, [the PostgreSQL proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/CustomerProfileTests.cs)
+its generated designer/snapshot, [the PostgreSQL proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo.Tests/CustomerProfileTests.cs)
 and [the model/artifact policy](../../tests/ArchitectureTests/ModulePersistenceTests.cs).
 Existing seed helpers and the console expectation also change for the new required version.
 

@@ -12,13 +12,21 @@ public sealed partial class DispatchTests(PostgreSqlFixture postgres)
     private static readonly Guid Second = Guid.Parse("d21a0000-0000-0000-0000-000000000012");
 
     [Fact]
-    public async Task ExecutableUsesBothConsumerShapesAndRetainsDeletedAggregateEvents()
+    public async Task NativeReactionExecutableCommitsTheImmutableModelCascade()
     {
-        string connection = await postgres.CreateDatabaseAsync(Token);
-        using var output = new StringWriter();
-        await ExtractionJourney.RunAsync(connection, output, Token);
-        Assert.Contains("deletion released 40", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("reserved=60", output.ToString(), StringComparison.Ordinal);
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(60));
+        string connection = await postgres.CreateDatabaseAsync(deadline.Token);
+        await using var child = new ChildHost(
+            typeof(ReactionExample).Assembly,
+            new() { ["DOMAIN_EVENTS_ASSESSMENT_CONNECTION_STRING"] = connection }
+        );
+        Assert.True(await child.WaitForExitAsync(deadline.Token) == 0, child.Output);
+        Assert.Contains(
+            "reserved=60, receipt=1, allocation=1",
+            child.Output,
+            StringComparison.Ordinal
+        );
     }
 
     [Theory]
@@ -35,6 +43,9 @@ public sealed partial class DispatchTests(PostgreSqlFixture postgres)
         string save
     )
     {
+        if (shape == "direct")
+            Assert.Equal(typeof(OwnedEntity), typeof(DirectOrder).BaseType);
+
         string connection = await SetupAsync(shape);
         await using var operation = new Scenario(shape, connection);
         await using var transaction = await operation.Context.Database.BeginTransactionAsync(Token);

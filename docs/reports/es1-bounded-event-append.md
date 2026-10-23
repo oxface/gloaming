@@ -19,7 +19,7 @@ The owner requested applying the settled inline-state/query directions. The
 signatures and necessary finite-seed adaptations for review. Required-state save enforcement,
 appender simplification and the new availability query are not yet implemented or proven.
 
-A new [independent-consumer test](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) uses
+A new [independent-consumer test](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) uses
 the existing reviewed appender to prepare a JsonElement payload from a JsonDocument, disposes
 the source before staging/saving, commits, then reloads it through EF in a fresh context. It
 checks nested objects/arrays/null, Unicode and escaped text, and a high-precision decimal;
@@ -141,7 +141,7 @@ append/history/required-participant checks are freshly exercised through the rev
 - Inline edits reuse their established load paths without event SELECT. Explicit live/temporal
   reads retain captured-head, integrity and historical policy behavior.
 
-[Independent PostgreSQL tests](../../src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) prove
+[Independent PostgreSQL tests](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) prove
 history-dependent eligibility, rejected complete batches, competing creation/append, native
 rollback and fresh-context redecision. A deterministic commit between header capture and event
 SELECT reconstructs the captured prefix and corresponding proposal, then loses at save; fresh

@@ -16,6 +16,8 @@ The [executable consumer](samples/PersistenceDemo/README.md) demonstrates adopti
 
 Library tests:
 
+- [Focused consumer adoption proofs](tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj)
+
 - [EntityFrameworkCoreTests](tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj)
 - [PersistenceTests](tests/PersistenceTests/PersistenceTests.csproj)
 - [PostgresTests](tests/PostgresTests/PostgresTests.csproj): independent fluent RLS consumer and actual read/write enforcement.

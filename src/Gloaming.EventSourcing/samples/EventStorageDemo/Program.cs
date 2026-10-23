@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using ModulithFoundry.Samples.EventStorageDemo;
 
 string connection =
@@ -5,5 +6,7 @@ string connection =
     ?? throw new InvalidOperationException(
         "Supply a disposable EVENT_STORAGE_DEMO_CONNECTION_STRING."
     );
-await DemoJourneys.RunAsync(connection, Console.Out, CancellationToken.None);
+await using (var setup = new StorageDbContext(StorageDbContext.Options(connection)))
+    await setup.Database.MigrateAsync();
+
 await CounterAppendJourney.RunAsync(connection, Console.Out, CancellationToken.None);

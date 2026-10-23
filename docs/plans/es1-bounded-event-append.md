@@ -624,7 +624,7 @@ creation/advancement and Attach/AddRange. Purchasing then stages two required vi
 Inventory stages one. Their projectors already load untracked version/timestamp-checked
 state, so no new reader or projector contract is needed.
 
-The standalone [storage journey](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs) currently
+The standalone [storage journey](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs) currently
 authors finite rows and demonstrates native transactions/mapping, not accepted-batch append.
 Its tenant-free rows and customized tables already exercise independent storage adoption.
 Its existing counter prefix provides the consumer loading/reconstruction recipe to reuse.

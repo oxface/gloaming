@@ -129,10 +129,10 @@ and [failure enum](../../src/Gloaming.Events/Gloaming.Events.Serialization/Event
 The [library guide](../../src/Gloaming.Events/Gloaming.Events.Serialization/README.md) describes
 the consumer obligations.
 
-Review the actual [Inventory recipe](../../src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionExample.cs)
-and [Purchasing recipe](../../src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
+Review the actual [Inventory recipe](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo/Inventory/StockPositionExample.cs)
+and [Purchasing recipe](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
 with [library proofs](../../src/Gloaming.Events/tests/EventSerializationTests/CodecTests.cs) and
-[consumer proofs](../../src/Gloaming.Events/samples/EventCodecDemo.Tests/CompatibilityTests.cs).
+[consumer proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Events/samples/EventCodecDemo.Tests/CompatibilityTests.cs).
 The [architecture changes](../../tests/ArchitectureTests/AssemblyDependencyTests.cs),
 [CI](../../.github/workflows/ci.yml) and [hooks](../../lefthook.yml) accompany the capability.
 Checkpoint-document updates record E3.7's already approved commit; they introduce no new

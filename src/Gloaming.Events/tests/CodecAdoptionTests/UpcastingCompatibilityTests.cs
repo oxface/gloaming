@@ -56,7 +56,7 @@ public sealed class UpcastingCompatibilityTests
     }
 
     [Fact]
-    public void ExecutableSchemaEvolutionJourneyRetainsIndependentTotals()
+    public void SchemaEvolutionRecipeRetainsIndependentTotals()
     {
         using var output = new StringWriter();
         SchemaEvolutionJourneys.Run(Path.Combine(AppContext.BaseDirectory, "Fixtures"), output);

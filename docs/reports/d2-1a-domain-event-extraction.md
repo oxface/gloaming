@@ -136,13 +136,13 @@ the tests passed with the permitted local IPC/container execution environment.
   [session](../../src/Gloaming.EventReactions/Gloaming.EventReactions/EventReactionDispatcher.cs)
   and [EF adapter](../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/EventReactionServiceCollectionExtensions.cs)
   are the proposed mechanism implementation.
-- [DirectOrders](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
+- [DirectOrders](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/DirectOrders.cs),
   [MappedQuotes](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/MappedQuotes.cs) and the
-  [finite journey](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/ExtractionJourney.cs) show
+  [finite journey](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/ExtractionJourney.cs) show
   actual consumer obligations.
 - [Core proofs](../../src/Gloaming.EventReactions/tests/EventReactionsTests/DispatcherTests.cs),
-  [database lifecycle proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs)
-  and [database fault proofs](../../src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs)
+  [database lifecycle proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.cs)
+  and [database fault proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/DispatchTests.Faults.cs)
   show expected outcomes and limits independently of the implementation.
 
 Five assessment projects are included in the solution. CI explicitly maps this sample directory

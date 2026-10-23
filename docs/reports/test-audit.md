@@ -92,7 +92,7 @@ CI has not been observed.
 Review the simplified [declaration tests](../../tests/ArchitectureTests/AdoptionDependencyTests.cs),
 their copied-project setup in [the test project](../../tests/ArchitectureTests/ArchitectureTests.csproj),
 the reduced [context composition](https://github.com/oxface/modulith-foundry/blob/5d86b20df5b0eb82f1aa96b889229ce6f5ca351f/src/Gloaming.Tenancy/samples/ContextDemo.Tests/CompositionTests.cs)
-and [Inventory proofs](../../src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs).
+and [Inventory proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.Persistence/samples/PersistenceDemo.Tests/OwnershipTests.cs).
 Removed private annotations are visible in the unsupported-mapping test diff. No staging
 or commit was performed this turn; previous owner-staged work was preserved.
 
