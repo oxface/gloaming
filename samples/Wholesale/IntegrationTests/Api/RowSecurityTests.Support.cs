@@ -33,6 +33,8 @@ public sealed partial class CompositionTests
                 GRANT USAGE ON SCHEMA access, inventory TO "{accessRole}";
                 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA access TO "{accessRole}";
                 GRANT SELECT ON inventory.stock_availability TO "{accessRole}";
+                -- Seed the earlier publication grant; the finite installer must remove it.
+                GRANT SELECT, INSERT ON sales.outbox_messages TO "{salesRole}";
                 """
             );
             proof.SalesConnection = new NpgsqlConnectionStringBuilder(admin)
@@ -116,6 +118,7 @@ public sealed partial class CompositionTests
     {
         internal WebApplication App { get; set; } = null!;
         internal string SalesConnection { get; set; } = "";
+
         internal string SalesRole { get; } = salesRole;
 
         internal Task VerifyPrivilegedAccessAsync() =>

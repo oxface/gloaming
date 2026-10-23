@@ -2,7 +2,7 @@
 
 Date: 2026-10-22. Outcome: a concrete Wholesale receiver now populates and maintains its
 own searchable customer delivery directory through public Sales Contracts. This implements
-the selected [bounded plan](../plans/b2-dispatch-directory-population.md); B1's discarded
+the selected [bounded plan](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/plans/b2-dispatch-directory-population.md); B1's discarded
 feed, writer gate and diagnostic journal are not restored.
 
 ## Concrete value and selected protocol
@@ -195,4 +195,4 @@ shipping/authorization policy. No broker proof is needed for the selected local 
 Product consolidation, complete solution/CI registration and mandatory two-axis review remain
 root integration work; this isolated branch intentionally avoids shared root metadata.
 
-Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.
+Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/reports/b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.

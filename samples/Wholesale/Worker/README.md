@@ -63,5 +63,3 @@ The [stock-regeneration command](Maintenance/stock-regeneration.md) retains its 
 `--regenerate-stock <organization-key> <stock-position-id>` syntax, progress, cancellation and
 exit codes. It uses `WHOLESALE_DEMO_CONNECTION_STRING` for its existing Inventory target and
 never provisions storage.
-
-The [Directory role](Directory/README.md) populates and maintains Dispatch customer search, including receiver-only trusted queries and restricted Sales relay credentials.

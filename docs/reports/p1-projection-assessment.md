@@ -99,4 +99,4 @@ multi-stream maintenance, cross-module atomic snapshots/writes, general asynchro
 event-store progress and online versioned projection cutover. None is silently supplied
 by the native query or single-stream maintenance evidence.
 
-Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.
+Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/reports/b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.

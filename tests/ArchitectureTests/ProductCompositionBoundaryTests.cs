@@ -18,8 +18,6 @@ public sealed class ProductCompositionBoundaryTests
         var sources = new[]
         {
             typeof(SalesDbContext).Assembly,
-            typeof(Samples.Wholesale.Dispatch.DispatchDbContext).Assembly,
-            typeof(Samples.Wholesale.Dispatch.Contracts.ICustomerDirectory).Assembly,
             typeof(InventoryDbContext).Assembly,
             typeof(IDraftOrderCommands).Assembly,
             typeof(Samples.Wholesale.Inventory.Contracts.IStockCatalog).Assembly,

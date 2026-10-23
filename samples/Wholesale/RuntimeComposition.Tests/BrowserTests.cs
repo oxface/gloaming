@@ -117,6 +117,7 @@ public sealed class BrowserTests
             await using var audit = new NpgsqlCommand(
                 """
                 SELECT (SELECT count(*) FROM sales.audit_entries) = 1
+                    AND NOT has_table_privilege('wholesale_sales', 'sales.outbox_messages', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE')
                     AND EXISTS (SELECT 1 FROM sales.audit_entries WHERE tenant_key = 'wholesale-alpha'
                         AND actor_kind = 2 AND actor_key = 'application-alpha'
                         AND action = 'customer-profile.changed' AND (details->>'Version')::bigint = 2)
@@ -295,7 +296,6 @@ public sealed class BrowserTests
                             "draft_order_grants",
                             "draft_order_lines",
                             "draft_orders",
-                            "outbox_messages",
                         ],
                         policiesReader.GetFieldValue<string[]>(1)
                     );

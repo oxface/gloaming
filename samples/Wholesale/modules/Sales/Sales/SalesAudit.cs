@@ -40,26 +40,6 @@ internal sealed class SalesAudit(
         );
     }
 
-    internal void DirectoryChanged(Guid customerId, long version, bool listed, bool created)
-    {
-        var now = timeProvider.GetUtcNow();
-        audit.Stage(
-            new AuditEntry(
-                Guid.CreateVersion7(now),
-                now,
-                actor.Current,
-                "sales",
-                created ? "customer-directory.registered" : "customer-directory.listing-changed",
-                "customer",
-                customerId.ToString("D"),
-                "accepted",
-                1,
-                JsonSerializer.SerializeToElement(new { Version = version, Listed = listed }),
-                tenantKey: tenancy.Current.RequireTenant().Value
-            )
-        );
-    }
-
     private sealed record ProfileChangedDetailsV1(
         Guid AddressId,
         long PreviousVersion,

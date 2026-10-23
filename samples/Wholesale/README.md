@@ -1,6 +1,6 @@
 # Wholesale reference product
 
-Wholesale composes Access, Sales, Inventory and Dispatch through their public Contracts and
+Wholesale composes Access, Sales and Inventory through their public Contracts and
 separate module-owned persistence. Run its [Api](Api/README.md), [Worker](Worker/README.md) and
 finite setup/maintenance roles. [AppHost](AppHost/README.md) orchestrates local PostgreSQL,
 optional Keycloak and the API; it never runs migrations/seeds as an API startup side effect.
@@ -38,13 +38,12 @@ Eight former product test projects are now one
 [Wholesale.IntegrationTests](IntegrationTests/README.md) executable test project with capability
 folders. Historical fixture-import/journey helpers live under `IntegrationTests/Scenarios`, and
 two finite child scenarios preserve earlier real-process assertions. They are test support;
-the product never references them. Retained module migrations and literal payloads remain unchanged; Purchasing and its owned
-migration chain are explicitly retired, with the proof disposition in the
+the product never references them. Retained modules keep their prior migration chains and literal payloads; Sales adds a forward
+migration removing directory listing. Purchasing, Dispatch and their owned migration chains
+are explicitly retired, with the proof disposition in the
 [current audit](../../docs/reports/gloaming-library-audit.md). Runtime/browser proofs remain in `RuntimeComposition.Tests` because they own real
 Aspire/Keycloak/Chromium lifetimes rather than in-process composition.
 
 Independent technical examples live beside their Gloaming families under `src/`; they do not
 use Wholesale. See the [consolidation proof map](../../docs/reports/s1-wholesale-consolidation.md)
 for precise ownership, retained assertions and fresh verification.
-
-Dispatch owns the independently searchable customer directory. Use the canonical [Worker Directory operations](Worker/Directory/README.md) to admit, populate, relay/process and search it; protected API profile edits publish ongoing changes.

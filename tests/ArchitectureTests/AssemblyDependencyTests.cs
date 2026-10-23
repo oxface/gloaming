@@ -395,7 +395,6 @@ public sealed class AssemblyDependencyTests
                 typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly,
                 typeof(Samples.Wholesale.Sales.SalesDbContext).Assembly,
                 typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
-                typeof(Samples.Wholesale.Dispatch.DispatchDbContext).Assembly,
             }
         )
             Assert.DoesNotContain(

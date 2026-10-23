@@ -4,19 +4,20 @@ Sales owns customer profiles, drafts, customer allowances and its durable stock 
 Business Contracts contain ordinary intent/result/query types. Native module persistence,
 grants, business rules and transactions remain consumer-owned.
 
-## Public delivery directory
+## Customer profiles
 
-`AddCustomerProfiles` also registers `ICustomerDeliveryDirectory` and durable source publication.
-Actual profile edits now atomically enqueue `sales.customer-delivery-state` on the fixed
-`dispatch.customer-directory` route. Compose that route in any Sales outbox publisher alongside
-other selected workflows. `RegisterAsync` creates a real profile/address; `SetListedAsync`
-withdraws or relists its public state. Both require a trusted human and selected Organization.
+`AddCustomerProfiles` registers the native profile service and its explicit accepted-change
+audit. It does not register an outbox publisher or a directory export/listing service.
+Profile name, address and audit commit in the existing service-owned transaction. Failed
+saves roll back the operation; a retry uses a fresh scope. The profile version remains the
+native concurrency token for profile changes.
 
-The profile version explicitly orders this complete public directory state. Historical profiles
-are listed by the migration; source tombstones and immutable keys are retained permanently.
-The [Dispatch guide](../Dispatch/README.md) defines disclosure, population, eventual readiness,
-writer participation and unsupported deletion/ID-reuse policies. The
-[composition](../../Worker/Directory/README.md) demonstrates separate source/receiver databases.
+Dispatch's public directory and Sales listing/publication policy are retired. The forward
+`RetireCustomerDirectory` migration drops only `delivery_listed`; all earlier Sales migrations
+remain. Profile/address data, audit records and existing outbox envelopes are preserved.
+Retired directory envelopes are not automatically deleted, redriven or consumed. `Down`
+recreates a default-true column; it cannot restore old listing decisions. Workflow outbox
+registration and dispatch remain explicit in the stock/reservation compositions.
 
 ## Private draft access
 

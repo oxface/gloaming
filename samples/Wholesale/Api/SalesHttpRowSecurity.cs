@@ -16,7 +16,6 @@ public static class SalesHttpRowSecurity
         "draft_order_lines",
         "draft_order_grants",
         "audit_entries",
-        "outbox_messages",
     ];
 
     public static async Task InstallAsync(
@@ -62,12 +61,7 @@ public static class SalesHttpRowSecurity
         foreach (string table in Tables)
             migration.EnableTenantRowSecurity(
                 table,
-                table switch
-                {
-                    "audit_entries" => "tenant_key",
-                    "outbox_messages" => "owner_key",
-                    _ => "organization_key",
-                },
+                table == "audit_entries" ? "tenant_key" : "organization_key",
                 "app.tenant_key",
                 "sales"
             );
@@ -92,7 +86,7 @@ public static class SalesHttpRowSecurity
             string privileges = table switch
             {
                 "draft_order_grants" => "SELECT",
-                "audit_entries" or "outbox_messages" => "SELECT, INSERT",
+                "audit_entries" => "SELECT, INSERT",
                 _ => "SELECT, INSERT, UPDATE, DELETE",
             };
             await using var grant = new NpgsqlCommand(
@@ -102,6 +96,16 @@ public static class SalesHttpRowSecurity
             );
             await grant.ExecuteNonQueryAsync(cancellationToken);
         }
+
+        // Older HTTP setup granted directory publication. That role no longer uses the outbox.
+        await using (
+            var revoke = new NpgsqlCommand(
+                $"REVOKE ALL ON sales.outbox_messages FROM {role}",
+                connection,
+                transaction
+            )
+        )
+            await revoke.ExecuteNonQueryAsync(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
     }
@@ -137,7 +141,7 @@ public static class SalesHttpRowSecurity
                         AND NOT has_table_privilege(r.oid, c.oid, 'TRUNCATE')
                         AND (c.relname = 'draft_order_grants'
                             OR (has_table_privilege(r.oid, c.oid, 'INSERT')
-                                AND (c.relname IN ('audit_entries', 'outbox_messages')
+                                AND (c.relname = 'audit_entries'
                                     OR (has_table_privilege(r.oid, c.oid, 'UPDATE')
                                         AND has_table_privilege(r.oid, c.oid, 'DELETE')))))
                         AND (SELECT count(*) FROM pg_policy p WHERE p.polrelid = c.oid) = 1
@@ -147,7 +151,6 @@ public static class SalesHttpRowSecurity
                             AND p.polqual IS NOT NULL AND p.polwithcheck IS NOT NULL)) = cardinality(@tables)
                 AND NOT has_table_privilege(r.oid, 'sales.draft_order_grants', 'INSERT,UPDATE,DELETE')
                 AND NOT has_table_privilege(r.oid, 'sales.audit_entries', 'UPDATE,DELETE')
-                AND NOT has_table_privilege(r.oid, 'sales.outbox_messages', 'UPDATE,DELETE')
                 AND NOT EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
                     WHERE n.nspname = 'sales' AND c.relkind IN ('r', 'p') AND c.relname <> ALL(@tables)
                         AND has_table_privilege(r.oid, c.oid, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE'))

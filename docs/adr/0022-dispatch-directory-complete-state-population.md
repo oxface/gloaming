@@ -1,10 +1,12 @@
 # ADR 0022: Complete-state population for Dispatch's delivery directory
 
-Date: 2026-10-22. Status: accepted under the owner's B2 scope approval; implementation
-review corrections are prepared for exact change-set review.
+Date: 2026-10-22. Status: retired, 2026-10-23, by the owner-selected Gloaming/sample audit.
+The [retirement record](../reports/gloaming-library-audit.md#wholesale-dispatch-retirement--2026-10-23)
+accounts for removed consumer policy, preserved technical proofs and the Sales forward migration.
+The decision below records the former B2 experiment; it is not an active implementation mandate.
 
 Dispatch needs the complete customer delivery directory for local search while Sales is
-unavailable. [B2](../plans/b2-dispatch-directory-population.md) selects a bounded public
+unavailable. [B2](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/plans/b2-dispatch-directory-population.md) selects a bounded public
 current-state export plus overlapping durable whole-state updates. Targeted hydration cannot
 discover unknown customers; retained broker state would add a state store and publication
 bridge without demonstrated need.
@@ -34,7 +36,7 @@ Readiness means the baseline traversal completed with overlapping durable captur
 coherent values/revision per key but do not form one coherent source snapshot. New keys behind
 the cursor and late commits converge through eventual delivery, potentially after readiness.
 Readiness therefore promises neither a source-head barrier, an empty backlog nor synchronous
-freshness. These limits are visible in the [consumer guide](../../samples/Wholesale/modules/Dispatch/README.md).
+freshness. These limits are visible in the [consumer guide](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/samples/Wholesale/modules/Dispatch/README.md).
 
 This decision does not revive [B1's rejected retained feed](0015-producer-owned-retained-profile-feed.md),
 Organization-wide source writer gate or diagnostic journal. It introduces no generic replication

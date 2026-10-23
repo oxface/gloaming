@@ -374,9 +374,12 @@ another operation scope. Native command failures still produce server errors.
 | `customer_profiles`, `customer_addresses`, `draft_orders`, `draft_order_lines` | SELECT/INSERT/UPDATE/DELETE, tenant equality through USING and WITH CHECK. |
 | `draft_order_grants` | SELECT only, tenant equality; this HTTP composition edits existing drafts and does not create grants. |
 | `audit_entries` | SELECT/INSERT, tenant equality; accepted profile audit commits with its business rows. |
-| `outbox_messages` | SELECT/INSERT, tenant equality; complete public directory updates commit with profile changes. No HTTP dispatch/update/delete permission. |
-| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. |
+| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. Stock dispatch/reply workers use separate credentials. |
 | Access/Inventory | Separate restricted connection for global admission and catalog work; no Sales table privileges. No new RLS policy. |
+
+Finite setup revokes the HTTP role's old directory-publication outbox grants. Startup rejects
+unexpected transport table grants. Accepted profile edits now write profile/address/audit only;
+HTTP has no outbox publication role.
 
 Use a fresh disposable database, a migration-owner login and two separate runtime logins.
 Provision those logins independently, without superuser/BYPASSRLS/CREATEROLE/CREATEDB,

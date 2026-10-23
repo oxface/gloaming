@@ -144,10 +144,7 @@ public sealed partial class CompositionTests
             await proof.ScalarAsync<bool>(
                 """
                 SELECT (SELECT count(*) FROM sales.audit_entries) = 1
-                    AND (SELECT count(*) FROM sales.outbox_messages) = 1
-                    AND EXISTS (SELECT 1 FROM sales.outbox_messages
-                        WHERE owner_key = 'wholesale-alpha' AND message_name = 'sales.customer-delivery-state'
-                            AND (payload->>'revision')::bigint = 2)
+                    AND (SELECT count(*) FROM sales.outbox_messages) = 0
                     AND EXISTS (SELECT 1 FROM sales.audit_entries WHERE tenant_key = 'wholesale-alpha'
                         AND actor_kind = 2 AND actor_key = 'application-alpha' AND action = 'customer-profile.changed'
                         AND (details->>'PreviousVersion')::bigint = 1 AND (details->>'Version')::bigint = 2)
@@ -157,6 +154,22 @@ public sealed partial class CompositionTests
                 """
             )
         );
+
+        await using var runtime = new NpgsqlConnection(proof.SalesConnection);
+        await runtime.OpenAsync(Token);
+        await using var publication = new NpgsqlCommand(
+            """
+            INSERT INTO sales.outbox_messages
+                (message_id, destination, message_name, schema_version, payload, owner_key, attempts)
+            VALUES (gen_random_uuid(), 'unselected.destination', 'unselected.message', 1,
+                '{}', 'wholesale-alpha', 0)
+            """,
+            runtime
+        );
+        var denied = await Assert.ThrowsAsync<PostgresException>(() =>
+            publication.ExecuteNonQueryAsync(Token)
+        );
+        Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, denied.SqlState);
     }
 
     [Fact]
@@ -270,6 +283,7 @@ public sealed partial class CompositionTests
     [InlineData("disabled-policy")]
     [InlineData("extra-policy")]
     [InlineData("transport-grant")]
+    [InlineData("outbox-grant")]
     [InlineData("missing-audit-insert")]
     public async Task SalesHttpRlsCatalogCheckRejectsMissingPoliciesOrBroaderPrivileges(
         string fault
@@ -284,6 +298,7 @@ public sealed partial class CompositionTests
                 "extra-policy" => "CREATE POLICY unsafe ON sales.customer_profiles USING (true)",
                 "missing-audit-insert" =>
                     $"REVOKE INSERT ON sales.audit_entries FROM \"{proof.SalesRole}\"",
+                "outbox-grant" => $"GRANT INSERT ON sales.outbox_messages TO \"{proof.SalesRole}\"",
                 _ => $"GRANT SELECT ON sales.inbox_messages TO \"{proof.SalesRole}\"",
             }
         );

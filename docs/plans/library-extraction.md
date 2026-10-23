@@ -4,8 +4,9 @@ Direction update, 2026-10-22: use the [library architecture audit](../reports/gl
 for the current implementation record and next increments. The generator and ContextDemo
 are retired as `dd6eb77`; [application patterns](../application-patterns.md) replace
 active creation instructions. Family example consolidation is checkpointed as `ae2909c`;
-the current audit increment retires Wholesale Purchasing while retaining Inventory proof coverage.
-Dispatch retirement remains next. The template/extraction sequence and dated authorizations
+Purchasing retirement is checkpointed as `8601204`; the current increment retires Dispatch
+and its Sales directory policy, retaining independent routing/transaction proofs. The
+template/extraction sequence and dated authorizations
 below retain historical context; they do not select further template
 work or authorize the audit's proposed interface/removal changes. Current package contracts
 remain with their library families until concrete changes are reviewed.
@@ -1542,6 +1543,6 @@ locking. Empty/blank/null entries fail validation before I/O. There are no new d
 transport interfaces or sample policy in the library. Route assignment remains consumer-owned;
 this does not authorize tenants or bypass RLS. See the self-contained
 [family contract](../../src/Gloaming.Messaging/docs/route-selection.md) and
-[product adoption evidence](../reports/b2-directory-product-adoption.md). Existing S1/B2 reports'
+[product adoption evidence](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/reports/b2-directory-product-adoption.md). Existing S1/B2 reports'
 initial no-extraction findings describe their earlier checkpoints; this later composition supplied
 the first concrete need and new provider/consumer proofs.

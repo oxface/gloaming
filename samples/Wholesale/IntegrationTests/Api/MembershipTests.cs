@@ -116,22 +116,20 @@ public sealed partial class CompositionTests
                 .ReadAsync(profile.CustomerId, Token);
             Assert.Equal(profile, persisted);
             Assert.Empty(await sales.Set<AuditRecord>().AsNoTracking().ToArrayAsync(Token));
-            // The permitted Beta edit publishes B2 state; suspended Alpha work publishes nothing.
+            // Profile edits now write only profile/address/audit; neither tenant publishes directory state.
             Assert.Equal(
                 1,
                 await sales
-                    .Database.SqlQueryRaw<long>(
-                        "SELECT count(*) AS \"Value\" FROM sales.outbox_messages WHERE owner_key = 'wholesale-beta' AND destination = 'dispatch.customer-directory'"
-                    )
-                    .SingleAsync(Token)
+                    .Set<AuditRecord>()
+                    .IgnoreQueryFilters()
+                    .CountAsync(row => row.TenantKey == "wholesale-beta", Token)
             );
-            Assert.Equal(
-                0,
+            Assert.Empty(
                 await sales
-                    .Database.SqlQueryRaw<long>(
-                        "SELECT count(*) AS \"Value\" FROM sales.outbox_messages WHERE owner_key = 'wholesale-alpha'"
-                    )
-                    .SingleAsync(Token)
+                    .Set<Gloaming.Messaging.EntityFrameworkCore.OutboxMessageRecord>()
+                    .IgnoreQueryFilters()
+                    .AsNoTracking()
+                    .ToArrayAsync(Token)
             );
         }
 

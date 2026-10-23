@@ -1,5 +1,4 @@
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -22,6 +21,5 @@ internal sealed class SalesRowSecurityModelCustomizer(ModelCustomizerDependencie
         modelBuilder.Entity<DraftOrderLineRow>().WithRls(setting);
         modelBuilder.Entity<DraftOrderGrantRow>().WithRls(setting);
         modelBuilder.Entity<AuditRecord>().WithRls(setting);
-        modelBuilder.Entity<OutboxMessageRecord>().WithRls(setting);
     }
 }

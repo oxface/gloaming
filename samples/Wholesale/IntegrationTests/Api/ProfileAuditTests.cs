@@ -27,7 +27,7 @@ public sealed partial class CompositionTests
         SalesDatabase.Configure(options, connection);
         await using var database = new SalesDbContext(options.Options, tenant);
         await database.GetService<IMigrator>().MigrateAsync("20261005223044_InitialSales", Token);
-        // Seed the historical schema, not today's model (which now includes delivery listing).
+        // Seed the historical schema before applying the complete current migration chain.
         await database.Database.ExecuteSqlRawAsync(
             """
             INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)

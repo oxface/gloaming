@@ -7,8 +7,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales;
 internal sealed class CustomerProfiles(
     SalesDbContext database,
     IActorContextAccessor actor,
-    SalesAudit audit,
-    CustomerDeliveryPublication publication
+    SalesAudit audit
 ) : ICustomerProfiles
 {
     public async Task<CustomerProfile?> ReadAsync(
@@ -101,7 +100,6 @@ internal sealed class CustomerProfiles(
             await database.SaveChangesAsync(cancellationToken);
             address.AddressLine = candidate.Details.AddressLine;
             audit.ProfileChanged(customer.Id, address.Id, change.ExpectedVersion, customer.Version);
-            publication.Enqueue(customer, address);
             await database.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return new ProfileChangeResult.Updated(candidate.ToProfile());

@@ -111,9 +111,6 @@ public static class SalesRegistration
         services.TryAddSingleton(TimeProvider.System);
         services.AddScoped<IAudit<SalesDbContext>, EfAudit<SalesDbContext>>();
         services.AddScoped<SalesAudit>();
-        services.AddPostgresOutbox<SalesDbContext>();
-        services.AddScoped<CustomerDeliveryPublication>();
-        services.AddScoped<ICustomerDeliveryDirectory, CustomerDeliveryDirectory>();
         return services.AddScoped<ICustomerProfiles, CustomerProfiles>();
     }
 }

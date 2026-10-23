@@ -1,16 +1,14 @@
 # Wholesale consumer modules
 
 The API and reservation workers compose Access, Sales and Inventory through separate Contracts
-and module-owned persistence. Dispatch remains the separate directory experiment pending its
-retirement in the next cleanup increment. These are consumer-owned modules; Gloaming does not
-prescribe their project layout, business policy or Contracts.
+and module-owned persistence. These are consumer-owned modules; Gloaming does not prescribe
+their project layout, business policy or Contracts.
 
 | Module | Ownership | Persistence |
 | --- | --- | --- |
 | [Access](Access/README.md) | Application users, exact external identities, canonical Organizations, current membership admission and authorized membership suspension/reactivation. | Global `access` schema, separate migration history; admission runs before tenancy. Administration owns its native transaction and accepted-change audit. |
 | [Sales](Sales/README.md) | Customer profiles, permitted draft orders/lines, submission allowances, stock-issue requests and compensating reservations. | Tenant-owned `sales` schema, separate migrations, inbox/outbox, audit and process state. |
 | Inventory | Catalog availability, event-sourced stock positions, receipts, issues and reservations. | Tenant-owned `inventory` schema, separate migrations, inline state, inbox/outbox and audit. The availability catalog is separate state-stored data. |
-| [Dispatch](Dispatch/README.md) | Customer-directory population and ongoing profile delivery, retained pending cleanup. | Independent `dispatch` schema, migrations and delivery transactions. |
 
 Each implementation references its own Contracts and communicates with peers through Contracts.
 It never references a peer implementation or host. Contracts expose plain business values and
@@ -31,7 +29,9 @@ stale versions and persistence failure leave accepted data intact; profile rows 
 audit commit together in the existing service-owned transaction. Inventory uses the optional
 [aggregate base](../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/README.md) for its
 immutable accepted state and pending facts. Quantity/stock rules remain Inventory policy.
-The former Purchasing price/line/total comparison and its migration chain are retired.
+The former Purchasing comparison and Dispatch directory are retired. Their business policies
+are not library capabilities; the [active audit](../../../docs/reports/gloaming-library-audit.md)
+records retained proofs and source provenance.
 
 ## Required local submission reactions
 

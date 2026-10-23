@@ -135,4 +135,4 @@ its migrations/fixtures and actual dispatch route. Root coordinates that merge, 
 independent code/isolation reviews and release verification. No archive deletion is included;
 S1's overall archive/template/integrated-review closure is not claimed by this Wholesale checkpoint.
 
-Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.
+Canonical Directory adoption subsequently folds the temporary B2 host/tests into Worker and IntegrationTests. The [adoption report](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/reports/b2-directory-product-adoption.md) records new executable and route-claim mechanism evidence separately from this checkpoint.

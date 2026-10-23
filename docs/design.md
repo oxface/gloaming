@@ -5,9 +5,10 @@ exercised skills replace further template expansion as the intended direction. E
 selected bounded library execution is permitted. The [architecture audit](reports/gloaming-library-audit.md)
 records confirmed ownership choices and implemented package/sample cleanup. The generator
 and ContextDemo are retired as `dd6eb77`; use [application patterns](application-patterns.md).
-Family example consolidation is checkpointed as `ae2909c`; the current audit increment retires
-Wholesale Purchasing, with Dispatch retirement pending. Detailed historical decisions below
-retain their dated context; current consumer contracts remain beside their libraries.
+Family example consolidation is checkpointed as `ae2909c`; Purchasing retirement as `8601204`.
+The current audit increment retires Wholesale Dispatch and its Sales directory policy, leaving
+Access, Sales and Inventory. Detailed historical decisions below retain their dated context;
+current consumer contracts remain beside their libraries.
 
 Status: direction approved by the owner on 2026-10-03. Public interfaces, package divisions,
 and implementation increments in [the extraction plan](plans/library-extraction.md) remain

@@ -5,8 +5,9 @@ Status: active audit and implementation record. The local package command and tw
 adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
 Continuation package consolidation is committed as `56a8b12`; Messaging example/fixture
 consolidation as `5d86b20`; application scaffolding retirement as `dd6eb77`. Remaining family
-example consolidation is committed as `ae2909c`; Wholesale Purchasing retirement is the current
-uncommitted batch. Dispatch and integrated publication cleanup remain open.
+example consolidation is committed as `ae2909c`; Purchasing retirement as `8601204`.
+Wholesale Dispatch retirement is the current uncommitted batch. Integrated cleanup and reviews
+remain open, followed by the owner-requested extra document/test pass and fresh-context sweep.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -244,8 +245,8 @@ integrated documentation/test/tooling cleanup and publication review. Umbrine re
 
 ## Wholesale Purchasing retirement — 2026-10-23
 
-Uncommitted, unstaged continuation after the exact owner-approved family snapshot was
-checkpointed as `ae2909c`; all checkpoint hooks passed. Wholesale now has four modules:
+Owner-approved snapshot committed as `8601204`, after all hooks passed. It followed the exact
+owner-approved family snapshot `ae2909c`. Wholesale had four modules at that checkpoint:
 Access, Sales, Inventory and the pending-retirement Dispatch experiment. Its API/reservation
 journey needs only the first three. This increment removes Purchasing, not a technical library.
 
@@ -320,6 +321,104 @@ host is promoted into Gloaming. This narrows supported sample behavior while pre
 library evidence. Dispatch population/disclosure/route-specific cleanup remains next, followed
 by integrated document/test/CI relevance, package adoption and independent code/architecture
 review. Those gaps remain open; this is not publication sign-off or Umbrine implementation.
+
+## Wholesale Dispatch retirement — 2026-10-23
+
+Uncommitted and unstaged continuation from owner-approved Purchasing checkpoint `8601204`.
+Wholesale now contains **Access, Sales and Inventory**, with its existing API and local/broker
+order/reservation journey. Dispatch's directory experiment, its worker role and Sales export/
+listing/publication policy are retired together. No Gloaming library interface or implementation
+changes, replacement framework, generator or new application is introduced.
+
+The removed module owns 13 files, including its three migration files. Directory host/relay,
+population/adoption fixtures, Sales directory Contracts/service/audit vocabulary and the B2
+plan/adoption report are removed. [ADR 0022](../adr/0022-dispatch-directory-complete-state-population.md)
+is marked retired; 12 historical links are pinned to verified Git objects at `8601204`,
+including the removed B2 documents. No new historical archive directory is created.
+
+[Profile changes](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs) retain their
+service-owned transaction, customer/address version checks and accepted-change audit. Profile
+registration no longer installs directory publication or outbox services. Messaging registration
+remains explicit in the stock/reservation roles, with their separate native contexts/credentials.
+The two actual local/broker route-exclusion proofs remain under
+[local reservations](../../samples/Wholesale/IntegrationTests/Reservations/Local/RouteSelectionTests.cs)
+and [restricted broker dispatch](../../samples/Wholesale/IntegrationTests/Reservations/Broker/SalesDispatchTests.Routes.cs),
+using `unselected.destination` rather than an active fourth module. Both check untouched
+attempt/revision/lease/completion fields while selected stock delivery progresses.
+
+Sales retains all prior migration classes. The native
+[forward migration](../../samples/Wholesale/modules/Sales/Sales/Migrations/20261023083547_RetireCustomerDirectory.cs)
+drops only `customer_profiles.delivery_listed`; its model snapshot loses that property's six
+lines. [The native upgrade proof](../../samples/Wholesale/IntegrationTests/Api/ProfileMigrationTests.cs)
+creates a populated pre-retirement schema, including withdrawn listings, accepted audit and
+pending envelopes on retired/stock routes, then checks profile/audit/envelope preservation,
+column removal and a real subsequent HTTP profile edit without new publication. Historical
+queued directory envelopes are preserved, not automatically consumed/deleted/redriven. `Down`
+restores a default-true column, not the old listing decisions. This is explicit consumer
+compatibility work, not a library migration or a new durable-message guarantee.
+
+[HTTP RLS provisioning](../../samples/Wholesale/Api/SalesHttpRowSecurity.cs) now selects six
+business/audit tables and revokes the HTTP role's outbox table grants. Startup rejects an
+unexpected outbox grant, and native HTTP credentials cannot insert an outgoing envelope.
+The test fixture seeds the earlier SELECT/INSERT grants before invoking finite setup, proving
+actual revocation. This installer remains fresh-database, single-use policy installation;
+repeated installation/reconciliation is not claimed. The HTTP model removes its unused outbox
+RLS declaration. Worker dispatch/reply privileges and their independent policies remain.
+
+Proof disposition:
+
+| Retired behavior | Retained mechanism or explicit policy retirement |
+| --- | --- |
+| Full-directory export, baseline cursor/readiness, overlapping population and late-key convergence | Retired consumer read-model policy; no general projection/bootstrap engine or reusable snapshot promise existed. |
+| Newer-state merge, equal-revision conflict, withdrawal/relisting fences and receiver admission/search | Retired Dispatch/Sales domain policy. Native tenant/RLS and admitted stock intake remain covered independently. |
+| Omitted `Listed` on wire and typed relay/intake | Retired consumer DTO requirement. Gloaming does not select business required fields. Inbox decode/handler failures still roll back effects and leave delivery incomplete under its documented protocol. |
+| Directory copy/checkpoint/source-publication atomicity | Directory-specific side effects retire. Independent inbox handler/save/completion rollback, outbox faults and stock consumer transaction proofs remain; failed profile/audit writes still roll back. |
+| Local and restricted broker route exclusion | Both consumer proofs retained, plus independent provider RouteSelectionTests for exact parameterized selection, disjoint progress and immutable options. |
+| Directory's table/migration chain | Retired with its module under the no-external-consumer compatibility decision. All old Access/Sales/Inventory migration classes and owned payload fixtures remain. |
+
+Exact integration accounting: **343 methods / 635 cases → 329 methods / 622 cases**. Fifteen
+methods/cases retire directory policy or its end-to-end adoption; two routing methods move/
+rename without losing their assertions. One native migration method is added, and the existing
+HTTP privilege matrix gains the outbox-grant case. No unexplained test-method removal.
+Architecture cases become **89 from 100**, removing only the retired implementation/Contracts
+and Directory namespace variants; all three module and local relay fences remain nonempty.
+
+Fresh verification:
+
+| Check | Result |
+| --- | --- |
+| Full Wholesale integration | 622 passed: native PostgreSQL/RabbitMQ, API, upgrade, routing and real recovery/maintenance processes. |
+| Architecture | 89 passed for retained libraries/modules/Contracts/hosts. |
+| Independent messaging providers | 108 outbox and 93 inbox PostgreSQL cases passed, including the preserved route/transaction/fault obligations. |
+| Actual Aspire/Keycloak/Chromium | All 6 passed: setup/readiness/outage, restricted runtime provisioning, normal/restricted authenticated profile edits, membership and unmapped-account rejection. |
+| Final HTTP model alignment | All 15 HTTP/RLS cases and the real restricted-runtime setup case passed again after removing the unused outbox declaration; these are subsets of the counts above. |
+| Build/tooling | Full solution build, zero warnings/errors; CSharpier 858 inputs, native style/analyzers and diff whitespace pass. |
+| Owned data/references/review state | All 56 unchanged migration preimages, nine literal JSON payloads and the historical Access SQL fixture match `8601204`; only the intended Sales snapshot differs, with the two new migration source files. Local links/project references resolve and the original empty staged snapshot is preserved. |
+
+These are **918 distinct fresh cases**; final affected-subset reruns do not add to that count.
+The first full run's two new-fixture failures were corrected: native policy installation must
+not be repeated, and EF raw-SQL formatting must not reinterpret literal JSON braces. The clean
+full rerun is `/tmp/gloaming-dispatch-wholesale-final-tests.log`. Other evidence:
+`/tmp/gloaming-dispatch-{architecture,outbox,inbox,runtime}-tests.log`,
+`/tmp/gloaming-dispatch-final-{http,runtime}-tests.log` and
+`/tmp/gloaming-dispatch-{build-final,csharpier,style-final,analyzers-final,links}.log`.
+No package implementation/artifact input changes; package-only consumers were not rerun
+here. The family checkpoint's 21-archive/six-consumer result remains historical until the
+planned integrated verification.
+
+Existing CI globs already select module/API/worker, integration, architecture and runtime
+changes/deletions. The solution removes Dispatch's two projects; no dedicated Dispatch lane
+or hook remains. Review Sales publication/registration removal, HTTP provisioning/model/grants,
+the forward migration and upgrade proof, retained routing proofs and changed browser assertions.
+Current [module](../../samples/Wholesale/modules/README.md), [Sales](../../samples/Wholesale/modules/Sales/README.md)
+and [API](../../samples/Wholesale/Api/README.md) guides describe the resulting behavior.
+
+**No new reusable mechanism was proven or proposed.** Existing inbox/outbox/RLS mechanisms are
+re-exercised with explicit consumer ownership. Template work remains retired; sample directory
+and disclosure policy is removed, not promoted into Gloaming. Remaining work is repository
+consolidation and integrated verification/independent review closure, then the owner's extra
+documentation/test pass and later separate-session sweep. These remain open; this increment
+does not implement Umbrine or establish publication sign-off.
 
 ## Confirmed direction and review criteria
 
@@ -590,21 +689,22 @@ different purposes; neither requires retaining every experimental migration chai
 
 ## Remaining cleanup slices
 
-The owner requested larger, closely related code-led batches, with relevant documentation,
-tests, CI and pruning completed alongside the implementation. Separate documentation-only
-increments are no longer part of this queue. Messaging examples and deployment fixtures are
-committed as `5d86b20`; scaffolding retirement as `dd6eb77`; family examples as `ae2909c`.
-Purchasing retirement is the current batch; estimate **two further batches** after it:
+The owner requested coherent code-led batches with their documentation, tests, CI and pruning,
+and allows as many reviewable increments as needed to meet requirements. Purchasing retirement
+is committed as `8601204`; Dispatch retirement is the current batch. The planning range after
+this batch is **2–4 slices**, plus the explicitly selected extra documentation/test pass.
+The owner's later clean-context sweep is a separate session, not claimed by this audit.
 
 | Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Wholesale Dispatch retirement | 1 | Complete the three-module target and one order/reservation journey; remove directory population/disclosure policy and account for route-selection/retention proofs. |
-| Integrated publication cleanup and review | 1 | Remaining document/test relevance, CI/hooks/tooling and empty directories; integrated package/adoption/sample checks, independent code/architecture review and explicit gaps. |
+| Repository consolidation | 1–2 | Review every document/test for current relevance; reduce active queues and historical duplication; finish CI/hooks/tooling and empty-directory cleanup. Keep related code/docs/proofs together. |
+| Verification and independent review closure | 1–2 | Integrated package-only adoption, retained sample/runtime checks, independent code and architecture reviews, and focused fixes for findings. |
+| Additional documentation/test pass | At least 1 | Owner-selected final pass after the above, using the completed implementation and review outcomes to remove remaining stale or redundant material. |
+| Fresh-context sweep | Separate session | Owner plans another review in a new session; do not count its conclusions as evidence already produced here. |
 
-Every batch updates its owning consumer docs and removes obsolete references/CI inputs.
-This estimate can change when proof ownership or library defects require more work. It is
-not release sign-off and excludes Umbrine, new capabilities and remote publication. Umbrine
-can use the reviewed local packages before cleanup is exhausted.
+Every required defect or mismatch remains open until fixed or explicitly disposed of by the
+owner. Estimates do not constrain the number of slices. Umbrine implementation and remote
+publication are separate; reviewed local packages remain usable during cleanup.
 
 ## Original implementation sequence and completion checks
 
