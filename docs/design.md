@@ -8,6 +8,8 @@ current public contracts, setup, limitations and deferred work.
 Use the [library audit](reports/gloaming-library-audit.md#remaining-cleanup-slices) for the
 active work queue, the [extraction gate](plans/library-extraction.md) before proposing a
 mechanism, and [application patterns](application-patterns.md) for exercised consumer setup.
+The [research briefs](research/README.md), [decision index](adr/README.md) and
+[proof ownership map](../tests/README.md) explain the retained evidence and current owners.
 Earlier extraction sequences and execution authorizations are
 [historical evidence](reports/s1-archive-retirement.md), not current instructions.
 

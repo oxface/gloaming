@@ -63,7 +63,8 @@ dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.cspr
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj
 ```
 
-Family-local READMEs list their own test projects. See the [development commands](docs/development.md),
+Family-local READMEs list their own test projects; the [proof map](tests/README.md) explains their
+responsibilities. See the [development commands](docs/development.md),
 [repository workflow](docs/conventions/repository.md) and [.NET conventions](docs/conventions/dotnet.md).
 CI selects affected families, package adopters and dependent consumers through an explicit path map.
 

@@ -1,17 +1,18 @@
 # ADR 0014: bounded explicit durable continuations
 
-Status: public interface and exact replacement scope accepted by the owner on 2026-10-12.
-Implementation awaits line-by-line code review. Supersedes [ADR 0013](0013-fixed-sequential-saga-progress.md)
-before the sequential experiment was checkpointed.
+Status: accepted and implemented. Original replacement scope, 2026-10-12; package
+consolidation owner-approved at `56a8b12`. Supersedes the discarded sequential experiment
+before it was checkpointed; its rationale remains in Git history.
 
 The owner approved the final reply/signal/input-pause names on 2026-10-13. Persisted numeric
 status values and continuation identities are retained.
 
 ## Decision
 
-Provide optional Messaging.Workflows definitions and a native EF adapter executing only a
-saved, typed continuation method. Do not replay an entry point, interpret a graph or generate a
-handler harness. Consumers use ordinary C# for branching and compensation, stable wire names
+Provide optional definitions and execution together in Gloaming.Messaging.Workflows.EntityFrameworkCore,
+retaining the two public namespaces. Definitions take its EF dependency; ordinary Messaging
+remains independent. Execute only a saved, typed continuation method. Do not replay an entry point,
+interpret a graph or generate a handler harness. Consumers use ordinary C# for branching and compensation, stable wire names
 for reply bindings, and explicit typed signal bindings for external input. Operator recovery
 is one consumer use of an input pause; the technical status does not imply business failure.
 
@@ -40,4 +41,4 @@ signal receipts, replay/graph engines and generic compensation selection remain 
 
 [Approved scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-durable-continuations.md),
 [current package-local contract](../../src/Gloaming.Messaging/docs/workflows.md), and
-[fresh evidence](../reports/wf2-durable-continuations.md).
+[dated evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-durable-continuations.md).

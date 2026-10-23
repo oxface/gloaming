@@ -113,4 +113,4 @@ the outbox transaction; identity, lease expiry/fencing and committed claim/failu
 stay with the existing store. No claim is released early or message replayed by this package.
 Intake still commits before ack; retained receipts suppress duplicates until receipt deletion.
 See [recovery/shutdown obligations](../docs/worker-recovery.md) and the
-[extraction proof report](../../../docs/reports/rabbitmq-session-lifecycle.md).
+[extraction proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/rabbitmq-session-lifecycle.md).

@@ -23,7 +23,7 @@ ordinary tenantless EF context with custom mapping. Run it from the repository r
 dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj
 ```
 
-PostgreSQL is the exercised provider. [E9 execution evidence](../../docs/reports/e9-explicit-transactional-audit.md)
+PostgreSQL is the exercised provider. [E9 execution evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-explicit-transactional-audit.md)
 is separate from archived audit evidence. Classification, authorization, required-audit
 selection, disclosure, query visibility and retention remain consumer-owned.
 

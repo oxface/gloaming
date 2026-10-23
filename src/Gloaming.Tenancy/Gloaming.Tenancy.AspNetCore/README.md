@@ -126,7 +126,7 @@ fallback chain. A user-to-tenant resolver can use neither helper.
 [Standalone HTTP proofs](../tests/TenancyAspNetCoreTests/HttpTenantTests.cs) exercise the
 adapter without an actor dependency. [The sample](../../../samples/Wholesale/Api/README.md)
 composes both adapters with consumer-owned Organization lookup and guarded Inventory reads.
-[The E3.2 report](../../../docs/reports/e3-2-http-tenancy.md) records executed guarantees and limits.
+[The E3.2 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-2-http-tenancy.md) records executed guarantees and limits.
 
 ## Deferred direction
 

@@ -36,5 +36,5 @@ retained history, without external side effects or a resumable checkpoint.
 The consumer owns selected target/admission, retry values, progress presentation, scheduling,
 consistent reducer rollout and pause/drain policy. Full-prefix materialization and uninterrupted
 synchronous evolution remain bounded-scope limitations; no large-stream or mixed-version rollout
-guarantee follows. [New proofs and limitations](../reports/es3-aggregate-regeneration-operations.md)
+guarantee follows. [New proofs and limitations](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es3-aggregate-regeneration-operations.md)
 are distinct from the earlier consumer-only journey and external research.

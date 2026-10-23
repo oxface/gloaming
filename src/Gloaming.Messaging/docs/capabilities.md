@@ -7,19 +7,19 @@ operations remain independently usable without this package.
 
 O1 supplies one bounded transactional-outbox capability. [Family setup](../README.md)
 and package READMEs define the public surface; [the O1 proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox1-transactional-dispatch.md)
-records owner review and [the report](../../../docs/reports/outbox1-transactional-dispatch.md)
+records owner review and [the report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox1-transactional-dispatch.md)
 records dated executions. O1 is owner-approved at checkpoint `2d7a865` and merged as
 `beafa4e`. I1 adds independently selected durable intake and separate transactional processing.
 Its [interface/scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/inbox1-durable-intake-processing.md) is owner-approved;
 the implementation is checkpointed as `ecab884`, refined as `863456b` and merged as `0f4d8bf`.
 [Inbox setup and guarantees](inbox.md) and
-[the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
+[the fresh execution report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
 M2 adds [durable failure accounting and operator retry](inbox-recovery.md) after owner
-interface review, with [separate current evidence](../../../docs/reports/m2-inbox-failure-recovery.md).
+interface review, with [separate current evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-failure-recovery.md).
 Its [outbox continuation](outbox-recovery.md) adds lease-fenced publisher-exception accounting,
 consumer-selected dead letters and bounded inspection/conditional retry, with
-[new PostgreSQL/HTTP/process evidence](../../../docs/reports/m2-outbox-dead-letters.md).
-The [completion supervision follow-up](../../../docs/reports/m2-outbox-completion-supervision.md)
+[new PostgreSQL/HTTP/process evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-dead-letters.md).
+The [completion supervision follow-up](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-completion-supervision.md)
 adds OutboxCompletionException and stops the optional worker on unconfirmed completion.
 Native host options, consumer repair and external restart policy govern recovery.
 The [operational visibility slice](outbox-observability.md) adds a separately callable
@@ -33,7 +33,7 @@ receipt-generation-aware operator retry. Deletion ends duplicate/content evidenc
 old delivery to execute again. Unprocessed/dead-lettered work remains. Consumer windows and
 scheduling are explicit. The owner approved retention's documented post-v1 supplied-feature
 deferrals with checkpoint 6510f9e, merged as 2e1ffac. The selected
-[broker recovery/shutdown continuation](../../../docs/reports/w1-broker-recovery-shutdown.md)
+[broker recovery/shutdown continuation](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-broker-recovery-shutdown.md)
 has its own implementation evidence and change-set review.
 
 [Queued-message schema compatibility](schema-compatibility.md) demonstrates retained v1 work
@@ -161,7 +161,7 @@ stopped or count unrecorded crashes. See [failure accounting and supervision](in
 The current context-typed IInboxDeadLetters concentrates bounded metadata list/detail and
 the existing conditional retry. Native timestamp/UUID keyset paging reserves no work and
 observes live state. Rendering's authenticated operator endpoints and restricted Sales proofs
-exercise the interface; [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md)
+exercise the interface; [the dead-letter report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-dead-letters.md)
 records fresh paging, authority and checkpoint-migration evidence. No console or payload editor.
 
 MessageId identifies one delivery and must remain stable on retry. Define deduplication
@@ -194,7 +194,7 @@ death/rollback and publication death/lease expiry/redelivery/deduplication. This
 the selected composition, not external exactly-once effects, a throughput benchmark or a
 deployment supervisor. Native intake remains sample code. Original W1 introduced no new
 library interface; existing typed composition, leases and row locks sufficed for that slice.
-[The W1 report](../../../docs/reports/w1-separate-worker-hosts.md) distinguishes these executions
+[The W1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-separate-worker-hosts.md) distinguishes these executions
 from historical O1/I1 results.
 
 The [worker recovery/shutdown contract](worker-recovery.md) adds consumer-owned native
@@ -202,7 +202,7 @@ terminal-session observation and supervised fresh-process restart. Automatic Rab
 stays disabled; ordinary publisher exceptions against an open session still use existing retry.
 Live broker outage/recovery, retained-message progress, actual blocked publication/SIGTERM and
 the existing unavailable-collector stop scenario have their own
-[closure evidence](../../../docs/reports/w1-broker-recovery-shutdown.md). Native attempt/RPC/close
+[closure evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-broker-recovery-shutdown.md). Native attempt/RPC/close
 timeouts and selected process verification budgets are distinct; no arbitrary publisher or
 exporter deadline or persistence protocol is added.
 
@@ -211,26 +211,21 @@ extracts native session/channel ownership, acquired-resource cleanup, phase-time
 one-time terminal observation. It returns native IChannel and uses an intentional-stop token/
 callback; no Generic Host/core/EF dependency or parallel publisher/recovery interface. The worker
 chooses fail-stop; finite and three-channel workflow adopters share cleanup while retaining their
-own lifetimes/native recovery. [Fresh extraction evidence](../../../docs/reports/rabbitmq-session-lifecycle.md)
+own lifetimes/native recovery. [Fresh extraction evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/rabbitmq-session-lifecycle.md)
 is separate from the original consumer-only proof.
 
 ## Current observability and workflow boundaries
 
 Host placement is consumer composition. Optional retained W3C context, native attempt
 activities, correlated failure logs and metrics are supported; see [observability](observability.md).
-Backlog observation, alert thresholds and dashboard UX remain deferred.
+[Outbox backlog observation](outbox-observability.md) is independently callable; alert thresholds
+and dashboard UX remain consumer policy.
 
-New-service snapshot/feed repopulation is a distinct planned capability. Current dispatch
-ordering and retained delivery rows do not provide a safe replay cursor or snapshot boundary.
-A producer-owned replay/export contract, retention rules and transactional receiver progress
-need separate proof; no bootstrap runtime is supplied. The owner closed B1 as the
-[retention/contract assessment](../../../docs/reports/b1-retention-and-contract-assessment.md)
-and rejected retaining the experiment code, tests, migration and reconstruction patch.
-Only research and [dated results](../../../docs/reports/b1-replayable-integration-feed.md)
-remain. Current Sales writes and setup have no feed dependency; no supported Messaging API
-or maintained bootstrap example was added. Neither generic state revisions nor historical
-replay follow from the existing envelope/outbox. Revisit implementation only for a concrete
-receiver need; B2 snapshot/bootstrap remains separate.
+New-service snapshot/feed repopulation is unsupported. Current dispatch ordering and retained
+delivery rows provide no safe replay cursor or snapshot boundary. The
+[state-transfer research](../../../docs/research/integration-state-transfer.md) retains alternatives
+and the rejected B1/retired Dispatch rationale. A concrete receiver requirement must establish
+public contract semantics, retention and atomic receiver progress before any extraction.
 
 Durable workflows begin with module-owned state and the existing messaging contracts. The
 [WF1 stock-issue consumer](../../../samples/Wholesale/Worker/Broker/README.md) demonstrates
@@ -255,7 +250,7 @@ deployment/rollback topologies require their own evidence; no rollout orchestrat
 Receipt-only mode if an adopter needs it;
 permanent inbox duplicate registries, dead-letter discard/purge and supplied cleanup scheduling;
 caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
-per-stream ordering; other DBMS providers; additional transports and local module handoff;
+per-stream ordering; other DBMS providers; additional transports and a generic local-handoff runtime;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
 transactions; template messaging presets. Event-sourcing maintenance/async projections remain
 in their owning family. These capabilities need specific failure/consumer evidence, not only

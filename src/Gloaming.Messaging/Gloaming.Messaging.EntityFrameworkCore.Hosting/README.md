@@ -70,5 +70,5 @@ tests exercise startup validation, fresh scopes, cancellation and fatal supervis
 package-only [hosting consumer](../../../tools/release/consumers/Hosting.cs) adopts both
 workers with supplied callable roles and no database provider. The separate PostgreSQL
 package consumer verifies its persistence/producer graph restores no Hosting abstractions.
-The [slice report](../../../docs/reports/messaging-worker-hosting.md) records fresh results
+The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/messaging-worker-hosting.md) records fresh results
 and remaining sample consolidation work.

@@ -85,8 +85,8 @@ the database setting, but still need actual policies and business-specific proto
 A custom setting is mutable trusted input: a credential holder can forge another tenant.
 RLS tenant equality does not authenticate, admit membership, authorize resources within a
 tenant, validate aggregates or retract data already in memory. Read the
-[A2.2 protection matrix](../../../docs/reports/a2-2-sales-postgres-rls.md) for exercised bypass
-controls and [primary-source evidence](../../../docs/reports/tenant-authorization-primary-sources.md).
+[A2.2 protection matrix](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-2-sales-postgres-rls.md) for exercised bypass
+controls and [primary-source evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/tenant-authorization-primary-sources.md).
 
 ## Executable consumers and proofs
 
@@ -97,7 +97,7 @@ controls and [primary-source evidence](../../../docs/reports/tenant-authorizatio
   extension in its explicit opt-in RLS composition. Its existing role/permission/raw/bulk/
   savepoint/retry/reconnect/COPY proofs now cross the public utility.
 - [Extraction scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-3-postgres-tenant-context.md) and
-  [fresh report](../../../docs/reports/a2-3-postgres-tenant-context.md) distinguish the reusable
+  [fresh report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-3-postgres-tenant-context.md) distinguish the reusable
   setup mechanism from consumer-owned policies and unsupported integration.
 
 ```bash
@@ -108,7 +108,7 @@ This suite runs in the Tenancy CI lane using PostgreSQL 18.6 Testcontainers. On 
 rootless Podman workstation, use the socket environment in the
 [development guide](../../../docs/development.md#postgresql-tenant-context-utility).
 
-The later [A2.4 capability research](../../../docs/reports/a2-4-rls-capability-reference-research.md)
+The later [A2.4 capability research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-rls-capability-reference-research.md)
 compares Bytefish's connection hook and Marten's fluent/schema/runtime split with an optional
 `HasTenantOwnership(...).WithRls()` integration. The separate optional
 [Persistence/PostgreSQL adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)

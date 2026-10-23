@@ -179,7 +179,7 @@ the automated process proof verifies actual OTLP data with a Collector, not dash
 See [the separate host example](../samples/Delivery/README.md) for executable
 OTLP configuration. Its tests use real PostgreSQL/RabbitMQ and an official test Collector,
 including process exit, completion/handler failure, new send spans, duplicate intake and
-unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)
+unavailable collection. [The OBS1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/obs1-durable-message-observability.md)
 separates fresh results from earlier worker/recovery evidence.
 
 The [worker recovery/shutdown continuation](worker-recovery.md) adds consumer publication-start
@@ -189,7 +189,7 @@ do not infer transport rejection or introduce metrics/accounting for every disco
 The existing unreachable-collector process scenario now separately budgets all three worker
 stops at fifteen seconds with its existing one-second exporter timeout. That selected result
 is distinct from a promise to flush arbitrary exporters or bound arbitrary publisher code;
-see the [closure report](../../../docs/reports/w1-broker-recovery-shutdown.md).
+see the [closure report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/w1-broker-recovery-shutdown.md).
 
 Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
 Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic

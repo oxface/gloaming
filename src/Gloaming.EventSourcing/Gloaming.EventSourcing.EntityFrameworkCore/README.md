@@ -264,7 +264,7 @@ window and scheduling remain consumer-owned. Bad retained facts and previously c
 business decisions are not repaired by regenerating derived state.
 
 The [ES3 CLI guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
-documents the finite operator journey, and the [slice report](../../../docs/reports/es3-aggregate-regeneration-operations.md)
+documents the finite operator journey, and the [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es3-aggregate-regeneration-operations.md)
 separates new execution evidence from earlier research and consumer-only proofs.
 
 ## Registration, errors and recovery
@@ -297,4 +297,4 @@ See [current capabilities and deferred directions](docs/capabilities.md),
 [standalone raw adoption](../samples/EventStorageDemo/README.md),
 [tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
 [reviewed replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) and
-[dated ES2 evidence](../../../docs/reports/es2-rebuild-design.md).
+[dated ES2 evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es2-rebuild-design.md).

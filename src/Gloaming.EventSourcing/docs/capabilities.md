@@ -28,7 +28,7 @@ for compatible schema changes. Inventory composes it during historical decoding 
 ordinary inline loading still reads saved state without replay or repair. Event rows are never
 rewritten. Shape-only changes need not rebuild correct state; projection-meaning changes and
 reader-before-writer rollout remain consumer decisions. See the [codec contract](../../Gloaming.Events/Gloaming.Events.Serialization/README.md)
-and [upcasting evidence](../../../docs/reports/event-payload-upcasting.md). This EF package gains
+and [upcasting evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-payload-upcasting.md). This EF package gains
 no serialization dependency.
 
 ## Explicit consumer operations

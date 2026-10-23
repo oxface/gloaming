@@ -66,7 +66,7 @@ explicit maintenance work; selected-range reads do not certify corruption elsewh
 tenant scoping, stream creation/update metadata or a committed captured head. The utility does
 not append, save, transact, retry or publish. Wholesale consumer suites exercise actual native EF queries, captured-head races and
 persistence on PostgreSQL; these are composition proofs beyond this utility alone. See [the plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-1-event-history.md)
-and [report](../../../docs/reports/e5-1-event-history.md).
+and [report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e5-1-event-history.md).
 
 ## Deferred direction and event-store composition
 

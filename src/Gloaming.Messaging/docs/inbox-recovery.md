@@ -91,7 +91,7 @@ until it is restarted; it does not promise progress while accounting remains bro
 
 This supervision adds no lease, durable started-at marker or global execution budget.
 Process death and other unrecorded attempts retain the limits above. See the
-[supervision report](../../../docs/reports/m2-inbox-failure-supervision.md) for current proofs.
+[supervision report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-failure-supervision.md) for current proofs.
 
 ## Authorized retry of retained work
 
@@ -200,7 +200,7 @@ Forward Rendering/Inventory/Sales migrations demonstrate storage changes. Existi
 Sales roles need an explicit grant update; finite provisioning is not a role reconciler and startup
 performs no DDL. [Sales setup](../../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) documents
 that consumer. [InboxDemo](../tests/Fixtures/InboxHost/README.md) shows optional operator usage;
-[the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md) records current evidence
+[the dead-letter report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-dead-letters.md) records current evidence
 separately from the original M2 recovery/supervision results. Processed cleanup has its own
 [contract and evidence](inbox-retention.md); unprocessed/dead-lettered work is preserved.
 Payload editing, global execution caps and template presets remain unsupported. The selected

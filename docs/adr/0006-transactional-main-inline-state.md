@@ -1,9 +1,8 @@
 # ADR 0006: Transactional main inline state for registered aggregate writes
 
-Status: accepted consistency direction, owner-confirmed on 2026-10-06. The owner subsequently
-endorsed a provided write store and authorized implementation for review on 2026-10-07.
-The exact configuration/implementation remains subject to line-by-line review. Supplements
-ADR 0005; see [the store surface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-library-write-store.md).
+Status: accepted and implemented. Owner-confirmed consistency direction, 2026-10-06;
+provided-store refinement, 2026-10-07. Supplements ADR 0005; direct staging and native optimistic
+rebuilding follow [ADR 0008](0008-native-optimistic-aggregate-rebuilding.md).
 
 ## Context
 
@@ -13,8 +12,8 @@ stream and would require a different command-loading contract. The owner require
 not to commit without their main inline state, but also wants independent raw-stream usage.
 The current history-only counter demonstrates a consumer without an inline view.
 
-ES1's module stores prepare required views in the consumer's native transaction. The public
-appender can stage events/header without any view. A transaction ensures included writes
+The initial ES1 module stores prepared required views in the consumer's native transaction,
+while its technical appender could stage events/header without any view. A transaction ensures included writes
 commit together; it does not ensure required state was included. Existing consumer proofs
 therefore do not establish universal library enforcement.
 
@@ -46,11 +45,11 @@ secondary-view contract is historical checkpoint evidence, superseded by the
 [reviewed ES2 reduction](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-aggregate-only-reduction.md). Native model
 registration and validation in both consumer save overrides check the active transaction,
 header, complete inserted event range and required state metadata before SQL. New omission,
-corruption, rollback and recovery proofs appear in [the follow-up report](../reports/es1-library-write-store.md).
+corruption, rollback and recovery proofs appear in [the follow-up report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es1-library-write-store.md).
 This is a tracked native-save contract: raw SQL, bulk updates/deletes, external writers and
 bypassed save overrides require a separate database enforcement contract. State-body semantic
 validation remains consumer-owned. No RLS or async consistency mechanism is established.
 
 See [the capability directions](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/event-sourcing-capabilities.md),
 [ADR 0005](0005-aggregate-write-contract-and-native-append.md) and
-[existing ES1 evidence](../reports/es1-bounded-event-append.md).
+[existing ES1 evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es1-bounded-event-append.md).

@@ -71,5 +71,5 @@ not require this package and are not supplied by it. Required intra-module write
 Deferred local work needs its own concrete requirement. D2.3 separately assesses durable in-process
 module-contract delivery and shared transactions. No new template preset is provided.
 
-The [consolidation report](../../../docs/reports/event-reactions-consolidation.md) supersedes the
+The [consolidation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-reactions-consolidation.md) supersedes the
 former Gloaming.Domain positioning and source contract; previous reports retain dated evidence.

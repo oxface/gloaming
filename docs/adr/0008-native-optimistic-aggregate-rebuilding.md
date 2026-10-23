@@ -1,7 +1,7 @@
 # ADR 0008: Native optimistic aggregate rebuilding
 
 Status: owner-approved replacement, 2026-10-07. Supersedes
-[ADR 0007](0007-pre-read-admission-for-inline-rebuilding.md) and the public two-phase append
+[ADR 0007](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/adr/0007-pre-read-admission-for-inline-rebuilding.md) and the public two-phase append
 mechanism described in ADR 0005; the aggregate contract and transactional required-state
 choice remain. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 
@@ -28,8 +28,8 @@ The shared EF package references Relational and DI abstractions without a provid
 PostgreSQL is the tested runtime. A future concrete pessimistic-locking obligation may justify
 *.Postgres anew; no empty abstraction/package is retained. Scheduling, scaling, retry/window
 policy, upcasting, catch-up, secondary/multi-stream projections and a maintenance worker remain
-separate capabilities with their own proof obligations. T1 remains event-free.
+separate capabilities with their own proof obligations. State-stored adopters need no event-sourcing dependency.
 
 [Current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
-and [dated executions](../reports/es2-single-stream-rebuilding.md) distinguish this contract from
+and [dated executions](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es2-single-stream-rebuilding.md) distinguish this contract from
 historical gate/SQL diagnostics.

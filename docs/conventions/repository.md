@@ -8,8 +8,8 @@ owner review. Split independent outcomes rather than introducing empty layers or
 intermediate states.
 
 Library interfaces and implementations receive line-by-line review. Sample usage and proof
-changes accompany the library so the consumer obligations can be assessed together. A new
-template file is needed only when the increment establishes a reusable setup pattern.
+changes accompany the library so the consumer obligations can be assessed together. Update
+application setup guidance when the increment establishes a reusable pattern.
 
 ## Repository scripts
 
@@ -74,5 +74,5 @@ obligation. Keep related package composition and optional dependencies explicit.
 Root design decisions, ADRs, interface proposals and slice reports retain cross-cutting review
 and dated evidence; link them to the owning library's current capability record. Mark future
 features as deferred rather than supported, including their known proof obligations. Moving
-project/test folders is a separately reviewed relocation with references, template snapshots
+project/test folders is a separately reviewed relocation with references, owned fixture/migration inputs
 and checks accounted for; documentation locality does not require moving everything at once.

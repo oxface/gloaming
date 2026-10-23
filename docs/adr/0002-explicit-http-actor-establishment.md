@@ -33,7 +33,7 @@ authentication/authorization setup, middleware order and direct composition when
 
 The adapter depends only on ActorIdentity and the native ASP.NET Core framework. Both
 ActorIdentity and Tenancy remain independently adoptable package-free cores. Provider-specific
-cookie/OIDC setup and external-identity/account policy stay in the sample/template consumer.
+cookie/OIDC setup and external-identity/account policy stay in the consumer.
 
 ## Consequences and limits
 
@@ -48,4 +48,4 @@ Full remote OIDC/session topology and tenant admission need separate evidence.
 
 See [the approved interface plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-1-http-actor-identity.md),
 [the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
-[the execution report](../reports/e3-1-http-actor-identity.md).
+[the execution report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-1-http-actor-identity.md).

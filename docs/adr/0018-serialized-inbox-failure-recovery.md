@@ -2,10 +2,11 @@
 
 Status: interface/scope owner-approved, 2026-10-18; supervision approved 2026-10-20;
 dead-letter interface approved 2026-10-21.
-Implementation remains uncommitted for line-by-line owner review.
+Implemented in current source; receipt-generation refinement follows
+[ADR 0020](0020-inbox-expiry-and-receipt-generations.md).
 [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-failure-recovery.md),
 [current contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md),
-[fresh evidence](../reports/m2-inbox-failure-recovery.md).
+[dated evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-failure-recovery.md).
 
 The existing post-transaction pending-only retry update protects successor completion but
 cannot safely own counters/dead-letter state alongside newer pending failures or operator redrive.
@@ -33,7 +34,7 @@ transaction protocol. Consumer alerting, repair and restart remain required; sto
 not establish progress for unrelated messages on that worker or count unrecorded crashes.
 
 A separately registered typed recovery operation conditionally changes only an unprocessed,
-dead-lettered delivery at the observed revision. It preserves the entire envelope and lifetime
+dead-lettered delivery at the observed receipt generation and revision. It preserves the entire envelope and lifetime
 failure count, resets cycle failures and records redrive count/time. Revision increments on
 failure, completion and redrive prevent old requests reopening a later dead-letter state. PostgreSQL
 locking and condition rechecks arbitrate competitors.

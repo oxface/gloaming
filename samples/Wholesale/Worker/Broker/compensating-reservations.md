@@ -103,8 +103,8 @@ are deferred. No timeout automatically reverses stock. Deployment owns producer 
 queue permissions and DLQ policy; shared demo credentials do not authenticate modules.
 
 Gloaming supplies local processing, durable delivery and an optional typed continuation runner.
-The [new report](../../../../docs/reports/wf2-durable-continuations.md) distinguishes fresh protocol
-and consumer proofs from the [initial consumer-only run](../../../../docs/reports/wf2-compensating-workflow.md)
-and discarded [sequential experiment](../../../../docs/reports/wf2-sequential-saga-coordinator.md).
+The [new report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-durable-continuations.md) distinguishes fresh protocol
+and consumer proofs from the [initial consumer-only run](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-compensating-workflow.md)
+and discarded [sequential experiment](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf2-sequential-saga-coordinator.md).
 Ordinary method bindings also support branching, as shown by the standalone workspace adopter.
 Parallel pending requests, deadlines and schedulers remain deferred.

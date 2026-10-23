@@ -51,7 +51,7 @@ and context after persistence failure/rollback and load committed state for a ne
 [consumer aggregate](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs),
 [core proofs](../tests/EventSourcingTests/AggregateTests.cs),
 [reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md),
-[findings](../../../docs/reports/es1-bounded-event-append.md).
+[findings](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es1-bounded-event-append.md).
 
 ## Local capability context
 

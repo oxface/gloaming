@@ -82,7 +82,7 @@ transport/deployment topologies beyond the demonstrated consumer require separat
 The typed registration factory has one local CA1000 suppression: the family type belongs on
 the registration and the method selects its concrete event type. There is no global analyzer
 disable or extra factory facade. Review it with [the interface plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e4-event-serialization.md)
-and [proof report](../../../docs/reports/e4-event-serialization.md).
+and [proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e4-event-serialization.md).
 
 ## Explicit historical schema upgrades
 

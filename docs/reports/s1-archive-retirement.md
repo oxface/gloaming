@@ -45,9 +45,26 @@ current [extraction gate](../plans/library-extraction.md) replaces the execution
 The generator and ContextDemo retired at `dd6eb77`; family example consolidation at
 `ae2909c`; Wholesale Purchasing at `8601204`; Dispatch and Sales directory policy at `0d43d3c`.
 The [audit implementation record](gloaming-library-audit.md#implementation-progress) maps
-those changes to fresh proof results and explicit retirements. Detailed dated reports still
-await the next relevance pass; their old status text does not reopen completed work or grant
+those changes to their dated proof results and explicit retirements. The current consolidation
+retires those diaries; their original status text does not reopen completed work or grant
 commit authority.
+
+## Dated reports and superseded decisions
+
+The report-consolidation baseline is
+[`bd2adb7dea58de304aa2eb3df3c587c6fe348320`](https://github.com/oxface/modulith-foundry/tree/bd2adb7dea58de304aa2eb3df3c587c6fe348320).
+Its [report tree](https://github.com/oxface/modulith-foundry/tree/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports) retains the
+129 retired execution/research reports; its
+[decision tree](https://github.com/oxface/modulith-foundry/tree/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/adr) retains superseded
+pre-read admission (0007), fixed sequential progress (0013), rejected retained feed (0015) and
+retired Dispatch population (0022). Original blobs were verified before deletion; no ADR
+number is reused.
+
+[Four research briefs](../research/README.md) distill useful alternatives and original source
+pins without selecting engines or reviving old proposals. [Current ADRs](../adr/README.md)
+reconcile later accepted implementation/package refinements. [The test map](../../tests/README.md)
+records present executable proof ownership. The compact audit retains checkpoint/outcome
+links; its full former assessment and per-slice execution logs remain at the baseline above.
 
 ## Current proof ownership
 

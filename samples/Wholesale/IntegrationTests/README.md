@@ -33,7 +33,7 @@ real-process coverage in `ProductOperationsTests`, and regeneration launches the
 The Access SQL fixture stays byte-for-byte intact. Event fixture JSON remains owned by the
 independent Events consumer and is linked read-only into the output directory. Retained module migrations
 remain in their owning modules. Purchasing and Dispatch with their owned migration chains are retired; the
-[current audit](../../../docs/reports/gloaming-library-audit.md) records replacement proof coverage. The [slice report](../../../docs/reports/s1-wholesale-consolidation.md)
+[current audit](../../../docs/reports/gloaming-library-audit.md) records replacement proof coverage. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/s1-wholesale-consolidation.md)
 maps the old projects and records fresh results separately from earlier slice evidence.
 
 Directory population/disclosure/wire policy and its API/worker adoption are retired. The two

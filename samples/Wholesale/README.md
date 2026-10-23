@@ -45,5 +45,5 @@ are explicitly retired, with the proof disposition in the
 Aspire/Keycloak/Chromium lifetimes rather than in-process composition.
 
 Independent technical examples live beside their Gloaming families under `src/`; they do not
-use Wholesale. See the [consolidation proof map](../../docs/reports/s1-wholesale-consolidation.md)
+use Wholesale. See the [consolidation proof map](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/s1-wholesale-consolidation.md)
 for precise ownership, retained assertions and fresh verification.

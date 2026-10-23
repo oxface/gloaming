@@ -11,8 +11,9 @@ records the comparison that earned this extraction.
 2. Consumer explicitly constructs AuditEntry, directly or through its own contextual wrapper. Validation and JSON cloning finish before
    Stage tracks a provided AuditRecord. No clock, identity, tenant or classification fallback.
 3. Stage associates that row object with its exact context lease and native transaction.
-   Both save overrides explicitly validate added row/envelope/transaction association.
-   Modified/deleted tracked audits are rejected. No library SaveChanges interceptor exists.
+   Install shared capability save composition or explicitly validate both native save overrides
+   as documented in the package setup. Both paths validate added row/envelope/transaction
+   association and reject modified/deleted tracked audits.
 4. Consumer saves once or several times, then commits explicitly. Disposal never commits.
    A failed participant or cancellation rolls back business effects and audit; recovery uses
    a fresh operation/context. Consumer code owns retry and ambiguous commit reconciliation.
@@ -48,8 +49,9 @@ ConfigureAudit supplies the native tenant/type/item/time/ID index by default as
 ix_audit_subject_timeline. Consumers can rename or
 replace it with native EF configuration.
 Read permission and tenant visibility remain consumer policy; there is no timeline service.
-The optional PostgreSQL package maps JSONB; generic relational mapping requires an explicit
-provider mapping. Both return editable native builders. Named V1 payload records keep schema
+PostgreSQL consumers select Details JSONB with native HasColumnType("jsonb"); the thin provider
+package is retired. Relational mapping returns editable native builders and requires explicit
+provider configuration. Named V1 payload records keep schema
 version selection in each wrapper, beside the payload fields; callers provide business values.
 
 The finite broker journey displays the committed action, actor and reply identity. Audit
@@ -76,4 +78,4 @@ untrusted persisted data must check enum/key consistency before using it as appl
 | Cross-module atomicity | Named workflow with shared native connection/enlistment/commit/failure proofs. |
 
 Historical archive proofs inform test intent; only current public-interface/consumer executions
-in [the report](../../../docs/reports/e9-explicit-transactional-audit.md) establish new guarantees.
+in [the report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-explicit-transactional-audit.md) establish new guarantees.

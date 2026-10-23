@@ -44,7 +44,7 @@ consumers replace `Gloaming.Messaging.Workflows` with this package. Definition t
 assembly while their CLR namespaces, persisted wire names, process rows and mappings remain
 unchanged. No type-forwarding compatibility package is supplied.
 
-The [consolidation report](../../../docs/reports/continuation-package-consolidation.md)
+The [consolidation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/continuation-package-consolidation.md)
 records the package-only PostgreSQL adopter and fresh definition, persistence, composition
 and separately compiled deployment-fixture results. No new reusable runtime mechanism is
 introduced by this package consolidation.

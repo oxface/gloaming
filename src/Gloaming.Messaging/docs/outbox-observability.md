@@ -119,7 +119,7 @@ restart policy are consumer responsibilities.
 
 [Restricted Sales inspection](../../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md#backlog-inspection)
 uses the same callable read for three fixed command routes without opening a broker. The
-[slice report](../../../docs/reports/outbox-operational-visibility.md) distinguishes new
+[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-operational-visibility.md) distinguishes new
 PostgreSQL/native-metrics/HTTP/process evidence from earlier attempt telemetry and recovery
 proofs. Inbox backlog, automatic alert delivery, durable telemetry, payload editing, replay,
 inbox retention and lease renewal remain separate capabilities. Separately authorized

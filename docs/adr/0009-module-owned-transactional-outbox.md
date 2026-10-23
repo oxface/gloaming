@@ -33,5 +33,5 @@ delivery; correlation groups related work and causation identifies immediate cau
 not conflate delivery deduplication with semantic business-operation idempotency.
 
 See [the library-local contract](../../src/Gloaming.Messaging/docs/capabilities.md) and
-[dated executions](../reports/outbox1-transactional-dispatch.md). T1 remains event/messaging-free;
+[dated executions](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox1-transactional-dispatch.md). Ordinary adopters can omit event sourcing and messaging;
 the archive, previous migrations, fixtures and existing event checkpoints are preserved.

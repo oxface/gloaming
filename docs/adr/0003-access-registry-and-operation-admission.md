@@ -2,7 +2,7 @@
 
 Status: accepted design direction in the owner-approved E3.3 plan, 2026-10-05.
 Implementation was owner-reviewed and checkpointed as `20a02be`; this is consumer
-sample/template policy.
+sample policy.
 
 ## Context
 
@@ -47,4 +47,4 @@ ingress remain E3.4 work. No reusable Access library is justified by this consum
 
 See [the approved plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-3-persisted-access.md),
 [consumer setup](../../samples/Wholesale/Api/README.md) and
-[execution report](../reports/e3-3-persisted-access.md).
+[execution report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-3-persisted-access.md).

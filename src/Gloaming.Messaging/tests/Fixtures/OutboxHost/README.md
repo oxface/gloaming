@@ -171,7 +171,7 @@ The [complete contract](../../../docs/outbox-observability.md) lists
 instrument names, six-column SELECT-only grants, staleness/aggregation rules and native OTel
 subscription. Tests exercise actual PostgreSQL/Kestrel, native MeterListener callbacks while
 the table is locked, storage faults/repair and worker readiness under Ignore. The
-[slice report](../../../../../docs/reports/outbox-operational-visibility.md) separates these proofs
+[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-operational-visibility.md) separates these proofs
 from the earlier transport/attempt telemetry evidence.
 
 ## Completed-outbox cleanup
@@ -220,7 +220,7 @@ Deletion removes sender identity/envelope/failure history and permits the databa
 that MessageId again. Keep identities unique and choose the evidence window deliberately.
 Obsolete publishers may still accept externally after completion/deletion. Inbox deduplication
 retention remains independent. The [current contract](../../../docs/outbox-retention.md)
-and [slice report](../../../../../docs/reports/outbox-completed-retention.md) record concurrency, authority,
+and [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-completed-retention.md) record concurrency, authority,
 index/deployment limits and actual PostgreSQL/process proofs.
 
 See [the family contract](../../../docs/capabilities.md) for setup/errors

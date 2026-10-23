@@ -138,7 +138,7 @@ not database commit order; no timeline endpoint, authorization or query service 
 Keep provided EF rows as classes with reference identity. A C# record would not give
 JsonElement content equality. The pending-envelope guard deliberately compares exact
 GetRawText values, including formatting; .NET's DeepEquals instead accepts equivalent JSON
-values. See [primary-source research](../../../docs/reports/e9-audit-context-research.md).
+values. See [primary-source research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-audit-context-research.md).
 
 Source/action/outcome/reason/schema and detail disclosure have no library taxonomy.
 Audit IDs are unique per table and Stage is not idempotent. Delivery/business semantic
@@ -206,7 +206,7 @@ PostgreSQL proofs cover no implicit save, cross-connection visibility, explicit 
 rollback/disposal, participant faults, cancellation and fresh recovery; exact transaction/
 context association, native duplicate IDs, attribution and guarded tracked writes. See the
 [family contract](../docs/transactional-audit.md) and
-[dated report](../../../docs/reports/e9-explicit-transactional-audit.md).
+[dated report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e9-explicit-transactional-audit.md).
 
 The guard cannot detect a business change that omitted Stage, prove detail truth, prevent
 privileged SQL, grant permission or make records tamper-evident. Consumer-specific commit

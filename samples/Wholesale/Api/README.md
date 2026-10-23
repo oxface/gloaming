@@ -303,9 +303,9 @@ rows/history through module relocation and Inventory migration.
 Run the suite in the active PostgreSQL lane; it is no longer a container-free hook.
 Standalone actor/tenancy HTTP suites remain container-free. See
 [development commands](../../../docs/development.md) and
-[the E3.3 report](../../../docs/reports/e3-3-persisted-access.md) and
-[the E3.4 report](../../../docs/reports/e3-4-persisted-business-ingress.md) and
-[the E3.5 report](../../../docs/reports/e3-5-profile-mutation.md).
+[the E3.3 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-3-persisted-access.md) and
+[the E3.4 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-4-persisted-business-ingress.md) and
+[the E3.5 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-5-profile-mutation.md).
 [Mutation proofs](../IntegrationTests/Api/ProfileTests.cs) and
 [Sales persistence proofs](../IntegrationTests/Api/ProfilePersistenceTests.cs) add real native
 antiforgery, exact application-actor rebinding, tenant/pair isolation, stale/competing edits,
@@ -356,7 +356,7 @@ required. Grant changes can affect a later statement while the actor/tenant stay
 This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
 or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
 [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) and
-[proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).
+[proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-1-sales-resource-permissions.md).
 
 ## Optional Sales HTTP row security
 
@@ -442,4 +442,4 @@ own native Sales transaction around reads, resource checks and writes.
 [HTTP/PostgreSQL proofs](../IntegrationTests/Api/RowSecurityTests.cs) exercise native HTTP
 admission, actual restricted roles, Alpha/Beta/Alpha backend reuse, deliberately unfiltered SQL,
 exact varchar keys, read/list/edit permissions, raw write rejection and profile/audit rollback.
-The [slice report](../../../docs/reports/a2-6-sales-http-rls.md) records verification and limits.
+The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-6-sales-http-rls.md) records verification and limits.

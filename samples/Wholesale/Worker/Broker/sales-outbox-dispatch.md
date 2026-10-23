@@ -98,10 +98,10 @@ fresh storage determines the retained state. Completion failures remain ambiguou
 never counted as publisher failures.
 
 Run the existing workflow test project to exercise the new proofs as well as the retained
-workflow journeys. The [slice report](../../../../docs/reports/a2-8-sales-outbox-dispatch.md)
+workflow journeys. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-8-sales-outbox-dispatch.md)
 records fresh results and limitations. **No new reusable mechanism or template output is
 introduced:** context selection, role grants and executable composition remain sample policy.
-The [M2 outbox report](../../../../docs/reports/m2-outbox-dead-letters.md) records the new library
+The [M2 outbox report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-dead-letters.md) records the new library
 accounting/retry proofs and restricted-credential follow-up separately from that A2.8 history.
 
 ## Backlog inspection
@@ -124,5 +124,5 @@ reporting an empty queue. Native grants/RLS still define visible rows across ten
 Pending is partitioned into Eligible, Delayed and Leased; DeadLetters is separate. These
 observations do not establish transport acceptance or reserve work. The [family contract](../../../../src/Gloaming.Messaging/docs/outbox-observability.md)
 defines database-clock age, metadata-only reader grants and native consumer health/metrics.
-The [visibility report](../../../../docs/reports/outbox-operational-visibility.md) records the
+The [visibility report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox-operational-visibility.md) records the
 new restricted child-process proof separately from the earlier dispatch and recovery results.

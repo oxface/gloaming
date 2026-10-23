@@ -178,4 +178,4 @@ The sample's minimal table DELETE grant cannot prevent arbitrary SQL by its cred
 from deleting active rows. Trusted invocation is required; install consumer-native row-security
 policies when database-enforced tenant/lane/lifecycle restrictions are needed. The library
 respects those policies and bypasses no RLS. See [the full retention/expiry/authority contract](../../../docs/inbox-retention.md)
-and [new PostgreSQL/process evidence](../../../../../docs/reports/m2-inbox-retention.md).
+and [new PostgreSQL/process evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-inbox-retention.md).

@@ -103,7 +103,7 @@ receiver deduplication remains necessary. See [outbox recovery](outbox-recovery.
 
 ## Proof scope and remaining limits
 
-The [slice report](../../../docs/reports/queued-message-schema-compatibility.md) records new
+The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/queued-message-schema-compatibility.md) records new
 literal-fixture, PostgreSQL, HTTP, RabbitMQ and actual child-process evidence, including retained
 v1 work, v2 writes, old-reader rejection, retry after reader replacement, killed workers and
 completion uncertainty. The finite CLI requires empty disposable module storage and rejects

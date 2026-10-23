@@ -163,7 +163,7 @@ ordering, automatic upcasting or other-provider guarantee is supplied.
 Executable references: [HTTP inbox-only receiver](../tests/Fixtures/InboxHost/README.md),
 [separate-context RabbitMQ round trip](../tests/Fixtures/BrokerJourney/README.md),
 [Inventory integration handler](../../../samples/Wholesale/modules/Inventory/Inventory/Messaging/StockIssueInboxHandler.cs).
-[New proof report](../../../docs/reports/inbox1-durable-intake-processing.md) distinguishes
+[New proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md) distinguishes
 fresh results from O1 and archived receipt-only evidence.
 
 TraceParent/TraceState are optional diagnostic fields, excluded from duplicate comparison.

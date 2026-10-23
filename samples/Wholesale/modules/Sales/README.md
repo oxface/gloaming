@@ -66,7 +66,7 @@ default HTTP, creation/submission and workers do not adopt those credentials/pol
 no within-tenant permission, authentication or protection from tenant-setting forgery by
 the credential holder.
 
-The later [A2.3 utility extraction](../../../../docs/reports/a2-3-postgres-tenant-context.md)
+The later [A2.3 utility extraction](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-3-postgres-tenant-context.md)
 replaces the executable's private setup helper with an optional Tenancy/PostgreSQL extension.
 Sales module registration and permission semantics remain unchanged; the executable owns
 that adapter reference and calls it explicitly inside each native transaction.
@@ -97,6 +97,6 @@ This consumer profile adds no Gloaming interface, schema migration or general wo
 - [CQRS consumer](../../IntegrationTests/Scenarios/Cqrs/README.md) creates and reads drafts using the creator's grants;
   its PostgreSQL cases exercise complete permitted selection and native snapshot timing.
 - [A2.1 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) and
-  [implementation report](../../../../docs/reports/a2-1-sales-resource-permissions.md) record
+  [implementation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-1-sales-resource-permissions.md) record
   fresh proofs separately from the A2 assessment and the
-  [A2.2 optional RLS report](../../../../docs/reports/a2-2-sales-postgres-rls.md).
+  [A2.2 optional RLS report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-2-sales-postgres-rls.md).

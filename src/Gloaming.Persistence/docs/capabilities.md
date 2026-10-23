@@ -51,35 +51,10 @@ package or interface is implemented by this repository relocation.
 
 ## Consumer research
 
-Optional PostgreSQL RLS and tenant/resource authorization composition are recorded in
-[A2](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
-[A1 Access/resource authorization](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-access-resource-authorization-research.md).
-The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) and
-[primary-source matrix](../../../docs/reports/tenant-authorization-primary-sources.md) are now
-prepared for review. Optional RLS needs a restricted runtime role and transaction-local setup
-for every protected read/write/retry; current local credentials and raw transport paths do
-not provide that guarantee. Tenant equality supplies no within-tenant resource permissions.
-These findings add no supported library capability or approved interface. The later
-[A2.2 consumer proof](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md) now exercises
-five Sales tables with separate credentials, raw/bulk paths and physical-pool/transaction
-lifecycle controls. Its [report](../../../docs/reports/a2-2-sales-postgres-rls.md) records the
-setting-forgery limit and paths not adopted. The current library guarantees and dependencies
-above describe the provider-independent baseline; the later optional adapter below adds
-automatic transaction setup for its separately selected composition.
-
-[A2.3](../../../docs/reports/a2-3-postgres-tenant-context.md) subsequently extracts explicit
-setup into the optional Tenancy/PostgreSQL family adapter. Persistence acquires no dependency
-on it; ownership mapping/save validation and database policy/context setup remain separate.
-
-[A2.4](../../../docs/reports/a2-4-ownership-rls-capability.md) now supplies the optional ownership/RLS
-adapter with an independent PostgreSQL consumer. It keeps HasQueryFilter and tracked ownership
-checks, adds USING/WITH CHECK policy helpers and binds the operation tenant before EF queries
-and writes. Automatic setup requires an existing caller-owned transaction for reads and writes; the
-explicit transaction-local utility remains independently usable. Refer to the adapter's contract for required integration, role/migration
-obligations and rejected connection modes. This adds no default HTTP/worker or template rollout.
-
-The owner-selected [transaction refinement](../../../docs/reports/a2-5-transaction-rls-simplification.md)
-replaces the initial session/registry experiment: `.UseRls<TContext>(provider)` installs one
-native transaction/command interceptor. The existing owner begins the transaction and all
-its protected work receives local tenant context automatically. No per-transaction setup call
-or additional tenancy scope is required. Selected reads also require that transaction.
+[Authorization and tenant-isolation research](../../../docs/research/authorization-and-isolation.md)
+explains the authority, credential and query-completeness boundaries behind this composition.
+The supported optional RLS contract above supersedes the old assessment's unimplemented
+proposals. Actual [Sales isolation proofs](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+and [HTTP setup](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
+retain their finite deployment/setting-forgery limits. Tenant equality is not within-tenant
+permission; no default application rollout or authorization-engine dependency is selected.

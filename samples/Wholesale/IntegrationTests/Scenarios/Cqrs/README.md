@@ -140,5 +140,5 @@ consumer requirements. An upper page-size limit does not bound offset scan cost
 or aggregate-query cost.
 
 The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/c1-cqrs-consumer-patterns.md) records the pre-implementation
-consumer proposal. The [slice report](../../../../../docs/reports/c1-cqrs-consumer-patterns.md)
+consumer proposal. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/c1-cqrs-consumer-patterns.md)
 separates new checks, historical evidence and remaining template work.

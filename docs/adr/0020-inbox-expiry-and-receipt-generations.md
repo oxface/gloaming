@@ -1,6 +1,7 @@
 # Inbox expiry and receipt generations
 
-Status: interface/scope owner-approved on 2026-10-22; implementation prepared for review.
+Status: accepted and implemented. Owner-approved checkpoint `6510f9e`, merged as `2e1ffac`
+on 2026-10-22, includes the five documented supplied-feature deferrals.
 
 Processed inbox cleanup removes duplicate and incompatible-content evidence, so a later
 delivery with the same key can execute again. Use a new immutable ReceiptId for each intake

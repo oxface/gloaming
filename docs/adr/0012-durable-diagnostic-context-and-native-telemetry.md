@@ -1,10 +1,5 @@
 # ADR 0012: durable diagnostic context and native telemetry
 
-Package refinement, 2026-10-22: the convenience adapter described below is retired.
-Consumers use the native configuration shown in the
-[retirement report](../reports/thin-adapter-retirement.md). The underlying transaction
-and diagnostic guarantees are unchanged; the original decision is retained below.
-
 Status: accepted, 2026-10-10; implementation owner-approved at `b44b5d5`,
 merged into `origin/main` at `4c0e0c5`.
 
@@ -39,11 +34,9 @@ API. The operation implementations own generated failure logging and the placeme
 attempt boundaries. ILogger dependencies stay with those operations/hosted workers rather
 than the core. Operation failures and native Npgsql/EF database diagnostics are distinct.
 
-The owner-approved optional `Gloaming.Messaging.OpenTelemetry` adapter provides
-AddGloamingMessaging overloads on the native trace and metric builders. Its sole dependency
-is OpenTelemetry.Api. It subscribes to the existing names without configuring providers,
-SDKs, exporters, sampling, logging or transport sources. Technical messaging packages
-remain independently adoptable without this convenience adapter.
+Consumers subscribe with native AddSource("Gloaming.Messaging") and AddMeter("Gloaming.Messaging")
+calls. The thin OpenTelemetry subscription adapter retired at `d63f567`; no parallel
+registration facade is maintained. SDKs, exporters and sampling remain host configuration.
 
 ## Consequences
 
@@ -52,7 +45,8 @@ at-least-once publication or delivery/business idempotency semantics. Trace cont
 across retries without becoming an inbox conflict. Compiled consumers rebuild for the optional
 constructor additions, and existing databases migrate before using the updated model.
 
-Backlog observations/alerts, dashboard UX, baggage, automatic tenant/actor propagation and
-durable telemetry remain separate capabilities. [Local setup/limits](../../src/Gloaming.Messaging/docs/observability.md)
-and [the OBS1 report](../reports/obs1-durable-message-observability.md) distinguish mechanism,
+[Outbox backlog observation](../../src/Gloaming.Messaging/docs/outbox-observability.md) is a
+separate callable capability. Alert policy/dashboard UX, baggage, automatic tenant/actor
+propagation and durable telemetry remain outside this diagnostic-context contract. [Local setup/limits](../../src/Gloaming.Messaging/docs/observability.md)
+and [the OBS1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/obs1-durable-message-observability.md) distinguish mechanism,
 consumer policy and fresh results from prior worker/archive evidence.

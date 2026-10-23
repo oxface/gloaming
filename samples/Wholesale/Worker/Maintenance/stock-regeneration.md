@@ -108,5 +108,5 @@ DOTNET_PROCESSOR_COUNT=4 \
 
 Use your reachable Docker-compatible socket on other hosts. See the
 [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es3-aggregate-regeneration-operations.md),
-[slice report](../../../../docs/reports/es3-aggregate-regeneration-operations.md) and
+[slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/es3-aggregate-regeneration-operations.md) and
 [current rebuilder contract](../../../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).

@@ -25,7 +25,7 @@ install command above obtain the CLI version from the native `AspireHostingSDKVe
 MSBuild property, so the workflow has no independent CLI version pin. Dependabot's
 NuGet update does not update the SDK attribute; review it when upgrading Aspire. Version 13.6.1
 includes the upstream fix for the one-minute DCP watch failure in 13.6.0; see the
-[upgrade verification](../../../docs/reports/aspire-watch-timeout-upgrade.md).
+[upgrade verification](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/aspire-watch-timeout-upgrade.md).
 
 ## Configure
 
@@ -152,7 +152,7 @@ The default graph retains its earlier single-credential composition and does **n
 
 [Runtime proofs](../RuntimeComposition.Tests/RowSecurityRuntimeTests.cs),
 [browser proofs](../RuntimeComposition.Tests/BrowserTests.cs) and
-the [A2.7 report](../../../docs/reports/a2-7-aspire-sales-rls.md) distinguish current results
+the [A2.7 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-7-aspire-sales-rls.md) distinguish current results
 from prior AppHost/browser evidence.
 
 ## Start and explicitly initialize
@@ -217,7 +217,7 @@ and failed business reads. There is no automatic repair, global HTTP retry polic
 shutdown worker. Local stop/cleanup was verified; exporter-outage delivery guarantees,
 production deployment, external providers and proxy/subdomain sessions remain separate proofs.
 
-See [runtime evidence](../../../docs/reports/e3-6-runtime-composition.md),
-[OIDC/browser evidence](../../../docs/reports/e3-7-oidc-browser-journey.md) and
+See [runtime evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-6-runtime-composition.md),
+[OIDC/browser evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-7-oidc-browser-journey.md) and
 [test commands](../../../docs/development.md). The AppHost/health/ServiceDefaults source is
 editable template material; generated template output and the bootstrap CLI remain E10.

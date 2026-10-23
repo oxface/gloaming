@@ -109,8 +109,8 @@ visible; no ambient scope, base DbContext or automatic stamping is introduced.
 
 See [the executable Inventory/Sales consumer](../samples/PersistenceDemo/README.md),
 [the first-slice plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-1-tenant-ownership.md) and
-[the first proof report](../../../docs/reports/e2-1-tenant-ownership.md) and
-[the relationship proof report](../../../docs/reports/e2-3-tenant-relationships.md).
+[the first proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e2-1-tenant-ownership.md) and
+[the relationship proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e2-3-tenant-relationships.md).
 
 ## Deferred direction
 
@@ -127,7 +127,7 @@ for optional integrations without duplicating private annotation names.
 
 The separate [A2.2 Sales consumer](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 now demonstrates restricted-role policies and explicit native setup, with
-[role/lifecycle proofs and limits](../../../docs/reports/a2-2-sales-postgres-rls.md). It is
+[role/lifecycle proofs and limits](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-2-sales-postgres-rls.md). It is
 sample-owned SQL, not a capability of this adapter. RLS does not enforce within-tenant
 permissions or contain a credential holder who can forge the custom tenant setting.
 
@@ -136,12 +136,12 @@ That consumer now uses the separate
 for explicit transaction setup. This Persistence adapter remains independent of Tenancy and
 Npgsql and does not generate policies or automatically bind context.
 
-The [A2.4 implementation report](../../../docs/reports/a2-4-ownership-rls-capability.md)
+The [A2.4 implementation report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-ownership-rls-capability.md)
 records the separate optional adapter's executable usage, read/write proofs and limitations.
-The [reference comparison](../../../docs/reports/a2-4-rls-capability-reference-research.md)
+The [reference comparison](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-4-rls-capability-reference-research.md)
 retains the earlier proposal and source evidence.
 
-The later [transaction simplification](../../../docs/reports/a2-5-transaction-rls-simplification.md)
+The later [transaction simplification](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-5-transaction-rls-simplification.md)
 uses direct `.UseRls<TContext>(provider)` installation and existing caller-owned transactions.
 The shared save coordinator retains its original dependency/interface; native transaction
 setup belongs entirely to the optional provider adapter.

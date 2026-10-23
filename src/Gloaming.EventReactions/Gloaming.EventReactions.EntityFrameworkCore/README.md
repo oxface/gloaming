@@ -75,4 +75,4 @@ event log, serializer, integration-message mapping or aggregate base is provided
 [Compiled registration](../tests/AdoptionTests/Fixtures/Direct/DirectOrdersRegistration.cs),
 [scoped request proof](../tests/AdoptionTests/AdHocSourceTests.cs),
 [execution contract](../docs/local-dispatch.md) and
-[current report](../../../docs/reports/event-reactions-consolidation.md).
+[current report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-reactions-consolidation.md).

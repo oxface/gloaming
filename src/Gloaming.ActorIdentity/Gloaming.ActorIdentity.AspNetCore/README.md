@@ -93,7 +93,7 @@ E3.2 extends that consumer with an optional, independent tenancy adapter and Org
 catalog reads; actor-only adoption remains exercised by the standalone suite.
 [Standalone HTTP proofs](../tests/ActorIdentityAspNetCoreTests/HttpActorTests.cs) use native
 protected cookies and a test-only secondary scheme without sample/EF/tenancy dependencies.
-[The E3.1 report](../../../docs/reports/e3-1-http-actor-identity.md) records current executions
+[The E3.1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-1-http-actor-identity.md) records current executions
 and limits. Live OIDC provider callbacks and session topology remain later evidence.
 
 ## Deferred direction

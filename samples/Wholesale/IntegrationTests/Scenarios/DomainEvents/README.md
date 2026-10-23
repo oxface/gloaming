@@ -52,5 +52,5 @@ writes. Late persistence facts, external effects, same-context retries and uncer
 are outside local dispatch. D2.2 and template adoption remain separate.
 
 See the [package contract](../../../../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md)
-and [current report](../../../../../docs/reports/ef1-1-capability-composition.md). Earlier reports retain
+and [current report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/ef1-1-capability-composition.md). Earlier reports retain
 dated results for superseded implementations.

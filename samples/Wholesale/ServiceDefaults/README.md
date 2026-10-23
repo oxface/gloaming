@@ -30,5 +30,5 @@ Foundry library segment.
 
 The [telemetry proofs](../IntegrationTests/Api/TelemetryTests.cs) use native in-memory
 exporters around real HTTP/PostgreSQL operations. The
-[runtime report](../../../docs/reports/e3-6-runtime-composition.md) separately records actual
+[runtime report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/e3-6-runtime-composition.md) separately records actual
 OTLP delivery into the Aspire dashboard and remaining limits.

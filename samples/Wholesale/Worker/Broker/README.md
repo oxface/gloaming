@@ -9,7 +9,7 @@ It retains native automatic recovery, separate confirm-enabled command/reply cha
 an intake channel. It does not register the fail-stop observer. The host selects five-second
 native protocol/close values; routing, publication timers, retrying intake and process policy
 remain here. Native lifecycle compatibility and consumer adoption have
-[separate evidence](../../../../docs/reports/rabbitmq-session-lifecycle.md).
+[separate evidence](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/rabbitmq-session-lifecycle.md).
 
 For an independent Sales dispatcher with a database login limited to the existing outbox,
 use the optional [restricted dispatch role](sales-outbox-dispatch.md). Inbox processing and
@@ -163,5 +163,5 @@ dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTe
 Testcontainers supplies real PostgreSQL and RabbitMQ. Podman users can set
 `DOCKER_HOST=unix:///run/user/1000/podman/podman.sock`. Proofs use separately owned databases,
 database constraints/triggers for failures and races, and real executable child processes for
-death/restart. The [slice report](../../../../docs/reports/wf1-durable-inter-module-workflow.md)
+death/restart. The [slice report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/wf1-durable-inter-module-workflow.md)
 records fresh results separately from historical messaging evidence.

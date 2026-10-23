@@ -109,7 +109,7 @@ Run the existing WorkflowDemo test project. New tests cover both tenants, retain
 replies, the restricted dispatcher/processor together, exact context matching, raw/bulk and native
 outbox write checks, failure of every atomic participant, competing processes and in-flight SIGTERM/
 hard-death recovery. Transaction-local context is checked after commit and rollback while the same
-connection remains open. The [report](../../../../docs/reports/a2-9-sales-inbox-rls.md) records fresh totals.
+connection remains open. The [report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-9-sales-inbox-rls.md) records fresh totals.
 
 This is an optional WF2 adoption. Other module/workflow/table coverage, tenant scheduling, production
 role lifecycle, restricted broker intake, external poolers/failover, default rollout and templates

@@ -59,8 +59,8 @@ to its user socket. Focused Inventory broker proofs additionally require RabbitM
 The inbox PostgreSQL suite shares one assembly-level container, creates a fresh database
 for each test and runs at most two tests concurrently. The outbox suite retains its sequential
 collection fixture; its measured parallel candidates did not show a reliable speed improvement.
-Architecture tests remain repository-owned. [The O1 report](../../docs/reports/outbox1-transactional-dispatch.md)
-separates its results from archived evidence; [I1's report](../../docs/reports/inbox1-durable-intake-processing.md)
+Architecture tests remain repository-owned. [The O1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/outbox1-transactional-dispatch.md)
+separates its results from archived evidence; [I1's report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/inbox1-durable-intake-processing.md)
 records the new inbox/adoption proofs separately.
 
 See [durable message observability](docs/observability.md) for optional W3C context, schema upgrades, native

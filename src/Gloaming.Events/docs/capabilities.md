@@ -41,7 +41,7 @@ EventSourcing capability catalog records related projection/stream directions.
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-The [payload-upcasting slice](../../../docs/reports/event-payload-upcasting.md) records the
+The [payload-upcasting slice](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/event-payload-upcasting.md) records the
 implemented optional codec contract and its new evidence. Consumers own the transformations;
 the library validates/selects paths and supports PassThrough for compatible optional-field
 additions. [Package-local capabilities](../Gloaming.Events.Serialization/docs/capabilities.md)

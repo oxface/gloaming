@@ -120,8 +120,8 @@ Superusers and BYPASSRLS bypass policies. FORCE subjects ordinary owner reads to
 but the owner retains DDL authority. A runtime credential holder can forge `app.tenant_key`;
 it is trusted application input, not database authentication. Constraints can reveal hidden
 row existence, and session-level settings can reappear after a local setting ends. These
-limits are exercised, not assumed away. Read the [protection matrix and results](../../../../../../docs/reports/a2-2-sales-postgres-rls.md)
-and [pinned primary-source analysis](../../../../../../docs/reports/tenant-authorization-primary-sources.md).
+limits are exercised, not assumed away. Read the [protection matrix and results](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-2-sales-postgres-rls.md)
+and [pinned primary-source analysis](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/tenant-authorization-primary-sources.md).
 
 ## Verify
 
@@ -136,7 +136,7 @@ DOTNET_PROCESSOR_COUNT=4 \
   dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --filter-class '*TenantIsolationTests'
 ```
 
-The [A2.3 extraction](../../../../../../docs/reports/a2-3-postgres-tenant-context.md) now supplies
+The [A2.3 extraction](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/a2-3-postgres-tenant-context.md) now supplies
 the explicit setup utility. Its public extension is used directly by the executable and
 the transferred lifecycle proofs. Table inventory, policies, role provisioning and grants
 remain sample decisions; automatic transaction interception and default HTTP/worker adoption

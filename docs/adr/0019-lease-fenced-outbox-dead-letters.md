@@ -42,7 +42,7 @@ retaining MessageId and the original InnerException. It also faults the optional
 without another poll. This signal preserves completion uncertainty and never triggers
 publisher-failure accounting or a compensating write. Requested worker shutdown ends normally;
 direct callers retain the typed stage/error signal, including completion-stage cancellation.
-The [separate report](../reports/m2-outbox-completion-supervision.md) records new proof evidence.
+The [separate report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-completion-supervision.md) records new proof evidence.
 
 ## Consequences
 
@@ -55,4 +55,4 @@ writes remain fenced. Receiver deduplication is required.
 Payload editing, completed-message replay, retention, lease renewal, a generic administration
 framework and template presets are excluded. See the [current family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md),
 [reviewed proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-outbox-dead-letters.md) and
-[new evidence report](../reports/m2-outbox-dead-letters.md).
+[dated evidence report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/m2-outbox-dead-letters.md).

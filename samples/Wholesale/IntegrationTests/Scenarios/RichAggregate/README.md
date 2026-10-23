@@ -125,8 +125,8 @@ journey is invoked directly by tests; no process-death/deployment claim follows.
 
 **No new reusable mechanism was proven.** Domain rules, Money/line values, row adaptation and the
 complete-candidate decisions remain consumer-owned. No arbitrary-graph mapper or default mirrored
-write guard is supplied. The later [registered event integration](../../../../../docs/reports/d2-1c-domain-event-integration-simplification.md)
+write guard is supplied. The later [registered event integration](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-1c-domain-event-integration-simplification.md)
 removes the old safeguard and supplies the shared save pipeline. T1 template and durable deferred
 reaction changes remain separate increments.
-[The D1.1 report](../../../../../docs/reports/d1-1-rich-state-stored-aggregate.md) records fresh evidence,
+[The D1.1 report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d1-1-rich-state-stored-aggregate.md) records fresh evidence,
 review-worthy files and remaining gaps.

@@ -166,6 +166,7 @@ fixtures and process helper select the product lane too. Wholesale source select
 Markdown-only changes run repository tooling/reference checks and omit expensive provider/browser checks. Configuration/detection
 failure fails Repository integrity instead of silently skipping tests.
 
-The [S1 report](reports/s1-wholesale-consolidation.md) records the exact move/merge/remove map,
-new results, compatibility repairs and pending integrated follow-ups. Earlier slice reports retain
-dated historical evidence, even when their source links now resolve to canonical product/test owners.
+The [proof map](../tests/README.md) records the retained test owners and distinct unit,
+provider, package-only and process obligations. [Retirement provenance](reports/s1-archive-retirement.md)
+links original move/merge/remove records and dated execution results in Git; current setup
+comes from the owning library or sample guide.

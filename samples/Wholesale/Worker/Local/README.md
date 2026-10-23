@@ -90,6 +90,6 @@ outbox lease, workflow version and operator-signal limitations still apply. Pois
 consumer intervention policy. Parallel workflow branches, expiry, cancellation and shared native
 transactions are outside this slice. No migrations or template presets are added.
 
-See the [D2.3 research](../../../../docs/reports/d2-3-module-consistency-and-coordination.md),
-[D2.3a proof report](../../../../docs/reports/d2-3a-local-durable-module-delivery.md) and
+See the [D2.3 research](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3-module-consistency-and-coordination.md),
+[D2.3a proof report](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/d2-3a-local-durable-module-delivery.md) and
 [workflow library contract](../../../../src/Gloaming.Messaging/docs/workflows.md).
