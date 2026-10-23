@@ -68,7 +68,11 @@ internal static class LocalHost
         var result = role switch
         {
             "read" => await orders.ReadAsync(orderId, startup.Token),
-            "retry-compensation" => await orders.RetryCompensationAsync(orderId, startup.Token),
+            "retry-compensation" => await orders.RetryCompensationAsync(
+                orderId,
+                Guid.Parse(Required("OperationId")),
+                startup.Token
+            ),
             _ => await orders.StartAsync(
                 new(
                     orderId,

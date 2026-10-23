@@ -6,9 +6,16 @@ Guidance/reference checks are checkpointed as `bd2adb7`; evidence/proof consolid
 `3c4f9a9`. [Integrated verification and independent reviews](integrated-verification-and-reviews.md)
 passed locally against that checkpoint. The extra [documentation/test pass](documentation-and-test-cleanup.md)
 and verification reports are checkpointed as `c5acb8e`, after all normal hooks passed.
-The current uncommitted batch is the [original-request sweep](original-request-sweep.md),
-requested before the owner's separate review. Its local checks pass; all new changes await owner review.
-This is the only active cleanup queue; dated plans/reports do not authorize new work or commits.
+The [original-request sweep](original-request-sweep.md) is checkpointed as `9eaab6d`, after
+normal hooks passed. The requested
+[Wolverine/Marten opportunity comparison](../research/wolverine-marten-opportunities.md), grounded
+in Umbrine's documented slices, is followed by a native
+[Sales command-receipt experiment](command-receipt-experiment.md). That experiment established
+consumer evidence without a new public interface. The owner subsequently requested
+[receipt extraction](command-receipts-extraction.md), closing
+the identified retention/deployment/adoption gaps before timers. Its implemented public-interface
+candidate awaits owner review. This is the only active cleanup queue; dated plans/reports do not
+authorize new work or commits.
 
 ## Confirmed direction and review criteria
 
@@ -33,13 +40,14 @@ CLI, topology matrix, authorization engine or general workflow framework is sele
 
 ## Library dispositions
 
-The current inventory is **21 packages across nine families**. [Family entry points](../../README.md)
+The current inventory is **22 packages across ten families**. [Family entry points](../../README.md)
 and local contracts define the actual dependency closures and limits. The
 [original package-by-package assessment](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/gloaming-library-audit.md#package-dispositions)
 records all 23 initial packages and the evidence behind these choices.
 
 | Area | Implemented disposition and boundary |
 | --- | --- |
+| Command receipts | Explicit EF/PostgreSQL acquisition and result retention, caller-owned save/commit, module-lifetime retention and stable deployment protocol. Independent of Messaging/admission; public-interface owner review pending. |
 | ActorIdentity and Tenancy | Keep independent immutable operation contexts and optional native HTTP/PostgreSQL integration. They grant no authorization. |
 | Persistence and shared EF saving | Keep selected ownership/RLS and ordered preparation/validation. Supported mapping/credential/transaction limits stay explicit; no universal unit of work. |
 | Events and EventReactions | Keep independently selectable codec/history and composable ordered local reactions. Domain types, payload evolution and business dependency ordering stay consumer-owned. |
@@ -73,6 +81,7 @@ or treated as fresh verification of the final tree.
 | `bd2adb7` | 80 dated plans retired; current design/gate; tested reference checks in CI/hooks. | [Guidance and checks](https://github.com/oxface/modulith-foundry/blob/bd2adb7dea58de304aa2eb3df3c587c6fe348320/docs/reports/repository-guidance-consolidation.md). |
 | `3c4f9a9` | Dated reports/retired decisions consolidated; four research briefs, current ADR/proof maps and 84 retained architecture cases. | [Evidence and proof ownership](evidence-and-proof-consolidation.md). |
 | `c5acb8e` | Independent EF coordinator tests, current test navigation, consolidated capability guidance and integrated verification/review records. | [Documentation/tests](documentation-and-test-cleanup.md), [integration](integrated-verification-and-reviews.md). |
+| `9eaab6d` | Editor launch, EF dependency grouping, heading/host-ownership repairs and an actionable module recipe. | [Original-request sweep](original-request-sweep.md). |
 
 Wholesale now contains Access, Sales and Inventory with native API/Worker composition and
 one order/reservation journey. Focused family examples are public adopters; compatibility,
@@ -112,9 +121,37 @@ another generator or skill. Static/reference checks and affected README packing 
 owned source/project/fixture inputs remain unchanged. No further library split or reusable
 runtime mechanism is justified by this pass.
 
+The subsequent [capability comparison](../research/wolverine-marten-opportunities.md) asks a
+different question: what further technical obligations might be worth adopting? Logical command
+receipts/results and durable due-time intent are the strongest proposed consumer experiments.
+Local fan-out, external-operation fencing and projection checkpoints have distinct evidence
+requirements. They are not cleanup defects or selected feature work; existing contracts and
+unsupported/deferred scope remain unchanged.
+
+The preceding [receipt experiment](command-receipt-experiment.md) implemented the first candidate
+privately in existing Sales submission and operator-retry flows. It adds consumer storage,
+native transaction locking and failure proofs without another module, dependency or package.
+Retention and deployment evolution were explicit gates before a general library extraction.
+Its dated final verification passed the complete **641-case Wholesale integration suite**, **84
+architecture cases** and **six native runtime/browser cases**, plus solution/style/model/reference
+checks. These are consumer-protocol proofs; the package inventory and public library contracts
+remained unchanged at that point. The subsequent extraction below supersedes this private
+implementation; the research, experiment and extraction are still unstaged for owner review.
+
+The current [receipt extraction](command-receipts-extraction.md) moves lock/compare/retain and
+save validation into an independently selectable EF/PostgreSQL package. Sales keeps its payload
+codec and native transaction decisions. A separate publishing context, compiled consumer-upgrade
+fixtures and a package-only adopter exercise the public contract. Module-lifetime retention,
+removal ending protection, reader-before-writer deployment and the frozen V1 lock frame close
+the experiment's selected gaps. Public interfaces still require owner line-by-line review.
+Fresh extraction checks pass **30 family cases**, **642 Wholesale cases**, **86 architecture
+cases**, **six runtime/browser cases** and **22 archives / seven isolated NuGet profiles**.
+The owning report records final static evidence and limits; earlier checkpoint results above
+remain dated.
+
 ## Current proof owners
 
-Use [the test map](../../tests/README.md) for all 31 native projects and their distinct
+Use [the test map](../../tests/README.md) for all 32 native projects and their distinct
 unit/provider/adoption/process obligations. [Retirement provenance](s1-archive-retirement.md)
 records historical origins. Family-local limitations and explicit deferrals remain authoritative.
 Current owned migrations/literals stay with their consumers; retired consumer policy needs no
@@ -122,7 +159,7 @@ replacement fixture. Source links or a matching test count do not establish a pa
 
 The [local package command](../../tools/release/README.md#everyday-local-packages) supports
 ordinary development consumption now. Unique versions and consumer source mapping avoid
-stale package caches. The heavier verifier proves archives and six fresh-cache package-only
+stale package caches. The heavier verifier proves archives and seven fresh-cache package-only
 profiles; remote publication is a separate owner action.
 
 ## Remaining cleanup slices
@@ -131,9 +168,10 @@ profiles; remote publication is a separate owner action.
 | --- | --- |
 | Fresh-context sweep | Separate session planned by the owner. Do not count its conclusions as evidence already supplied here. |
 
-After review/checkpoint of the original-request repairs, the remaining planned cleanup is the
-owner's **separate-session fresh-context sweep**; further increments depend on its findings, with no fixed cap. Important
-defects remain required until fixed or explicitly disposed of by the owner. The five approved inbox-retention supplied-feature deferrals
+The remaining planned cleanup is the owner's **separate-session fresh-context sweep**; further
+increments depend on its findings, with no fixed cap. Capability research does not add an
+implementation backlog to this queue. Important defects remain required until fixed or
+explicitly disposed of by the owner. The five approved inbox-retention supplied-feature deferrals
 remain in [the owning contract](../../src/Gloaming.Messaging/docs/inbox-retention.md); no new
 deferral is introduced. Production capacity, Umbrine implementation, push and publication are
 separate from this cleanup and are not claimed by successful local proofs.

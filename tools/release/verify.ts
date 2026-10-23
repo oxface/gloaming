@@ -135,7 +135,7 @@ interface Assets {
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  21,
+  22,
   "Review the package inventory when adding/removing libraries.",
 );
 
@@ -387,6 +387,12 @@ try {
       ids: packages.map((item) => item.id),
       external: false,
     },
+    {
+      name: "command-receipts",
+      source: "CommandReceipts.cs",
+      ids: ["Gloaming.CommandReceipts.EntityFrameworkCore.Postgres"],
+      external: true,
+    },
   ];
   for (const profile of profiles) {
     const directory = join(scratch, "consumers", profile.name);
@@ -398,7 +404,7 @@ try {
             join(import.meta.dirname, "consumers", profile.source),
             "utf8",
           )
-        : 'Console.WriteLine("PASS all 21 package references compile together");',
+        : `Console.WriteLine("PASS all ${packages.length} package references compile together");`,
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),

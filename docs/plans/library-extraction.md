@@ -29,6 +29,11 @@ package consolidation and thin-adapter retirements are implemented; their checkp
 records are in the audit. Optional execution may own a bounded transaction or invoke a consumer
 handler under an explicit contract. Consumers retain all authority outside that delegation.
 
+The subsequent owner-requested [CommandReceipts capability](../reports/command-receipts-extraction.md)
+implements a review candidate from the native Sales experiment, including independent adoption,
+retention/deployment contracts and proofs. It remains subject to owner line-by-line interface
+review and commit approval; it is not authorization for further framework feature parity.
+
 Event-sourcing projections, permanent inbox duplicate registries, automatic maintenance,
 human-workflow assignments and broader providers/transports remain governed by their owning
 families' documented unsupported/deferred scope. They are not implicit follow-up tasks.

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../Fixtures/ReceiptDeployment/Earlier/ReceiptDeployment.Earlier.csproj" />
+    <ProjectReference Include="../Fixtures/ReceiptDeployment/Current/ReceiptDeployment.Current.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="ChildHost.cs" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

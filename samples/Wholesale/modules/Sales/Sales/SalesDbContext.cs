@@ -1,4 +1,5 @@
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
 using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
@@ -31,6 +32,13 @@ public sealed class SalesDbContext(
         DraftOrderMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
         DraftOrderGrantRow.Configure(modelBuilder, () => RequiredOrganizationKey);
         OrderAllowanceRow.Configure(modelBuilder, () => RequiredOrganizationKey);
+        var receipts = modelBuilder.ConfigureCommandReceipts("sales");
+        receipts.Property(row => row.ScopeKey).HasColumnName("organization_key");
+        receipts.HasTenantOwnership(
+            row => row.ScopeKey,
+            () => RequiredOrganizationKey,
+            "OrganizationScope"
+        );
         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(
             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),

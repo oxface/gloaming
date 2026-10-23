@@ -39,12 +39,16 @@ internal sealed class ReservationProof(WorkflowProof workflow) : IAsyncDisposabl
             .ReadAsync(id, token);
     }
 
-    internal async Task<StockReservationOrder> RetryAsync(Guid id, CancellationToken token)
+    internal async Task<StockReservationOrder> RetryAsync(
+        Guid id,
+        CancellationToken token,
+        Guid? operationId = null
+    )
     {
         await using var scope = workflow.Scope(actor: true);
         return await scope
             .ServiceProvider.GetRequiredService<IStockReservationOrders>()
-            .RetryCompensationAsync(id, token);
+            .RetryCompensationAsync(id, operationId ?? Guid.NewGuid(), token);
     }
 
     internal async Task<StockPositionHistory> StockAsync(

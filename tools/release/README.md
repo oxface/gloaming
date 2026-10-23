@@ -104,7 +104,7 @@ npm --prefix tools/release run verify
 before packing; PostgreSQL is never silently skipped. `DOTNET_HOST_PATH` can select
 a particular `dotnet` executable; otherwise it must be on `PATH`.
 
-The harness invokes the same pack-only command for the 21 `Gloaming.*` library
+The harness invokes the same pack-only command for the 22 `Gloaming.*` library
 projects, using a unique local prerelease version and a temporary feed. Ordinary
 `dotnet pack` uses the repository's native SDK
 [`Directory.Build.targets`](../../src/Directory.Build.targets) to render each
@@ -122,7 +122,7 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Six clean executable consumers are created outside the repository:
+Seven clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -136,7 +136,9 @@ Six clean executable consumers are created outside the repository:
   inbox/outbox workers in fresh scopes without a database provider.
 - Continuations: select the combined EF package and PostgreSQL storage, roll back and restart
   a process, commit a saved reply, recover in a fresh context and deduplicate its outcome.
-- All packages: restore, compile and execute with all 21 packages selected.
+- Command receipts: independently select native EF/PostgreSQL receipts, use consumer save
+  overrides without DI/hosting, commit an effect/result and replay it from a fresh context.
+- All packages: restore, compile and execute with all 22 packages selected.
 
 Each generated project references exact package versions, restores Gloaming only
 from the temporary local feed and uses a fresh package cache. Assets must contain

@@ -44,6 +44,10 @@ internal sealed class DraftOrderEdits(SalesDbContext database, IDraftOrderComman
         {
             return new DraftOrderChangeResult.Conflict();
         }
+        catch (CommandReceiptConflictException)
+        {
+            return new DraftOrderChangeResult.Conflict();
+        }
         catch (OrderAllowanceExceededException failure)
         {
             return new DraftOrderChangeResult.LimitExceeded(failure.Ceiling, failure.Requested);

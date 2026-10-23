@@ -169,6 +169,20 @@ internal sealed class DraftOrderCommands(
         if (row is null)
             return new DraftOrderChangeResult.NotFound();
 
+        const string operation = "submit-draft";
+        string input = SalesCommandReceipts.Input(new { request.Id, request.ExpectedVersion });
+        var receipt = request.OperationId is { } operationId
+            ? await SalesCommandReceipts.AcquireAsync<DraftOrder>(
+                database,
+                operation,
+                operationId,
+                input,
+                cancellationToken
+            )
+            : null;
+        if (receipt?.Result is { } retained)
+            return new DraftOrderChangeResult.Changed(retained);
+
         if (database.Entry(row).State != EntityState.Unchanged)
             throw new InvalidOperationException("Save the current proposal before submitting.");
 
@@ -182,6 +196,8 @@ internal sealed class DraftOrderCommands(
         row.Version = candidate.Version;
         row.IsSubmitted = candidate.IsSubmitted;
         events.Raise(submitted);
+        receipt?.Retain(candidate.ToView());
+
         return new DraftOrderChangeResult.Changed(candidate.ToView());
     }
 

@@ -67,6 +67,7 @@ public static class DraftOrderEndpoints
             draftId == Guid.Empty
             || edit.ExpectedVersion < 1
             || edit.ExpectedVersion == long.MaxValue
+            || edit.OperationId == Guid.Empty
         )
             return Results.BadRequest();
 
@@ -82,7 +83,10 @@ public static class DraftOrderEndpoints
         }
 
         return Result(
-            await edits.SubmitAsync(new(draftId, edit.ExpectedVersion), cancellationToken)
+            await edits.SubmitAsync(
+                new(draftId, edit.ExpectedVersion, edit.OperationId),
+                cancellationToken
+            )
         );
     }
 
@@ -278,7 +282,7 @@ public sealed record DraftOrderLineEdit(
     decimal UnitPrice
 );
 
-public sealed record SubmitDraft(long ExpectedVersion);
+public sealed record SubmitDraft(long ExpectedVersion, Guid? OperationId = null);
 
 public sealed record DraftLinesEdit(
     long ExpectedVersion,

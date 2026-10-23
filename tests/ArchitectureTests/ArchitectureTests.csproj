@@ -5,6 +5,12 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+    <None
+      Include="../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <None
       Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj"

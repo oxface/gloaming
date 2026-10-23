@@ -1,7 +1,8 @@
 # Original-request sweep
 
 Date: 2026-10-23. Base: owner-approved checkpoint `c5acb8e`.
-Status: local checks passed; uncommitted review batch. The checkpoint matched the approved
+Status: owner-approved checkpoint `9eaab6d`, after normal hooks passed. The text below records
+that batch at review time. The preceding checkpoint matched the approved
 35-path snapshot and passed all normal hooks. Its worktree/index were clean before this pass.
 The owner requested another sweep against the original request before their own later review.
 This pass uses the existing conversation context; it is not a new independent context/reviewer.

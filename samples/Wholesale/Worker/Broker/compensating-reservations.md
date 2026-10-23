@@ -90,10 +90,14 @@ version predicates and event-position constraints. These arbitrate writers; disc
 failed scopes. After an ambiguous commit response, read progress using the original identity.
 
 A refused release leaves NeedsAttention and CompensationRefusal alongside the original
-second-line Refusal. After investigation, call `RetryCompensationAsync(orderId)` or
-`--role retry-compensation --OrderId ...`. A new delivery targets the same reservation.
+second-line Refusal. After investigation, call `RetryCompensationAsync(orderId, operationId, token)` or
+`--role retry-compensation --OrderId ... --OperationId ...`. A new delivery targets the same reservation.
 Recorded attempt outcomes prevent an old refusal from overwriting a later success. Retry is
-accepted only from NeedsAttention; inspect current state after an ambiguous retry commit.
+accepted only from NeedsAttention. Retain the operation identity before calling and reuse it
+after an uncertain commit: Sales returns the original result without signaling again, including
+after another refusal pauses the workflow. A deliberately new retry needs a new operation ID.
+The [Sales receipt protocol](../../modules/Sales/command-receipts.md) owns this protection;
+the generic workflow `SignalAsync` contract is unchanged. Read current progress separately when needed.
 The sample supplies a system actor, but operator authorization/UI and reconciliation policy
 remain consumer responsibilities.
 

@@ -63,7 +63,10 @@ dotnet run --project samples/Wholesale/Worker -- --transport local --role run
 ```
 
 In another terminal with the same environment, use `--role read --OrderId ...`, or explicitly invoke
-`--role retry-compensation --OrderId ...` after a refused compensation. The default Organization is
+`--role retry-compensation --OrderId ... --OperationId ...` after a refused compensation.
+Retain/reuse that operation ID for equal retries; a new operator decision needs a new ID.
+Sales retains the original result through its [receipt adoption](../../modules/Sales/command-receipts.md),
+so a repeated old retry cannot signal a later pause. The default Organization is
 wholesale-alpha; wholesale-beta is also admitted. Seed creates five units at version 2. The example
 requests two first-line units and six second-line units, reaching Compensated. Quantities of two on
 both lines reach Reserved. Stock IDs must be new. LeaseSeconds controls the native publication lease

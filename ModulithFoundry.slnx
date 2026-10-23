@@ -1,4 +1,13 @@
 <Solution>
+  <Folder Name="/Libraries/CommandReceipts/">
+    <Project Path="src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/CommandReceipts/Tests/">
+    <Project Path="src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj" />
+    <Project Path="src/Gloaming.CommandReceipts/tests/Fixtures/ReceiptDeployment/Current/ReceiptDeployment.Current.csproj" />
+    <Project Path="src/Gloaming.CommandReceipts/tests/Fixtures/ReceiptDeployment/Earlier/ReceiptDeployment.Earlier.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/CommandReceipts/Tests/Fixtures/" />
   <Folder Name="/Libraries/EntityFrameworkCore/">
     <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
   </Folder>
@@ -35,6 +44,7 @@
     <Project Path="src/Gloaming.Messaging/tests/MessagingTests/MessagingTests.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj" />
   </Folder>
+  <Folder Name="/Libraries/" />
   <Folder Name="/Libraries/ActorIdentity/">
     <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/Gloaming.ActorIdentity.AspNetCore.csproj" />
     <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />

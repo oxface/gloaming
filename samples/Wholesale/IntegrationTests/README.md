@@ -16,11 +16,11 @@ retain ordinary xUnit parallelism.
 | --- | --- |
 | `Api` | Native authentication/admission/antiforgery, membership concurrency, profiles/audit, private draft permissions, restricted HTTP credentials/RLS, historical Access migration and telemetry. New product draft lifecycle/allowance rollback assertions live here. |
 | `Domain` / `DraftOrders` | Immutable Sales profile/draft decisions, relational children, root concurrency, complete candidate acceptance and rollback; event-sourced decisions live with Inventory. |
-| `Reactions` | Required local allowance reactions, save/commit distinctions, cancellation, faults and rejected proposals. |
-| `Queries` | SQL filtering/joins, complete permitted counts/pages, caller-owned transaction snapshots and independent restricted-role RLS lifecycle proofs. |
+| `Reactions` | Required local allowance reactions, save/commit distinctions, cancellation, faults and rejected proposals; native Sales command-receipt concurrency and real crash/lost-response recovery. |
+| `Queries` | SQL filtering/joins, complete permitted counts/pages, caller-owned transaction snapshots and independent restricted-role RLS lifecycle/receipt replay proofs. |
 | `EventPersistence` | Literal histories, codecs/upcasting, exact native reads, append/rebuild/regeneration, inbox/outbox faults, real broker assertions, cancellation/process death/ambiguous commit. |
 | `Reservations/Broker` | Original stock-issue and compensation behavior, RabbitMQ/process recovery, Sales reply RLS/dead letters and restricted outbox dispatch/retention/migration assertions. |
-| `Reservations/Local` | Broker-free public intake, separate transactions, observation and the three real process-death handoff cuts. Child processes explicitly select `Transport=local`. |
+| `Reservations/Local` | Broker-free public intake, separate transactions, observation and the three real process-death handoff cuts; native Sales signal receipts and repeated operator decisions. Worker child processes explicitly select `Transport=local`. |
 | `Scenarios` | Finite fixture/journey helpers retained for active module proofs. They call live module Contracts; no copied product implementation. |
 
 `TestEntryPoint` selects only the two historical child scenarios (`--scenario history` and

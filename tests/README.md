@@ -1,6 +1,6 @@
 # Proof ownership
 
-The **31 native test projects** comprise 27 family-local Gloaming suites, two root cross-family
+The **32 native test projects** comprise 28 family-local Gloaming suites, two root cross-family
 suites and two Wholesale suites. Family tests live in `src/Gloaming.*/tests`; root `tests` covers
 cross-family composition and repository architecture. This guide is their common entry point,
 and the solution includes every native test project. Process hosts and Earlier/Current binaries
@@ -29,6 +29,7 @@ control test selection: the native solution and explicit CI commands do.
 | Tenancy | [Core](../src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj), [HTTP](../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj), [PostgreSQL](../src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj) | Tenantless/missing distinction, independent admission/order, native transaction-local context and cleanup. |
 | Persistence | [Model/write guards](../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj), [GUID adopter](../src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj), [RLS](../src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj), [module adopter](../src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj) | Supported/rejected mappings, stored-owner predicates, detached writes, native policy/grants/lifecycle, independent migrations and transactions. |
 | EntityFrameworkCore | [Save coordinator](../src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj) | Context/model selection, scoped execution, prepare/detect/validate ordering, idempotent installation, suppressed/nested saving, cancellation and failed-operation disposal. No feature-family or sample dependency. |
+| CommandReceipts | [Independent provider/deployment adopter](../src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj) | Public receipt API, transaction/immutable-proposal guards, concurrency, rollback/cancellation/uncertain commit, append-only lifetime and explicit removal; separately compiled old/new consumers, real process death and frozen lock-protocol compatibility. No Sales or Messaging dependency. |
 | EventReactions | [Reactions](../src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj), [native EF adopter](../src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj) | Ordered bounded capture, explicit source selection, immutable/package-free models, real EF save/rollback and reaction-created ownership/outbox validation. |
 | Events | [Codec](../src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj), [history](../src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj), [adopter/compatibility](../src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj) | Durable names/schema validation, forward decoding, range integrity, literal historical JSON and actual executable usage. |
 | EventSourcing | [Aggregate](../src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj), [PostgreSQL](../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj), [storage adopter](../src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj) | Candidate bookkeeping, append/state atomicity, native concurrency, complete-key history/rebuild/regeneration and alternative consumer mappings. |
@@ -68,7 +69,7 @@ not a complete API/branch coverage measurement or a production-capacity certific
 Unit, provider, package-only and process tests can exercise the same API while protecting
 different failures. A fake publisher cannot prove broker acceptance uncertainty; an in-process
 rollback cannot prove abrupt process recovery; ProjectReference builds cannot prove the
-[six package-only profiles](../tools/release/README.md#full-package-adoption-proof).
+[seven package-only profiles](../tools/release/README.md#full-package-adoption-proof).
 Historic literals and populated migration fixtures need independent expected outcomes and
 owned provenance, not values manufactured by the implementation under test.
 

@@ -61,11 +61,17 @@ WITH CHECK (organization_key = NULLIF(current_setting('app.tenant_key', true), '
 | `draft_orders` | SELECT, INSERT, UPDATE, DELETE |
 | `draft_order_lines` | SELECT, INSERT, UPDATE, DELETE |
 | `draft_order_grants` | SELECT only |
+| `command_receipts` | SELECT, INSERT only |
 
 The role gets schema USAGE and no Sales-schema CREATE, TRUNCATE, ownership or grant writes.
 The four business-table write grants allow the native DML proofs; production consumers
 should select privileges for their own actual paths. No privileges are granted on Inventory,
 allowances, audit, inbox, outbox, stream or workflow tables.
+
+Receipt proofs also replay an authorized submission retained by an administrative setup
+transaction. Runtime cannot replace/delete the result or insert foreign-Organization receipts;
+disabled EF filters still reveal only the admitted Organization. This adds no runtime allowance
+write privilege or general submission capability to this restricted profile.
 
 USING suppresses foreign existing rows; WITH CHECK rejects proposed foreign ownership.
 Missing/empty settings yield no matches and writes fail. Whitespace/unrecognized text also

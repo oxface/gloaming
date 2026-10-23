@@ -200,7 +200,11 @@ internal static class BrokerHost
                 var order = role switch
                 {
                     "read-order" => await orders.ReadAsync(id, startup.Token),
-                    "retry-compensation" => await orders.RetryCompensationAsync(id, startup.Token),
+                    "retry-compensation" => await orders.RetryCompensationAsync(
+                        id,
+                        Guid.Parse(Required("OperationId")),
+                        startup.Token
+                    ),
                     _ => await orders.StartAsync(
                         new(
                             id,

@@ -5,6 +5,33 @@ namespace ModulithFoundry.ArchitectureTests;
 public sealed class AdoptionDependencyTests
 {
     [Fact]
+    public void CommandReceiptsDeclareOnlySaveCompositionAndTheNativePostgresProvider()
+    {
+        var declaration = XDocument.Load(
+            Path.Combine(
+                AppContext.BaseDirectory,
+                "ProjectDeclarations",
+                "Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj"
+            )
+        );
+        Assert.Equal(
+            ["Gloaming.EntityFrameworkCore"],
+            declaration
+                .Descendants("ProjectReference")
+                .Select(reference =>
+                    Path.GetFileNameWithoutExtension((string)reference.Attribute("Include")!)
+                )
+        );
+        Assert.Equal(
+            ["Npgsql.EntityFrameworkCore.PostgreSQL"],
+            declaration
+                .Descendants("PackageReference")
+                .Select(reference => (string)reference.Attribute("Include")!)
+        );
+        Assert.Empty(declaration.Descendants("FrameworkReference"));
+    }
+
+    [Fact]
     public void CodecExampleDeclaresOnlySerializationWithoutHistoryOrInfrastructure()
     {
         var declaration = XDocument.Load(

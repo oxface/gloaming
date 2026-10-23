@@ -1,4 +1,5 @@
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
 using Gloaming.EntityFrameworkCore;
 using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
@@ -23,6 +24,7 @@ public static class SalesDatabase
             context.RequiredOrganizationKey
         );
         services.AddAuditValidation<SalesDbContext>();
+        services.AddPostgresCommandReceipts<SalesDbContext>();
         services.AddInboxValidation<SalesDbContext>();
         services.AddOutboxValidation<SalesDbContext>();
         services.AddWorkflowValidation<SalesDbContext>();

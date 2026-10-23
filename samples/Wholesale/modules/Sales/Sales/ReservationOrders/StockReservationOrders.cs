@@ -53,6 +53,7 @@ internal sealed class StockReservationOrders(
 
     public async Task<OrderView> RetryCompensationAsync(
         Guid orderId,
+        Guid operationId,
         CancellationToken cancellationToken
     )
     {
@@ -62,14 +63,28 @@ internal sealed class StockReservationOrders(
         await using var transaction = await database.Database.BeginTransactionAsync(
             cancellationToken
         );
+        const string operation = "retry-reservation-compensation";
+        string input = SalesCommandReceipts.Input(new { OrderId = orderId });
+        var receipt = await SalesCommandReceipts.AcquireAsync<OrderView>(
+            database,
+            operation,
+            operationId,
+            input,
+            cancellationToken
+        );
+        if (receipt.Result is { } retained)
+            return retained;
+
         var snapshot = await workflow.SignalAsync(
             new(orderId, database.RequiredOrganizationKey),
             new RetryReservationRelease(),
             cancellationToken
         );
+        var result = ReservationState.Read(snapshot);
+        receipt.Retain(result);
         await database.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-        return ReservationState.Read(snapshot);
+        return result;
     }
 
     private void RequireCaller()

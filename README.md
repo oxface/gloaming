@@ -15,6 +15,7 @@ documentation and tests; it does not introduce an umbrella dependency or applica
 | [Tenancy](src/Gloaming.Tenancy/README.md) | Selected-tenant/tenantless context, optional HTTP admission and explicit PostgreSQL transaction context. |
 | [Persistence](src/Gloaming.Persistence/README.md) | EF ownership filtering/protected writes and optional PostgreSQL RLS. |
 | [EntityFrameworkCore](src/Gloaming.EntityFrameworkCore/README.md) | Explicit preparation/validation composition through native EF saving. |
+| [CommandReceipts](src/Gloaming.CommandReceipts/README.md) | Logical action/result retention and cooperating-writer serialization in caller-owned EF/PostgreSQL transactions. |
 | [Events](src/Gloaming.Events/README.md) | Independent JSON serialization/upcasting and event-history utilities. |
 | [EventReactions](src/Gloaming.EventReactions/README.md) | Local event buffers, ordered reactions and optional EF preparation. |
 | [EventSourcing](src/Gloaming.EventSourcing/README.md) | Aggregate bookkeeping and optional native EF write/rebuild operations. |
@@ -32,7 +33,7 @@ npm --prefix tools/release run pack
 The command reports the completed version and folder feed. Follow the
 [consumer source-mapping setup](tools/release/README.md#consume-from-another-repository) and
 [development guide](docs/development.md); no remote package service is required.
-The heavier release verifier checks all archives and six isolated package-only consumers.
+The heavier release verifier checks all archives and seven isolated package-only consumers.
 
 [Application patterns](docs/application-patterns.md) describe module ownership, native scopes,
 per-module persistence and durable handoff using existing code. The source-copying template

@@ -36,7 +36,8 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
     internal static async Task<LocalWorkflowProof> CreateAsync(
         PostgreSqlFixture postgres,
         CancellationToken token,
-        DbCommandInterceptor? interceptor = null
+        DbCommandInterceptor? interceptor = null,
+        IInterceptor? salesInterceptor = null
     )
     {
         string sales = await postgres.CreateDatabaseAsync(token);
@@ -47,6 +48,11 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
         if (interceptor is not null)
             services.AddDbContext<InventoryDbContext>(options =>
                 options.AddInterceptors(interceptor)
+            );
+
+        if (salesInterceptor is not null)
+            services.AddDbContext<SalesDbContext>(options =>
+                options.AddInterceptors(salesInterceptor)
             );
 
         var provider = services.BuildServiceProvider(

@@ -57,6 +57,12 @@ One lifetime of an inbox receipt, identified by ReceiptId. A duplicate or operat
 keeps that generation; receiving the delivery after receipt deletion creates another.
 _Avoid_: Message identity, operator authority
 
+**Command receipt**:
+Retained evidence for a consumer-selected logical action and its original business result.
+Different deliveries may represent that same action. Equal retained attempts recover the result;
+removing the evidence ends its duplicate protection. The receipt grants no authority.
+_Avoid_: Inbox receipt, entity identity, current business state
+
 **Application user**:
 A person represented by a stable product identity, independently of their login provider
 or tenant memberships.

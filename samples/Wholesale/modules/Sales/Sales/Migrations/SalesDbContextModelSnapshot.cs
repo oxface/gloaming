@@ -20,6 +20,7 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
             modelBuilder
                 .HasDefaultSchema("sales")
                 .HasAnnotation("Gloaming:Requires:audit", true)
+                .HasAnnotation("Gloaming:Requires:command-receipts.postgres.v1", true)
                 .HasAnnotation("Gloaming:Requires:event-reactions", true)
                 .HasAnnotation("Gloaming:Requires:inbox", true)
                 .HasAnnotation("Gloaming:Requires:outbox", true)
@@ -110,6 +111,62 @@ namespace ModulithFoundry.Samples.Wholesale.Sales.Migrations
                         )
                         .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
                         .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "TenantKey");
+                }
+            );
+
+            modelBuilder.Entity(
+                "Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.CommandReceiptRecord",
+                b =>
+                {
+                    b.Property<string>("ScopeKey")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("organization_key")
+                        .UseCollation("C");
+
+                    b.Property<string>("Operation")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("operation")
+                        .UseCollation("C");
+
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("operation_id");
+
+                    b.Property<int>("FormatVersion")
+                        .HasColumnType("integer")
+                        .HasColumnName("format_version");
+
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("input");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("result");
+
+                    b.HasKey("ScopeKey", "Operation", "OperationId");
+
+                    b.ToTable(
+                        "command_receipts",
+                        "sales",
+                        t =>
+                        {
+                            t.HasCheckConstraint("ck_command_receipt_format", "format_version > 0");
+                        }
+                    );
+
+                    b.HasAnnotation("command-receipts.postgres.v1", true)
+                        .HasAnnotation(
+                            "ModulithFoundry:TenantContextMember",
+                            "ModulithFoundry.Samples.Wholesale.Sales.SalesDbContext, Sales, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Property|RequiredOrganizationKey"
+                        )
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipFilter", "OrganizationScope")
+                        .HasAnnotation("ModulithFoundry:TenantOwnershipProperty", "ScopeKey");
                 }
             );
 

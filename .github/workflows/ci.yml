@@ -65,6 +65,17 @@ jobs:
         dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
     steps: *family-steps
 
+  command_receipts:
+    needs: changes
+    if: needs.changes.outputs.CommandReceipts == 'true'
+    name: Gloaming.CommandReceipts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
   event_reactions:
     needs: changes
     if: needs.changes.outputs.EventReactions == 'true'

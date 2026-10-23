@@ -15,7 +15,7 @@ shared:
 unmapped:
   - '**'
   - '!**/*.md'
-  - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
+  - '!src/Gloaming.{Auditing,ActorIdentity,CommandReceipts,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/Wholesale/**'
   - '!tests/ArchitectureTests/**'
   - '!tests/ContextCompositionTests/**'
@@ -24,6 +24,12 @@ unmapped:
 
 EntityFrameworkCore:
   - 'src/Gloaming.EntityFrameworkCore/**'
+  - '!**/*.md'
+
+CommandReceipts:
+  - 'src/Gloaming.CommandReceipts/**'
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - 'tests/Support/{PostgreSqlFixture,ChildHost}.cs'
   - '!**/*.md'
 
 Auditing:

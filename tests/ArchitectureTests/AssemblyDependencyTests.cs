@@ -40,6 +40,7 @@ public sealed class AssemblyDependencyTests
     private static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies(
             typeof(ActorId).Assembly,
+            typeof(Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.CommandReceiptKey).Assembly,
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
             typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
             typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly,
@@ -57,6 +58,7 @@ public sealed class AssemblyDependencyTests
             typeof(TenantDatabaseContextExtensions).Assembly,
             typeof(Gloaming.EntityFrameworkCore.CapabilityConfiguration).Assembly,
             typeof(Samples.Wholesale.Sales.SalesDatabase).Assembly,
+            typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
             typeof(Samples.Wholesale.Access.AccessRegistration).Assembly,
             typeof(TenantOwnershipExtensions).Assembly,
             typeof(Gloaming.Persistence.EntityFrameworkCore.Postgres.TenantRowSecurityExtensions).Assembly,
@@ -71,6 +73,27 @@ public sealed class AssemblyDependencyTests
             typeof(Samples.Wholesale.Api.DemoComposition).Assembly
         )
         .Build();
+
+    [Fact]
+    public void CommandReceiptsAreIndependentOfAdmissionMessagingAndConsumerBusinessTypes()
+    {
+        foreach (
+            string forbidden in new[]
+            {
+                Actor,
+                Tenancy,
+                Persistence,
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Sales",
+                "Access",
+                "Inventory",
+            }
+        )
+            NoDependency("Gloaming.CommandReceipts.EntityFrameworkCore.Postgres", forbidden)
+                .Check(Architecture);
+    }
 
     [Fact]
     public void WorkerHostingRemainsIndependentOfProviderAndOptionalForCallableLibraries()

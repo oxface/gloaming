@@ -4,6 +4,11 @@ Sales owns customer profiles, drafts, customer allowances and its durable stock 
 Business Contracts contain ordinary intent/result/query types. Native module persistence,
 grants, business rules and transactions remain consumer-owned.
 
+The [command-receipt consumer](command-receipts.md) adds safe equal retries for explicitly
+selected draft submissions and operator compensation retries. Gloaming's independently selected
+CommandReceipts package owns the technical protocol; Sales owns permissions, logical identities,
+input/result meaning and native transaction composition.
+
 ## Customer profiles
 
 `AddCustomerProfiles` registers the native profile service and its explicit accepted-change
@@ -60,8 +65,9 @@ Draft visibility governs the lines/customer display fields returned here; indepe
 protected fields need their own selected capability and proof.
 
 The separate [opt-in PostgreSQL RLS consumer](../../IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
-adds database tenant equality on five Sales tables under restricted credentials and explicit
-transaction-local setup. It proves reads/existing-draft edits; ordinary module registration,
+adds database tenant equality on six Sales tables, including append-only command receipts,
+under restricted credentials and explicit transaction-local setup. It proves reads/existing-draft
+edits and receipt replay; ordinary module registration,
 default HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
 no within-tenant permission, authentication or protection from tenant-setting forgery by
 the credential holder.

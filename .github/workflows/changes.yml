@@ -3,6 +3,8 @@ name: CI scope
 on:
   workflow_call:
     outputs:
+      CommandReceipts:
+        value: ${{ jobs.changes.outputs.CommandReceipts }}
       EntityFrameworkCore:
         value: ${{ jobs.changes.outputs.EntityFrameworkCore }}
       Auditing:
@@ -40,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      CommandReceipts: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.CommandReceipts == 'true') && 'true' || 'false' }}
       EntityFrameworkCore: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EntityFrameworkCore == 'true') && 'true' || 'false' }}
       Auditing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Auditing == 'true') && 'true' || 'false' }}
       ActorIdentity: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.ActorIdentity == 'true') && 'true' || 'false' }}

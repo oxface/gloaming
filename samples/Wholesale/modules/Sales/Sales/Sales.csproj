@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <ProjectReference Include="../../../../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
     <InternalsVisibleTo Include="Wholesale.IntegrationTests" />
   </ItemGroup>

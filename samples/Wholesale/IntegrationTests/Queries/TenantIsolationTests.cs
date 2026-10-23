@@ -46,7 +46,7 @@ public sealed partial class TenantIsolationTests(PostgreSqlFixture postgres)
             await ValueAsync<string>(connection, null, "SELECT current_user")
         );
         Assert.Equal(
-            5,
+            6,
             await ValueAsync<int>(
                 connection,
                 null,

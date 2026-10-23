@@ -98,20 +98,24 @@ public sealed partial class CompositionTests
         using (var response = await client.SendAsync(request, Token))
             response.EnsureSuccessStatusCode();
 
-        using (
-            var request = ProductOrderRequest(
-                session,
-                HttpMethod.Post,
-                path + "/submit",
-                new SubmitDraft(3)
-            )
-        )
-        using (var response = await client.SendAsync(request, Token))
+        Guid submissionId = Guid.NewGuid();
+        for (int attempt = 0; attempt < 2; attempt++)
         {
-            response.EnsureSuccessStatusCode();
-            var submitted = await response.Content.ReadFromJsonAsync<DraftOrder>(Token);
-            Assert.True(submitted!.IsSubmitted);
-            Assert.Equal(4, submitted.Version);
+            using (
+                var request = ProductOrderRequest(
+                    session,
+                    HttpMethod.Post,
+                    path + "/submit",
+                    new SubmitDraft(3, submissionId)
+                )
+            )
+            using (var response = await client.SendAsync(request, Token))
+            {
+                response.EnsureSuccessStatusCode();
+                var submitted = await response.Content.ReadFromJsonAsync<DraftOrder>(Token);
+                Assert.True(submitted!.IsSubmitted);
+                Assert.Equal(4, submitted.Version);
+            }
         }
 
         using (
@@ -119,7 +123,7 @@ public sealed partial class CompositionTests
                 session,
                 HttpMethod.Post,
                 path + "/submit",
-                new SubmitDraft(4)
+                new SubmitDraft(4, submissionId)
             )
         )
         using (var response = await client.SendAsync(request, Token))

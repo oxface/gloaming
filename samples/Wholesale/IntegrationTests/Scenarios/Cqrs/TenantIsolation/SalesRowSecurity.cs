@@ -12,6 +12,7 @@ internal static class SalesRowSecurity
         "draft_orders",
         "draft_order_lines",
         "draft_order_grants",
+        "command_receipts",
     ];
 
     internal static async Task ApplyAsync(
@@ -76,7 +77,16 @@ internal static class SalesRowSecurity
             );
             await command.ExecuteNonQueryAsync(cancellationToken);
 
-            if (table != "draft_order_grants")
+            if (table == "command_receipts")
+            {
+                await using var grant = new NpgsqlCommand(
+                    $"GRANT INSERT ON {name} TO {quotedRole}",
+                    connection,
+                    transaction
+                );
+                await grant.ExecuteNonQueryAsync(cancellationToken);
+            }
+            else if (table != "draft_order_grants")
             {
                 await using var grant = new NpgsqlCommand(
                     $"GRANT INSERT, UPDATE, DELETE ON {name} TO {quotedRole}",
@@ -107,7 +117,7 @@ internal static class SalesRowSecurity
                 AND (SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
                     WHERE n.nspname = 'sales' AND c.relname = ANY(@tables)
                         AND c.relrowsecurity AND c.relforcerowsecurity
-                        AND NOT pg_has_role(r.oid, c.relowner, 'MEMBER')) = 5
+                        AND NOT pg_has_role(r.oid, c.relowner, 'MEMBER')) = cardinality(@tables)
             FROM pg_roles r WHERE r.rolname = current_user
             """,
             connection
