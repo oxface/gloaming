@@ -4,7 +4,7 @@ Implementation authorized by the owner on 2026-10-16 after the
 [A1 assessment](access-authorization-assessment.md). Prepared on
 `feat/membership-suspension` in `/tmp/modulith-foundry-membership-suspension`, based on
 approved assessment `fd8a10e`, following fetched main `7ea6652`. The
-[concrete scope](../plans/a1-1-membership-suspension.md) records consumer Contracts, native
+[concrete scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-1-membership-suspension.md) records consumer Contracts, native
 persistence/HTTP adoption and the owner's selected product policies. At the initial
 implementation handoff, changes were unstaged and commit approval remained separate.
 

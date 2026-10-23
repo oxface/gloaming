@@ -3,7 +3,7 @@
 Assessment: 2026-10-16. Source baseline: fetched `origin/main`, `7ea6652`
 (`chore: cqrs research`), isolated `docs/access-authorization-assessment` worktree.
 Recommendation for owner review; no engine adoption, runtime change, migration, public
-library interface or ADR is selected. [A1 scope](../plans/a1-access-resource-authorization-research.md),
+library interface or ADR is selected. [A1 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-access-resource-authorization-research.md),
 [original intake](access-authorization-research-intake.md),
 [primary-source/version evidence](access-authorization-primary-sources.md).
 

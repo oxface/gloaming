@@ -1,7 +1,7 @@
 # E2.3 same-tenant parent/child relationships
 
 2026-10-04. Implemented after the owner approved proceeding from E2.2 checkpoint `f2dcf2b`.
-Changes remain unstaged and uncommitted for review. [The slice plan](../plans/e2-3-tenant-relationships.md)
+Changes remain unstaged and uncommitted for review. [The slice plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-3-tenant-relationships.md)
 records the authorized scope and consumer choices.
 
 ## Outcome and guarantees

@@ -97,7 +97,7 @@ the current packages do not supply or prove that automatic direct-contract adapt
 independently committing calls inside the workflow's decision delegates: their current contract
 requires returning a proposed turn without such effects.
 
-[D2.3](../plans/d2-3-module-consistency-and-coordination-research.md) now explicitly retains module
+[D2.3](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-3-module-consistency-and-coordination-research.md) now explicitly retains module
 ownership and this adapter/recovery question. Shared native transactions through module Contracts
 remain another separately assessed choice; saga durability does not establish their atomicity.
 No workflow runtime, public Contracts, compensation protocol or transport was changed here.

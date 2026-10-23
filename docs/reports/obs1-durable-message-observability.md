@@ -69,7 +69,7 @@ business workflow or telemetry framework was extracted.
   [Inventory upgrade/adoption](../../samples/Wholesale/IntegrationTests/EventPersistence/InboxDispatchTests.cs).
 - [Self-sufficient library contract](../../src/Gloaming.Messaging/docs/observability.md),
   [executable setup](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo/README.md),
-  [approved scope/file map](../plans/durable-message-observability.md) and
+  [approved scope/file map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/durable-message-observability.md) and
   [ADR 0012](../adr/0012-durable-diagnostic-context-and-native-telemetry.md).
 
 The architecture dependency assertion now includes the explicitly used, already-pinned

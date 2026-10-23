@@ -1,7 +1,7 @@
 # RabbitMQ lifecycle extraction assessment
 
 Date: 2026-10-22. Status: source comparison and
-[public-interface proposal](../plans/rabbitmq-session-lifecycle.md), awaiting owner review.
+[public-interface proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/rabbitmq-session-lifecycle.md), awaiting owner review.
 No new runtime/library implementation or fresh infrastructure test result is claimed here.
 
 Follow-up: the owner approved the interface/scope and the

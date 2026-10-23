@@ -11,5 +11,5 @@ tombstone store or a sequence shared by every processing transition. This adds a
 schema migration and a pre-v1 caller change; no revision-only retry overload remains.
 
 Unprocessed and dead-lettered work is preserved. Retention duration, scheduling and business
-idempotency remain consumer-owned. See the [reviewed scope](../plans/m2-inbox-retention.md)
+idempotency remain consumer-owned. See the [reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-retention.md)
 and [current family contract](../../src/Gloaming.Messaging/docs/inbox-retention.md).

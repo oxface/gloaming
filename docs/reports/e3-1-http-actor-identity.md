@@ -1,6 +1,6 @@
 # E3.1 actor identity in native ASP.NET Core requests
 
-2026-10-04. Implemented after the owner approved [the interface and scope](../plans/e3-1-http-actor-identity.md),
+2026-10-04. Implemented after the owner approved [the interface and scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-1-http-actor-identity.md),
 following E2.4 checkpoint `6069c05`. Owner review, including the registration refinement,
 concluded with approved checkpoint `faefc0b` on 2026-10-05.
 
@@ -175,4 +175,4 @@ The sample directory is an immutable fixture, not durable Access or a membership
 Tenancy selection/admission, Organization membership/revocation, permissions, business module
 HTTP calls and native Aspire topology remain separate E3 increments. The next proposed slice
 is the independently adoptable tenancy HTTP adapter;
-[its proposed interface](../plans/e3-2-http-tenancy.md) needs separate review.
+[its proposed interface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-2-http-tenancy.md) needs separate review.

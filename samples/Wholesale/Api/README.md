@@ -314,7 +314,7 @@ second-save database failure and cancellation at a blocked address UPDATE.
 The [real browser journeys](../RuntimeComposition.Tests/BrowserTests.cs) exercise local
 Keycloak login/callback and native session cookies against HTTPS Kestrel, with no injected
 authentication cookie or OIDC form replay. Their scope/limits are recorded in
-[E3.7](../../../docs/plans/e3-7-oidc-browser-journey.md).
+[E3.7](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-7-oidc-browser-journey.md).
 
 Focused membership administration and private draft grants are supported as documented here.
 User creation/linking, invitations, general grant administration and configurable roles,
@@ -355,7 +355,7 @@ Count and page use separate native statements; choose RepeatableRead for one sna
 required. Grant changes can affect a later statement while the actor/tenant stay fixed.
 This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
 or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
-[scope](../../../docs/plans/a2-1-sales-resource-permissions.md) and
+[scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) and
 [proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).
 
 ## Optional Sales HTTP row security

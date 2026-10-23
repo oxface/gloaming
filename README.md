@@ -44,7 +44,7 @@ generator is retired. Future task skills should follow repeated real consumer wo
 - [Ownership](src/Gloaming.Persistence/samples/PersistenceDemo/README.md): module-owned contexts/migrations, protected writes and ordinary native transactions.
 - [Receipt codec/upcasting](src/Gloaming.Events/samples/EventCodecDemo/README.md), [counter append](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) and [immutable-model reactions](src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md): focused family adopters.
 - [Durable delivery](src/Gloaming.Messaging/samples/Delivery/README.md): independent module libraries, producer API and separately selected worker roles.
-- [Wholesale](samples/Wholesale/README.md): the larger cross-family reference application, with consumer-owned business policy and real runtime/browser proofs. Further module reduction remains in the audit queue.
+- [Wholesale](samples/Wholesale/README.md): Access, Sales and Inventory compose the cross-family reference application, with consumer-owned business policy and real runtime/browser proofs.
 
 Fault injection and separately compiled deployment consumers belong to tests, including
 [Messaging fixtures](src/Gloaming.Messaging/tests/Fixtures/README.md). Retained historic payloads

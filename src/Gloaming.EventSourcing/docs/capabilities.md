@@ -59,8 +59,8 @@ can deliver after completion, with asynchronous handler errors outside the retur
   belong before a general projection maintenance engine.
 - Snapshot plus delta catch-up: deferred. Current inline state is required at the exact head;
   ordinary fetch does not repair or apply missing events. Full replay repairs data explicitly.
-- New-service repopulation: separately planned for state-stored and event-sourced sources in
-  the [remaining roadmap](../../../docs/plans/remaining-capability-roadmap.md). A public export
+- New-service repopulation: unsupported; revisit only for a concrete receiver requirement.
+  The [historical roadmap](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/remaining-capability-roadmap.md) records earlier proposals. A public export
   snapshot plus retained integration changes needs a consistent boundary and safe progress
   cursor; timestamps or allocated global sequences alone do not establish it. The existing
   bounded per-stream reader/full rebuilder does not supply this cross-service protocol.

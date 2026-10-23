@@ -30,7 +30,7 @@ slice identifies a concrete consumer requirement; no immediate implementation fo
   not all publish corresponding messages. Stream versions therefore need not be contiguous
   in the integration history, and replaying this effect-bearing contract differs from
   replacing a current-state record.
-- [D1](../plans/remaining-capability-roadmap.md#work-queue) is a proposed DDD-pattern
+- [D1](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/remaining-capability-roadmap.md#work-queue) is a proposed DDD-pattern
   assessment. It does not promise persistent domain events, automatic public mapping or
   a streaming runtime. Existing event sourcing retains private per-stream facts; ordinary
   state-stored DDD need not retain domain events at all.

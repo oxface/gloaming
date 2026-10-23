@@ -41,7 +41,7 @@ database operation requires a fresh scope because rollback does not restore the 
 The fixed sequence cannot replace branching/parallel workflows, cancellation, deadlines,
 workflow migrations, retention or operator tooling. Missing replies never imply business failure.
 
-[Reviewed scope](../plans/wf2-sequential-saga-coordinator.md),
+[Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-sequential-saga-coordinator.md),
 [fresh evidence](../reports/wf2-sequential-saga-coordinator.md), and
 [current replacement contract](../../src/Gloaming.Messaging/docs/workflows.md) distinguish the
 historical experiment from the supported continuation composition.

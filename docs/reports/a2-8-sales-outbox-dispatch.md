@@ -1,7 +1,7 @@
 # A2.8: restricted Sales outbox dispatch
 
 Implemented for owner review on 2026-10-17 after the owner-approved A2.7 checkpoint `192fe7d`.
-The owner selected the [bounded scope](../plans/a2-8-sales-outbox-dispatch.md): independent
+The owner selected the [bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-8-sales-outbox-dispatch.md): independent
 Sales outbox dispatch using the existing PostgreSQL dispatcher, worker and RabbitMQ publisher.
 All new changes remain unstaged on `feat/sales-postgres-rls`; no commit or push is part of this slice.
 

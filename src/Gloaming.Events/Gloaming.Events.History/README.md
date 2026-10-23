@@ -65,7 +65,7 @@ Successful validation certifies only the supplied range. Full-stream integrity c
 explicit maintenance work; selected-range reads do not certify corruption elsewhere, correct
 tenant scoping, stream creation/update metadata or a committed captured head. The utility does
 not append, save, transact, retry or publish. Wholesale consumer suites exercise actual native EF queries, captured-head races and
-persistence on PostgreSQL; these are composition proofs beyond this utility alone. See [the plan](../../../docs/plans/e5-1-event-history.md)
+persistence on PostgreSQL; these are composition proofs beyond this utility alone. See [the plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-1-event-history.md)
 and [report](../../../docs/reports/e5-1-event-history.md).
 
 ## Deferred direction and event-store composition

@@ -1,7 +1,7 @@
 # M2 processed-inbox retention and deduplication expiry
 
 Date: 2026-10-22. Status: owner approved the
-[cleanup and receipt-generation interface/scope](../plans/m2-inbox-retention.md) before
+[cleanup and receipt-generation interface/scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-retention.md) before
 implementation. Changes remain unstaged and uncommitted on feat/inbox-completed-retention,
 based on fetched origin/main eeaa25b. M2 closure remains pending final change-set review and
 explicit owner dispositions below. The earlier completed sub-slices did not close the block.

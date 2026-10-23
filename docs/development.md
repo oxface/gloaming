@@ -134,6 +134,17 @@ continue proving consumption without source references or a special project layo
 
 ## Formatting, isolation and CI selection
 
+Run the lightweight repository checks, including local documentation and literal linked
+project/fixture targets:
+
+```bash
+npm --prefix tools/repository run check
+```
+
+The [tooling guide](../tools/repository/README.md#local-references) defines the supported
+syntax and limits. These checks run for documentation-only changes as well as code changes.
+Native .NET formatting remains separate:
+
 ```bash
 dotnet csharpier check . --include-generated
 dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
@@ -152,7 +163,7 @@ The SHA-pinned [filter workflow](../.github/workflows/changes.yml) uses
 SDK/tooling and workflow changes select all checks; unknown inputs conservatively select full
 coverage. Library implementation changes select dependent Wholesale coverage. Its linked event
 fixtures and process helper select the product lane too. Wholesale source selects runtime.
-Markdown-only changes omit expensive provider/browser checks. Configuration/detection
+Markdown-only changes run repository tooling/reference checks and omit expensive provider/browser checks. Configuration/detection
 failure fails Repository integrity instead of silently skipping tests.
 
 The [S1 report](reports/s1-wholesale-consolidation.md) records the exact move/merge/remove map,

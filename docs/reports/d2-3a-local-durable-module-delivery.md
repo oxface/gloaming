@@ -3,7 +3,7 @@
 Date: 2026-10-15 (Europe/Kiev). Owner selected this executable increment with “proceed” after
 the [D2.3 research](d2-3-module-consistency-and-coordination.md). Prepared on
 feat/ddd-sample-patterns after merge checkpoint `5f90abe`, under the
-[bounded scope](../plans/d2-3a-local-durable-module-delivery.md). Implementation remains subject
+[bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-3a-local-durable-module-delivery.md). Implementation remains subject
 to owner review; no staging, checkpoint commit or publication is performed for this increment.
 
 ## Outcome

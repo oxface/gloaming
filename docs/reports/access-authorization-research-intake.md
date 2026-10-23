@@ -129,7 +129,7 @@ documentation-only intake. Existing test/code links are evidence pointers, not n
 
 ## Membership suspension follow-up: 2026-10-15
 
-Umbrine requested [A1.1](../plans/a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
+Umbrine requested [A1.1](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-access-resource-authorization-research.md#a11-organization-membership-suspension-follow-up)
 as a focused addition to Access research. Its priority is unchanged; it is not a separate
 pre-development gate or authorization to implement a library/administration API.
 

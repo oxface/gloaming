@@ -127,7 +127,7 @@ Next E2 work remains two module-owned schemas/contexts, reviewed migrations and 
 ownership, separately mapped children and same-tenant relationships, a separate version
 token, and richer failure/transaction cases. Shared cross-module transactions require their
 own explicit workflow and proof. Membership, actor authorization and trusted HTTP ingress
-remain E3. See [the E2 scope inventory](../plans/e2-persistence.md).
+remain E3. See [the E2 scope inventory](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-persistence.md).
 
 ## Subsequent tooling update
 

@@ -25,7 +25,7 @@ mechanism source/core proofs follow their new family locations; consumer migrati
 
 **A reusable local dispatch/save lifecycle is now proven in standalone sample prototypes.**
 Recommend extracting a platform-only core and an optional EF Relational adapter after owner
-review of the [complete proposed interface](../plans/d2-1a-domain-event-extraction.md).
+review of the [complete proposed interface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-1a-domain-event-extraction.md).
 No Gloaming package or library interface has been adopted by this assessment. No ADR is needed
 until the interface/dependency choices are settled. D2.2 durable deferred reactions remain separate.
 

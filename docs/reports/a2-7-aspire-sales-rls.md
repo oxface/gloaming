@@ -2,7 +2,7 @@
 
 Implemented for owner review on 2026-10-17. The owner approved committing the A2.6 snapshot
 and continuing on the same branch. A2.6 was committed as `521e9b3` with all repository hooks
-enabled/passing; this next increment remains unstaged. The [scope](../plans/a2-7-aspire-sales-rls.md)
+enabled/passing; this next increment remains unstaged. The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-7-aspire-sales-rls.md)
 and [operator guide](../../samples/Wholesale/AppHost/README.md#optional-sales-rls-graph) describe
 the bounded local composition. There is no new Gloaming interface or worker adoption.
 

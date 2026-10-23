@@ -1,6 +1,6 @@
 # E5.2.2 expected-version append and caller-owned transactions
 
-2026-10-06. The owner-authorized [append scope](../plans/e5-2-2-native-event-append.md)
+2026-10-06. The owner-authorized [append scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-2-2-native-event-append.md)
 was owner-reviewed and checkpointed as `abcd370`, together with E5.3, after E5.2.1
 checkpoint `4f4d5b2`. The results below describe this increment. [E6.1](e6-1-inline-decision-state.md)
 subsequently replaces ordinary command history replay with required inline state.

@@ -14,7 +14,7 @@ and custom false-save acceptance described below. Source links for removed adapt
 now point to their current interceptor/module-registration replacements; earlier results remain dated.
 
 Date: 2026-10-15. Owner-authorized implementation of the
-[registered integration/cleanup scope](../plans/d2-1c-domain-event-integration-simplification.md),
+[registered integration/cleanup scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-1c-domain-event-integration-simplification.md),
 prepared on `feat/ddd-sample-patterns` for review. No commit or staging was performed.
 
 ## Outcome

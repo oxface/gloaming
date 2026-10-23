@@ -296,5 +296,5 @@ See [current capabilities and deferred directions](docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
 [standalone raw adoption](../samples/EventStorageDemo/README.md),
 [tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
-[reviewed replacement](../../../docs/plans/es2-native-ef-simplification.md) and
+[reviewed replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) and
 [dated ES2 evidence](../../../docs/reports/es2-rebuild-design.md).

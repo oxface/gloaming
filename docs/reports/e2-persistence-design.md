@@ -2,8 +2,8 @@
 
 2026-10-03. Planning/evidence review only. The owner confirmed shared database, module schemas,
 tenant-discriminated tables and rejection of tenant changes in ordinary persistence.
-See [the complete E2 proposal](../plans/e2-persistence.md) and
-[the first-increment plan](../plans/e2-1-tenant-ownership.md).
+See [the complete E2 proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-persistence.md) and
+[the first-increment plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-1-tenant-ownership.md).
 This report preserves the pre-implementation findings; subsequent implementation results
 are in [the E2.1 proof report](e2-1-tenant-ownership.md).
 

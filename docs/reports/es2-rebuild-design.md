@@ -3,11 +3,11 @@
 Historical diagnosis of the former gate protocol. The rejection of optimistic repair below
 concerns an **unchanged event-version predicate**. The reviewed technical stamp alternative
 is recorded in [ADR 0008](../adr/0008-native-optimistic-aggregate-rebuilding.md),
-[the replacement scope](../plans/es2-native-ef-simplification.md) and
+[the replacement scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) and
 [its actual EF/PostgreSQL results](es2-single-stream-rebuilding.md#native-ef-replacement-2026-10-07).
 
 Status: proposal evidence, 2026-10-07. ES1 is checkpointed as `ab85ec9`; family ownership is
-checkpointed as `39c1ab3`. This report supports the [proposed ES2 interface and scope](../plans/es2-single-stream-rebuilding.md).
+checkpointed as `39c1ab3`. This report supports the [proposed ES2 interface and scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-single-stream-rebuilding.md).
 No new C# library implementation, approved interface or library integration guarantee follows
 from these findings. Proposed runtime files have not been edited.
 
@@ -122,7 +122,7 @@ restriction belongs specifically to optimized rebuilding, not all rebuilding.
 Our greater coordination scope is online same-version repair alongside state-dependent
 writers. A simpler offline repair with writers paused would have a different contract.
 Registration boilerplate and module maintenance facades are separate from that race; the
-[review follow-up proposal](../plans/library-extraction.md#es2-owner-review-follow-up)
+[review follow-up proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#es2-owner-review-follow-up)
 records candidates for simplifying those integration steps without weakening coordination.
 
 PostgreSQL provides shared/exclusive advisory locks with application-defined keys, and

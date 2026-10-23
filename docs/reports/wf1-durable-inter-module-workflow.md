@@ -71,7 +71,7 @@ shared workflow mechanics.
 The solution, architecture project/rules and CI path map include the new consumer. The
 Messaging lane runs its tests. Module/library/Contracts types cannot depend on the workflow
 host. Sample/module and Messaging-family documentation link the executable and declare limits;
-the [scope map](../plans/wf1-durable-inter-module-workflow.md) records the complete change areas.
+the [scope map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf1-durable-inter-module-workflow.md) records the complete change areas.
 
 ## Fresh verification
 

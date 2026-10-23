@@ -1,5 +1,8 @@
 pre-commit:
   jobs:
+    - name: repository-references
+      glob: "*.{md,csproj,props,targets,slnx,ts,json,yml,yaml}"
+      run: npm --prefix tools/repository run check
     - name: audit-postgres-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-restore

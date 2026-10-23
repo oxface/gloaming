@@ -1,7 +1,7 @@
 # 0021: Optional native RabbitMQ session lifecycle
 
 Date: 2026-10-22. Status: accepted by owner interface/scope approval; implementation is
-prepared for exact change-set review. [Reviewed scope](../plans/rabbitmq-session-lifecycle.md).
+prepared for exact change-set review. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/rabbitmq-session-lifecycle.md).
 
 ## Context
 

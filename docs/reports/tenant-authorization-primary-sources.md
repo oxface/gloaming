@@ -5,7 +5,7 @@ below were consulted on that date. **Fact** means official documentation or rele
 source inspection; **assessment** means an integration recommendation or inference for this
 repository. No database was started, role catalog inspected, policy installed or runtime
 proof executed for this note. Read with the [A2 assessment](tenant-authorization-assessment.md)
-and [A2 brief](../plans/a2-tenant-resource-authorization-rls-research.md).
+and [A2 brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-tenant-resource-authorization-rls-research.md).
 
 The later [A2.2 implementation report](a2-2-sales-postgres-rls.md) records freshly executed
 role/SQL/lifecycle controls for an opt-in Sales consumer. This source note retains the

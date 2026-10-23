@@ -108,7 +108,7 @@ neither opens transactions, saves, commits, retries nor registers services. Nati
 visible; no ambient scope, base DbContext or automatic stamping is introduced.
 
 See [the executable Inventory/Sales consumer](../samples/PersistenceDemo/README.md),
-[the first-slice plan](../../../docs/plans/e2-1-tenant-ownership.md) and
+[the first-slice plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-1-tenant-ownership.md) and
 [the first proof report](../../../docs/reports/e2-1-tenant-ownership.md) and
 [the relationship proof report](../../../docs/reports/e2-3-tenant-relationships.md).
 

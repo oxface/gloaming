@@ -3,7 +3,7 @@
 Date: 2026-10-21. Interface/scope approved by the owner's “proceed with implementation”.
 Implementation is prepared for owner line-by-line review on `feat/outbox-dead-letters`,
 based on fetched main `f4f694018b03c0d43c1707086ca3673e0352a6d6`. No commit or push was made.
-The [reviewed proposal](../plans/m2-outbox-dead-letters.md) records the opening baseline;
+The [reviewed proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-outbox-dead-letters.md) records the opening baseline;
 the [family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md) defines current
 consumer setup, guarantees, deployment obligations and limits.
 

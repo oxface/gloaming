@@ -1,7 +1,7 @@
 # EF1: external domain-event and EF integration patterns
 
 Research date: 2026-10-15. This is the external-source part of
-[EF1](../plans/ef1-capability-interception-research.md). It compares public implementation
+[EF1](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/ef1-capability-interception-research.md). It compares public implementation
 sources, rather than counting tutorials or claiming a representative survey of all .NET
 applications. No external project's tests were executed. No new reusable mechanism was
 proven by this source review. The companion [Gloaming/native EF investigation](ef1-capability-interception-research.md)

@@ -103,7 +103,7 @@ runtime results above. Untouched HTTP/state-persistence suites were not repeated
 - [Reader PostgreSQL proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventHistoryReaderTests.cs)
   cover the new mechanism; existing family/consumer tests exercise composition.
 - [Consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
-  records setup/errors/limits; [approved scope](../plans/event-history-reader-extraction.md) preserves the proposal.
+  records setup/errors/limits; [approved scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/event-history-reader-extraction.md) preserves the proposal.
 
 The selected prefix is materialized in full; capacity, paging and streaming are unproven. Initial
 lookup/cutoff selection remain consumer-owned; excluded history is not certified. Arbitrary bypass

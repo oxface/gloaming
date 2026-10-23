@@ -164,7 +164,7 @@ Use explicit application orchestration for complex dependencies or decisions req
 result. Local reactions remain an available bounded atomic pattern; no eventual-consistency default
 is introduced inside a module. Durable workflow state is already module-owned, but existing workflow
 durability does not make arbitrary direct module calls recoverable or persist a call stack.
-[D2.3](../plans/d2-3-module-consistency-and-coordination-research.md) retains that delivery/compensation
+[D2.3](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-3-module-consistency-and-coordination-research.md) retains that delivery/compensation
 and shared-transaction assessment. No new saga adapter, deferred-local inbox, decider abstraction or
 business-history capability was implemented here.
 

@@ -2,7 +2,7 @@
 
 Owner-approved, 2026-10-15, including the extraction assessment below, on `feat/cqrs-consumer-patterns` in
 `/tmp/modulith-foundry-c1`, from freshly fetched `origin/main` at `e400e73`.
-The [scope and concrete usage](../plans/c1-cqrs-consumer-patterns.md) were presented
+The [scope and concrete usage](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/c1-cqrs-consumer-patterns.md) were presented
 before implementation. At the initial handoff all changes were unstaged; the owner
 has since staged a review snapshot. The extraction follow-up below changes only
 the working tree and preserves that snapshot. No commit or push was made.

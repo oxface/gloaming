@@ -4,7 +4,7 @@ The later [dead-letter report](m2-inbox-dead-letters.md) records current naming 
 inspection; this report retains its dated supervision evidence.
 
 Date: 2026-10-20. Branch: `feat/inbox-failure-recovery`, continuing the original M2 work.
-The owner approved the [concrete exception and behavior](../plans/m2-inbox-failure-supervision.md)
+The owner approved the [concrete exception and behavior](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-failure-supervision.md)
 before implementation. The existing staged M2 review snapshot is preserved; this follow-up
 is unstaged and uncommitted. Original M2 results remain dated evidence in its
 [separate report](m2-inbox-failure-recovery.md).

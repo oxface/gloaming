@@ -6,11 +6,11 @@ Worker registration and polling options are supplied by the explicitly selected
 operations remain independently usable without this package.
 
 O1 supplies one bounded transactional-outbox capability. [Family setup](../README.md)
-and package READMEs define the public surface; [the O1 proposal](../../../docs/plans/outbox1-transactional-dispatch.md)
+and package READMEs define the public surface; [the O1 proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox1-transactional-dispatch.md)
 records owner review and [the report](../../../docs/reports/outbox1-transactional-dispatch.md)
 records dated executions. O1 is owner-approved at checkpoint `2d7a865` and merged as
 `beafa4e`. I1 adds independently selected durable intake and separate transactional processing.
-Its [interface/scope](../../../docs/plans/inbox1-durable-intake-processing.md) is owner-approved;
+Its [interface/scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/inbox1-durable-intake-processing.md) is owner-approved;
 the implementation is checkpointed as `ecab884`, refined as `863456b` and merged as `0f4d8bf`.
 [Inbox setup and guarantees](inbox.md) and
 [the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.

@@ -1,7 +1,7 @@
 # D1: state-stored and event-sourced domain decisions
 
 Date: 2026-10-14. Implementation prepared for owner review on `feat/ddd-sample-patterns`,
-from fetched `origin/main` at `824c95b`. Scope: [D1 plan](../plans/d1-ddd-sample-patterns.md).
+from fetched `origin/main` at `824c95b`. Scope: [D1 plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d1-ddd-sample-patterns.md).
 No library promotion, commit or push is inferred from implementation authorization.
 
 ## Outcome

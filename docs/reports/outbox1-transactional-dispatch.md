@@ -3,7 +3,7 @@
 Date: 2026-10-08. Base `0740cd3`; branch `codex/transactional-outbox`.
 Owner authorized the revised interface/scope before implementation. The initial handoff was
 unstaged for line-by-line review; this agent has not committed, pushed or merged this slice.
-[Scope/interface history](../plans/outbox1-transactional-dispatch.md),
+[Scope/interface history](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox1-transactional-dispatch.md),
 [ADR 0009](../adr/0009-module-owned-transactional-outbox.md),
 [current consumer contract](../../src/Gloaming.Messaging/docs/capabilities.md).
 

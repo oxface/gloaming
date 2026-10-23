@@ -1,7 +1,7 @@
 # ES1 default envelope and library-local documentation refinement
 
 Historical design/execution record. The active interface is superseded by
-[the owner-approved native EF replacement](../plans/es2-native-ef-simplification.md).
+[the owner-approved native EF replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 Renamed-source links lead to current replacements; removed mechanisms link to their replacement scope.
 
 Status: implemented for owner review, 2026-10-07. The owner requested a default StoredEventRecord,
@@ -99,7 +99,7 @@ loaders and Inventory's native query use the renamed storage type. No runtime de
 Review both EventSourcing package READMEs/local capability documents, the seven other library
 README refinements, repository documentation convention and current root plan/design links.
 The previous catalog path remains a pointer rather than losing its historical references.
-Exact public types and the complete ES1 file map remain in [the review brief](../plans/es1-library-write-store.md).
+Exact public types and the complete ES1 file map remain in [the review brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-library-write-store.md).
 
 Library mechanism: optional default envelope, existing shared write coordinator/projection
 storage and explicit tracked-save checks. Consumer policy: domain fact definitions, encoding/

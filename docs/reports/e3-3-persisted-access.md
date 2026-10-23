@@ -1,6 +1,6 @@
 # E3.3 persisted Access lookup and Organization admission
 
-2026-10-05. The owner approved [the plan and admission policies](../plans/e3-3-persisted-access.md).
+2026-10-05. The owner approved [the plan and admission policies](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-3-persisted-access.md).
 Implementation, consumer usage and proofs were owner-reviewed and checkpointed as `20a02be`.
 E3.2 was checkpointed as `cfbac9a`; its checkpoint documentation updates accompanied E3.3.
 
@@ -130,7 +130,7 @@ general membership/permission policy engine. Trusted non-HTTP callers explicitly
 admission and tenant initialization; possessing a UserId/OrganizationId alone grants no authority.
 
 Persisted Inventory/business ingress and module project structure are proposed in
-[E3.4](../plans/e3-4-persisted-business-ingress.md). Account
+[E3.4](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-4-persisted-business-ingress.md). Account
 creation/linking, profiles, invitations, membership administration, roles/permissions,
 user/Organization disabling, session invalidation, real OIDC/proxy topology, antiforgery
 mutations, tenant-aware native authorization handlers and shared transactions remain separate

@@ -156,7 +156,7 @@ does not observe arbitrary commands executed directly on an ADO.NET connection.
 ## Fit with Gloaming's added-capability model
 
 This is a recommendation, not implemented support. The more complete interface proposal
-lives in [the extraction plan](../plans/library-extraction.md#a24-ownership-declared-postgresql-rls).
+lives in [the extraction plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#a24-ownership-declared-postgresql-rls).
 The desired chain can preserve today's ownership declaration and add an explicit RLS choice:
 
 ```csharp

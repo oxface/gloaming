@@ -9,7 +9,7 @@ owner-authorized family relocation; those changes are unstaged for review.
 Nine existing library projects and nine library test projects now belong to five source
 families: ActorIdentity, Tenancy, Persistence, Events and EventSourcing. Each family owns a
 README and local capability/composition guide. Detailed package setup and deferred context
-remain beside their source. The [scope map](../plans/library-family-layout.md) lists every
+remain beside their source. The [scope map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-family-layout.md) lists every
 previous/current project directory and affected tooling behavior.
 
 All active C# sources and the nine library project declarations are byte-for-byte unchanged

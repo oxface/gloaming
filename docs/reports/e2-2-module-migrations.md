@@ -6,7 +6,7 @@ Checkpoint update, 2026-10-04: the owner reviewed and committed this 33-file sli
 
 2026-10-04. Implemented after the owner's instruction to proceed from E2.1 checkpoint
 `50e7933`. This slice is ready for owner review. Changes remain unstaged and uncommitted.
-Scope and limits are in [the slice plan](../plans/e2-2-module-migrations.md).
+Scope and limits are in [the slice plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-2-module-migrations.md).
 
 ## Outcome and evidence
 

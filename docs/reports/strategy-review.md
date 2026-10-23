@@ -7,8 +7,8 @@ Nothing was deleted, staged or committed. Recommendations below remain proposals
 Subsequent checkpoints: E6.1 was preserved as `1ae13d4`, and the recommended T1 rehearsal
 was completed and owner-approved as `8ccf4c8`. The body below preserves the review's original
 observations and recommendation sequence; its descriptions of uncommitted E6 or absent
-template output are historical. Use [the current plan](../plans/library-extraction.md) and
-[ES1 brief](../plans/es1-bounded-event-append.md) for the next task. This note adds no test execution.
+template output are historical. Use [the current plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md) and
+[ES1 brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md) for the next task. This note adds no test execution.
 
 ## Outcome
 
@@ -140,7 +140,7 @@ deletion versus a forward schema change.
 ## Proposed sequence and clean sessions
 
 1. Review this recommendation and the precise disposition of the existing E6 experiment.
-2. Run [T1](../plans/t1-template-rehearsal.md) in a new session: generate one bounded
+2. Run [T1](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/t1-template-rehearsal.md) in a new session: generate one bounded
    state-stored consumer outside the Foundry tree, with tested naming and event omission.
 3. If optional event sourcing remains a priority, use a separate session to define its
    supported adopter behavior and compare Foundry-owned EF mechanics with an established

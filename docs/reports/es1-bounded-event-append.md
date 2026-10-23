@@ -1,7 +1,7 @@
 # ES1: aggregate-based bounded event append
 
 Historical design/execution record. The active interface is superseded by
-[the owner-approved native EF replacement](../plans/es2-native-ef-simplification.md).
+[the owner-approved native EF replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 Renamed-source links lead to current replacements; removed mechanisms link to their replacement scope.
 
 The later [provided-store revision](es1-library-write-store.md) adds shared write loading/
@@ -15,7 +15,7 @@ is available for line-by-line implementation review. No commit is authorized.
 ## JSONB follow-up proof — 2026-10-07
 
 The owner requested applying the settled inline-state/query directions. The
-[exact revision proposal](../plans/es1-inline-state-enforcement.md) records the new public
+[exact revision proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-inline-state-enforcement.md) records the new public
 signatures and necessary finite-seed adaptations for review. Required-state save enforcement,
 appender simplification and the new availability query are not yet implemented or proven.
 
@@ -208,14 +208,14 @@ rerun here. No new template or archive runtime mechanism is claimed.
 
 Start with [aggregate core](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/EventSourcedAggregate.cs),
 [write contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/IEventSourcedAggregate.cs),
-[former configured appender](../plans/es2-native-ef-simplification.md),
+[former configured appender](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md),
 [record adapter](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventRecordMapping.cs)
-and [former prepared batch](../plans/es2-native-ef-simplification.md).
+and [former prepared batch](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 Then review [Inventory store](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
 [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
 [Purchasing store](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs)
 and [independent store](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), alongside their
-aggregates/adapters and tests linked above. The [brief](../plans/es1-bounded-event-append.md#exact-replacement-file-and-behavior-map)
+aggregates/adapters and tests linked above. The [brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md#exact-replacement-file-and-behavior-map)
 contains the exact file/behavior change map, including documentation, clock setup and CI.
 
 Only ordinary registered CLR keys/relationships and the native Version token are supported.

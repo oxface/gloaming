@@ -1,14 +1,14 @@
 # E6.1 inline decision state and required views
 
 Historical design/execution record. The active interface is superseded by
-[the owner-approved native EF replacement](../plans/es2-native-ef-simplification.md).
+[the owner-approved native EF replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 Renamed-source links lead to current replacements; removed mechanisms link to their replacement scope.
 
-2026-10-06. The owner-approved [scope](../plans/e6-1-inline-decision-state.md) is implemented
+2026-10-06. The owner-approved [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e6-1-inline-decision-state.md) is implemented
 following checkpoint `abcd370` (E5.2.2 and E5.3), and was checkpointed separately as `1ae13d4`.
 The results below are the original local executions, not remote CI or fresh runs for this
 status update. T1 subsequently completed the event-free template rehearsal as `8ccf4c8`.
-The next proposed capability is [ES1 bounded append](../plans/es1-bounded-event-append.md),
+The next proposed capability is [ES1 bounded append](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md),
 not projection repair. No new commit is authorized by this report.
 
 ## Outcome
@@ -163,12 +163,12 @@ Read the domain state/evolution, detached preparation and required-view protocol
 
 - Inventory [state](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionState.cs),
   [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
-  [former projector](../plans/es2-native-ef-simplification.md)
+  [former projector](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md)
   and [queries Contract](../../samples/Wholesale/modules/Inventory/Inventory.Contracts/IStockPositionQueries.cs).
 - Purchasing [state](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderState.cs),
   [commands](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
-  [former projector](../plans/es2-native-ef-simplification.md),
-  [former summary](../plans/es2-native-ef-simplification.md)
+  [former projector](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md),
+  [former summary](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md)
   and [queries Contract](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderQueries.cs).
 - Native [Inventory mapping](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/InlineStateMapping.cs)
   and [migration](../../samples/Wholesale/modules/Inventory/Inventory/Migrations/20261006135521_AddStockPositionCurrent.cs),

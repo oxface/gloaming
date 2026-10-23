@@ -50,7 +50,7 @@ and context after persistence failure/rollback and load committed state for a ne
 [EF appender](../Gloaming.EventSourcing.EntityFrameworkCore/README.md),
 [consumer aggregate](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionAggregate.cs),
 [core proofs](../tests/EventSourcingTests/AggregateTests.cs),
-[reviewed scope](../../../docs/plans/es1-bounded-event-append.md),
+[reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md),
 [findings](../../../docs/reports/es1-bounded-event-append.md).
 
 ## Local capability context

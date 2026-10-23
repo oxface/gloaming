@@ -1,6 +1,6 @@
 # E4 explicit durable event serialization
 
-2026-10-06. Implemented the approved [E4 scope](../plans/e4-event-serialization.md) after
+2026-10-06. Implemented the approved [E4 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e4-event-serialization.md) after
 E3.7 checkpoint `dc3ac3b`, using the owner-selected `ModulithFoundry.Events.Serialization`
 name. The owner approved the exact 42-file change set, checkpointed as `2a49ef3b`.
 Pre-commit checks and commitlint passed. The hooks reran all 202 active container-free cases

@@ -1,7 +1,7 @@
 # A2.9: admitted Sales reservation replies under RLS
 
 Implemented for owner review on 2026-10-17 after A2.8 checkpoint `087a008`, on the existing
-`feat/sales-postgres-rls` branch. The owner selected the [bounded inbox slice](../plans/a2-9-sales-inbox-rls.md).
+`feat/sales-postgres-rls` branch. The owner selected the [bounded inbox slice](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-9-sales-inbox-rls.md).
 The [consumer guide](../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) gives setup, execution,
 the operation scope and exact persistence limitations. All new changes remain unstaged.
 

@@ -1,7 +1,7 @@
 # W1/M2 and W1/OBS1 operating-boundary assessment
 
 Date: 2026-10-22. Status: preparation for
-[concrete consumer-scope review](../plans/w1-broker-recovery-shutdown.md).
+[concrete consumer-scope review](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/w1-broker-recovery-shutdown.md).
 No runtime/test implementation or fresh PostgreSQL/RabbitMQ result is claimed here.
 
 Follow-up: the owner approved this scope and the

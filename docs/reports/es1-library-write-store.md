@@ -1,7 +1,7 @@
 # ES1 provided write-store follow-up
 
 Historical design/execution record. The active interface is superseded by
-[the owner-approved native EF replacement](../plans/es2-native-ef-simplification.md).
+[the owner-approved native EF replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 Renamed-source links lead to current replacements; removed mechanisms link to their replacement scope.
 
 Status: implemented and verified for owner review, 2026-10-07. The owner endorsed
@@ -136,7 +136,7 @@ Then review [Inventory binding](../../samples/Wholesale/modules/Inventory/Invent
 creation/command changes and fixture-seed adaptations. The
 [required-state proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.RequiredInlineState.cs)
 and [independent proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/AppendTests.cs) exercise the
-supported seam. [The brief](../plans/es1-library-write-store.md) lists exact public types,
+supported seam. [The brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-library-write-store.md) lists exact public types,
 errors/dependencies and every file/behavior group beyond the prior ES1 surface.
 
 No source file or fixture is removed; unused module-local staging methods are replaced by the
@@ -173,5 +173,5 @@ lane was not rerun for this store-only revision; template sources/output were un
 
 Projection repair, async processing/subscriptions, snapshots, upcasting, messaging, audit,
 cross-module transactions and event template presets remain deferred. Their separate contract
-and recovery proofs are recorded in [the capability catalog](../plans/event-sourcing-capabilities.md).
+and recovery proofs are recorded in [the capability catalog](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/event-sourcing-capabilities.md).
 Stop here for review of this single capability.

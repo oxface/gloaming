@@ -1,10 +1,10 @@
 # W1/M2 broker recovery and W1/OBS1 shutdown closure
 
 Date: 2026-10-22. Branch `fix/worker-broker-recovery`, based on fetched inbox-retention
-merge `2e1ffac`. The owner approved the [concrete consumer scope](../plans/w1-broker-recovery-shutdown.md)
+merge `2e1ffac`. The owner approved the [concrete consumer scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/w1-broker-recovery-shutdown.md)
 before implementation. Changes remain unstaged and uncommitted for exact change-set review.
 
-Subsequent owner-approved continuation: the [RabbitMQ lifecycle interface](../plans/rabbitmq-session-lifecycle.md)
+Subsequent owner-approved continuation: the [RabbitMQ lifecycle interface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/rabbitmq-session-lifecycle.md)
 is implemented in an optional package, with [separate fresh extraction/adoption evidence](rabbitmq-session-lifecycle.md).
 The results below remain the earlier consumer-only proof; they do not substitute for those
 new executions or rule out useful shared mechanics.

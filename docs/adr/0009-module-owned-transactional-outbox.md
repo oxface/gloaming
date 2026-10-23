@@ -1,7 +1,7 @@
 # ADR 0009: Module-owned transactional outbox and independent dispatch
 
 Status: accepted and owner-reviewed, 2026-10-08. Approved checkpoint `2d7a865`, merged
-through PR #1 as `beafa4e`. [Reviewed scope](../plans/outbox1-transactional-dispatch.md).
+through PR #1 as `beafa4e`. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox1-transactional-dispatch.md).
 
 Each adopting module owns its typed native DbContext, schema/table, business contracts and
 transaction. Explicit enqueue joins that context's existing transaction; business changes,
@@ -27,7 +27,7 @@ O1 does not implement an inbox. The owner prefers durable intake followed by ind
 transactional processing: retain a complete envelope, commit intake, acknowledge transport,
 then later commit handler effects/completion/outgoing work together. That protocol needs its
 own reviewed interface and real two-module broker/database recovery proof; the
-[I1 interface/scope](../plans/inbox1-durable-intake-processing.md) received owner approval;
+[I1 interface/scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/inbox1-durable-intake-processing.md) received owner approval;
 [ADR 0010](0010-durable-inbox-local-processing.md) records the separate retained-intake protocol. MessageId identifies
 delivery; correlation groups related work and causation identifies immediate cause. They must
 not conflate delivery deduplication with semantic business-operation idempotency.

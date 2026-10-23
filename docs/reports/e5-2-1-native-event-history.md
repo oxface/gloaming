@@ -1,7 +1,7 @@
 # E5.2.1 native EF history reads
 
 2026-10-06. The owner reviewed and approved the complete 60-file
-[read/mapping increment](../plans/e5-2-1-native-event-history.md), checkpointed as `4f4d5b2`
+[read/mapping increment](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-2-1-native-event-history.md), checkpointed as `4f4d5b2`
 after E5.1 checkpoint `4cc12a1`. The working tree was clean immediately after committing.
 
 ## Outcome and extraction finding

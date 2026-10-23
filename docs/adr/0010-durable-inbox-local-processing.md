@@ -6,7 +6,7 @@ retry. The original I1 decision/evidence remains historical; retained intake/ide
 success atomicity are preserved.
 
 Status: interface and scope owner-approved, 2026-10-08. Implementation remains unstaged for
-line-by-line review. [Reviewed scope](../plans/inbox1-durable-intake-processing.md).
+line-by-line review. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/inbox1-durable-intake-processing.md).
 
 Each receiving module owns one typed DbContext, schema/table and explicitly keyed handler
 registration. Inbox intake, processing and hosting are independently selected; an inbox-only

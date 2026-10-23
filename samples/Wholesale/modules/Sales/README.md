@@ -96,7 +96,7 @@ This consumer profile adds no Gloaming interface, schema migration or general wo
   composes late native resource checks, queries and antiforgery-protected versioned edits.
 - [CQRS consumer](../../IntegrationTests/Scenarios/Cqrs/README.md) creates and reads drafts using the creator's grants;
   its PostgreSQL cases exercise complete permitted selection and native snapshot timing.
-- [A2.1 scope](../../../../docs/plans/a2-1-sales-resource-permissions.md) and
+- [A2.1 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) and
   [implementation report](../../../../docs/reports/a2-1-sales-resource-permissions.md) record
   fresh proofs separately from the A2 assessment and the
   [A2.2 optional RLS report](../../../../docs/reports/a2-2-sales-postgres-rls.md).

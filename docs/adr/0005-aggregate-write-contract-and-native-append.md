@@ -43,5 +43,5 @@ ambiguous-commit recovery or arbitrary side-effect rollback is supplied. Postgre
 proved provider. T1 remains event-free. Future engine/reader/projector capabilities need
 separate evidence and owner review.
 
-[Reviewed interfaces and exact scope](../plans/es1-bounded-event-append.md#concrete-aggregate-based-replacement-for-interface-review),
+[Reviewed interfaces and exact scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md#concrete-aggregate-based-replacement-for-interface-review),
 [implementation and verification](../reports/es1-bounded-event-append.md).

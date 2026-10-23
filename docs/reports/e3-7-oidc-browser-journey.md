@@ -2,7 +2,7 @@
 
 Status: owner-reviewed and checkpointed as `dc3ac3b` after E3.6 checkpoint `28ee797`.
 All configured pre-commit and commit-message hooks passed. See
-[the scope](../plans/e3-7-oidc-browser-journey.md) and
+[the scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-7-oidc-browser-journey.md) and
 [local runtime guide](../../samples/Wholesale/AppHost/README.md).
 
 ## Outcome and ownership
@@ -174,5 +174,5 @@ Logout/provider end-session, ticket stores/session invalidation, account lifecyc
 linking, membership administration, roles/permissions, open registration and tenant-aware
 native authorization handlers remain separate capabilities. This closes the bounded E3
 state-stored ingress proof, not those additional features. The next
-planned slice is [E4 durable event identity/payload codecs](../plans/e4-event-serialization.md), exercised by two event families
+planned slice is [E4 durable event identity/payload codecs](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e4-event-serialization.md), exercised by two event families
 without requiring messaging or EF.

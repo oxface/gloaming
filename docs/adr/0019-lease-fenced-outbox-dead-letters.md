@@ -36,7 +36,7 @@ faults without another poll; native host supervision and consumer repair/restart
 recovery. Consumer code owns classification, budgets, acceptance, admission, operator authority,
 credentials, presentation and audit. Column grants do not enforce legal lifecycle transitions.
 
-The subsequently owner-selected [completion supervision follow-up](../plans/m2-outbox-completion-supervision.md)
+The subsequently owner-selected [completion supervision follow-up](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-outbox-completion-supervision.md)
 uses OutboxCompletionException for unconfirmed completion after normal publication return,
 retaining MessageId and the original InnerException. It also faults the optional worker
 without another poll. This signal preserves completion uncertainty and never triggers
@@ -54,5 +54,5 @@ writes remain fenced. Receiver deduplication is required.
 
 Payload editing, completed-message replay, retention, lease renewal, a generic administration
 framework and template presets are excluded. See the [current family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md),
-[reviewed proposal](../plans/m2-outbox-dead-letters.md) and
+[reviewed proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-outbox-dead-letters.md) and
 [new evidence report](../reports/m2-outbox-dead-letters.md).

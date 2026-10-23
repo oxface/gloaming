@@ -1,7 +1,7 @@
 # S1 Wholesale product consolidation
 
 Date: 2026-10-22. Base: `c346a51`. Branch: `feat/v1-wholesale-consolidation`.
-Scope: [selected consolidation map](../plans/s1-sample-experiment-consolidation.md#selected-wholesale-map).
+Scope: [selected consolidation map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/s1-sample-experiment-consolidation.md#selected-wholesale-map).
 
 Wholesale now has one [API](../../samples/Wholesale/Api/README.md), one
 [worker/maintenance executable](../../samples/Wholesale/Worker/README.md), one

@@ -125,7 +125,7 @@ cross-module technical duplication that warrants a library. Persisted projection
 generic repositories, mediator/pipeline abstractions and generic paging/filter
 helpers remain unselected.
 
-The [A2.1 permission slice](../../../../../docs/plans/a2-1-sales-resource-permissions.md) adds
+The [A2.1 permission slice](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) adds
 direct human/system grants and native HTTP adoption; its query tests cover sparse grants,
 revocation, tenant-colliding IDs and count/page grant-snapshot changes. This supplies no
 grant editor, role/group engine, export/AI endpoint or strict permission-at-commit fence.
@@ -139,6 +139,6 @@ query indexes/benchmarks, alternate sorting and provider semantics need separate
 consumer requirements. An upper page-size limit does not bound offset scan cost
 or aggregate-query cost.
 
-The [scope](../../../../../docs/plans/c1-cqrs-consumer-patterns.md) records the pre-implementation
+The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/c1-cqrs-consumer-patterns.md) records the pre-implementation
 consumer proposal. The [slice report](../../../../../docs/reports/c1-cqrs-consumer-patterns.md)
 separates new checks, historical evidence and remaining template work.

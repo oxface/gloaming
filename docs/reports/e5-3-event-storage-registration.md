@@ -1,6 +1,6 @@
 # E5.3 explicit event-sourcing storage registration
 
-2026-10-06. The owner-authorized [interface and scope](../plans/e5-3-event-storage-registration.md)
+2026-10-06. The owner-authorized [interface and scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-3-event-storage-registration.md)
 was owner-reviewed and checkpointed as `abcd370`, together with E5.2.2. This report records
 implementation executions separately from checkpoint hooks; it makes no remote CI claim.
 
@@ -52,7 +52,7 @@ Formatting checked 293 files; native semantic style and analyzers passed. Active
 links/whitespace passed, and the archive verifier confirmed all 800 original files unchanged.
 The sandbox initially denied the test/style runners' IPC sockets; the permitted reruns passed.
 
-[E6.1's proposed scope](../plans/e6-1-inline-decision-state.md) covers explicit inline decision
+[E6.1's proposed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e6-1-inline-decision-state.md) covers explicit inline decision
 loading and required views next. It remains a plan, not another implemented storage guarantee.
 
 ### Native model

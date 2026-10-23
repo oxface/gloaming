@@ -128,6 +128,6 @@ Review the exception, [callable boundary](../../src/Gloaming.Messaging/Gloaming.
 [PostgreSQL proofs](../../src/Gloaming.Messaging/tests/OutboxPostgresTests/CompletionSupervisionTests.cs),
 [child-process proof](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/OutboxRecoveryProcessTests.cs) and
 [family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md) first. The
-[scope](../plans/m2-outbox-completion-supervision.md) records concrete usage and file/schema
+[scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-outbox-completion-supervision.md) records concrete usage and file/schema
 boundaries. This follow-up remains unstaged and uncommitted; its originally empty index is
 preserved. No push or pull request was requested.

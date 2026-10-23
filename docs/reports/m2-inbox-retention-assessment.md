@@ -1,7 +1,7 @@
 # M2 inbox retention: current-code assessment
 
 Date: 2026-10-22. Status: preparation evidence for
-[owner interface/scope review](../plans/m2-inbox-retention.md). No C# or schema implementation,
+[owner interface/scope review](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-retention.md). No C# or schema implementation,
 new reusable mechanism or new PostgreSQL test result is claimed here.
 
 ## Scope and repository state

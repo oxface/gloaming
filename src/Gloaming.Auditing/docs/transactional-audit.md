@@ -1,7 +1,7 @@
 # Transactional audit contract
 
 [Package setup and usage](../Gloaming.Auditing.EntityFrameworkCore/README.md) is independently
-adoptable. [The reviewed E9 scope](../../../docs/plans/e9-explicit-transactional-audit.md)
+adoptable. [The reviewed E9 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e9-explicit-transactional-audit.md)
 records the comparison that earned this extraction.
 
 ## Native lifecycle

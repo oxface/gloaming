@@ -2,7 +2,7 @@
 
 Date: 2026-10-21. Branch: `feat/inbox-failure-recovery`, continuing checkpoint `f7d38d4`.
 The owner selected completion before merge and approved the
-[concrete public interface](../plans/m2-inbox-dead-letters.md) before implementation.
+[concrete public interface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-dead-letters.md) before implementation.
 Changes remain unstaged and uncommitted; the starting empty index is preserved.
 Earlier [recovery](m2-inbox-failure-recovery.md) and
 [supervision](m2-inbox-failure-supervision.md) reports retain their dated evidence.

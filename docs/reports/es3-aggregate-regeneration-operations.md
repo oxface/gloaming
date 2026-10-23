@@ -37,7 +37,7 @@ maintenance entry. Business Contracts gain no technical dependency.
 An independent [direct-JSON ledger adopter](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegenerationTests.cs)
 uses the same public executor without Wholesale, tenancy, actor or codec assumptions. The
 [package contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations)
-is self-sufficient; [reviewed interface/scope](../plans/library-extraction.md#es3-optional-regeneration-executor-interface-review)
+is self-sufficient; [reviewed interface/scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#es3-optional-regeneration-executor-interface-review)
 and [ADR 0017](../adr/0017-explicit-aggregate-regeneration-execution.md) record ownership decisions.
 
 ## New PostgreSQL and process proofs

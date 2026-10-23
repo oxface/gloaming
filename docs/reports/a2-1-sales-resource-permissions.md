@@ -2,7 +2,7 @@
 
 Implementation selected by the owner on 2026-10-16 after the
 [A2 assessment](tenant-authorization-assessment.md). The selected
-[bounded scope](../plans/a2-1-sales-resource-permissions.md) is Sales resource permissions
+[bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-1-sales-resource-permissions.md) is Sales resource permissions
 and complete queries; optional PostgreSQL RLS remains separate. Prepared on
 `feat/sales-resource-authorization` from fetched main `d35b3ee`, using the existing checkout
 and preserving the earlier unstaged assessment. No commit/push is part of this handoff.

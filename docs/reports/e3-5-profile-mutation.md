@@ -1,7 +1,7 @@
 # E3.5 Sales profile mutation
 
 Status: implemented for owner review; new changes remain unstaged. The owner-approved
-[plan](../plans/e3-5-profile-mutation.md) supplies scope/interfaces, not commit authorization.
+[plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-5-profile-mutation.md) supplies scope/interfaces, not commit authorization.
 The owner's existing 73-file staged E3.4 set was preserved unchanged throughout this slice.
 
 ## Outcome and ownership

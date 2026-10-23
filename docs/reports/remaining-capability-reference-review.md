@@ -7,9 +7,9 @@ against this repository's dependency versions. No new reusable mechanism was pro
 
 ## Decision context
 
-The [design](../design.md) and [extraction plan](../plans/library-extraction.md) keep ordinary
+The [design](../design.md) and [extraction plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md) keep ordinary
 .NET adoption, native transactions, explicit setup and consumer-owned policy. The existing
-[durable-message observability proposal](../plans/durable-message-observability.md) is still a
+[durable-message observability proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/durable-message-observability.md) is still a
 proposal. This review provides external evidence for bounded follow-ups; it neither approves
 that interface nor changes the currently supported library contracts. Archived sample proofs
 remain historical evidence and were not rerun.

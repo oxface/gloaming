@@ -96,7 +96,7 @@ controls and [primary-source evidence](../../../docs/reports/tenant-authorizatio
 - [Sales executable](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md): adopts this
   extension in its explicit opt-in RLS composition. Its existing role/permission/raw/bulk/
   savepoint/retry/reconnect/COPY proofs now cross the public utility.
-- [Extraction scope](../../../docs/plans/a2-3-postgres-tenant-context.md) and
+- [Extraction scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-3-postgres-tenant-context.md) and
   [fresh report](../../../docs/reports/a2-3-postgres-tenant-context.md) distinguish the reusable
   setup mechanism from consumer-owned policies and unsupported integration.
 

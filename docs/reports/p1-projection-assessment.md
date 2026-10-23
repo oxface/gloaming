@@ -2,7 +2,7 @@
 
 Date: 2026-10-22. Baseline: `790a8b7`; isolated topic branch
 `docs/v1-projection-assessment`. Scope: the
-[bounded decision and proof contract](../plans/p1-projection-assessment.md), with no runtime,
+[bounded decision and proof contract](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/p1-projection-assessment.md), with no runtime,
 library interface, dependency, migration, solution, CI or template changes.
 
 ## Verdict
@@ -27,7 +27,7 @@ count planned directory proofs as passing tests.
 | SQL filters/count/page can ignore permission completeness | Rejected. [Authorization proofs](../../samples/Wholesale/IntegrationTests/Queries/QueryTests.Authorization.cs), especially `ResourceGrantsFilterDetailsTotalsAndPagesBeforeMaterialization`, cover sparse visibility and overlapping grants. Current EXISTS intersects subject/tenant grants before the query shape/count/page. |
 | A current customer name must be copied into draft state | Rejected for this requirement. `NameFilterUsesCurrentJoinedCustomerAndLiteralCaseSensitiveSubstring` changes the profile and observes new joined results while draft version/total remain unchanged. |
 | Every event-sourced read needs replay or another persisted projection | Rejected. `InventoryFiltersReservedAvailabilityInSqlWithoutReplayingHistory` verifies availability 3 at threshold 3, none at 4, native JOINs, tenant isolation, no tracking or stored-event reads. [Purchasing](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderQueries.cs) derives its point summary from checked inline state. |
-| Purchasing's point-summary tests establish server-side JSON line total search | Rejected. Source inspection shows materialization before `state.Total`; list filtering/sorting/counting over those totals has no current requirement/proof. [ES2's reviewed replacement](../plans/es2-native-ef-simplification.md) already removed the dormant summary table through a forward migration. Earlier E6 multi-view results are historical. |
+| Purchasing's point-summary tests establish server-side JSON line total search | Rejected. Source inspection shows materialization before `state.Total`; list filtering/sorting/counting over those totals has no current requirement/proof. [ES2's reviewed replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) already removed the dormant summary table through a forward migration. Earlier E6 multi-view results are historical. |
 | Deterministic sorting means count/page form one snapshot | Rejected. [Transaction proofs](../../samples/Wholesale/IntegrationTests/Queries/QueryTests.Transactions.cs) show concurrent insert drift under ReadCommitted and stable count/page under caller-selected RepeatableRead. A2.1 repeats the distinction for grant revocation. |
 | One same-module query proves a cross-module common snapshot | Rejected. [CqrsJourney](../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/CqrsJourney.cs) uses Inventory and Sales Contracts in separate operations. It supplies advisory availability, without a common snapshot, reservation or cross-module transaction. |
 | A shared PostgreSQL server authorizes private-context joins | Rejected by [current module ownership](../../samples/Wholesale/modules/README.md). Contracts export immutable business results, not rows/IQueryable. C1's SQL observation also asserts the Sales search does not query `inventory.`. |
@@ -76,7 +76,7 @@ table in the plan is an obligation inventory, not execution evidence.
 
 ## Review-worthy files and findings
 
-Review the [plan](../plans/p1-projection-assessment.md) for the native-query/ownership
+Review the [plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/p1-projection-assessment.md) for the native-query/ownership
 boundary, selected Dispatch view, per-key revision/tombstone assumptions and population/
 checkpoint/backfill obligations. Review this report for evidence attribution and remaining
 gaps. Runtime query/test files are evidence pointers only and are unchanged by P1.

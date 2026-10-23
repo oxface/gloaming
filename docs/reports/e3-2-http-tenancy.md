@@ -1,6 +1,6 @@
 # E3.2 HTTP tenant establishment
 
-2026-10-05. The owner approved [the scope](../plans/e3-2-http-tenancy.md), including middleware
+2026-10-05. The owner approved [the scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-2-http-tenancy.md), including middleware
 after native authorization and actor completion. Implementation, consumer usage and proofs
 were owner-reviewed and checkpointed as `cfbac9a`, including the registration refinements.
 The owner approved the complete 50-file change set; no files were added to that approved
@@ -186,7 +186,7 @@ Review public interface/outcomes and policy first:
   and [sample composition](../../samples/Wholesale/IntegrationTests/Api/CompositionTests.cs).
 
 The implementation and refinements were owner-reviewed before checkpointing.
-[E3.3 proposes persisted Access lookup/admission](../plans/e3-3-persisted-access.md); a tenant-bearing
+[E3.3 proposes persisted Access lookup/admission](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-3-persisted-access.md); a tenant-bearing
 state-stored business journey using E2 persistence follows separately. Tenant-aware native authorization handlers,
 revocation/invitations/roles, provider/proxy infrastructure, BFF/session/antiforgery, mutation
 semantics, full module project structure and shared transactions remain unproven here.

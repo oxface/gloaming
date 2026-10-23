@@ -55,7 +55,7 @@ obligations without creating speculative abstractions:
 
 The initial assessment rejected a generic state/store wrapper around native EF. The owner's
 follow-up identified a narrower candidate: ordered progress, expected-command/outcome matching
-and compensation-attempt bookkeeping. [The concrete sequential-coordinator proposal](../plans/wf2-sequential-saga-coordinator.md)
+and compensation-attempt bookkeeping. [The concrete sequential-coordinator proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-sequential-saga-coordinator.md)
 now assesses that extraction while leaving business input validation and typed commands local.
 Its interface and exact replacement scope await owner review; no new mechanism is implemented
 or proven by the results below. Existing Gloaming mechanisms already concentrate transaction,
@@ -86,7 +86,7 @@ dispatch and scope behavior. Scheduling and poison handling remain separate futu
   [races/process recovery](../../samples/Wholesale/IntegrationTests/Reservations/Broker/ReservationRecoveryTests.cs),
   fixture and extended database barrier. No new durable script or test project was needed.
 
-The [scope map](../plans/wf2-compensating-workflow.md) names all changed behavior. Existing CI
+The [scope map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-compensating-workflow.md) names all changed behavior. Existing CI
 paths and the Messaging test invocation already cover the extended project; no CI change is
 needed. Module implementations retain Contracts-only peer references. No library runtime
 code/interface or template preset changed; T1 remains independently event/messaging-free.

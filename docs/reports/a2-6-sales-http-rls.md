@@ -1,7 +1,7 @@
 # A2.6: Sales HTTP row security adoption
 
 Implemented for owner review on 2026-10-16 after the owner approved continuation on
-`feat/sales-postgres-rls`, starting from `635cb5b`. The [scope](../plans/a2-6-sales-http-rls.md)
+`feat/sales-postgres-rls`, starting from `635cb5b`. The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-6-sales-http-rls.md)
 and [executable consumer guide](../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
 describe the bounded optional composition. All new changes remain unstaged.
 

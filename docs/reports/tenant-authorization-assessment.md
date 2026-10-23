@@ -3,7 +3,7 @@
 Assessment: 2026-10-16. Code baseline: fetched `origin/main`
 `d35b3ee24205e33244add4c61ee69430b4192454`, including merged A1 (`b3e1c11`) and
 A1.1 (`d35b3ee`). Prepared on `docs/tenant-authorization-assessment` in the existing
-checkout. [Brief](../plans/a2-tenant-resource-authorization-rls-research.md),
+checkout. [Brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-tenant-resource-authorization-rls-research.md),
 [A1 recommendation](access-authorization-assessment.md),
 [A1.1 implementation/proofs](a1-1-membership-suspension.md),
 [PostgreSQL/Npgsql primary sources](tenant-authorization-primary-sources.md).

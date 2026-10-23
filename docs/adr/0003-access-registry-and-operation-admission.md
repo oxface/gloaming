@@ -45,6 +45,6 @@ Membership management, invitations, roles, session invalidation and stronger mut
 authorization need separate review. Assembly-level module isolation and persisted Inventory
 ingress remain E3.4 work. No reusable Access library is justified by this consumer alone.
 
-See [the approved plan](../plans/e3-3-persisted-access.md),
+See [the approved plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-3-persisted-access.md),
 [consumer setup](../../samples/Wholesale/Api/README.md) and
 [execution report](../reports/e3-3-persisted-access.md).

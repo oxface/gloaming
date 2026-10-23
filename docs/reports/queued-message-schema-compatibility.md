@@ -1,6 +1,6 @@
 # Queued-message schema compatibility
 
-Date: 2026-10-21. Owner-approved [scope and sample surface](../plans/queued-message-schema-compatibility.md),
+Date: 2026-10-21. Owner-approved [scope and sample surface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/queued-message-schema-compatibility.md),
 implemented on feat/queued-message-schema-compatibility from fetched main `86331de` after PR #41.
 The [preparation assessment](queued-message-schema-compatibility-assessment.md) records the original
 caller findings separately. The prior outbox, inbox and codec reports remain historical evidence;

@@ -1,7 +1,7 @@
 # ADR 0007: Pre-read admission for version-preserving inline rebuilding
 
 Status: superseded by [ADR 0008](0008-native-optimistic-aggregate-rebuilding.md). Historical owner-reviewed direction, 2026-10-07; implementation remains available for line-by-line
-review. [The reviewed ES2 scope](../plans/es2-single-stream-rebuilding.md) adds one maintenance
+review. [The reviewed ES2 scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-single-stream-rebuilding.md) adds one maintenance
 capability to the explicit native EF transaction contract.
 
 Repair rebuilds the one required inline aggregate state at the existing event head without modifying events,

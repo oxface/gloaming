@@ -135,6 +135,8 @@ or schedule it using their existing infrastructure; no additional permanent work
 
 Dead letters remain retained for repair and authorized retry. Discard/purge, permanent duplicate
 registries, supplied scheduling, durable cumulative cleanup accounting and console/dashboard
-features are not implemented by this contract. Their proposed post-v1 disposition still needs
-the owner's explicit decision in the [M2 report](../../../docs/reports/m2-inbox-retention.md).
+features are not implemented by this contract. The owner explicitly approved these five
+supplied-feature deferrals with checkpoint `6510f9e`, merged as `2e1ffac`;
+the [dated M2 report](../../../docs/reports/m2-inbox-retention.md) records the original proposal.
+Those deferrals do not grant permanent delivery suppression or terminal-deletion support.
 See [completed-outbox cleanup](outbox-retention.md) for its different sender-history contract.

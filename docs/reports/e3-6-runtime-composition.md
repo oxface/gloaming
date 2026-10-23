@@ -1,7 +1,7 @@
 # E3.6 Runtime composition and native telemetry
 
 Status: owner-reviewed and checkpointed as `28ee797` after E3.4/E3.5 checkpoint `31c7a8b`.
-All configured pre-commit and commit-message hooks passed. See [the scope](../plans/e3-6-runtime-composition.md)
+All configured pre-commit and commit-message hooks passed. See [the scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-6-runtime-composition.md)
 and [runtime guide](../../samples/Wholesale/AppHost/README.md).
 
 ## Outcome and control

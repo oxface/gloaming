@@ -1,7 +1,7 @@
 # Bounded completed-outbox retention
 
 Date: 2026-10-21. Owner-selected implementation after approving visibility checkpoint
-`2125860`, on `feat/outbox-completed-retention`. The [scope](../plans/outbox-completed-retention.md)
+`2125860`, on `feat/outbox-completed-retention`. The [scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox-completed-retention.md)
 records concrete usage, authority and schema boundaries. This report distinguishes new
 retention proofs from the earlier [visibility](outbox-operational-visibility.md),
 [completion](m2-outbox-completion-supervision.md) and [dead-letter](m2-outbox-dead-letters.md) evidence.

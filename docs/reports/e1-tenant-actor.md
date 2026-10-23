@@ -2,7 +2,7 @@
 
 Historical checkpoint report, 2026-10-03. The combined design below is superseded by
 [the independent actor/tenancy split](e1-identity-split.md). Original implementation and
-interfaces remain available at commit `a8e45c9`; the active [slice plan](../plans/e1-tenant-actor.md)
+interfaces remain available at commit `a8e45c9`; the active [slice plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e1-tenant-actor.md)
 now describes the split. This report records the original work,
 owner-reviewed and checkpointed as `a8e45c9`. Review revisions were left unstaged for the
 owner's staging; the checkpoint followed explicit exact-change-set approval.

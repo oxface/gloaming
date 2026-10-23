@@ -3,7 +3,7 @@
 Status: owner-approved interface and implementation scope, 2026-10-17, with approved native
 IProgress/scope-factory refinement on 2026-10-18. Extends the optional
 maintenance capability described in ADR 0008; it does not replace native optimistic concurrency
-or change direct rebuilder/store save ownership. [Reviewed surface](../plans/library-extraction.md#es3-optional-regeneration-executor-interface-review).
+or change direct rebuilder/store save ownership. [Reviewed surface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#es3-optional-regeneration-executor-interface-review).
 
 Provide `AggregateRegenerator<TAggregate,TContext>` in the existing EventSourcing EF package.
 An explicit call delegates one complete maintenance operation: fresh scope/context per attempt,

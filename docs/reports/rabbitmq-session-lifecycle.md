@@ -1,7 +1,7 @@
 # RabbitMQ lifecycle extraction and adoption
 
 Date: 2026-10-22. Branch `fix/worker-broker-recovery`, based on inbox-retention merge 2e1ffac.
-The owner approved the [concrete public interface/adoption scope](../plans/rabbitmq-session-lifecycle.md)
+The owner approved the [concrete public interface/adoption scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/rabbitmq-session-lifecycle.md)
 before implementation. All work remains unstaged and uncommitted for exact change-set review.
 
 ## Outcome: one reusable lifecycle mechanism

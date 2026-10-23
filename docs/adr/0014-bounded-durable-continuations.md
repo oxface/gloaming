@@ -38,6 +38,6 @@ operations retain history indefinitely and have no throughput/pruning claim. Pos
 first proven database. Parallel joins, scheduling, deadlines, cancellation, durable operator
 signal receipts, replay/graph engines and generic compensation selection remain deferred.
 
-[Approved scope](../plans/wf2-durable-continuations.md),
+[Approved scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-durable-continuations.md),
 [current package-local contract](../../src/Gloaming.Messaging/docs/workflows.md), and
 [fresh evidence](../reports/wf2-durable-continuations.md).

@@ -114,5 +114,5 @@ native authentication/authorization integration, independent actor/tenancy estab
 Organization selection and admission/membership policy. Its exact first capability and
 public interfaces require a separate plan/review. Persistence refinements can return when a
 real workflow requires them; this slice supplies no reason to pre-build a generic transaction
-abstraction. See [the E2 inventory](../plans/e2-persistence.md) and
-[the overall extraction plan](../plans/library-extraction.md).
+abstraction. See [the E2 inventory](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e2-persistence.md) and
+[the overall extraction plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md).

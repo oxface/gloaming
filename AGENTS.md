@@ -7,7 +7,8 @@ Before choosing change scope, staging, preparing a pull request, or committing, 
 
 - Before changing C# code, read [the .NET conventions](docs/conventions/dotnet.md).
 - Before architecture, dependencies, or public-interface work, read
-  [the current design decisions](docs/design.md) and [the extraction plan](docs/plans/library-extraction.md).
+  [the current design](docs/design.md) and [the extraction gate](docs/plans/library-extraction.md).
+- When continuing repository cleanup, use the [audit's current queue](docs/reports/gloaming-library-audit.md#remaining-cleanup-slices).
 - Before changing shared terminology, read [the project glossary](CONTEXT.md). Keep it to
   resolved definitions; implementation choices belong in the design documents.
 - Implement one reviewable capability with executable consumer usage and relevant proofs.
@@ -18,7 +19,7 @@ Before choosing change scope, staging, preparing a pull request, or committing, 
   Historical plans and instructions do not authorize active implementation. Preserve current
   owned fixtures and migrations; document compatibility repairs with their owning capability.
 - Record settled, hard-to-reverse architecture choices in `docs/adr/`. Proposed interfaces
-  remain in the extraction plan until reviewed.
+  follow the extraction gate and remain proposals until reviewed.
 
 ## Slice reports
 

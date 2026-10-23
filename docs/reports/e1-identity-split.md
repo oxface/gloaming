@@ -3,7 +3,7 @@
 2026-10-03. Implemented under owner authorization, owner-reviewed and checkpointed as
 `c8cbf64` after explicit approval of the complete 55-file staged change set. This revises
 checkpoint `a8e45c9`, whose combined interface and 40-test result
-remain [historical E1 evidence](e1-tenant-actor.md). See [the revised interfaces](../plans/e1-tenant-actor.md).
+remain [historical E1 evidence](e1-tenant-actor.md). See [the revised interfaces](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e1-tenant-actor.md).
 
 ## Outcome
 

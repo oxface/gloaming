@@ -1,6 +1,6 @@
 # E3.4 persisted business ingress and module projects
 
-The owner approved [the plan](../plans/e3-4-persisted-business-ingress.md) for implementation.
+The owner approved [the plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-4-persisted-business-ingress.md) for implementation.
 Implementation, executable consumer and relevant proofs are complete for owner review;
 all changes remain unstaged and no commit is authorized. E3.3 is checkpointed as `20a02be`.
 

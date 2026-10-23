@@ -60,7 +60,7 @@ The synthetic conversation/distinct-worker-traces audit proof and trace-specific
 validation/tampering cases are removed. The finite broker journey no longer installs a local
 listener or starts an activity solely for audit. Existing native HTTP telemetry coverage
 remains separate; distributed HTTP/message span continuity is a separate
-[proposal](../plans/durable-message-observability.md), not an E9 guarantee.
+[proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/durable-message-observability.md), not an E9 guarantee.
 
 StockIssueMessages now generates conversation correlation per direct-command operation
 scope instead of using the aggregate ID. Inbox replies retain incoming correlation even
@@ -237,7 +237,7 @@ mechanism is proven by this slice.
   and [outbox retry proof](../../samples/Wholesale/IntegrationTests/EventPersistence/OutboxDispatchTests.cs).
   Two supporting older Sales migration assertions now compare all declared migrations.
 - [Library-local contract](../../src/Gloaming.Auditing/docs/transactional-audit.md),
-  [reviewed scope](../plans/e9-explicit-transactional-audit.md) and
+  [reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e9-explicit-transactional-audit.md) and
   [ADR 0011](../adr/0011-explicit-transactional-audit.md); architecture/CI/hook integration.
 
 The completed executions prove a new reusable mechanism: explicit envelope capture and

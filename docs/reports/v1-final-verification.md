@@ -16,7 +16,7 @@ is performed. This verification does not authorize those actions.
 
 | Requirement | Implementation and proof owner | Current disposition |
 | --- | --- | --- |
-| WF2 retained progress across deployment | [Selected scope](../plans/wf2-deployment-continuity.md), separately compiled Earlier/Current consumers, literal protocol fixtures and seven PostgreSQL process cases. | Implemented and merged; seven cases passed in the integrated native matrix. Compatible continuation, rejection/restoration and save-before-commit interruption are exercised. No mixed-version runtime or deployment coordinator is claimed. |
+| WF2 retained progress across deployment | [Selected scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-deployment-continuity.md), separately compiled Earlier/Current consumers, literal protocol fixtures and seven PostgreSQL process cases. | Implemented and merged; seven cases passed in the integrated native matrix. Compatible continuation, rejection/restoration and save-before-commit interruption are exercised. No mixed-version runtime or deployment coordinator is claimed. |
 | B2 initial population plus ongoing changes | [Protocol report](b2-dispatch-directory-population.md), [canonical adoption](https://github.com/oxface/modulith-foundry/blob/86012044cdaf248c90f65a05eb9dc64e8accfb07/docs/reports/b2-directory-product-adoption.md), Sales/Dispatch public Contracts, Directory Worker and integration tests. | Implemented and merged. The fresh complete canonical run passed 713 cases, zero skipped. Producer-defined revisions, withdrawal fences, overlap, restart, atomic progress and baseline readiness are the supported contract. Earlier fourteen-case and 713-case checkpoint results remain separately dated evidence. |
 | Useful extraction and consumer burden | [Route selection contract](../../src/Gloaming.Messaging/docs/route-selection.md), provider tests and different Directory/reservation publishers. | Optional copied/validated route selection is behind the existing PostgreSQL claim/lease mechanism. Full-diff code and architecture reviews found no additional justified extraction; disclosure, admission, revision meaning, merge/readiness and native save/commit remain consumer-owned. |
 | P1 native query assessment | [Assessment](p1-projection-assessment.md), actual Sales/Inventory/Purchasing query code and retained query proofs; B2 owns the independent receiver view. | Native joins/filters satisfy selected same-module reads. B2 supplies the concrete availability/population need. No generic projection engine is justified or claimed. |
@@ -98,7 +98,7 @@ alone do not prove runtime behavior.
 ## Supported limits and gap disposition
 
 The five owner-approved post-v1 M2 supplied-feature deferrals remain in the merged
-[retention scope](../plans/m2-inbox-retention.md) and family contract. No important selected
+[retention scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-retention.md) and family contract. No important selected
 gap is silently reclassified as a new slice. Historical source-audit gaps are reconciled with
 later broker recovery/shutdown, queued compatibility, retention and regeneration work rather
 than reopened from stale reports.

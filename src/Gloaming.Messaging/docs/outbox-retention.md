@@ -75,7 +75,7 @@ deployment plan. Its ordinary transactional index build is not an online/concurr
 rollout guarantee. Batch row limits do not bound scan cost, lock time, WAL, disk reclamation or
 vacuum behavior; this slice supplies no capacity benchmark or automatic maintenance service.
 
-See [the scope](../../../docs/plans/outbox-completed-retention.md) and
+See [the scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox-completed-retention.md) and
 [new proof report](../../../docs/reports/outbox-completed-retention.md) for actual PostgreSQL,
 credential, migration and child-process evidence. [Dead-letter retry](outbox-recovery.md) and
 [backlog/worker health](outbox-observability.md) retain their separate contracts. Inbox [processed-receipt expiry](inbox-retention.md),

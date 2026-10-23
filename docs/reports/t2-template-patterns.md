@@ -1,7 +1,7 @@
 # T2: template pattern adoption
 
 Date: 2026-10-22. Topic branch `feat/v1-template-patterns`, fixed P1 base `4bed3eb`.
-The [bounded scope](../plans/t2-template-patterns.md) adds working generated Catalog
+The [bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/t2-template-patterns.md) adds working generated Catalog
 commands/queries and one explicitly selected separate report-worker composition.
 
 ## Outcome

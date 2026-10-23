@@ -156,7 +156,7 @@ provider/scope construction in the executable host or test harness. Review that 
 shape before introducing interception, new base contexts, repository abstractions or
 serialized event storage. These are proposed changes; this research changed no runtime code.
 
-The [concrete composition follow-up](../plans/d2-1d-module-owned-event-composition.md) shows the
+The [concrete composition follow-up](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-1d-module-owned-event-composition.md) shows the
 implemented module extension, native scope and options-only DbContext shape. No Gloaming or AlCopilot
 project test suite was executed for this comparison; the isolated equality check is the only new
 runtime execution and establishes no dispatch/transaction guarantee.

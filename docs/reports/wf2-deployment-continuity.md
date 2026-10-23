@@ -1,7 +1,7 @@
 # WF2 deployment continuity proof
 
 Date: 2026-10-22. Base: `790a8b7`. Scope:
-[bounded deployment continuity](../plans/wf2-deployment-continuity.md).
+[bounded deployment continuity](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-deployment-continuity.md).
 
 The [standalone consumer](https://github.com/oxface/modulith-foundry/blob/56a8b12857d1cffb842d839238784c607b66e474/src/Gloaming.Messaging/samples/WorkflowDeploymentDemo/README.md)
 now executes a real earlier/current process journey on PostgreSQL. Its Earlier and Current

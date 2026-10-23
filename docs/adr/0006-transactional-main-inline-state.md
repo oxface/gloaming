@@ -3,7 +3,7 @@
 Status: accepted consistency direction, owner-confirmed on 2026-10-06. The owner subsequently
 endorsed a provided write store and authorized implementation for review on 2026-10-07.
 The exact configuration/implementation remains subject to line-by-line review. Supplements
-ADR 0005; see [the store surface](../plans/es1-library-write-store.md).
+ADR 0005; see [the store surface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-library-write-store.md).
 
 ## Context
 
@@ -43,7 +43,7 @@ documented policy. Raw streams keep independent adoption without an implicit pro
 
 The provided store declares one required aggregate state explicitly. The earlier ES1
 secondary-view contract is historical checkpoint evidence, superseded by the
-[reviewed ES2 reduction](../plans/es2-aggregate-only-reduction.md). Native model
+[reviewed ES2 reduction](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-aggregate-only-reduction.md). Native model
 registration and validation in both consumer save overrides check the active transaction,
 header, complete inserted event range and required state metadata before SQL. New omission,
 corruption, rollback and recovery proofs appear in [the follow-up report](../reports/es1-library-write-store.md).
@@ -51,6 +51,6 @@ This is a tracked native-save contract: raw SQL, bulk updates/deletes, external 
 bypassed save overrides require a separate database enforcement contract. State-body semantic
 validation remains consumer-owned. No RLS or async consistency mechanism is established.
 
-See [the capability directions](../plans/event-sourcing-capabilities.md),
+See [the capability directions](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/event-sourcing-capabilities.md),
 [ADR 0005](0005-aggregate-write-contract-and-native-append.md) and
 [existing ES1 evidence](../reports/es1-bounded-event-append.md).

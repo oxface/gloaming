@@ -56,5 +56,5 @@ save and before inbox completion/commit, then recover in another process. The co
 `WORKFLOW_DEPLOYMENT_PAUSE_AFTER_SAVE=true`; keep this test setting unset for ordinary commands.
 
 See [family deployment guidance](../../../docs/workflow-deployments.md),
-[bounded scope](../../../../../docs/plans/wf2-deployment-continuity.md) and
+[bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-deployment-continuity.md) and
 [fresh evidence](../../../../../docs/reports/wf2-deployment-continuity.md).

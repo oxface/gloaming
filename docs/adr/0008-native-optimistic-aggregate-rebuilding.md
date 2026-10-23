@@ -3,7 +3,7 @@
 Status: owner-approved replacement, 2026-10-07. Supersedes
 [ADR 0007](0007-pre-read-admission-for-inline-rebuilding.md) and the public two-phase append
 mechanism described in ADR 0005; the aggregate contract and transactional required-state
-choice remain. [Reviewed scope](../plans/es2-native-ef-simplification.md).
+choice remain. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 
 Add an application-managed Guid ConcurrencyStamp on the stream header alongside the native
 Version concurrency token. Every append and full rebuild changes the stamp. Repair preserves

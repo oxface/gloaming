@@ -12,5 +12,5 @@ the host; Inventory stores the admitted Organization key without an Access datab
 
 The boundary is consumer-owned template policy. It neither changes independently adoptable
 technical libraries nor prevents privileged native EF/raw SQL bypasses. See
-[the approved plan](../plans/e3-4-persisted-business-ingress.md) and
+[the approved plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e3-4-persisted-business-ingress.md) and
 [executable module ownership](../../samples/Wholesale/modules/README.md).

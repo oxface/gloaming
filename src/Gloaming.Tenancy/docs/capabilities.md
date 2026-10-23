@@ -47,8 +47,8 @@ package or interface is implemented by this repository relocation.
 ## Consumer research
 
 Tenant-aware resource authorization and native authorization ordering are recorded in
-[A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
-[A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
+[A2](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
+[A1 Access/resource authorization](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-access-resource-authorization-research.md).
 The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) now traces the
 current composition: the optional actor evaluator establishes actor before native handlers;
 tenant admission still follows native authorization. Late consumer resource checks are the

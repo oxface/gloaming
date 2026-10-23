@@ -1,7 +1,7 @@
 # WF2 follow-up: reusable sequential saga coordinator
 
 Historical experiment, superseded before checkpoint by the owner-approved
-[continuation replacement](../plans/wf2-durable-continuations.md). Old test counts are dated
+[continuation replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/wf2-durable-continuations.md). Old test counts are dated
 evidence, not results for the replacement. The staged review snapshot is retained.
 
 

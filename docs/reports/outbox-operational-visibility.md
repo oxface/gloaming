@@ -3,7 +3,7 @@
 Date: 2026-10-21. Owner-selected follow-up after approving completion supervision,
 checkpoint `020a292`. That checkpoint passed every repository commit hook. This slice is
 implemented on `feat/outbox-operational-visibility` for owner line-by-line review; the
-[scope](../plans/outbox-operational-visibility.md) records concrete public usage and file/schema
+[scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/outbox-operational-visibility.md) records concrete public usage and file/schema
 boundaries. Earlier [completion](m2-outbox-completion-supervision.md), [dead-letter](m2-outbox-dead-letters.md)
 and [attempt telemetry](obs1-durable-message-observability.md) results remain separate evidence.
 

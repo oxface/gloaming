@@ -3,7 +3,7 @@
 Status: interface/scope owner-approved, 2026-10-18; supervision approved 2026-10-20;
 dead-letter interface approved 2026-10-21.
 Implementation remains uncommitted for line-by-line owner review.
-[Reviewed scope](../plans/m2-inbox-failure-recovery.md),
+[Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-failure-recovery.md),
 [current contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md),
 [fresh evidence](../reports/m2-inbox-failure-recovery.md).
 
@@ -23,7 +23,7 @@ committed failure observations, not all executions. Commit response loss is ambi
 issue compensating failure writes after attempting completion/accounting commit. Fresh retained
 state governs the next operation.
 
-The [approved supervision follow-up](../plans/m2-inbox-failure-supervision.md) distinguishes
+The [approved supervision follow-up](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-failure-supervision.md) distinguishes
 unconfirmed failure accounting with InboxFailureAccountingException, derived from
 AggregateException and retaining delivery identity and both original errors. The optional
 inbox worker faults without polling again for that exception. Native host supervision applies
@@ -47,7 +47,7 @@ precede deployment. Outbox recovery, retention, payload editing and schema evolu
 This supersedes ADR 0010's separate retry-write implementation, while preserving retained intake,
 deduplication, independent module commits and atomic successful local handling.
 
-The owner approved the [dead-letter follow-up](../plans/m2-inbox-dead-letters.md) on 2026-10-21.
+The owner approved the [dead-letter follow-up](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-dead-letters.md) on 2026-10-21.
 IInboxDeadLetters replaces the unreleased recovery interface and adds bounded metadata list/detail
 around the same conditional retry. DeadLetter/DeadLetteredAt replace public quarantine names;
 the original `quarantined_at` storage column and historical migrations remain. Live keyset paging

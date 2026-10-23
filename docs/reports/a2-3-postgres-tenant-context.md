@@ -2,7 +2,7 @@
 
 Owner-authorized extraction on 2026-10-16 following the
 [A2.2 consumer proof](a2-2-sales-postgres-rls.md). The
-[selected scope](../plans/a2-3-postgres-tenant-context.md) is implemented on the existing
+[selected scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-3-postgres-tenant-context.md) is implemented on the existing
 `feat/sales-postgres-rls` checkout, retaining the uncommitted A2.2 composition. No staging,
 commit or push is part of this handoff.
 

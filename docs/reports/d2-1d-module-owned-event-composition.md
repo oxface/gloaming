@@ -120,6 +120,6 @@ No staging, unstaging, commit or push was performed.
   [current package contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md).
 
 Earlier reports retain dated results and superseded setup with replacement source links. The
-[plan](../plans/d2-1d-module-owned-event-composition.md), [design](../design.md),
+[plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-1d-module-owned-event-composition.md), [design](../design.md),
 [ADR 0016](../adr/0016-local-domain-event-dispatch.md) and package/sample READMEs now describe this
 interceptor composition. Library implementation/public types still require owner line-by-line review.

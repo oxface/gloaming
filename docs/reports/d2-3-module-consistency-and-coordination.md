@@ -1,7 +1,7 @@
 # D2.3: module consistency and coordination
 
 Date: 2026-10-15 (Europe/Kiev). Scope: the comparison selected in the
-[D2.3 plan](../plans/d2-3-module-consistency-and-coordination-research.md).
+[D2.3 plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-3-module-consistency-and-coordination-research.md).
 This is research and a review of existing evidence. It adds no runtime mechanism,
 template behavior or executable comparison. Source research proves no new reusable
 mechanism. Recommendations below are design judgments, distinguished from observations

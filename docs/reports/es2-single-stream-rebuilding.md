@@ -35,7 +35,7 @@ arity. All new edits remain unstaged; existing index entries are preserved. No c
 
 ## Native EF replacement, 2026-10-07
 
-The owner approved [the exact replacement scope](../plans/es2-native-ef-simplification.md)
+The owner approved [the exact replacement scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md)
 with “agree, proceed.” Implementation, executable adoption and verification are complete.
 New changes remain unstaged; the pre-existing owner/app-staged index is preserved. No commit,
 checkpoint reset, archive/fixture change or template-source change was made.
@@ -177,7 +177,7 @@ Aspire runtime, library worker or additional reusable projection mechanism is cl
 
 Historical implementation, superseded by the native EF replacement above.
 
-The owner approved [the exact replacement scope](../plans/es2-aggregate-only-reduction.md).
+The owner approved [the exact replacement scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-aggregate-only-reduction.md).
 That implementation maintained one aggregate state per registered stream, with strict ordinary
 loading and a separate explicit full-rebuild lane. Secondary-view orchestration is removed.
 That implementation's Purchasing summaries derived from checked aggregate state; legacy summary mappings,
@@ -262,9 +262,9 @@ execution is claimed. Archived source integrity was freshly checked instead.
 
 Review [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs),
 [AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs),
-[former PreparedAggregateRebuild](../plans/es2-native-ef-simplification.md)
+[former PreparedAggregateRebuild](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md)
 and [the native save guard](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs)
-with [the exact reduction map](../plans/es2-aggregate-only-reduction.md#exact-filebehavior-map).
+with [the exact reduction map](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-aggregate-only-reduction.md#exact-filebehavior-map).
 Purchasing's query/store/mapping and replacement tests show the changed consumer behavior.
 Current setup, capabilities, limits and future context are recorded in family/EF/provider-local
 documents; the ES2 brief and ADRs reflect the narrower supported contract.
@@ -385,13 +385,13 @@ writing, as AGENTS.md requires recording settled architectural choices; no new i
 
 ## Review map and preserved scope
 
-The [reviewed brief](../plans/es2-aggregate-only-reduction.md#exact-filebehavior-map)
+The [reviewed brief](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-aggregate-only-reduction.md#exact-filebehavior-map)
 lists the complete file/behavior map. Start line-by-line review with:
 
 - [EventStore](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStore.cs): configuration, pre-read shared admission, full replay and all-projection preparation/staging.
-- [former EventStreamWriteGate](../plans/es2-native-ef-simplification.md) and [former private state](../plans/es2-native-ef-simplification.md): complete key, transaction/access lifecycle and exact prepared repair association.
+- [former EventStreamWriteGate](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) and [former private state](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md): complete key, transaction/access lifecycle and exact prepared repair association.
 - [RequiredInlineStateExtensions](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/RequiredInlineStateExtensions.cs), [InlineProjectionStorage](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/InlineStateReader.cs), EventAppender and PreparedEventAppend in the same project: registered aggregate rebuilding, native guards, raw repair loading, observed-token staging and lower-level admission enforcement.
-- [former Replay surface](../plans/es2-native-ef-simplification.md), [maintenance interface/result](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IAggregateRebuilder.cs) and [former provider implementation](../plans/es2-native-ef-simplification.md).
+- [former Replay surface](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md), [maintenance interface/result](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/IAggregateRebuilder.cs) and [former provider implementation](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md).
 - [Aggregate DI registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventStoreServiceCollectionExtensions.cs) and [registration proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RegistrationTests.cs): same scoped roles, clock overrides, incompatible binding rejection, typed context isolation and explicit declaration compatibility.
 - [Standalone proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildTests.cs), [real consumer proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.Rebuilding.cs) and [executable maintenance journey](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/RebuildJourney.cs).
 
@@ -437,7 +437,7 @@ and Prettier passed. The original Python implementation is replaced, and reprodu
 now use Node 24.21+. These results do not add C# integration proofs or rerun the suites above.
 The repository workflow now records TypeScript as the preferred durable scripting language.
 
-[The reviewed refinement](../plans/library-extraction.md#es2-owner-review-follow-up) now supplies
+[The reviewed refinement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#es2-owner-review-follow-up) now supplies
 AddEventStore<TAggregate,TStore> for one scoped concrete store and both role aliases, preserving
 clock overrides and rejecting incompatible registrations before partial changes. Main inline
 registration now includes rebuilding, removing a redundant model call from both modules and
@@ -477,7 +477,7 @@ T1 was freshly rerun for this refinement against an owned disposable PostgreSQL 
 
 The owner requested clearer names/comments and reconsideration of the entire shape, including
 active schema/sample replacement without backward compatibility. Internal cleanup is implemented;
-[new public/schema replacement](../plans/es2-native-ef-simplification.md) awaits owner interface review.
+[new public/schema replacement](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es2-native-ef-simplification.md) awaits owner interface review.
 Current admission/append/rebuild guarantees remain unchanged. No new reusable mechanism is proven.
 
 AggregateRebuilder now separates admission, captured-prefix validation, historical evolution,

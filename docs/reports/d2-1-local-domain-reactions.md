@@ -9,7 +9,7 @@ the original Sales-only coordinator with registered Gloaming handlers and remove
 mirroring. Results below describe that earlier implementation, not today's additional safeguards.
 
 Date: 2026-10-14. Prepared for owner review on `feat/ddd-sample-patterns`, after D1.1
-checkpoint `f55d803`. [Selected scope](../plans/d2-1-local-domain-reactions.md) and
+checkpoint `f55d803`. [Selected scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/d2-1-local-domain-reactions.md) and
 [executable usage](../../samples/Wholesale/IntegrationTests/Scenarios/DomainEvents/README.md) define this increment.
 
 ## Outcome and consumer ownership

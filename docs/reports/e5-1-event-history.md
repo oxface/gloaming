@@ -1,7 +1,7 @@
 # E5.1 selected history ranges and explicit hydration
 
 2026-10-06. The owner reviewed and approved the complete revised 38-file change set for
-[selected-range validation](../plans/e5-1-event-history.md). Checkpoint `4cc12a1` follows E4
+[selected-range validation](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e5-1-event-history.md). Checkpoint `4cc12a1` follows E4
 checkpoint `2a49ef3b`. The working tree was clean immediately after committing.
 
 ## Outcome and extraction finding

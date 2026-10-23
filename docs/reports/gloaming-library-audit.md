@@ -6,7 +6,8 @@ adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2
 Continuation package consolidation is committed as `56a8b12`; Messaging example/fixture
 consolidation as `5d86b20`; application scaffolding retirement as `dd6eb77`. Remaining family
 example consolidation is committed as `ae2909c`; Purchasing retirement as `8601204`.
-Wholesale Dispatch retirement is the current uncommitted batch. Integrated cleanup and reviews
+Wholesale Dispatch retirement is committed as `0d43d3c`. Repository guidance/reference-check
+consolidation is the current uncommitted batch. Integrated cleanup and reviews
 remain open, followed by the owner-requested extra document/test pass and fresh-context sweep.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
@@ -180,7 +181,7 @@ workflows and implementation remain outside this cleanup.
 
 ## Remaining family example consolidation
 
-Current batch, uncommitted. Four focused executable paths replace the older multi-journey
+Committed as `ae2909c`. Four focused executable paths replace the older multi-journey
 entry points; their four adoption projects now live under family `tests/` directories.
 Current guides, solution groups, CI and hooks follow that ownership in the same batch.
 No Gloaming library interface or implementation changes.
@@ -324,7 +325,7 @@ review. Those gaps remain open; this is not publication sign-off or Umbrine impl
 
 ## Wholesale Dispatch retirement — 2026-10-23
 
-Uncommitted and unstaged continuation from owner-approved Purchasing checkpoint `8601204`.
+Committed as `0d43d3c` after owner approval and all checkpoint hooks passed.
 Wholesale now contains **Access, Sales and Inventory**, with its existing API and local/broker
 order/reservation journey. Dispatch's directory experiment, its worker role and Sales export/
 listing/publication policy are retired together. No Gloaming library interface or implementation
@@ -419,6 +420,15 @@ and disclosure policy is removed, not promoted into Gloaming. Remaining work is 
 consolidation and integrated verification/independent review closure, then the owner's extra
 documentation/test pass and later separate-session sweep. These remain open; this increment
 does not implement Umbrine or establish publication sign-off.
+
+## Repository guidance and reference consolidation — 2026-10-23
+
+The current [repository guidance/reference-check batch](repository-guidance-consolidation.md)
+retires 80 dated plans, replaces the long extraction sequence with a proposal gate and the
+design diary with current ownership guidance, and adds tested TypeScript reference checks
+to existing CI/hooks. Library/sample implementation, migrations and fixtures remain unchanged.
+Its fresh tooling/package/provenance evidence is recorded separately. Detailed report/ADR
+and test relevance remain required work; no new reusable Gloaming mechanism is proven.
 
 ## Confirmed direction and review criteria
 
@@ -640,19 +650,20 @@ fixture or literal payload need not remain a separately advertised application.
 
 | Example | Current disposition | Evidence condition |
 | --- | --- | --- |
-| ContextDemo | Retired in the current batch; direct native-DI composition tests and the operation recipe replace the fixture application. | Independent cores and 12 composition cases retain lifecycle/requirement/isolation obligations; SKU/preview policy is explicitly retired. |
-| PersistenceDemo | Narrowed in the current batch to owned reads/writes and native commits; profile mutation is test-owned. | All 36 adopter cases remain, including stored-owner, relationship, migration and profile transaction proofs; independent GUID/RLS consumers remain untouched. |
+| ContextDemo | Retired at `dd6eb77`; direct native-DI composition tests and the operation recipe replace the fixture application. | Independent cores and 12 composition cases retain lifecycle/requirement/isolation obligations; SKU/preview policy is explicitly retired. |
+| PersistenceDemo | Narrowed at `ae2909c` to owned reads/writes and native commits; profile mutation is test-owned. | All 36 adopter cases remain, including stored-owner, relationship, migration and profile transaction proofs; independent GUID/RLS consumers remain untouched. |
 | EventCodecDemo | Narrowed to a receipt field rename/read/write example with only Serialization; larger stock/purchasing/history recipes are test-owned. | All historic JSON remains unchanged; 25 adoption cases include the actual new executable. |
 | EventStorageDemo | Public executable is the counter append path; raw multi-family mapping moves to test fixtures. | 37 adoption cases retain raw/custom/default mapping, metadata, append and fault/concurrency behavior; actual processes cover fresh and populated storage. |
 | EventReactionsDemo | Package-free immutable model is the public path; direct-source inheritance and extra variants are test-owned. Pure EF prototype probes are retired. | 86 current adopter cases retain actual Gloaming composition, selection, order, save/recovery and marker-free model proofs. |
-| Messaging Delivery (formerly six separate demo/defaults projects) | Implemented in the current batch: two plain module libraries, producer/worker entry points and test-owned policy/fault fixtures. | All retained adoption, migration, broker, operational and process cases run in DeliveryTests; architecture checks include the complete producer runtime graph. |
-| WorkflowDeployment Earlier/Current | Moved to test-owned fixtures in the current batch. | Seven separately compiled deployment tests and four byte-identical literal JSON files remain. |
-| Wholesale | Reduce to Access, Sales and Inventory with one order/reservation journey. | Retain the chosen HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition. Keep focused failure scenarios with their library owners. |
-| Wholesale Purchasing | Retire from the primary sample. | Transfer any unique event-store assertions first; independent raw/ledger consumers can retain variation without another business module. |
-| Wholesale Dispatch | Retire from the primary sample. | Route-selection guarantees already have provider tests. Snapshot/population, disclosure and directory merge/readiness are consumer-owned policy; retaining that experiment is not required by Messaging's route selector. |
-| templates/state-stored and tools/template | Retired in the current batch with generated-only CI and dependencies. | Fresh ownership/transaction proofs and package-only adoption remain; creation/naming/worker-specific promises are retired. Concise existing application patterns remain. |
+| Messaging Delivery (formerly six separate demo/defaults projects) | Consolidated at `5d86b20`: two plain module libraries, producer/worker entry points and test-owned policy/fault fixtures. | All retained adoption, migration, broker, operational and process cases run in DeliveryTests; architecture checks include the complete producer runtime graph. |
+| WorkflowDeployment Earlier/Current | Moved to test-owned fixtures at `5d86b20`. | Seven separately compiled deployment tests and four byte-identical literal JSON files remain. |
+| Wholesale | Access, Sales and Inventory remain after `0d43d3c`, with one order/reservation journey. | Retained HTTP/admission, module-Contracts, tenant ownership, local reactions, audit, event-sourcing and durable-handoff composition have their dated proof maps above. |
+| Wholesale Purchasing | Retired at `8601204`. | Unique event-store assertions transferred to independent family consumers; invented business policy is removed. |
+| Wholesale Dispatch | Retired at `0d43d3c`. | Route-selection and populated-schema migration/grant proofs remain. Snapshot/population, disclosure and directory merge/readiness policy is retired. |
+| templates/state-stored and tools/template | Retired at `dd6eb77` with generated-only CI and dependencies. | Fresh ownership/transaction proofs and package-only adoption remain; creation/naming/worker-specific promises are retired. Concise existing application patterns remain. |
 
-Unimplemented dispositions remain proposals; existing tests are not assumed to be duplicates.
+These dispositions are implemented; the detailed sections above distinguish retained proofs
+from retired consumer policy. Their dated counts do not establish current integrated sign-off.
 Before each deletion, map its assertions to a retained test or explicitly retire the
 behavior. An application can be removed while its useful independent consumer fixture stays.
 Conversely, do not preserve business-scenario tests solely to preserve historical counts.
@@ -691,13 +702,15 @@ different purposes; neither requires retaining every experimental migration chai
 
 The owner requested coherent code-led batches with their documentation, tests, CI and pruning,
 and allows as many reviewable increments as needed to meet requirements. Purchasing retirement
-is committed as `8601204`; Dispatch retirement is the current batch. The planning range after
-this batch is **2–4 slices**, plus the explicitly selected extra documentation/test pass.
+is committed as `8601204`; Dispatch retirement as `0d43d3c`. The current
+[guidance/reference-check consolidation](repository-guidance-consolidation.md) retires competing
+plans. The planning range after this batch is **2–3 slices**, plus the explicitly selected
+extra documentation/test pass.
 The owner's later clean-context sweep is a separate session, not claimed by this audit.
 
 | Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Repository consolidation | 1–2 | Review every document/test for current relevance; reduce active queues and historical duplication; finish CI/hooks/tooling and empty-directory cleanup. Keep related code/docs/proofs together. |
+| Remaining repository consolidation | 1 | Classify the detailed dated reports and remaining decisions; distill useful research/contracts, retire historical duplication, and complete test/CI relevance review. Guidance/reference tooling is the current batch; it does not finish this broader pass. |
 | Verification and independent review closure | 1–2 | Integrated package-only adoption, retained sample/runtime checks, independent code and architecture reviews, and focused fixes for findings. |
 | Additional documentation/test pass | At least 1 | Owner-selected final pass after the above, using the completed implementation and review outcomes to remove remaining stale or redundant material. |
 | Fresh-context sweep | Separate session | Owner plans another review in a new session; do not count its conclusions as evidence already produced here. |

@@ -211,6 +211,9 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: npm ci --prefix tools/repository --ignore-scripts
 
+      - name: Verify repository tooling and local references
+        run: npm --prefix tools/repository run check
+
       - name: Restore active formatter
         if: needs.changes.outputs.repository_dotnet == 'true'
         run: dotnet tool restore

@@ -8,7 +8,7 @@ At the owner's request, the creation/proof tooling now uses TypeScript and npm.
 
 This checkpoint-status update adds no new test execution. The results below retain their
 original execution scope. The next proposed capability is
-[ES1 bounded event append](../plans/es1-bounded-event-append.md).
+[ES1 bounded event append](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/es1-bounded-event-append.md).
 
 ## Outcome and supported configuration
 

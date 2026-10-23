@@ -114,5 +114,5 @@ Normal startup never migrates/seeds. Real provisioning remains explicitly consum
 
 No Personnel, general business permissions, license/Organization-availability model or
 permission-aware exports/AI queries are implemented here. Reactivation is not a bypass for
-those future gates. See the [implementation scope](../../../../docs/plans/a1-1-membership-suspension.md)
+those future gates. See the [implementation scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-1-membership-suspension.md)
 and [fresh proof report](../../../../docs/reports/a1-1-membership-suspension.md).

@@ -6,7 +6,7 @@ retained sessions, Stage, owned transactions and completion enforcement describe
 links now lead to replacements; test counts below remain dated evidence.
 
 Date: 2026-10-15 (Europe/Kiev). Investigation requested during D2.1d owner review.
-This report completes the [research scope](../plans/ef1-capability-interception-research.md),
+This report completes the [research scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/ef1-capability-interception-research.md),
 with [external implementation comparisons](ef1-external-patterns.md) and retained
 [native EF probes](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer.Tests/EfInterceptionResearchTests.cs).
 Production libraries and contexts are unchanged. Interfaces and package names below are proposals.

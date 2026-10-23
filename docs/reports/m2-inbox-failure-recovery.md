@@ -8,7 +8,7 @@ fault and worker containment, with fresh evidence separate from this original re
 
 Date: 2026-10-18. Base: fetched `origin/main` `54ebe8d`. Branch:
 `feat/inbox-failure-recovery`, without upstream tracking. The owner reviewed
-[consumer usage, interfaces and protocol](../plans/m2-inbox-failure-recovery.md), then authorized
+[consumer usage, interfaces and protocol](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/m2-inbox-failure-recovery.md), then authorized
 implementation. The complete implementation/documentation change set remains unstaged and
 uncommitted for line-by-line owner review.
 

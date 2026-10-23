@@ -144,7 +144,7 @@ those domain choices.
 
 ## Recommended next comparison
 
-The revised [E6 plan](../plans/library-extraction.md#e6-required-inline-views-and-bounded-repair)
+The revised [E6 plan](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/library-extraction.md#e6-required-inline-views-and-bounded-repair)
 makes aggregate loading, candidate-batch acceptance and required inline views explicit before
 repair. First reimplement those behaviors in both active families, with native caller-owned
 transactions and independently expected state. Compare the resulting obligations before

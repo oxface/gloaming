@@ -1,7 +1,7 @@
 # I1: Durable inbox intake and transactional local processing
 
 Date: 2026-10-08. Base `beafa4e` (merged O1), branch `codex/durable-inbox`.
-The owner approved the [interface and scope](../plans/inbox1-durable-intake-processing.md)
+The owner approved the [interface and scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/inbox1-durable-intake-processing.md)
 before implementation. The initial implementation, proofs and documentation handoff was
 **unstaged** for line-by-line review. Existing staging is preserved during follow-up review;
 follow-up edits remain unstaged. No commit, push, deployment or archive amendment accompanies this report.

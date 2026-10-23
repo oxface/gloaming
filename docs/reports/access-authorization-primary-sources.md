@@ -1,7 +1,7 @@
 # A1 primary-source evidence: authorization providers and native composition
 
 Assessed 2026-10-16 (Europe/Kiev). This is source inspection for the
-[A1 assessment](../plans/a1-access-resource-authorization-research.md), not an engine
+[A1 assessment](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a1-access-resource-authorization-research.md), not an engine
 selection, runtime proof, package addition or public-interface proposal. **Fact** below
 means provider documentation or released source; **assessment** means an inference for
 Umbrine. All external links were consulted on that date. Live documentation can change;

@@ -29,7 +29,7 @@ evidence for this assessment; no new runtime proof was executed in this preparat
 
 ## Concrete recommendation and review scope
 
-The [proposal](../plans/queued-message-schema-compatibility.md) selects a small consumer wire
+The [proposal](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/queued-message-schema-compatibility.md) selects a small consumer wire
 change: schema 2 renames Pages to PageCount while preserving business meaning. Keep default
 v1 writes, opt into v2 explicitly, and retain v1 support through the optional existing codec.
 Proposed constructor/DTO usage, finite executable adoption, file/dependency scope and native

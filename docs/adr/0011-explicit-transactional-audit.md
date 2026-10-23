@@ -6,7 +6,7 @@ Consumers use the native configuration shown in the
 and diagnostic guarantees are unchanged; the original decision is retained below.
 
 Status: interface and bounded scope owner-approved, 2026-10-09; implementation remains
-unstaged for line-by-line review. [Reviewed scope](../plans/e9-explicit-transactional-audit.md).
+unstaged for line-by-line review. [Reviewed scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/e9-explicit-transactional-audit.md).
 
 Use an independently adoptable `Gloaming.Auditing.EntityFrameworkCore` package. Consumers
 explicitly construct AuditEntry and call typed IAudit<TDbContext>.Stage within the native

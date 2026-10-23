@@ -2,7 +2,7 @@
 
 Owner-authorized implementation on 2026-10-16, following the
 [A2 assessment](tenant-authorization-assessment.md) and committed A2.1 Sales permissions
-(`b2f0d01`). The [bounded scope](../plans/a2-2-sales-postgres-rls.md) is implemented on
+(`b2f0d01`). The [bounded scope](https://github.com/oxface/modulith-foundry/blob/0d43d3cf746bc5b70dec60b8864459cf97c7d65d/docs/plans/a2-2-sales-postgres-rls.md) is implemented on
 `feat/sales-postgres-rls`, stacked on that local commit; fetched main is `d35b3ee`.
 The checkout is reused. This follow-up remains unstaged and uncommitted.
 
