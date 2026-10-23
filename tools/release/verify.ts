@@ -28,7 +28,7 @@ const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
 const connection = process.env.GLOAMING_PACKAGE_TEST_CONNECTION_STRING;
 assert(
   connection,
-  "Set GLOAMING_PACKAGE_TEST_CONNECTION_STRING to a PostgreSQL connection with CREATEDB permission; full verification never skips PostgreSQL.",
+  "Set GLOAMING_PACKAGE_TEST_CONNECTION_STRING to a PostgreSQL connection with CREATEDB and CREATEROLE permissions; full verification never skips PostgreSQL.",
 );
 assert.equal(
   process.argv.length,
@@ -390,6 +390,30 @@ try {
         "Gloaming.EntityFrameworkCore",
         "Gloaming.EventReactions",
         "Gloaming.EventReactions.EntityFrameworkCore",
+      ],
+    },
+    {
+      name: "http-establishment",
+      source: "HttpEstablishment.cs",
+      ids: ["Gloaming.ActorIdentity.AspNetCore", "Gloaming.Tenancy.AspNetCore"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.ActorIdentity",
+        "Gloaming.ActorIdentity.AspNetCore",
+        "Gloaming.Tenancy",
+        "Gloaming.Tenancy.AspNetCore",
+      ],
+    },
+    {
+      name: "row-security",
+      source: "RowSecurity.cs",
+      ids: ["Gloaming.Persistence.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection, postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore.Postgres",
+        "Gloaming.Tenancy",
       ],
     },
     {

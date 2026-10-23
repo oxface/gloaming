@@ -73,9 +73,11 @@ not a complete API/branch coverage measurement or a production-capacity certific
 Unit, provider, package-only and process tests can exercise the same API while protecting
 different failures. A fake publisher cannot prove broker acceptance uncertainty; an in-process
 rollback cannot prove abrupt process recovery; ProjectReference builds cannot prove the
-[nine package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
-the [native event-storage consumer](../tools/release/consumers/EventStorage.cs) and
-[local reaction composition](../tools/release/consumers/EventReactions.cs).
+[eleven package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
+the [native event-storage consumer](../tools/release/consumers/EventStorage.cs),
+[local reaction composition](../tools/release/consumers/EventReactions.cs),
+[native HTTP establishment](../tools/release/consumers/HttpEstablishment.cs), and
+[restricted PostgreSQL row security](../tools/release/consumers/RowSecurity.cs).
 Historic literals and populated migration fixtures need independent expected outcomes and
 owned provenance, not values manufactured by the implementation under test.
 

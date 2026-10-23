@@ -89,9 +89,12 @@ and [version normalization](https://learn.microsoft.com/en-us/nuget/concepts/pac
 ## Full package adoption proof
 
 Requires .NET SDK 10, Node 24.21 or later in the 24.x line, and a PostgreSQL
-connection whose role can create and drop databases. The supplied database is
-used only to create/drop each profile's randomly named scratch database; its
-existing tables are not changed. Use a disposable PostgreSQL server.
+connection whose provisioning role can create/drop databases and login roles
+(`CREATEDB` and `CREATEROLE`, or a disposable superuser). The RLS profile also grants
+its new runtime role access to its own schema/table. The supplied database is used
+only to create/drop randomly named scratch databases and, for RLS, a random login;
+its existing tables and roles are not changed. Scratch databases and the RLS login
+are removed in finally. Use a disposable PostgreSQL server.
 
 ```sh
 npm --prefix tools/release ci
@@ -122,7 +125,7 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Nine clean executable consumers are created outside the repository:
+Eleven clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -139,6 +142,22 @@ Nine clean executable consumers are created outside the repository:
   sync/async and false-acceptance saves, caller commit/rollback, handler/candidate/SQL failure
   recovery, the invocation ceiling and async-only reaction lane selection. The Gloaming
   dependency closure contains only EventReactions, its EF adapter and Gloaming.EntityFrameworkCore.
+- HTTP establishment: independently select the ActorIdentity and Tenancy ASP.NET Core
+  adapters and run a native loopback Kestrel host. Protected cookies select the effective
+  principal; authorization observes its mapped actor before tenant admission. Prove
+  once-only mapping, native challenge/forbid, explicit anonymous/tenantless endpoints,
+  failed mapping/admission, concurrent requests and following-scope isolation. The Gloaming
+  graph contains only the two context cores and their HTTP adapters. Identity mapping,
+  membership decisions, authorization and error responses belong to this consumer.
+- Restricted PostgreSQL row security: select the persistence PostgreSQL adapter, native
+  DI and Npgsql. Deploy a consumer-owned versioned EF migration with ENABLE/FORCE and
+  read/write policies, then use a separate restricted login with audited role/table/policy
+  privileges. Prove sync/async transaction setup, reads with EF filters disabled, native
+  command/bulk SQL isolation, rejected foreign inserts/ownership changes, savepoint recovery,
+  caller commit/rollback and reuse of the same reset-enabled pooled connection. Missing
+  tenancy/transactions fail before business work. The Gloaming graph contains only
+  Persistence.EntityFrameworkCore, its PostgreSQL adapter, Gloaming.EntityFrameworkCore
+  and Tenancy. Credentials, migrations and tenant admission remain consumer-owned.
 - PostgreSQL ownership, outbox and audit: consumer-owned mapping and wiring,
   unsaved/uncommitted invisibility, native commit and rollback, failed later save
   after earlier business SQL, fresh-context recovery, tenant filters and foreign
@@ -172,5 +191,7 @@ change the index. NuGet requires access to nuget.org for third-party dependencie
 This is packaging/adoption evidence. It does not repeat every library guarantee,
 start RabbitMQ, prove broker delivery or substitute for release publication,
 independent architecture/code review, operational capacity tests or owner sign-off.
-The PostgreSQL ownership proof exercises EF filters and tracked-save validation;
-it does not claim row-level security against bypass SQL.
+The PostgreSQL ownership/outbox/audit profile exercises EF filters and tracked-save
+validation. The separate row-security profile proves bypass-SQL isolation for its one
+explicitly deployed table and restricted login; it does not certify a consumer's full
+schema, credential inventory, membership policy or external transaction pooler.
