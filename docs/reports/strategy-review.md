@@ -85,7 +85,7 @@ separation of business Contracts and native host composition.
 ### Settle the event capability before adding more projection machinery
 
 The two [command](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs)
-[implementations](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs)
+[implementations](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs)
 repeat transaction preconditions, observed-version checks, timestamps, envelope positions,
 header advancement and detached preparation. The two history readers likewise repeat
 captured-head and temporal-prefix coordination. The technical protocol largely remains
@@ -99,7 +99,7 @@ reducers, tenant admission and final save/commit ownership explicit at their sea
 
 The next comparison must include one meaningful state-dependent decision. Current
 [receipt decisions](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionDecisions.cs)
-and [line decisions](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderDecisions.cs)
+and [line decisions](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderDecisions.cs)
 take requests alone; commands select events before loading existing state. State contributes
 to evolution and arithmetic checks, which is legitimate, but provides limited evidence for
 the broader decider/aggregate loading interface. A second consumer should vary an actual

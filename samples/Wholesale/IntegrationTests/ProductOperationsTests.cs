@@ -8,12 +8,8 @@ namespace ModulithFoundry.Samples.Wholesale.IntegrationTests;
 public sealed class ProductOperationsTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>
 {
-    [Theory]
-    [InlineData("inventory")]
-    [InlineData("purchasing")]
-    public async Task CanonicalProductSetupAndWorkerOperationsPersistModuleStateAndRejectStaleCommands(
-        string role
-    )
+    [Fact]
+    public async Task CanonicalProductSetupAndWorkerOperationsPersistInventoryStateAndRejectStaleCommands()
     {
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(
             TestContext.Current.CancellationToken
@@ -30,48 +26,24 @@ public sealed class ProductOperationsTests(PostgreSqlFixture postgres)
         )
             Assert.True(await setup.WaitForExitAsync(token) == 0, setup.Output);
 
+        const string role = "inventory";
         var id = Guid.NewGuid();
-        object first =
-            role == "inventory"
-                ? new
-                {
-                    id,
-                    stockItemId = Guid.NewGuid(),
-                    stockingLocationId = Guid.NewGuid(),
-                    baseUnitCode = "EA",
-                }
-                : new
-                {
-                    id,
-                    code = "PRODUCT-PURCHASE",
-                    supplierReference = "SUPPLIER",
-                    currency = "EUR",
-                };
-        object second =
-            role == "inventory"
-                ? new
-                {
-                    id,
-                    expectedVersion = 1,
-                    receipts = new[] { new { quantity = 5, deliveryReference = "DELIVERY" } },
-                }
-                : new
-                {
-                    id,
-                    expectedVersion = 1,
-                    lines = new[]
-                    {
-                        new
-                        {
-                            itemCode = "DEMO-NOTEBOOK",
-                            quantity = 2,
-                            unitPrice = 10,
-                        },
-                    },
-                };
-        await Command(role == "inventory" ? "open" : "draft", first, 0);
-        await Command(role == "inventory" ? "receive" : "change-lines", second, 0);
-        await Command(role == "inventory" ? "receive" : "change-lines", second, 2);
+        var first = new
+        {
+            id,
+            stockItemId = Guid.NewGuid(),
+            stockingLocationId = Guid.NewGuid(),
+            baseUnitCode = "EA",
+        };
+        var second = new
+        {
+            id,
+            expectedVersion = 1,
+            receipts = new[] { new { quantity = 5, deliveryReference = "DELIVERY" } },
+        };
+        await Command("open", first, 0);
+        await Command("receive", second, 0);
+        await Command("receive", second, 2);
         var environment = EnvironmentFor();
         environment["Operation"] = "read";
         environment["Id"] = id.ToString("D");
@@ -102,8 +74,7 @@ public sealed class ProductOperationsTests(PostgreSqlFixture postgres)
         Dictionary<string, string> EnvironmentFor() =>
             new()
             {
-                ["ConnectionStrings__" + (role == "inventory" ? "Inventory" : "Purchasing")] =
-                    connection,
+                ["ConnectionStrings__Inventory"] = connection,
                 ["Organization"] = "wholesale-alpha",
             };
 

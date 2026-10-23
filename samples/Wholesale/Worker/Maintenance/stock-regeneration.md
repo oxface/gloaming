@@ -19,7 +19,7 @@ dotnet run --project samples/Wholesale/Worker -- \
 
 Supply an existing stock-position identity created through the Inventory product operations. Maintenance does not migrate, seed, open a
 missing stream or register ordinary command/query services. It selects one Inventory context;
-Purchasing is not part of this journey. Wrong Organization/unknown GUID returns not-found.
+Wrong Organization/unknown GUID returns not-found.
 
 ## Progress and outcomes
 

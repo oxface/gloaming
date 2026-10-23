@@ -213,7 +213,7 @@ Start with [aggregate core](../../src/Gloaming.EventSourcing/Gloaming.EventSourc
 and [former prepared batch](../plans/es2-native-ef-simplification.md).
 Then review [Inventory store](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
 [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
-[Purchasing store](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs)
+[Purchasing store](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs)
 and [independent store](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), alongside their
 aggregates/adapters and tests linked above. The [brief](../plans/es1-bounded-event-append.md#exact-replacement-file-and-behavior-map)
 contains the exact file/behavior change map, including documentation, clock setup and CI.

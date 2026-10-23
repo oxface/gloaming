@@ -39,8 +39,9 @@ public sealed partial class AppendTests
             );
             Assert.False(rows[3].GetProperty("payload").TryGetProperty("quantity", out _));
         }
+
         await using var provider = RebuildProvider(connection);
-        await AssertReadAsync(provider, true, (4, 15m));
+        await AssertReadAsync(provider, (4, 15m));
         await using (var read = Scope(provider, Alpha))
         {
             var history = read.ServiceProvider.GetRequiredService<IStockPositionHistory>();
@@ -50,8 +51,9 @@ public sealed partial class AppendTests
                 (await history.ReadAtVersionAsync(Id, 3, Token))!.LatestDeliveryReference
             );
             Assert.Equal(10.125m, (await history.ReadAsOfAsync(Id, Changed, Token))!.OnHand);
-            Assert.Empty(Context(read, true).ChangeTracker.Entries());
+            Assert.Empty(Context(read).ChangeTracker.Entries());
         }
+
         if (damage == "missing")
             await ExecuteAsync(connection, "DELETE FROM inventory.stock_position_current");
         if (damage == "corrupt")
@@ -61,16 +63,17 @@ public sealed partial class AppendTests
             );
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, true);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal(
                 (4, FixtureHistories.LastStockChangeAt.AddSeconds(10)),
-                Rebuilt(await RebuildAsync(repair, true))
+                Rebuilt(await RebuildAsync(repair))
             );
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (4, 15m));
+
+        await AssertReadAsync(provider, (4, 15m));
         Assert.Equal(facts, await StoredFactsAsync(connection));
     }
 
@@ -101,7 +104,8 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (2, 10.125m));
+
+        await AssertReadAsync(provider, (2, 10.125m));
     }
 
     [Theory]
@@ -124,10 +128,10 @@ public sealed partial class AppendTests
         await using var provider = RebuildProvider(connection);
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, true);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             var failure = await Assert.ThrowsAsync<EventDecodingException>(() =>
-                RebuildAsync(repair, true)
+                RebuildAsync(repair)
             );
             Assert.Equal(EventDecodingFailure.InvalidPayload, failure.Failure);
             Assert.Equal("inventory.stock-position.received", failure.EventName);
@@ -136,6 +140,7 @@ public sealed partial class AppendTests
             Assert.Empty(database.ChangeTracker.Entries());
             await transaction.RollbackAsync(Token);
         }
+
         Assert.Equal(damagedFacts, await StoredFactsAsync(connection));
         Assert.Equal(damagedState, await StoredAggregateAsync(connection));
         await using (var read = Scope(provider, Alpha))
@@ -146,7 +151,7 @@ public sealed partial class AppendTests
             );
         await ReplaceOldPayloadAsync(connection, """{"quantity":10.125}""");
         await RepairMixedAsync(provider);
-        await AssertReadAsync(provider, true, (4, 15m));
+        await AssertReadAsync(provider, (4, 15m));
         Assert.Equal(originalFacts, await StoredFactsAsync(connection));
     }
 
@@ -172,15 +177,16 @@ public sealed partial class AppendTests
         await using var provider = RebuildProvider(connection);
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, true);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Rebuilt(await RebuildAsync(repair, true));
+            Rebuilt(await RebuildAsync(repair));
             if (failSave)
                 await Assert.ThrowsAsync<DbUpdateException>(() => database.SaveChangesAsync(Token));
             else
                 await database.SaveChangesAsync(Token);
             await transaction.RollbackAsync(Token);
         }
+
         Assert.Equal(facts, await StoredFactsAsync(connection));
         Assert.Equal(damagedState, await StoredAggregateAsync(connection));
         if (failSave)
@@ -189,7 +195,7 @@ public sealed partial class AppendTests
                 "ALTER TABLE inventory.stock_position_current DROP CONSTRAINT upcast_repair_fault"
             );
         await RepairMixedAsync(provider);
-        await AssertReadAsync(provider, true, (4, 15m));
+        await AssertReadAsync(provider, (4, 15m));
         Assert.Equal(facts, await StoredFactsAsync(connection));
     }
 
@@ -238,16 +244,16 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, true);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal(
                 (4, 15m),
                 Proposed(
                     await AppendAsync(
                         write,
-                        true,
                         3,
                         [2m],
                         FixtureHistories.LastStockChangeAt.AddSeconds(10)
@@ -257,15 +263,16 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         return connection;
     }
 
     private static async Task RepairMixedAsync(ServiceProvider provider)
     {
         await using var repair = Scope(provider, Alpha);
-        var database = Context(repair, true);
+        var database = Context(repair);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
-        Rebuilt(await RebuildAsync(repair, true));
+        Rebuilt(await RebuildAsync(repair));
         await database.SaveChangesAsync(Token);
         await transaction.CommitAsync(Token);
     }

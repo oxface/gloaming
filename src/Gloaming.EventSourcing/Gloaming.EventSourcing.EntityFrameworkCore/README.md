@@ -43,8 +43,8 @@ fills its complete key/version/time. It preserves EF's original header and state
 ~~~csharp
 await using var transaction = await database.Database.BeginTransactionAsync(token);
 var aggregate = await store.GetForWritingAsync(id, expectedVersion, token);
-aggregate ??= PurchaseOrderAggregate.Create(request);
-aggregate.SetLines(lines);
+aggregate ??= StockPositionAggregate.Create(openRequest);
+aggregate.Receive(receipts);
 await store.AppendAsync(aggregate, token);
 await database.SaveChangesAsync(token);
 await transaction.CommitAsync(token);

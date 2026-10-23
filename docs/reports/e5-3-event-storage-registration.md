@@ -154,7 +154,7 @@ Review [the row interfaces](../../src/Gloaming.EventSourcing/Gloaming.EventSourc
 [options](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventSourcingStorageOptions.cs)
 and [registration](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/EventSourcingStorageExtensions.cs).
 Compare [Inventory configuration](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/HistoryMapping.cs)
-and [Purchasing configuration](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/HistoryMapping.cs)
+and [Purchasing configuration](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/HistoryMapping.cs)
 with their concrete rows and unchanged snapshots. Then inspect [the independent context](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/StorageDbContext.cs),
 [caller transaction recipe](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo/DemoJourneys.cs), new native migration
 and [database proofs](https://github.com/oxface/modulith-foundry/blob/dd6eb77a4a0e3c8afd7af710d7689ca265d43a64/src/Gloaming.EventSourcing/samples/EventStorageDemo.Tests/StorageTests.cs).

@@ -97,7 +97,7 @@ runtime results above. Untouched HTTP/state-persistence suites were not repeated
 - [AggregateRebuilder](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/AggregateRebuilder.cs)
   injects the reader without changing state replacement or transaction/concurrency semantics.
 - [Inventory reader](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs)
-  and [Purchasing reader](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
+  and [Purchasing reader](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
   retain temporal selection and reducers. [Counter decoder](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterHistoryReader.cs)
   demonstrates materially different adoption with direct JSON and ordinary keys.
 - [Reader PostgreSQL proofs](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventHistoryReaderTests.cs)

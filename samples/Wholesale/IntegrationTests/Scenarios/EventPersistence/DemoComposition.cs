@@ -1,7 +1,6 @@
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
@@ -21,13 +20,9 @@ public static class DemoComposition
             provider.GetRequiredService<TenantContextAccessor>()
         );
         services.AddInventoryDatabase(connectionString);
-        services.AddPurchasingDatabase(connectionString);
         services.AddStockPositionHistory();
         services.AddStockPositionCommands();
         services.AddStockPositionQueries();
-        services.AddPurchaseOrderHistory();
-        services.AddPurchaseOrderCommands();
-        services.AddPurchaseOrderQueries();
         return services;
     }
 }

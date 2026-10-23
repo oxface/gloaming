@@ -97,7 +97,7 @@ topology or template composition proof.
 - [Profile service](../../samples/Wholesale/modules/Sales/Sales/CustomerProfiles.cs) and
   [finite creation](../../samples/Wholesale/modules/Sales/Sales/SalesDemoSeed.cs): domain/persistence
   adaptation, early version conflict and preserved native save/audit ownership.
-- [Consumer journey](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/DddJourney.cs) and
+- [Consumer journey](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/IntegrationTests/Scenarios/Ddd/DddJourney.cs) and
   [composition](../../samples/Wholesale/IntegrationTests/Scenarios/Ddd/DddComposition.cs): distinct transaction recipes,
   explicit finite identities and rejected-candidate recovery.
 - [Domain proofs](../../samples/Wholesale/IntegrationTests/Domain/DomainDecisionTests.cs) and

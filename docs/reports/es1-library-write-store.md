@@ -131,7 +131,7 @@ The previously reviewed EventRecordAdapter, EventAppender and PreparedEventAppen
 underlying batch mechanism, with their existing public shapes.
 
 Then review [Inventory binding](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionStore.cs),
-[Purchasing binding](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs),
+[Purchasing binding](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderStore.cs),
 [raw counter](../../src/Gloaming.EventSourcing/samples/EventStorageDemo/CounterStore.cs), native model/save integration,
 creation/command changes and fixture-seed adaptations. The
 [required-state proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.RequiredInlineState.cs)

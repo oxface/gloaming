@@ -10,8 +10,8 @@ DTOs), `change` (the existing line-edit DTOs) and `remove` (line IDs). Submissio
 antiforgery. Existing Edit grants govern line changes/submission; creating a draft grants Edit
 to its creator. Native module validation and required allowance reservation run before commit.
 
-Finite full product setup applies Purchasing migrations too and seeds EUR 1000 customer
-allowances. Exceeding an allowance returns Conflict with the draft/allowance rolled back.
+Finite full product setup applies Access, Sales and Inventory migrations and seeds EUR 1000
+customer allowances. Exceeding an allowance returns Conflict with the draft/allowance rolled back.
 No allowance administration API is supplied. The optional restricted Sales-RLS mode intentionally
 keeps existing-draft/profile operations and omits create/submit, preserving its limited grants;
 it has no blanket authority to create resource grants or update allowances.

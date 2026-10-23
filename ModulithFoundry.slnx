@@ -92,8 +92,6 @@
   <Folder Name="/Sample modules/">
     <Project Path="samples/Wholesale/modules/Dispatch/Dispatch/Dispatch.csproj" />
     <Project Path="samples/Wholesale/modules/Dispatch/Dispatch.Contracts/Dispatch.Contracts.csproj" />
-    <Project Path="samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
-    <Project Path="samples/Wholesale/modules/Purchasing/Purchasing.Contracts/Purchasing.Contracts.csproj" />
     <Project Path="samples/Wholesale/modules/Sales/Sales/Sales.csproj" />
     <Project Path="samples/Wholesale/modules/Sales/Sales.Contracts/Sales.Contracts.csproj" />
     <Project Path="samples/Wholesale/modules/Access/Access/Access.csproj" />

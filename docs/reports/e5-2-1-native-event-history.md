@@ -144,11 +144,11 @@ from this slice.
 Review the business Contracts first:
 [Inventory queries](../../samples/Wholesale/modules/Inventory/Inventory.Contracts/IStockPositionHistory.cs),
 [stock result](../../samples/Wholesale/modules/Inventory/Inventory.Contracts/StockPositionHistory.cs),
-[Purchasing queries](../../samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderHistory.cs)
-and [order result](../../samples/Wholesale/modules/Purchasing/Purchasing.Contracts/PurchaseOrderHistory.cs).
+[Purchasing queries](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderHistory.cs)
+and [order result](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing.Contracts/PurchaseOrderHistory.cs).
 
 Then review [Inventory reader](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionHistoryReader.cs)
-and [Purchasing reader](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
+and [Purchasing reader](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderHistoryReader.cs)
 with their native mappings and consumer evolution. Review
 [the executable recipe](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/DemoJourneys.cs),
 [PostgreSQL proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs)

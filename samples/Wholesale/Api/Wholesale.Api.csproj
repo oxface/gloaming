@@ -11,7 +11,6 @@
     <ProjectReference Include="../modules/Access/Access/Access.csproj" />
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
-    <ProjectReference Include="../modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
   </ItemGroup>
 </Project>

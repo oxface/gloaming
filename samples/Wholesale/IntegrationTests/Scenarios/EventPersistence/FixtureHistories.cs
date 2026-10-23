@@ -4,7 +4,7 @@ using Gloaming.Events.Serialization;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
-// The six durable literals remain in the isolated codec consumer. Metadata is authored here.
+// Durable literals remain in the codec family’s owned fixtures. Metadata is authored here.
 public static class FixtureHistories
 {
     public static readonly Guid StreamId = Guid.Parse("e5060000-0000-0000-0000-000000000001");
@@ -20,16 +20,6 @@ public static class FixtureHistories
             (Read(directory, "Inventory/opened.v1.json", multiplier), OpenedAt),
             (Read(directory, "Inventory/received.v1.json", multiplier), FirstChangeAt),
             (Read(directory, "Inventory/received-second.v1.json", multiplier), LastStockChangeAt),
-        ];
-
-    public static (SerializedEvent Event, DateTimeOffset RecordedAt)[] Purchasing(
-        string directory,
-        decimal multiplier = 1
-    ) =>
-        [
-            (Read(directory, "Purchasing/drafted.v1.json", multiplier), OpenedAt),
-            (Read(directory, "Purchasing/line-set.v1.json", multiplier), FirstChangeAt),
-            (Read(directory, "Purchasing/line-replaced.v1.json", multiplier), FirstChangeAt),
         ];
 
     private static SerializedEvent Read(string directory, string path, decimal multiplier)

@@ -2,8 +2,6 @@ using Gloaming.Auditing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using ModulithFoundry.Tests.Infrastructure;
@@ -13,62 +11,6 @@ namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Domain;
 public sealed class ConsumerTests(PostgreSqlFixture postgres) : IClassFixture<PostgreSqlFixture>
 {
     private static CancellationToken Token => TestContext.Current.CancellationToken;
-
-    [Fact]
-    public async Task ExecutableJourneyCommitsBothModelsAndRejectsPartialCandidates()
-    {
-        string connection = await postgres.CreateDatabaseAsync(Token);
-        using var output = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
-        await DddJourney.RunAsync(connection, output, Token);
-        Assert.Contains("invalid address rejected", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("overflowing total rejected", output.ToString(), StringComparison.Ordinal);
-
-        await using var provider = Provider(connection);
-        await using var read = DddComposition.CreateScope(provider);
-        Assert.Equal(
-            new CustomerProfile(
-                SalesDemoSeed.AlphaCustomerId,
-                SalesDemoSeed.AlphaAddressId,
-                "DEMO-CUSTOMER",
-                "D1 Customer",
-                "D1 Street",
-                2
-            ),
-            await read
-                .ServiceProvider.GetRequiredService<ICustomerProfiles>()
-                .ReadAsync(SalesDemoSeed.AlphaCustomerId, Token)
-        );
-        var current = await read
-            .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
-            .ReadCurrentAsync(DddJourney.OrderId, Token);
-        Assert.NotNull(current);
-        Assert.Equal(2, current.Version);
-        Assert.Equal("D1-ORDER", current.Code);
-        Assert.Equal("EUR", current.Currency);
-        Assert.Equal(37.5m, current.Total);
-        Assert.Equal(new PurchaseOrderLine("ITEM-1", 3, 12.5m), Assert.Single(current.Lines));
-        var history = await read
-            .ServiceProvider.GetRequiredService<IPurchaseOrderHistory>()
-            .ReadCurrentAsync(DddJourney.OrderId, Token);
-        Assert.NotNull(history);
-        Assert.Equal(2, history.Version);
-        Assert.Equal(37.5m, history.Total);
-        Assert.Equal(new PurchaseOrderLine("ITEM-1", 3, 12.5m), Assert.Single(history.Lines));
-        Assert.Single(
-            await read
-                .ServiceProvider.GetRequiredService<SalesDbContext>()
-                .Set<AuditRecord>()
-                .ToArrayAsync(Token)
-        );
-        Assert.False(
-            read.ServiceProvider.GetRequiredService<SalesDbContext>()
-                .Database.HasPendingModelChanges()
-        );
-        Assert.False(
-            read.ServiceProvider.GetRequiredService<PurchasingDbContext>()
-                .Database.HasPendingModelChanges()
-        );
-    }
 
     [Theory]
     [InlineData(true)]

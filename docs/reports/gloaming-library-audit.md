@@ -5,7 +5,8 @@ Status: active audit and implementation record. The local package command and tw
 adapter removals are committed as `d63f567`; optional worker hosting as `ffc6ec2`.
 Continuation package consolidation is committed as `56a8b12`; Messaging example/fixture
 consolidation as `5d86b20`; application scaffolding retirement as `dd6eb77`. Remaining family
-example consolidation is the current uncommitted batch; Wholesale and final cleanup remain open.
+example consolidation is committed as `ae2909c`; Wholesale Purchasing retirement is the current
+uncommitted batch. Dispatch and integrated publication cleanup remain open.
 
 Make Gloaming the repository's primary product. Keep its useful persistence and delivery
 mechanisms, simplify package divisions that provide little independent value, and reduce
@@ -232,13 +233,93 @@ version `1.0.0-local.1792712551632.g53f9bb95`, SHA-256
 `382efb13fc2290e10e619ee0ec74bb797df793e5cedfa56da53cbe7e4a2e851e`.
 Logs: `/tmp/gloaming-family-{ownership,storage,codec,reactions,architecture}-tests.log` and
 `/tmp/gloaming-family-packages.log`. The disposable package-proof PostgreSQL container was
-stopped and auto-removed. Changes remain unstaged for owner review.
+stopped and auto-removed. The owner approved this family batch; `ae2909c` passed every commit
+hook and preserved the exact approved snapshot.
 
 **No new reusable mechanism was proven.** The receipt field rename, counter ceiling,
 customer/profile policy and quote rules remain consumer code. Test-owned shape and fault
 variants retain useful evidence without becoming more public applications; no new library,
 framework host or extraction candidate is added. Next is Wholesale reduction, followed by
 integrated documentation/test/tooling cleanup and publication review. Umbrine remains separate.
+
+## Wholesale Purchasing retirement — 2026-10-23
+
+Uncommitted, unstaged continuation after the exact owner-approved family snapshot was
+checkpointed as `ae2909c`; all checkpoint hooks passed. Wholesale now has four modules:
+Access, Sales, Inventory and the pending-retirement Dispatch experiment. Its API/reservation
+journey needs only the first three. This increment removes Purchasing, not a technical library.
+
+The solution, API, Worker and architecture project no longer reference Purchasing or its
+Contracts. [Finite API setup](../../samples/Wholesale/Api/DemoSetup.cs) migrates only Access,
+Sales and Inventory; [operator commands](../../samples/Wholesale/Worker/Maintenance/BusinessOperations.cs)
+now expose Inventory directly without module switches. The existing setup/open/receive/read,
+stale-command and foreign-tenant assertions still execute real product processes. Purchasing's
+40 owned source files, including nine migration files, are retired; there are no external
+consumers or databases requiring that sample schema. The unchanged literal Purchasing payloads
+and codec/history/upcasting recipes remain with the Events family and are no longer copied
+into Wholesale. Its test project now links only the Inventory literals it actually uses.
+
+[Inventory append proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs)
+and [history proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/HistoryReadTests.cs)
+retain their native guarantees with typed Inventory helpers. Remove the former Boolean module
+axis, Purchasing branches and service registrations rather than keeping a dead generic fixture.
+The history child uses the shared disposable process harness and a 60-second deadline, with
+six Inventory output lines. Forward migration still preserves the pre-existing availability
+catalog and adds owned stock history. Retained module migration bytes are unchanged.
+
+Proof disposition:
+
+| Retired variant | Current obligation and evidence |
+| --- | --- |
+| Purchasing append/storage/history/tenant/race/save-fault matrix | Inventory retains the same technical axes, including caller commit visibility, complete winner, required state, rollback across saves, raw constraints and fresh-context recovery. Independent EventSourcing PostgreSQL readers/rebuilders retain native direct-JSON variation without sample module dependencies. |
+| Purchasing JSONB replacement failure and recovery | Existing [ledger repair tests](../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/RebuildTests.cs) retain failed replacement, transaction rollback and fresh repair. Inventory upcasting/repair tests also retain corrupted JSONB and repair-write failure. Both retired and retained rows map native JsonElement; no separate EF value-converter guarantee is lost. |
+| Price/total overflow, line replacement and query-derived summary | Retired consumer policy, not a Gloaming query/projection capability. [Aggregate tests](../../src/Gloaming.EventSourcing/tests/EventSourcingTests/AggregateTests.cs) retain final-candidate validation and unchanged accepted state/version/pending facts after rejected evolution. Inventory retains whole-batch overflow rejection before tracking. |
+| Mixed Sales/Purchasing DDD journey | Retire the combined demonstration. Sales immutable profile/domain and native failure/concurrency proofs remain, together with actual API profile/audit usage. Inventory supplies the event-sourced consumer path. |
+| Purchasing-first versus Inventory-first migration order | Retire the removed module's compatibility obligation. Inventory's native forward migration remains; the earlier family checkpoint separately proved independently owned Inventory/Sales migration histories. That earlier result is historical here, not another fresh run. |
+
+Exact test accounting: 349 methods / 713 cases become 343 methods / 635 cases. Six methods
+(eight cases) explicitly retire Purchasing policy, its overlapping JSONB repair or the mixed
+journey. Thirty-one retained methods lose 70 duplicate/removed-module variants. Five method
+names now describe their retained Inventory behavior. No unexplained test-method removal or
+new mirrored tests; `--scenario schema-evolution`, event/intake/broker faults and actual
+regeneration processes remain. Architecture cases become 100 from 110 because the removed
+implementation and Contracts no longer participate in dependency matrices.
+
+Fresh verification for this increment:
+
+| Check | Result |
+| --- | --- |
+| Wholesale integration | 635 passed, PostgreSQL/RabbitMQ plus real setup/worker/maintenance processes. |
+| Final Inventory persistence reruns | All 135 selected cases passed after helper typing/cleanup and again with only the four Inventory literals in output; a subset of the 635, not additional distinct cases. |
+| Architecture | 100 passed for the retained module/library/host boundaries. |
+| Independent EventSourcing | 92 PostgreSQL cases and 11 core aggregate cases passed. |
+| Actual Aspire setup/runtime | 2 passed: explicit normal setup/readiness/outage and restricted Sales RLS provisioning/startup. Browser/OIDC journeys were not rerun; no authentication or browser wiring changed. |
+| Solution/tooling | Full solution build, zero warnings/errors; CSharpier 877 inputs, native style/analyzer verification and diff whitespace pass. |
+| Owned data/references | All 60 retained module migration files, nine literal JSON payloads and the Access historical SQL fixture match `ae2909c`; local links/project references resolve. |
+
+These are **840 distinct fresh test cases**; the 135-case Inventory subset was rerun after
+the final helper and fixture changes. Logs:
+`/tmp/gloaming-purchasing-{wholesale,architecture,event-sourcing,aggregate,runtime}-tests.log`,
+`/tmp/gloaming-purchasing-final-{event,fixture}-tests.log` and
+`/tmp/gloaming-purchasing-{build-final,csharpier,style,analyzers}.log`.
+All 21 package implementations and public interfaces remain unchanged; package-only consumers
+were last run in the family checkpoint, not rerun here. Current package docs use Inventory
+rather than the retired module. Twenty-one historical source links are pinned to verified Git
+objects at `ae2909c`; they become remotely available with eventual branch publication.
+
+Existing CI capability/module globs already cover these changed/deleted paths; no standalone
+Purchasing lane or hook remains. Solution and architecture references are updated together.
+The existing empty staged review snapshot is preserved. Review the operator/setup changes,
+retained Inventory proof matrix, [module guide](../../samples/Wholesale/modules/README.md),
+[scenario proof map](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md)
+and the explicit retirement above.
+
+**No new reusable mechanism was proven or proposed.** Quantity, pricing, profile and reservation
+rules remain consumer policy; no business Contracts, compatibility layer, generator or framework
+host is promoted into Gloaming. This narrows supported sample behavior while preserving existing
+library evidence. Dispatch population/disclosure/route-specific cleanup remains next, followed
+by integrated document/test/CI relevance, package adoption and independent code/architecture
+review. Those gaps remain open; this is not publication sign-off or Umbrine implementation.
 
 ## Confirmed direction and review criteria
 
@@ -512,12 +593,12 @@ different purposes; neither requires retaining every experimental migration chai
 The owner requested larger, closely related code-led batches, with relevant documentation,
 tests, CI and pruning completed alongside the implementation. Separate documentation-only
 increments are no longer part of this queue. Messaging examples and deployment fixtures are
-committed as `5d86b20`; scaffolding retirement as `dd6eb77`. Family examples are the
-current batch; estimate **2–3 further batches** after it:
+committed as `5d86b20`; scaffolding retirement as `dd6eb77`; family examples as `ae2909c`.
+Purchasing retirement is the current batch; estimate **two further batches** after it:
 
 | Work | Estimated batches | Completion evidence |
 | --- | --- | --- |
-| Wholesale reduction | 1–2 | Three or four modules and one coherent journey; preserve useful persistence/authorization/audit/continuation evidence, rehoming unique proofs before removing experiments. |
+| Wholesale Dispatch retirement | 1 | Complete the three-module target and one order/reservation journey; remove directory population/disclosure policy and account for route-selection/retention proofs. |
 | Integrated publication cleanup and review | 1 | Remaining document/test relevance, CI/hooks/tooling and empty directories; integrated package/adoption/sample checks, independent code/architecture review and explicit gaps. |
 
 Every batch updates its owning consumer docs and removes obsolete references/CI inputs.

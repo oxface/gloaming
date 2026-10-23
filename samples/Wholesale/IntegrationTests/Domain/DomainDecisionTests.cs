@@ -1,6 +1,4 @@
 using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing.PurchaseOrders;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
@@ -109,57 +107,6 @@ public sealed class DomainDecisionTests
                 CustomerProfileDetails.Create("Customer", "Street")
             )
         );
-    }
-
-    [Theory]
-    [InlineData("quantity")]
-    [InlineData("price")]
-    [InlineData("overflow")]
-    public void RejectedOrderBatchPreservesAcceptedStateVersionAndPendingFacts(string fault)
-    {
-        var aggregate = PurchaseOrderAggregate.Create(
-            new DraftPurchaseOrder(Guid.NewGuid(), "ORDER-1", "SUPPLIER-1", "EUR")
-        );
-        aggregate.SetLines([new PurchaseOrderLine("ITEM-1", 2, 5)]);
-        var accepted = aggregate.State;
-        var pending = aggregate.PendingEvents.ToArray();
-        var batch = new[]
-        {
-            new PurchaseOrderLine("ITEM-1", 3, 5),
-            new PurchaseOrderLine(
-                "ITEM-2",
-                fault == "quantity" ? 0
-                    : fault == "overflow" ? decimal.MaxValue
-                    : 1,
-                fault == "price" ? -1 : 2
-            ),
-        };
-        if (fault == "overflow")
-            Assert.Throws<OverflowException>(() => aggregate.SetLines(batch));
-        else
-            Assert.Throws<ArgumentOutOfRangeException>(() => aggregate.SetLines(batch));
-
-        Assert.Same(accepted, aggregate.State);
-        Assert.Equal(2, aggregate.Version);
-        Assert.Equal(pending, aggregate.PendingEvents);
-        Assert.Equal(10, aggregate.State!.Total);
-        Assert.Equal(new PurchaseOrderLine("ITEM-1", 2, 5), Assert.Single(aggregate.State.Lines));
-    }
-
-    [Fact]
-    public void OrderRulesValidateTheFinalBatchRatherThanTemporaryTotals()
-    {
-        var aggregate = PurchaseOrderAggregate.Create(
-            new DraftPurchaseOrder(Guid.NewGuid(), "ORDER-1", "SUPPLIER-1", "EUR")
-        );
-        aggregate.SetLines([
-            new PurchaseOrderLine("ITEM-1", decimal.MaxValue, 1),
-            new PurchaseOrderLine("ITEM-2", 1, 1),
-            new PurchaseOrderLine("ITEM-1", 2, 1),
-        ]);
-        Assert.Equal(3, aggregate.State!.Total);
-        Assert.Equal(4, aggregate.Version);
-        Assert.Equal(4, aggregate.PendingEvents.Count);
     }
 
     private static CustomerProfileAggregate CreateProfile() =>

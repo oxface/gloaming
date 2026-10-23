@@ -1,31 +1,22 @@
-using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed partial class AppendTests
 {
     [Theory]
-    [InlineData(true, "missing")]
-    [InlineData(false, "missing")]
-    [InlineData(true, "behind")]
-    [InlineData(false, "behind")]
-    [InlineData(true, "corrupt")]
-    [InlineData(false, "corrupt")]
-    public async Task RebuildRestoresAggregateStateAndFreshCommandsUseCorrectState(
-        bool inventory,
-        string damage
-    )
+    [InlineData("missing")]
+    [InlineData("behind")]
+    [InlineData("corrupt")]
+    public async Task RebuildRestoresAggregateStateAndFreshCommandsUseCorrectState(string damage)
     {
-        string connection = await SeedAsync(inventory);
-        string table = $"{Schema(inventory)}.{CurrentTable(inventory)}";
+        string connection = await SeedAsync();
+        string table = $"{Schema}.{CurrentTable}";
         await ExecuteAsync(
             connection,
             damage switch
@@ -39,140 +30,91 @@ public sealed partial class AppendTests
         await using var provider = RebuildProvider(connection);
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, inventory);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Assert.Equal((3, Changed), Rebuilt(await RebuildAsync(repair, inventory)));
+            Assert.Equal((3, Changed), Rebuilt(await RebuildAsync(repair)));
             Assert.Equal(2, database.ChangeTracker.Entries().Count());
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, inventory, (3, inventory ? 5m : 37.5m));
-        Assert.Equal(3, await EventCountAsync(connection, inventory));
+
+        await AssertReadAsync(provider, (3, 5m));
+        Assert.Equal(3, await EventCountAsync(connection));
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, inventory);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            if (inventory)
-            {
-                var commands = write
-                    .ServiceProvider.WithClock(Changed)
-                    .GetRequiredService<IStockPositionCommands>();
-                Assert.IsType<StockPositionChangeResult.InsufficientStock>(
-                    await commands.IssueAsync(new IssueStock(Id, 3, [new StockIssue(6)]), Token)
-                );
-                Assert.Empty(database.ChangeTracker.Entries());
-                Assert.Equal(
-                    (4, 1m),
-                    Proposed(
-                        await commands.IssueAsync(new IssueStock(Id, 3, [new StockIssue(4)]), Token)
-                    )
-                );
-            }
-            else
-                Assert.Equal((5, 100m), Proposed(await AppendAsync(write, false, 3, WinningBatch)));
+            var commands = write
+                .ServiceProvider.WithClock(Changed)
+                .GetRequiredService<IStockPositionCommands>();
+            Assert.IsType<StockPositionChangeResult.InsufficientStock>(
+                await commands.IssueAsync(new IssueStock(Id, 3, [new StockIssue(6)]), Token)
+            );
+            Assert.Empty(database.ChangeTracker.Entries());
+            Assert.Equal(
+                (4, 1m),
+                Proposed(
+                    await commands.IssueAsync(new IssueStock(Id, 3, [new StockIssue(4)]), Token)
+                )
+            );
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, inventory, inventory ? (4, 1m) : (5, 100m));
-    }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task RepairRollbackAndForeignTenantLeaveHistoryAndServingStateAlone(bool inventory)
-    {
-        string connection = await SeedAsync(inventory);
-        await using var provider = RebuildProvider(connection);
-        await using (var foreign = Scope(provider, Beta))
-        {
-            var database = Context(foreign, inventory);
-            await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Assert.True(
-                await RebuildAsync(foreign, inventory)
-                    is StockPositionRebuildResult.NotFound
-                        or PurchaseOrderRebuildResult.NotFound
-            );
-            Assert.Empty(database.ChangeTracker.Entries());
-        }
-        await using (var repair = Scope(provider, Alpha))
-        {
-            var database = Context(repair, inventory);
-            await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Rebuilt(await RebuildAsync(repair, inventory));
-            await database.SaveChangesAsync(Token);
-            await transaction.RollbackAsync(Token);
-        }
-        await AssertReadAsync(provider, inventory, (3, inventory ? 5m : 37.5m));
-        await using var fresh = Scope(provider, Alpha);
-        var freshDatabase = Context(fresh, inventory);
-        await using var freshTransaction = await freshDatabase.Database.BeginTransactionAsync(
-            Token
-        );
-        Rebuilt(await RebuildAsync(fresh, inventory));
-        await freshDatabase.SaveChangesAsync(Token);
-        await freshTransaction.CommitAsync(Token);
-        Assert.Equal(3, await EventCountAsync(connection, inventory));
+        await AssertReadAsync(provider, (4, 1m));
     }
 
     [Fact]
-    public async Task PurchasingStateSqlFailureRollsBackReplacementAndFreshRepairRestoresDerivedSummary()
+    public async Task RepairRollbackAndForeignTenantLeaveHistoryAndServingStateAlone()
     {
-        string connection = await SeedAsync(false);
-        await ExecuteAsync(
-            connection,
-            "UPDATE purchasing.purchase_order_current SET state = '[]'::jsonb; ALTER TABLE purchasing.purchase_order_current ADD CONSTRAINT repair_fault CHECK (state = '[]'::jsonb) NOT VALID"
-        );
+        string connection = await SeedAsync();
         await using var provider = RebuildProvider(connection);
+        await using (var foreign = Scope(provider, Beta))
+        {
+            var database = Context(foreign);
+            await using var transaction = await database.Database.BeginTransactionAsync(Token);
+            Assert.True(await RebuildAsync(foreign) is StockPositionRebuildResult.NotFound);
+            Assert.Empty(database.ChangeTracker.Entries());
+        }
+
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, false);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Rebuilt(await RebuildAsync(repair, false));
-            await Assert.ThrowsAsync<DbUpdateException>(() => database.SaveChangesAsync(Token));
+            Rebuilt(await RebuildAsync(repair));
+            await database.SaveChangesAsync(Token);
             await transaction.RollbackAsync(Token);
         }
-        await using (var read = Scope(provider, Alpha))
-            await Assert.ThrowsAnyAsync<JsonException>(() =>
-                read
-                    .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
-                    .ReadSummaryAsync(Id, Token)
-            );
-        await ExecuteAsync(
-            connection,
-            "ALTER TABLE purchasing.purchase_order_current DROP CONSTRAINT repair_fault"
+
+        await AssertReadAsync(provider, (3, 5m));
+        await using var fresh = Scope(provider, Alpha);
+        var freshDatabase = Context(fresh);
+        await using var freshTransaction = await freshDatabase.Database.BeginTransactionAsync(
+            Token
         );
-        await using (var repair = Scope(provider, Alpha))
-        {
-            var database = Context(repair, false);
-            await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Rebuilt(await RebuildAsync(repair, false));
-            await database.SaveChangesAsync(Token);
-            await transaction.CommitAsync(Token);
-        }
-        await AssertReadAsync(provider, false, (3, 37.5m));
+        Rebuilt(await RebuildAsync(fresh));
+        await freshDatabase.SaveChangesAsync(Token);
+        await freshTransaction.CommitAsync(Token);
+        Assert.Equal(3, await EventCountAsync(connection));
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task RealConsumerAppendInvalidatesCapturedRepairAndFreshReplayRecovers(
-        bool inventory
-    )
+    [Fact]
+    public async Task RealConsumerAppendInvalidatesCapturedRepairAndFreshReplayRecovers()
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var provider = RebuildProvider(connection);
         await using var writer = Scope(provider, Alpha);
-        var writerDatabase = Context(writer, inventory);
+        var writerDatabase = Context(writer);
         await using var writerTransaction = await writerDatabase.Database.BeginTransactionAsync(
             Token
         );
-        Proposed(await AppendAsync(writer, inventory, 3, WinningBatch));
+        Proposed(await AppendAsync(writer, 3, WinningBatch));
         await using var repair = Scope(provider, Alpha);
-        var repairDatabase = Context(repair, inventory);
+        var repairDatabase = Context(repair);
         await using var repairTransaction = await repairDatabase.Database.BeginTransactionAsync(
             Token
         );
-        Assert.Equal((3, Changed), Rebuilt(await RebuildAsync(repair, inventory)));
+        Assert.Equal((3, Changed), Rebuilt(await RebuildAsync(repair)));
         await writerDatabase.SaveChangesAsync(Token);
         await writerTransaction.CommitAsync(Token);
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
@@ -181,65 +123,60 @@ public sealed partial class AppendTests
         await repairTransaction.RollbackAsync(Token);
         await using (var fresh = Scope(provider, Alpha))
         {
-            var database = Context(fresh, inventory);
+            var database = Context(fresh);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Assert.Equal((5, Changed), Rebuilt(await RebuildAsync(fresh, inventory)));
+            Assert.Equal((5, Changed), Rebuilt(await RebuildAsync(fresh)));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, inventory, (5, inventory ? 20m : 100m));
+
+        await AssertReadAsync(provider, (5, 20m));
     }
 
     [Fact]
-    public async Task ExecutableMaintenanceJourneyUsesBothModuleContracts()
+    public async Task MaintenanceJourneyUsesInventoryContracts()
     {
         string connection = await DatabaseAsync();
         using var output = new StringWriter();
         await RebuildJourney.RunAsync(connection, output, Token);
         Assert.Contains("inventory rebuilt", output.ToString(), StringComparison.Ordinal);
-        Assert.Contains("purchasing rebuilt", output.ToString(), StringComparison.Ordinal);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task AnotherAdmittedOwnerCanWriteSameIdDuringUncommittedRepair(bool inventory)
+    [Fact]
+    public async Task AnotherAdmittedOwnerCanWriteSameIdDuringUncommittedRepair()
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var provider = RebuildProvider(connection);
         await using var repair = Scope(provider, Alpha);
-        var database = Context(repair, inventory);
+        var database = Context(repair);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
-        Rebuilt(await RebuildAsync(repair, inventory));
+        Rebuilt(await RebuildAsync(repair));
         await using var other = Scope(provider, Beta);
-        var otherDatabase = Context(other, inventory);
+        var otherDatabase = Context(other);
         await using var otherTransaction = await otherDatabase.Database.BeginTransactionAsync(
             Token
         );
         Assert.Equal(
             (1, 0m),
-            Proposed(await CreateAsync(other, inventory).WaitAsync(TimeSpan.FromSeconds(5), Token))
+            Proposed(await CreateAsync(other).WaitAsync(TimeSpan.FromSeconds(5), Token))
         );
         await otherDatabase.SaveChangesAsync(Token);
         await otherTransaction.CommitAsync(Token);
         await database.SaveChangesAsync(Token);
         await transaction.CommitAsync(Token);
-        await AssertReadAsync(provider, inventory, (1, 0m), Beta);
-        await AssertReadAsync(provider, inventory, (3, inventory ? 5m : 37.5m));
+        await AssertReadAsync(provider, (1, 0m), Beta);
+        await AssertReadAsync(provider, (3, 5m));
     }
 
     [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, false)]
-    [InlineData(true, true)]
-    [InlineData(false, true)]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task ReplayRetainsConsumerSchemaAndDomainSequenceFailuresBeforeTracking(
-        bool inventory,
         bool invalidSequence
     )
     {
-        string connection = await SeedAsync(inventory);
-        string table = $"{Schema(inventory)}.events";
+        string connection = await SeedAsync();
+        string table = $"{Schema}.events";
         await ExecuteAsync(
             connection,
             invalidSequence
@@ -248,26 +185,23 @@ public sealed partial class AppendTests
         );
         await using var provider = RebuildProvider(connection);
         await using var repair = Scope(provider, Alpha);
-        var database = Context(repair, inventory);
+        var database = Context(repair);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
         if (invalidSequence)
-            await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                RebuildAsync(repair, inventory)
-            );
+            await Assert.ThrowsAsync<InvalidOperationException>(() => RebuildAsync(repair));
         else
-            await Assert.ThrowsAsync<EventDecodingException>(() => RebuildAsync(repair, inventory));
+            await Assert.ThrowsAsync<EventDecodingException>(() => RebuildAsync(repair));
         Assert.Empty(database.ChangeTracker.Entries());
         await transaction.RollbackAsync(Token);
         await using var read = Scope(provider, Alpha);
-        Assert.Equal((3, inventory ? 5m : 37.5m), await CurrentAsync(read, inventory));
-        Assert.Equal(3, await EventCountAsync(connection, inventory));
+        Assert.Equal((3, 5m), await CurrentAsync(read));
+        Assert.Equal(3, await EventCountAsync(connection));
     }
 
     private static ServiceProvider RebuildProvider(string connection)
     {
         var services = DemoComposition.CreateServices(connection);
         services.AddStockPositionRebuilding();
-        services.AddPurchaseOrderRebuilding();
         services.AddScoped<TestClock>();
         services.AddScoped<TimeProvider>(provider => provider.GetRequiredService<TestClock>());
         return services.BuildServiceProvider(
@@ -275,20 +209,17 @@ public sealed partial class AppendTests
         );
     }
 
-    private static async Task<object> RebuildAsync(AsyncServiceScope scope, bool inventory) =>
-        inventory
-            ? await scope
-                .ServiceProvider.GetRequiredService<IStockPositionRebuilding>()
-                .RebuildAsync(Id, Token)
-            : await scope
-                .ServiceProvider.GetRequiredService<IPurchaseOrderRebuilding>()
-                .RebuildAsync(Id, Token);
+    private static async Task<StockPositionRebuildResult> RebuildAsync(AsyncServiceScope scope) =>
+        await scope
+            .ServiceProvider.GetRequiredService<IStockPositionRebuilding>()
+            .RebuildAsync(Id, Token);
 
-    private static (long Version, DateTimeOffset RecordedAt) Rebuilt(object result) =>
+    private static (long Version, DateTimeOffset RecordedAt) Rebuilt(
+        StockPositionRebuildResult result
+    ) =>
         result switch
         {
             StockPositionRebuildResult.Changed staged => (staged.Version, staged.RecordedAt),
-            PurchaseOrderRebuildResult.Changed staged => (staged.Version, staged.RecordedAt),
             _ => throw new InvalidOperationException("Expected a staged rebuild."),
         };
 }

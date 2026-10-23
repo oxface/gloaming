@@ -67,7 +67,7 @@ and [worker roles](../samples/Wholesale/Worker/README.md). The API's finite `--i
 applies existing module migrations and sample data; normal API/worker startup never migrates
 or seeds. The default API supports admitted profiles/catalog/memberships and the private Sales
 draft lifecycle. Restricted HTTP RLS and restricted reply/dispatch workers retain their explicit
-smaller capability and credential boundaries. Operator Inventory/Purchasing commands and stock
+smaller capability and credential boundaries. Operator Inventory commands and stock
 regeneration live in the single Worker, with caller-owned admission/credentials.
 
 ```bash

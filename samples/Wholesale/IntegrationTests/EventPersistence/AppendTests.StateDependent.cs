@@ -10,11 +10,11 @@ public sealed partial class AppendTests
     [Fact]
     public async Task IssueEligibilityUsesLoadedStockAndRejectsTheCompleteBatch()
     {
-        string connection = await SeedAsync(true); // Version 3, on-hand 5.
+        string connection = await SeedAsync(); // Version 3, on-hand 5.
         await using var provider = Provider(connection);
         await using (var rejected = Scope(provider, Alpha))
         {
-            var database = Context(rejected, true);
+            var database = Context(rejected);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal(
                 new StockPositionChangeResult.InsufficientStock(5, 6),
@@ -24,21 +24,23 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (3, 5));
+
+        await AssertReadAsync(provider, (3, 5));
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, true);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal((5, 1m), Proposed(await IssueAsync(write, 3, [2, 2])));
-            await AssertReadAsync(provider, true, (3, 5));
+            await AssertReadAsync(provider, (3, 5));
             await database.SaveChangesAsync(Token);
-            await AssertReadAsync(provider, true, (3, 5));
+            await AssertReadAsync(provider, (3, 5));
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (5, 1));
+
+        await AssertReadAsync(provider, (5, 1));
         await using (var fresh = Scope(provider, Alpha))
         {
-            var database = Context(fresh, true);
+            var database = Context(fresh);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal(
                 new StockPositionChangeResult.InsufficientStock(1, 2),
@@ -49,20 +51,21 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (6, 0)); // Includes deterministic live replay.
-        Assert.Equal(6, await EventCountAsync(connection, true));
+
+        await AssertReadAsync(provider, (6, 0)); // Includes deterministic live replay.
+        Assert.Equal(6, await EventCountAsync(connection));
     }
 
     [Fact]
     public async Task CompetingEligibleIssuesRequireAFreshDecisionAfterTheLosingSave()
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using (var winner = Scope(provider, Alpha))
         await using (var loser = Scope(provider, Alpha))
         {
-            var winnerDatabase = Context(winner, true);
-            var loserDatabase = Context(loser, true);
+            var winnerDatabase = Context(winner);
+            var loserDatabase = Context(loser);
             await using var winningTransaction =
                 await winnerDatabase.Database.BeginTransactionAsync(Token);
             await using var losingTransaction = await loserDatabase.Database.BeginTransactionAsync(
@@ -75,14 +78,15 @@ public sealed partial class AppendTests
             var failure = await Assert.ThrowsAnyAsync<DbUpdateException>(() =>
                 loserDatabase.SaveChangesAsync(Token)
             );
-            Assert.True(IsConflict(true, failure));
+            Assert.True(IsConflict(failure));
             await losingTransaction.RollbackAsync(CancellationToken.None);
         }
-        await AssertReadAsync(provider, true, (5, 1));
-        Assert.Equal(5, await EventCountAsync(connection, true));
+
+        await AssertReadAsync(provider, (5, 1));
+        Assert.Equal(5, await EventCountAsync(connection));
         await using (var fresh = Scope(provider, Alpha))
         {
-            var database = Context(fresh, true);
+            var database = Context(fresh);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal(
                 new StockPositionChangeResult.InsufficientStock(1, 4),
@@ -93,7 +97,8 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (6, 0));
+
+        await AssertReadAsync(provider, (6, 0));
     }
 
     [Theory]
@@ -101,22 +106,23 @@ public sealed partial class AppendTests
     [InlineData("later-event")]
     public async Task IssueParticipantFaultRollsBackAndFreshContextCanIssue(string fault)
     {
-        string connection = await SeedAsync(true);
-        await FaultAsync(connection, true, fault);
+        string connection = await SeedAsync();
+        await FaultAsync(connection, fault);
         await using var provider = Provider(connection);
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, true);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal((5, 1m), Proposed(await IssueAsync(write, 3, [2, 2])));
             var failure = await Assert.ThrowsAsync<DbUpdateException>(() =>
                 database.SaveChangesAsync(Token)
             );
-            Assert.False(IsConflict(true, failure));
+            Assert.False(IsConflict(failure));
             await transaction.RollbackAsync(CancellationToken.None);
         }
-        await AssertReadAsync(provider, true, (3, 5));
-        Assert.Equal(3, await EventCountAsync(connection, true));
+
+        await AssertReadAsync(provider, (3, 5));
+        Assert.Equal(3, await EventCountAsync(connection));
         await ExecuteAsync(
             connection,
             fault == "current"
@@ -125,13 +131,14 @@ public sealed partial class AppendTests
         );
         await using (var fresh = Scope(provider, Alpha))
         {
-            var database = Context(fresh, true);
+            var database = Context(fresh);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal((5, 1m), Proposed(await IssueAsync(fresh, 3, [2, 2])));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (5, 1));
+
+        await AssertReadAsync(provider, (5, 1));
     }
 
     [Theory]
@@ -140,7 +147,7 @@ public sealed partial class AppendTests
     [InlineData("timestamp")]
     public async Task IssueCannotDecideFromADamagedRequiredView(string damage)
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await ExecuteAsync(
             connection,
             damage switch
@@ -153,24 +160,24 @@ public sealed partial class AppendTests
         );
         await using var provider = Provider(connection);
         await using var write = Scope(provider, Alpha);
-        var database = Context(write, true);
+        var database = Context(write);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
         await Assert.ThrowsAsync<InvalidDataException>(() => IssueAsync(write, 3, [1]));
         Assert.Empty(database.ChangeTracker.Entries());
-        Assert.Equal(3, await EventCountAsync(connection, true));
+        Assert.Equal(3, await EventCountAsync(connection));
     }
 
     [Fact]
     public async Task IssueRejectsAnAheadViewObservedAfterTheHeader()
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var winner = Provider(connection);
         var observation = new QueryObservation("inventory")
         {
             BeforeInlineRead = async cancellation =>
             {
                 await using var operation = Scope(winner, Alpha);
-                var database = Context(operation, true);
+                var database = Context(operation);
                 await using var transaction = await database.Database.BeginTransactionAsync(
                     cancellation
                 );
@@ -181,55 +188,59 @@ public sealed partial class AppendTests
         };
         await using var provider = Provider(connection, observation);
         await using var loser = Scope(provider, Alpha);
-        var loserDatabase = Context(loser, true);
+        var loserDatabase = Context(loser);
         await using var loserTransaction = await loserDatabase.Database.BeginTransactionAsync(
             Token
         );
         Assert.IsType<StockPositionChangeResult.Conflict>(await IssueAsync(loser, 3, [2]));
         Assert.Empty(loserDatabase.ChangeTracker.Entries());
-        await AssertReadAsync(winner, true, (4, 1));
+        await AssertReadAsync(winner, (4, 1));
     }
 
     [Fact]
     public async Task IssuePreservesTenantIsolationAndStaleVersionOutcomes()
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using (var foreign = Scope(provider, Beta))
         {
-            var database = Context(foreign, true);
+            var database = Context(foreign);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.IsType<StockPositionChangeResult.NotFound>(await IssueAsync(foreign, 3, [1]));
             Assert.Empty(database.ChangeTracker.Entries());
-            Proposed(await CreateAsync(foreign, true));
+            Proposed(await CreateAsync(foreign));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await using (var foreign = Scope(provider, Beta))
         {
-            var database = Context(foreign, true);
+            var database = Context(foreign);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Proposed(await AppendAsync(foreign, true, 1, [9]));
+            Proposed(await AppendAsync(foreign, 1, [9]));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await using (var foreign = Scope(provider, Beta))
         {
-            var database = Context(foreign, true);
+            var database = Context(foreign);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal((3, 1m), Proposed(await IssueAsync(foreign, 2, [8])));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await using (var stale = Scope(provider, Alpha))
         {
-            var database = Context(stale, true);
+            var database = Context(stale);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.IsType<StockPositionChangeResult.Conflict>(await IssueAsync(stale, 2, [1]));
             Assert.Empty(database.ChangeTracker.Entries());
         }
-        await AssertReadAsync(provider, true, (3, 5));
-        await AssertReadAsync(provider, true, (3, 1), Beta);
+
+        await AssertReadAsync(provider, (3, 5));
+        await AssertReadAsync(provider, (3, 1), Beta);
     }
 
     [Theory]
@@ -237,10 +248,10 @@ public sealed partial class AppendTests
     [InlineData(true)]
     public async Task InvalidIssueBatchCannotLeaveAPartiallyAcceptedProposal(bool overflow)
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using var operation = Scope(provider, Alpha);
-        var database = Context(operation, true);
+        var database = Context(operation);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
         if (overflow)
             await Assert.ThrowsAsync<OverflowException>(() =>
@@ -249,7 +260,7 @@ public sealed partial class AppendTests
         else
             await Assert.ThrowsAnyAsync<ArgumentException>(() => IssueAsync(operation, 3, [1, 0]));
         Assert.Empty(database.ChangeTracker.Entries());
-        await AssertReadAsync(provider, true, (3, 5));
+        await AssertReadAsync(provider, (3, 5));
     }
 
     private static Task<StockPositionChangeResult> IssueAsync(

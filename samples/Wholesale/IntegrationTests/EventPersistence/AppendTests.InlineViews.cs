@@ -3,20 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using Npgsql;
 
 namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed partial class AppendTests
 {
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task InlineEditWorksWithHistoryReadsDeniedWhileLiveReplayFails(bool inventory)
+    [Fact]
+    public async Task InlineEditWorksWithHistoryReadsDeniedWhileLiveReplayFails()
     {
-        string connection = await SeedAsync(inventory);
-        string schema = Schema(inventory);
+        string connection = await SeedAsync();
+        string schema = Schema;
         string role = "inline_writer_" + Guid.NewGuid().ToString("N");
         await ExecuteAsync(
             connection,
@@ -35,50 +32,38 @@ public sealed partial class AppendTests
         await using var provider = Provider(restricted.ConnectionString);
         await using (var read = Scope(provider, Alpha))
         {
-            Assert.Equal((3, inventory ? 5m : 37.5m), await CurrentAsync(read, inventory));
+            Assert.Equal((3, 5m), await CurrentAsync(read));
             var failure = await Assert.ThrowsAsync<PostgresException>(async () =>
             {
-                if (inventory)
-                    await read
-                        .ServiceProvider.GetRequiredService<IStockPositionHistory>()
-                        .ReadCurrentAsync(Id, Token);
-                else
-                    await read
-                        .ServiceProvider.GetRequiredService<IPurchaseOrderHistory>()
-                        .ReadCurrentAsync(Id, Token);
+                await read
+                    .ServiceProvider.GetRequiredService<IStockPositionHistory>()
+                    .ReadCurrentAsync(Id, Token);
             });
             Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, failure.SqlState);
         }
+
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, inventory);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Assert.Equal(
-                (5, inventory ? 20m : 100m),
-                Proposed(await AppendAsync(write, inventory, 3, WinningBatch))
-            );
+            Assert.Equal((5, 20m), Proposed(await AppendAsync(write, 3, WinningBatch)));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await using var administrator = Provider(connection);
-        await AssertReadAsync(administrator, inventory, (5, inventory ? 20m : 100m));
+        await AssertReadAsync(administrator, (5, 20m));
     }
 
     [Theory]
-    [InlineData(true, "missing")]
-    [InlineData(true, "behind")]
-    [InlineData(true, "timestamp")]
-    [InlineData(false, "missing")]
-    [InlineData(false, "behind")]
-    [InlineData(false, "timestamp")]
-    public async Task AggregateStateDamageRejectsStagingAndQueriesWithoutRepair(
-        bool inventory,
-        string damage
-    )
+    [InlineData("missing")]
+    [InlineData("behind")]
+    [InlineData("timestamp")]
+    public async Task AggregateStateDamageRejectsStagingAndQueriesWithoutRepair(string damage)
     {
-        string connection = await SeedAsync(inventory);
-        string table = CurrentTable(inventory);
-        string target = $"{Schema(inventory)}.{table}";
+        string connection = await SeedAsync();
+        string table = CurrentTable;
+        string target = $"{Schema}.{table}";
         await ExecuteAsync(
             connection,
             damage switch
@@ -93,22 +78,17 @@ public sealed partial class AppendTests
         await using var provider = Provider(connection);
         await using (var write = Scope(provider, Alpha))
         {
-            var database = Context(write, inventory);
+            var database = Context(write);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             await Assert.ThrowsAsync<InvalidDataException>(() =>
-                AppendAsync(write, inventory, 3, WinningBatch)
+                AppendAsync(write, 3, WinningBatch)
             );
             Assert.Empty(database.ChangeTracker.Entries());
         }
+
         await using var read = Scope(provider, Alpha);
-        await Assert.ThrowsAsync<InvalidDataException>(() => CurrentAsync(read, inventory));
-        if (!inventory)
-            await Assert.ThrowsAsync<InvalidDataException>(() =>
-                read
-                    .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
-                    .ReadSummaryAsync(Id, Token)
-            );
-        Assert.Equal(3, await EventCountAsync(connection, inventory));
+        await Assert.ThrowsAsync<InvalidDataException>(() => CurrentAsync(read));
+        Assert.Equal(3, await EventCountAsync(connection));
         if (damage == "missing")
         {
             await using var sql = new NpgsqlConnection(connection);
@@ -119,27 +99,22 @@ public sealed partial class AppendTests
     }
 
     [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, false)]
-    [InlineData(true, true)]
-    [InlineData(false, true)]
-    public async Task CommitBetweenHeaderAndViewReadsIsConcurrencyRatherThanCorruption(
-        bool inventory,
-        bool query
-    )
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CommitBetweenHeaderAndViewReadsIsConcurrencyRatherThanCorruption(bool query)
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var winner = Provider(connection);
-        var observation = new QueryObservation(Schema(inventory))
+        var observation = new QueryObservation(Schema)
         {
             BeforeInlineRead = async cancellation =>
             {
                 await using var scope = Scope(winner, Alpha);
-                var database = Context(scope, inventory);
+                var database = Context(scope);
                 await using var transaction = await database.Database.BeginTransactionAsync(
                     cancellation
                 );
-                Proposed(await AppendAsync(scope, inventory, 3, WinningBatch));
+                Proposed(await AppendAsync(scope, 3, WinningBatch));
                 await database.SaveChangesAsync(cancellation);
                 await transaction.CommitAsync(cancellation);
             },
@@ -148,233 +123,97 @@ public sealed partial class AppendTests
         await using (var scope = Scope(provider, Alpha))
         {
             if (query)
-                await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() =>
-                    CurrentAsync(scope, inventory)
-                );
+                await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => CurrentAsync(scope));
             else
             {
-                var database = Context(scope, inventory);
+                var database = Context(scope);
                 await using var transaction = await database.Database.BeginTransactionAsync(Token);
-                Assert.Equal(
-                    "conflict",
-                    Status(await AppendAsync(scope, inventory, 3, InitialBatch))
-                );
+                Assert.Equal("conflict", Status(await AppendAsync(scope, 3, InitialBatch)));
                 Assert.Empty(database.ChangeTracker.Entries());
             }
         }
-        await AssertReadAsync(winner, inventory, (5, inventory ? 20m : 100m));
+
+        await AssertReadAsync(winner, (5, 20m));
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task InvalidLaterInputCannotLeaveAnAcceptedPartialBatch(bool inventory)
+    [Fact]
+    public async Task InvalidLaterInputCannotLeaveAnAcceptedPartialBatch()
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using (var scope = Scope(provider, Alpha))
         {
-            var database = Context(scope, inventory);
+            var database = Context(scope);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
-                AppendAsync(scope, inventory, 3, [7m, -1m])
+                AppendAsync(scope, 3, [7m, -1m])
             );
             Assert.Empty(database.ChangeTracker.Entries());
         }
-        await AssertReadAsync(provider, inventory, (3, inventory ? 5m : 37.5m));
-        await CommitBatchAsync(provider, inventory, 3, WinningBatch);
-        await AssertReadAsync(provider, inventory, (5, inventory ? 20m : 100m));
+
+        await AssertReadAsync(provider, (3, 5m));
+        await CommitBatchAsync(provider, 3, WinningBatch);
+        await AssertReadAsync(provider, (5, 20m));
     }
 
-    [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, false)]
-    [InlineData(false, true)]
-    public async Task UnrepresentableCandidateRejectsTheWholeBatchBeforeTracking(
-        bool inventory,
-        bool total
-    )
+    [Fact]
+    public async Task UnrepresentableCandidateRejectsTheWholeBatchBeforeTracking()
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using (var scope = Scope(provider, Alpha))
         {
-            var database = Context(scope, inventory);
+            var database = Context(scope);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            if (total)
-                await Assert.ThrowsAsync<OverflowException>(() =>
-                    scope
-                        .ServiceProvider.WithClock(Changed)
-                        .GetRequiredService<IPurchaseOrderCommands>()
-                        .ChangeLinesAsync(
-                            new ChangePurchaseOrderLines(
-                                Id,
-                                3,
-                                [
-                                    new PurchaseOrderLine("MAX-A", decimal.MaxValue, 1),
-                                    new PurchaseOrderLine("MAX-B", 1, 1),
-                                ]
-                            ),
-                            Token
-                        )
-                );
-            else
-                await Assert.ThrowsAsync<OverflowException>(() =>
-                    AppendAsync(scope, inventory, 3, [7m, decimal.MaxValue])
-                );
+            await Assert.ThrowsAsync<OverflowException>(() =>
+                AppendAsync(scope, 3, [7m, decimal.MaxValue])
+            );
             Assert.Empty(database.ChangeTracker.Entries());
         }
-        await AssertReadAsync(provider, inventory, (3, inventory ? 5m : 37.5m));
-        await CommitBatchAsync(provider, inventory, 3, WinningBatch);
-        await AssertReadAsync(provider, inventory, (5, inventory ? 20m : 100m));
-    }
 
-    [Fact]
-    public async Task FinalCandidateValidationAllowsATemporaryBatchTotalToBeReplaced()
-    {
-        string connection = await SeedAsync(false);
-        await using var provider = Provider(connection);
-        await using (var scope = Scope(provider, Alpha))
-        {
-            var database = Context(scope, false);
-            await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            var result = await scope
-                .ServiceProvider.WithClock(Changed)
-                .GetRequiredService<IPurchaseOrderCommands>()
-                .ChangeLinesAsync(
-                    new ChangePurchaseOrderLines(
-                        Id,
-                        3,
-                        [
-                            new PurchaseOrderLine("ITEM-1", decimal.MaxValue, 1),
-                            new PurchaseOrderLine("ITEM-2", 1, 1),
-                            new PurchaseOrderLine("ITEM-1", 2, 1),
-                        ]
-                    ),
-                    Token
-                );
-            Assert.Equal((6, 3m), Proposed(result));
-            await database.SaveChangesAsync(Token);
-            await transaction.CommitAsync(Token);
-        }
-        await AssertReadAsync(provider, false, (6, 3m));
-        await using var read = Scope(provider, Alpha);
-        var summary = (
-            await read
-                .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
-                .ReadSummaryAsync(Id, Token)
-        )!;
-        Assert.Equal(2, summary.LineCount);
-    }
-
-    [Fact]
-    public async Task DerivedSummaryReflectsOnlyTheTargetLineReplacement()
-    {
-        string connection = await SeedAsync(false);
-        await using var provider = Provider(connection);
-        await using (var scope = Scope(provider, Alpha))
-        {
-            var database = Context(scope, false);
-            await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Assert.Equal(
-                (5, 47m),
-                Proposed(
-                    await scope
-                        .ServiceProvider.WithClock(Changed)
-                        .GetRequiredService<IPurchaseOrderCommands>()
-                        .ChangeLinesAsync(
-                            new ChangePurchaseOrderLines(
-                                Id,
-                                3,
-                                [
-                                    new PurchaseOrderLine("ITEM-2", 4, 5),
-                                    new PurchaseOrderLine("ITEM-1", 3, 9),
-                                ]
-                            ),
-                            Token
-                        )
-                )
-            );
-            await database.SaveChangesAsync(Token);
-            await transaction.CommitAsync(Token);
-        }
-        await AssertReadAsync(provider, false, (5, 47m));
-        await using var read = Scope(provider, Alpha);
-        var queries = read.ServiceProvider.GetRequiredService<IPurchaseOrderQueries>();
-        var summary = (await queries.ReadSummaryAsync(Id, Token))!;
-        Assert.Equal(
-            ("APPEND-1", "EUR", 2, 47m),
-            (summary.Code, summary.Currency, summary.LineCount, summary.Total)
-        );
-        var state = (await queries.ReadCurrentAsync(Id, Token))!;
-        Assert.Collection(
-            state.Lines.OrderBy(line => line.ItemCode),
-            line => Assert.Equal(new PurchaseOrderLine("ITEM-1", 3, 9), line),
-            line => Assert.Equal(new PurchaseOrderLine("ITEM-2", 4, 5), line)
-        );
+        await AssertReadAsync(provider, (3, 5m));
+        await CommitBatchAsync(provider, 3, WinningBatch);
+        await AssertReadAsync(provider, (5, 20m));
     }
 
     [Theory]
-    [InlineData(true, false)]
-    [InlineData(false, false)]
-    [InlineData(true, true)]
-    [InlineData(false, true)]
-    public async Task CommittedViewQueriesRequireAnEstablishedSelectedTenant(
-        bool inventory,
-        bool tenantless
-    )
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CommittedViewQueriesRequireAnEstablishedSelectedTenant(bool tenantless)
     {
-        string connection = await SeedAsync(inventory);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using var scope = provider.CreateAsyncScope();
         if (tenantless)
             scope
                 .ServiceProvider.GetRequiredService<ITenantContextInitializer>()
                 .Initialize(TenantContext.Tenantless());
-        await Assert.ThrowsAnyAsync<InvalidOperationException>(() =>
-            CurrentAsync(scope, inventory)
-        );
-        if (!inventory)
-            await Assert.ThrowsAnyAsync<InvalidOperationException>(() =>
-                scope
-                    .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
-                    .ReadSummaryAsync(Id, Token)
-            );
+        await Assert.ThrowsAnyAsync<InvalidOperationException>(() => CurrentAsync(scope));
     }
 
-    private static string CurrentTable(bool inventory) =>
-        inventory ? "stock_position_current" : "purchase_order_current";
+    private const string CurrentTable = "stock_position_current";
 
     private static async Task<(long Version, decimal Amount)?> CurrentAsync(
         AsyncServiceScope scope,
-        bool inventory,
         Guid? id = null
     )
     {
-        if (inventory)
-        {
-            var current = await scope
-                .ServiceProvider.GetRequiredService<IStockPositionQueries>()
-                .ReadCurrentAsync(id ?? Id, Token);
-            return current is null ? null : (current.Version, current.OnHand);
-        }
-        var order = await scope
-            .ServiceProvider.GetRequiredService<IPurchaseOrderQueries>()
+        var current = await scope
+            .ServiceProvider.GetRequiredService<IStockPositionQueries>()
             .ReadCurrentAsync(id ?? Id, Token);
-        return order is null ? null : (order.Version, order.Total);
+        return current is null ? null : (current.Version, current.OnHand);
     }
 
     private static async Task CommitBatchAsync(
         ServiceProvider provider,
-        bool inventory,
         long expected,
         decimal[] batch
     )
     {
         await using var scope = Scope(provider, Alpha);
-        var database = Context(scope, inventory);
+        var database = Context(scope);
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
-        Proposed(await AppendAsync(scope, inventory, expected, batch));
+        Proposed(await AppendAsync(scope, expected, batch));
         await database.SaveChangesAsync(Token);
         await transaction.CommitAsync(Token);
     }

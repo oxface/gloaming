@@ -3,8 +3,10 @@
 Direction update, 2026-10-22: use the [library architecture audit](../reports/gloaming-library-audit.md)
 for the current implementation record and next increments. The generator and ContextDemo
 are retired as `dd6eb77`; [application patterns](../application-patterns.md) replace
-active creation instructions. The template/extraction sequence
-and dated authorizations below retain historical context; they do not select further template
+active creation instructions. Family example consolidation is checkpointed as `ae2909c`;
+the current audit increment retires Wholesale Purchasing while retaining Inventory proof coverage.
+Dispatch retirement remains next. The template/extraction sequence and dated authorizations
+below retain historical context; they do not select further template
 work or authorize the audit's proposed interface/removal changes. Current package contracts
 remain with their library families until concrete changes are reviewed.
 

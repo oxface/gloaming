@@ -616,7 +616,7 @@ validation and header Add/Attach advancement move behind Prepare/Stage as review
 
 The actual append callers are
 [StockPositionCommands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs)
-and [PurchaseOrderCommands](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs).
+and [PurchaseOrderCommands](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs).
 Both currently decide events before loading the header/inline state. Both repeat native
 transaction and tracked-header checks, UTC/nonregressing timestamps, checked version
 arithmetic, full-batch encoding/materialization, contiguous envelope positions, header

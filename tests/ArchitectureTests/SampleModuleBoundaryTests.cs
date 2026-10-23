@@ -19,8 +19,6 @@ using ModulithFoundry.Samples.Wholesale.Dispatch;
 using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
 using ModulithFoundry.Samples.Wholesale.Inventory;
 using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 using ModulithFoundry.Samples.Wholesale.Sales;
 using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
@@ -35,7 +33,6 @@ public sealed class SampleModuleBoundaryTests
         typeof(AccessDbContext).Assembly,
         typeof(InventoryDbContext).Assembly,
         typeof(SalesDbContext).Assembly,
-        typeof(PurchasingDbContext).Assembly,
         typeof(DispatchDbContext).Assembly,
     ];
     private static readonly ReflectionAssembly[] Contracts =
@@ -43,7 +40,6 @@ public sealed class SampleModuleBoundaryTests
         typeof(IApplicationAccess).Assembly,
         typeof(IStockCatalog).Assembly,
         typeof(ICustomerProfiles).Assembly,
-        typeof(IPurchaseOrderHistory).Assembly,
         typeof(ICustomerDirectory).Assembly,
     ];
     private static readonly ReflectionAssembly[] Libraries =
@@ -81,19 +77,10 @@ public sealed class SampleModuleBoundaryTests
     [InlineData("Dispatch", "Access")]
     [InlineData("Dispatch", "Sales")]
     [InlineData("Dispatch", "Inventory")]
-    [InlineData("Dispatch", "Purchasing")]
     [InlineData("Dispatch", "Wholesale.Api")]
     [InlineData("Access", "Dispatch")]
     [InlineData("Sales", "Dispatch")]
     [InlineData("Inventory", "Dispatch")]
-    [InlineData("Purchasing", "Dispatch")]
-    [InlineData("Purchasing", "Access")]
-    [InlineData("Access", "Purchasing")]
-    [InlineData("Purchasing", "Inventory")]
-    [InlineData("Inventory", "Purchasing")]
-    [InlineData("Purchasing", "Sales")]
-    [InlineData("Sales", "Purchasing")]
-    [InlineData("Purchasing", "Wholesale.Api")]
     [InlineData("Access", "Sales")]
     [InlineData("Sales", "Access")]
     [InlineData("Inventory", "Sales")]
@@ -108,7 +95,6 @@ public sealed class SampleModuleBoundaryTests
 
     [Theory]
     [InlineData("Dispatch.Contracts")]
-    [InlineData("Purchasing.Contracts")]
     [InlineData("Access.Contracts")]
     [InlineData("Inventory.Contracts")]
     [InlineData("Sales.Contracts")]

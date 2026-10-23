@@ -165,15 +165,15 @@ Read the domain state/evolution, detached preparation and required-view protocol
   [commands](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs),
   [former projector](../plans/es2-native-ef-simplification.md)
   and [queries Contract](../../samples/Wholesale/modules/Inventory/Inventory.Contracts/IStockPositionQueries.cs).
-- Purchasing [state](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderState.cs),
-  [commands](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
+- Purchasing [state](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderState.cs),
+  [commands](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
   [former projector](../plans/es2-native-ef-simplification.md),
   [former summary](../plans/es2-native-ef-simplification.md)
-  and [queries Contract](../../samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderQueries.cs).
+  and [queries Contract](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderQueries.cs).
 - Native [Inventory mapping](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/InlineStateMapping.cs)
   and [migration](../../samples/Wholesale/modules/Inventory/Inventory/Migrations/20261006135521_AddStockPositionCurrent.cs),
-  [Purchasing mapping](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/InlineStateMapping.cs)
-  and [migration](../../samples/Wholesale/modules/Purchasing/Purchasing/Migrations/20261006135521_AddPurchaseOrderViews.cs).
+  [Purchasing mapping](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/InlineStateMapping.cs)
+  and [migration](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/Migrations/20261006135521_AddPurchaseOrderViews.cs).
 - [Focused proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.InlineViews.cs),
   [extended append proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs),
   [executable journeys](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/AppendJourneys.cs)

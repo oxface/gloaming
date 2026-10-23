@@ -4,8 +4,10 @@ Direction update, 2026-10-22: Gloaming is the primary product; application patte
 exercised skills replace further template expansion as the intended direction. Explicitly
 selected bounded library execution is permitted. The [architecture audit](reports/gloaming-library-audit.md)
 records confirmed ownership choices and implemented package/sample cleanup. The generator
-and ContextDemo are retired as `dd6eb77`; use [application patterns](application-patterns.md). Detailed historical decisions below retain their dated context;
-current consumer contracts remain beside their libraries.
+and ContextDemo are retired as `dd6eb77`; use [application patterns](application-patterns.md).
+Family example consolidation is checkpointed as `ae2909c`; the current audit increment retires
+Wholesale Purchasing, with Dispatch retirement pending. Detailed historical decisions below
+retain their dated context; current consumer contracts remain beside their libraries.
 
 Status: direction approved by the owner on 2026-10-03. Public interfaces, package divisions,
 and implementation increments in [the extraction plan](plans/library-extraction.md) remain

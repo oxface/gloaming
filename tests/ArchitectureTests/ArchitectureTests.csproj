@@ -52,7 +52,6 @@
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Api/Wholesale.Api.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />

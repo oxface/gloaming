@@ -20,7 +20,7 @@ if (configuration["role"] == "directory")
     return;
 }
 
-if (configuration["role"] is "inventory" or "purchasing")
+if (configuration["role"] == "inventory")
 {
     using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
     Environment.ExitCode = await BusinessOperations.RunAsync(configuration, deadline.Token);

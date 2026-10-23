@@ -38,7 +38,7 @@ ApplyChanges mutates accepted aggregate bookkeeping; Evolve calculates a candida
 can share its internal pure reducer between aggregate evolution and historical reconstruction,
 without exposing aggregate mutation or sharing business policy with the library. Different
 projection state shapes retain their own reducers. The whole-batch hook avoids repeatedly
-copying Purchasing's line dictionary for each fact.
+copying a growing collection for each fact.
 
 States/facts and consumer evolution/policy must be immutable and free of side effects. The
 base preserves its own accepted state/version/pending after ordinary failures; it cannot

@@ -142,11 +142,11 @@ comparison evidence, not guarantees for this implementation.
 ## Review and remaining gaps
 
 Start with [Inventory command Contracts](../../samples/Wholesale/modules/Inventory/Inventory.Contracts/IStockPositionCommands.cs)
-and [Purchasing command Contracts](../../samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderCommands.cs).
+and [Purchasing command Contracts](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing.Contracts/IPurchaseOrderCommands.cs).
 Review [stock decisions](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionDecisions.cs)
-and [purchase decisions](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderDecisions.cs)
+and [purchase decisions](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderDecisions.cs)
 with their evolution helpers. Then compare [Inventory staging](../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/StockPositionCommands.cs)
-and [Purchasing staging](../../samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
+and [Purchasing staging](https://github.com/oxface/modulith-foundry/blob/ae2909cd2e8f46a8b4dc0da71cc1c4a3ab6d52b4/samples/Wholesale/modules/Purchasing/Purchasing/PurchaseOrders/PurchaseOrderCommands.cs),
 their native AppendFailures helpers, registration and tracked-header checks.
 [Caller composition](../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/AppendJourneys.cs) and
 [PostgreSQL proofs](../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.cs) accompany them.
