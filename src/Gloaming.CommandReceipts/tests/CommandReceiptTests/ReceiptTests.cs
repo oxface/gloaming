@@ -52,7 +52,10 @@ public sealed class ReceiptTests(PostgreSqlFixture postgres) : IClassFixture<Pos
     public async Task AllNativeSaveFormsCommitTheReceiptAndBusinessIntentTogether(string save)
     {
         string connection = await SetupAsync();
-        await using var services = Consumer.Services(connection);
+        await using var services = Consumer.Services(
+            connection,
+            save.StartsWith("async", StringComparison.Ordinal) ? [new RejectSynchronousReads()] : []
+        );
         await using var scope = services.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<PublishDatabase>();
         await using var transaction = await database.Database.BeginTransactionAsync(Token);
@@ -73,6 +76,69 @@ public sealed class ReceiptTests(PostgreSqlFixture postgres) : IClassFixture<Pos
         Assert.Equal(0, await database.SaveChangesAsync(Token));
         await AssertCountsAsync(connection, 0);
         await transaction.CommitAsync(Token);
+        await AssertCountsAsync(connection, 1);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task UnsavedReceiptCannotBeAcceptedBeforeSavingBusinessChanges(
+        bool asynchronous,
+        bool acceptAll
+    )
+    {
+        string connection = await SetupAsync();
+        await using var services = Consumer.Services(connection);
+        var key = Key();
+        await using (var scope = services.CreateAsyncScope())
+        {
+            var database = scope.ServiceProvider.GetRequiredService<PublishDatabase>();
+            await using var transaction = await database.Database.BeginTransactionAsync(Token);
+            Stage(database, await Store(scope).AcquireAsync(key, "input", Token));
+            if (acceptAll)
+                database.ChangeTracker.AcceptAllChanges();
+            else
+                Assert.Single(database.ChangeTracker.Entries<CommandReceiptRecord>()).State =
+                    EntityState.Unchanged;
+
+            if (asynchronous)
+                await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                    database.SaveChangesAsync(Token)
+                );
+            else
+                Assert.Throws<InvalidOperationException>(() => database.SaveChanges());
+        }
+
+        await AssertCountsAsync(connection, 0);
+        await Consumer.PublishAsync(services, key, Guid.NewGuid(), "input", Token);
+        await AssertCountsAsync(connection, 1);
+    }
+
+    [Fact]
+    public async Task ReceiptRolledBackToAnEarlierSavepointCannotAuthorizeALaterSave()
+    {
+        string connection = await SetupAsync();
+        await using var services = Consumer.Services(connection);
+        var key = Key();
+        await using (var scope = services.CreateAsyncScope())
+        {
+            var database = scope.ServiceProvider.GetRequiredService<PublishDatabase>();
+            await using var transaction = await database.Database.BeginTransactionAsync(Token);
+            await transaction.CreateSavepointAsync("before_receipt", Token);
+            Stage(database, await Store(scope).AcquireAsync(key, "input", Token));
+            await database.SaveChangesAsync(Token);
+            await transaction.RollbackToSavepointAsync("before_receipt", Token);
+            database.Add(new Publication { Id = Guid.NewGuid(), Version = 1 });
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                database.SaveChangesAsync(Token)
+            );
+        }
+
+        await AssertCountsAsync(connection, 0);
+        await Consumer.PublishAsync(services, key, Guid.NewGuid(), "input", Token);
         await AssertCountsAsync(connection, 1);
     }
 
@@ -460,5 +526,15 @@ public sealed class ReceiptTests(PostgreSqlFixture postgres) : IClassFixture<Pos
             TransactionEndEventData eventData,
             CancellationToken cancellationToken = default
         ) => throw new IOException("Commit succeeded; response was lost.");
+    }
+
+    private sealed class RejectSynchronousReads : DbCommandInterceptor
+    {
+        public override InterceptionResult<DbDataReader> ReaderExecuting(
+            DbCommand command,
+            CommandEventData eventData,
+            InterceptionResult<DbDataReader> result
+        ) =>
+            throw new InvalidOperationException("Async saving must not perform synchronous reads.");
     }
 }

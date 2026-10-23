@@ -36,6 +36,14 @@ Consumers own authentication/authorization, logical identity, payload meaning, r
 context lifetime, native credentials, migrations, save/commit and failure reconciliation.
 There is no handler runtime, chosen serializer, mandatory host or Messaging dependency.
 
+An unchanged tracked proposal is not evidence that its receipt was saved. Before allowing a
+later save, validation reads its native stored values in the original transaction and compares
+the complete retained record. This preserves valid repeated saves while rejecting premature
+acceptance and an insert undone by savepoint rollback. The native key read ignores EF query
+filters; database permissions/RLS still apply. Registered async saves use cancellable async IO;
+the explicit synchronous guard retains its synchronous behavior. No public lifecycle hook or
+generic save-coordination mechanism is introduced.
+
 Independent native, deployment and package-only adopters exercise this boundary.
 Unknown result formats must never cause re-execution. This does not supply HTTP response replay,
 safe pruning with permanent protection, cross-database atomicity or exactly-once external effects.

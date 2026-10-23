@@ -137,7 +137,9 @@ Seven clean executable consumers are created outside the repository:
 - Continuations: select the combined EF package and PostgreSQL storage, roll back and restart
   a process, commit a saved reply, recover in a fresh context and deduplicate its outcome.
 - Command receipts: independently select native EF/PostgreSQL receipts, use consumer save
-  overrides without DI/hosting, commit an effect/result and replay it from a fresh context.
+  overrides without DI/hosting, commit an effect/result and replay it from a fresh context;
+  retain valid repeated saves after false-acceptance saving and reject suppressed unsaved
+  receipt proposals in both native save forms.
 - All packages: restore, compile and execute with all 22 packages selected.
 
 Each generated project references exact package versions, restores Gloaming only

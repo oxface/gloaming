@@ -1,6 +1,7 @@
 using System.Data;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -47,6 +48,23 @@ internal sealed class ReceiptScope
 
     internal void Validate(DbContext database)
     {
+        var proposal = ValidateTrackedChanges(database);
+        if (proposal?.State == EntityState.Unchanged)
+            ValidateStoredValues(proposal.GetDatabaseValues());
+    }
+
+    internal async Task ValidateAsync(DbContext database, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var proposal = ValidateTrackedChanges(database);
+        if (proposal?.State == EntityState.Unchanged)
+            ValidateStoredValues(await proposal.GetDatabaseValuesAsync(cancellationToken));
+    }
+
+    private EntityEntry<CommandReceiptRecord>? ValidateTrackedChanges(DbContext database)
+    {
+        database.ChangeTracker.DetectChanges();
         if (Failed)
             throw new InvalidOperationException(
                 "Dispose the failed receipt scope before another attempt."
@@ -64,7 +82,7 @@ internal sealed class ReceiptScope
         }
 
         if (Record is null)
-            return;
+            return null;
 
         RequireTransaction(database);
         var proposal = database.Entry(Record);
@@ -80,5 +98,17 @@ internal sealed class ReceiptScope
                     "A retained receipt proposal was changed outside its attempt."
                 );
         }
+
+        return proposal;
+    }
+
+    private void ValidateStoredValues(PropertyValues? stored)
+    {
+        // Unchanged can mean a completed save, premature acceptance, or an undone savepoint.
+        // Only the original transaction's stored values distinguish those cases.
+        if (stored is null || Values!.Any(value => !Equals(stored[value.Key], value.Value)))
+            throw new InvalidOperationException(
+                "An unchanged receipt must already be stored with its retained values in the original transaction."
+            );
     }
 }

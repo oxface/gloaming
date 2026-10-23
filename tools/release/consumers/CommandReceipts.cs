@@ -35,9 +35,40 @@ try
 
             database.Add(new Effect { Id = key.OperationId });
             receipt.Retain(new(1, "published"));
-            await database.SaveChangesAsync();
+            await database.SaveChangesAsync(acceptAllChangesOnSuccess: false);
+            database.ChangeTracker.AcceptAllChanges();
+            if (database.SaveChanges() != 0 || await database.SaveChangesAsync() != 0)
+                throw new InvalidOperationException("A later save repeated the retained proposal.");
+
             await transaction.CommitAsync();
         }
+    }
+
+    foreach (bool asynchronous in new[] { false, true })
+    {
+        await using var database = new ReceiptDatabase(options);
+        await using var transaction = await database.Database.BeginTransactionAsync();
+        var pendingKey = new CommandReceiptKey("admitted", "suppressed", Guid.NewGuid());
+        var receipt = await new PostgresCommandReceipts<ReceiptDatabase>(database)
+            .AcquireAsync(pendingKey, "stable-input");
+        database.Add(new Effect { Id = pendingKey.OperationId });
+        receipt.Retain(new(1, "must-not-commit"));
+        database.ChangeTracker.Entries<CommandReceiptRecord>().Single().State = EntityState.Unchanged;
+        bool rejected = false;
+        try
+        {
+            if (asynchronous) await database.SaveChangesAsync();
+            else database.SaveChanges();
+        }
+        catch (InvalidOperationException)
+        {
+            rejected = true;
+        }
+
+        if (!rejected)
+            throw new InvalidOperationException("A native save accepted an unpersisted receipt.");
+
+        await transaction.RollbackAsync();
     }
 
     await using var read = new ReceiptDatabase(options);
@@ -63,12 +94,14 @@ sealed class ReceiptDatabase(DbContextOptions<ReceiptDatabase> options) : DbCont
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         this.ValidateCommandReceiptChanges();
+
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         this.ValidateCommandReceiptChanges();
+
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

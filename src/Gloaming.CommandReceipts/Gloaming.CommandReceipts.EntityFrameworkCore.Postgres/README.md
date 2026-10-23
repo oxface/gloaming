@@ -84,7 +84,18 @@ Failed acquisition faults that context's receipt operation. Save guards reject a
 detached, directly added, edited/deleted or transaction-separated receipt proposals; one
 attempt cannot retain twice or replace a retained result. Native sync/async saving and
 `acceptAllChangesOnSuccess: false` are supported; use native AcceptAllChanges before another
-save after a false-acceptance save. Guards do not detect every native save/commit failure.
+save after a false-acceptance save. A retained proposal marked `Unchanged` must already exist
+with all its retained values in the original transaction. Validation uses native EF database
+values, not its tracked original/current values, to reject premature acceptance and an insert
+undone by savepoint rollback. This complete-primary-key read uses native mappings, transaction
+and database permissions/RLS; like native `GetDatabaseValues`, it ignores EF query filters and
+establishes no authorization. Normal first saves of an `Added` proposal need no verification read.
+
+Registered async save validation awaits that read with the save cancellation token. The explicit
+`ValidateCommandReceiptChanges` alternative remains synchronous, including when called from an
+async save override; use the registered integration when async validation IO is required.
+The public interface, physical schema and V1 locking protocol are unchanged.
+Guards do not detect every native save/commit failure.
 On error, cancellation or uncertain commit, dispose the transaction and scope, then reconcile
 from fresh state using the original logical ID. Never retry a failed tracked operation in place.
 

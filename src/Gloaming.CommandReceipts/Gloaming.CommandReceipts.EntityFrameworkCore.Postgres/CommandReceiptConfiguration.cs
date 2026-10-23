@@ -66,16 +66,17 @@ public static class CommandReceiptConfiguration
         return services.TryAddGloamingCapability<TContext>(
             Capability,
             CapabilityPhase.Validate,
-            (_, database) => database.ValidateCommandReceiptChanges()
+            (_, database) => database.ValidateCommandReceiptChanges(),
+            (_, database, cancellationToken) =>
+                ReceiptScope.For(database).ValidateAsync(database, cancellationToken)
         );
     }
 
-    /// <summary>Alternative explicit save integration; call for both sync and async saves after detecting changes.</summary>
+    /// <summary>Alternative synchronous save validation, including a native key read for an unchanged retained proposal; call before both sync and async saves.</summary>
     public static void ValidateCommandReceiptChanges(this DbContext database)
     {
         ArgumentNullException.ThrowIfNull(database);
 
-        database.ChangeTracker.DetectChanges();
         ReceiptScope.For(database).Validate(database);
     }
 
