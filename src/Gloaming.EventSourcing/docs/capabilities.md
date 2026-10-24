@@ -20,20 +20,22 @@ reuses Events.History integrity checks but has no serialization dependency. Temp
 selection and initial stream lookup remain consumer-owned. Rebuilders inject this independent
 reader; writing requires no history registration. Native
 Queries/Filters can filter and join stored aggregate state without persisting secondary views.
-Secondary inline and multi-stream projections are deferred until a concrete query/storage need
-justifies them. Main aggregate state must remain current within every successful append transaction.
+The optional [PostgreSQL feed module](../Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides committed multi-stream reads, bounded transactional secondary projections and generation
+backfill/cutover over explicitly installed sources. It adds a declared writer-serialization cost.
+Secondary inline projection composition remains consumer-owned. Main aggregate state must remain
+current within every successful append transaction.
 
-Optional Events.Serialization now provides explicit forward JSON upcasting and PassThrough
-for compatible schema changes. Inventory composes it during historical decoding and full replay;
-ordinary inline loading still reads saved state without replay or repair. Event rows are never
-rewritten. Shape-only changes need not rebuild correct state; projection-meaning changes and
-reader-before-writer rollout remain consumer decisions. See the [codec contract](../../Gloaming.Events/Gloaming.Events.Serialization/README.md)
-and [upcasting evidence](../../../docs/reports/event-payload-upcasting.md). This EF package gains
-no serialization dependency.
+Optional Events.Serialization supplies forward JSON upcasting and PassThrough for
+compatible changes. Inventory composes it during historical decoding/full replay; ordinary
+inline loading reads saved state without replay or repair. Stored facts are not rewritten.
+Projection-meaning changes and reader-before-writer rollout remain consumer decisions.
+See the [codec contract](../../Gloaming.Events/Gloaming.Events.Serialization/README.md).
+The EF store gains no serialization dependency.
 
 ## Explicit consumer operations
 
-The [ES3 stock-position command](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
+The [stock-position command](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
 demonstrates one finite operation with progress, bounded native-conflict retries, cancellation
 and process restart. The optional `AggregateRegenerator<TAggregate,TContext>` now owns fresh
 attempt scopes/read-committed transactions, replay/save/commit, cleanup and typed outcomes over
@@ -42,7 +44,7 @@ Verified changed-header read races and exact maintenance save-concurrency entrie
 persistent ahead state and unrelated failures remain terminal. Acknowledged commit is retained
 even if cleanup fails; uncertain commit is not automatically retried. See
 [the package contract](../Gloaming.EventSourcing.EntityFrameworkCore/README.md#complete-regeneration-operations).
-Scheduling, durable queues, multi-target progress and scaling remain deferred. Admission,
+The regeneration executor supplies no scheduler, durable job queue, multi-target progress or scaling. Admission,
 retry values, presentation and online/pause policy belong to the consumer. Full replay remains
 in-memory, with cancellation at IO/stage boundaries and uninterrupted synchronous evolution.
 Native scope factories own required context establishment before returning each scope; no
@@ -50,29 +52,13 @@ per-call initialization hook is needed. Optional IProgress receives ordered Repo
 while delivery belongs to the reporter. The CLI uses inline reporting; standard Progress<T>
 can deliver after completion, with asynchronous handler errors outside the returned outcome.
 
-## Planned capabilities and their proof obligations
+## Unsupported capabilities
 
-- Async projections and durable checkpoints: prove ordering, duplicate handling, rollback,
-  restart and fault recovery. Not just an implementation exercise.
-- Multi-stream projections and extra inline views: reassess native EF joins/filter translation
-  first. Shared-row updates require real cross-stream concurrency and deadlock proofs; these
-  belong before a general projection maintenance engine.
-- Snapshot plus delta catch-up: deferred. Current inline state is required at the exact head;
-  ordinary fetch does not repair or apply missing events. Full replay repairs data explicitly.
-- New-service repopulation: separately planned for state-stored and event-sourced sources in
-  the [remaining roadmap](../../../docs/plans/remaining-capability-roadmap.md). A public export
-  snapshot plus retained integration changes needs a consistent boundary and safe progress
-  cursor; timestamps or allocated global sequences alone do not establish it. The existing
-  bounded per-stream reader/full rebuilder does not supply this cross-service protocol.
-- Projection backfill/rebuild orchestration: new views need an explicit population step, not
-  automatic read repair. Prove serving behavior, cutover and concurrency before adding workers.
-- Stream lifecycle/deletion, branching, global ordering, pessimistic write modes, subscriptions,
-  event metadata/correlation/causation, retention/archiving, import/export and ambiguous-commit
-  reconciliation: unsupported. Add bounded concrete obligations before introducing machinery.
-- Messaging/outbox, audit integration, cross-module transactions and template event presets:
-  excluded from this capability. T1 remains event-free.
-- Provider-specific locking (for example SELECT FOR UPDATE): if a real future obligation needs
-  it, consider a separate *.Postgres package and discover the abstraction then. The earlier
-  advisory-gate package was removed; its proof document is retained as historical evidence.
+- The provider-free EF store supplies no global feed or secondary projector. Select the optional PostgreSQL module and its complete deployment/transaction contract where needed.
+- Snapshot/delta catch-up is unsupported. Current inline state must match the exact head; full replay is separate explicit maintenance.
+- Whole-service bootstrap and business-data import remain consumer-owned. The optional PostgreSQL feed supports fixed-source secondary-generation backfill with its committed boundary and safe cursor; it does not deploy a new service, its complete schema or non-event business state.
+- Stream deletion/branching, fleet/traffic orchestration, online source-set expansion, automatic history retention and import/export remain unsupported. The optional feed supports its fixed-source publication order, bounded backfill, conditional generation selection and explicit commit-uncertainty outcomes.
+- Messaging, audit and cross-module transaction composition remain separately selected consumer integrations.
+- Provider-specific pessimistic locking requires a concrete obligation and its own supported contract.
 
 [EF setup, public API, errors and limitations](../Gloaming.EventSourcing.EntityFrameworkCore/README.md) is the consumer contract.

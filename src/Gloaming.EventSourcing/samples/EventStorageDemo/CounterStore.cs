@@ -2,7 +2,7 @@ using Gloaming.Events.History;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 internal sealed class CounterStore
     : EventStore<CounterAggregate, CounterEvent, EventStreamRecord, StoredEventRecord>

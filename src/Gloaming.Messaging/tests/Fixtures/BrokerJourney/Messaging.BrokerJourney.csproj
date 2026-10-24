@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../samples/Delivery/Exports/Messaging.Exports.csproj" />
+    <ProjectReference Include="../../../samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <ProjectReference Include="../../../samples/Delivery/Worker/Messaging.Worker.csproj" />
+    <ProjectReference Include="../../../Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
+    <PackageReference Include="RabbitMQ.Client" />
+  </ItemGroup>
+</Project>

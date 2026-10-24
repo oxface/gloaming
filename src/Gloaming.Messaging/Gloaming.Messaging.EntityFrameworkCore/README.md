@@ -1,6 +1,7 @@
 # Native EF messaging composition
 
-References Messaging, Gloaming.EntityFrameworkCore and native EF Core Relational, DI, Hosting and Logging abstractions.
+References Messaging, Gloaming.EntityFrameworkCore and native EF Core Relational and DI abstractions.
+Optional workers live in [Gloaming.Messaging.EntityFrameworkCore.Hosting](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md).
 No Npgsql, broker, Events, EventSourcing, Persistence or Tenancy dependency.
 
 For [shared save composition](../../Gloaming.EntityFrameworkCore/README.md), ConfigureOutbox/ConfigureInbox
@@ -29,15 +30,9 @@ writers are outside this contract.
 NoWork means no eligible row was claimed at that moment; Published means acceptance plus
 guarded completion; ClaimLost can follow successful acceptance and permits later delivery.
 
-Optionally register `AddOutboxWorker<TDbContext>(new OutboxWorkerOptions(idleDelay,failureDelay))`
-after a concrete dispatcher and native logging registration. It starts no migrations and
-discovers no modules. Each sequential invocation gets a fresh async scope, disposed before
-waiting. Dependency/model/provider failures during resolution fail startup/execution;
-ordinary claim/publication failures are logged and retried with failureDelay when any required
-failure accounting was confirmed. IdleDelay applies on
-NoWork; both delays must be positive and within native Task.Delay bounds. Cooperative host
-cancellation stops new work and reaches the publisher. A non-cooperative publisher can still
-hold shutdown; leases do not forcibly terminate code. Callable dispatch requires no worker.
+Callable dispatch requires no worker or Hosting dependency. Hosts can supply their own loop
+or select the [optional hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md)
+for polling, fresh scopes, cancellation and supervision.
 
 Optional IOutboxFailurePolicy selects delayed retry or dead-letter state using durable
 publisher-exception observations. Attempts remains committed claims; failures do not prove
@@ -67,7 +62,7 @@ AddInboxHandler<TDbContext,THandler>(subscriptionKey) binds a consumer-owned sco
 through native keyed DI. The handler stages bounded local effects on that context, including
 optional outbox work. It does not commit or perform external effects. No public lease or
 prepared-message handle is introduced. AddInboxWorker<TDbContext>(subscriptionKey,options)
-is separately selected and uses fresh scopes, native logging and cooperative cancellation.
+is selected from the optional hosting package and uses fresh scopes, native logging and cooperative cancellation.
 An InboxFailureAccountingException retains delivery identity and both original errors when
 failure accounting is unconfirmed. It faults the optional inbox worker without another poll;
 native host supervision decides whether the host stops. The library installs no host-wide

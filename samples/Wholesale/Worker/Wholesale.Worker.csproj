@@ -3,13 +3,11 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <ProjectReference Include="../modules/Sales/Sales/Sales.csproj" />
-    <ProjectReference Include="../modules/Dispatch/Dispatch/Dispatch.csproj" />
-    <ProjectReference Include="../modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../modules/Inventory/Inventory/Inventory.csproj" />
     <ProjectReference Include="../ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
     <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
-    <ProjectReference Include="../../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="RabbitMQ.Client" />
   </ItemGroup>

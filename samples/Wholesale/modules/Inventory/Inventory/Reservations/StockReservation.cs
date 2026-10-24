@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Reservations;
+namespace Gloaming.Samples.Wholesale.Inventory.Reservations;
 
 // Business receipt survives inbox retention and records the original decision after release.
 internal sealed class StockReservation

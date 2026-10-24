@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -54,27 +53,20 @@ public sealed class InlineStateReader<TStreamRecord, TInlineStateRecord>
         CancellationToken cancellationToken
     )
     {
-        var parameter = Expression.Parameter(typeof(TInlineStateRecord), "row");
-        Expression predicate = Expression.Constant(true);
-        for (int index = 0; index < streamForeignKey.Properties.Count; index++)
-        {
-            IProperty property = streamForeignKey.Properties[index];
-            object? value = streamForeignKey
-                .PrincipalKey.Properties[index]
-                .PropertyInfo!.GetValue(observedStream);
-            predicate = Expression.AndAlso(
-                predicate,
-                Expression.Equal(
-                    Expression.Property(parameter, property.PropertyInfo!),
-                    Expression.Constant(value, property.ClrType)
-                )
-            );
-        }
+        var keyValues = streamForeignKey
+            .PrincipalKey.Properties.Select(property =>
+                property.PropertyInfo!.GetValue(observedStream)
+            )
+            .ToArray();
+
         var row = await database
             .Set<TInlineStateRecord>()
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                Expression.Lambda<Func<TInlineStateRecord, bool>>(predicate, parameter),
+                StreamKeyPredicate.Create<TInlineStateRecord>(
+                    streamForeignKey.Properties,
+                    keyValues
+                ),
                 cancellationToken
             );
         return row;

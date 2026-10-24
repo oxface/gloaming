@@ -112,33 +112,17 @@ public abstract class EventHistoryReader<TEvent, TStreamRecord, TStoredEventReco
 
     private Expression<Func<TStoredEventRecord, bool>> MatchesStream(TStreamRecord observedStream)
     {
-        var parameter = Expression.Parameter(typeof(TStoredEventRecord), "record");
-        Expression predicate = Expression.Constant(true);
-        for (int index = 0; index < streamForeignKey.Properties.Count; index++)
-        {
-            var property = streamForeignKey.Properties[index];
-            object? keyValue = streamForeignKey
-                .PrincipalKey.Properties[index]
-                .PropertyInfo!.GetValue(observedStream);
-            if (keyValue is null)
-                throw new ArgumentException("Supply the complete observed stream key.");
+        var keyValues = streamForeignKey
+            .PrincipalKey.Properties.Select(property =>
+                property.PropertyInfo!.GetValue(observedStream)
+            )
+            .ToArray();
+        if (keyValues.Any(value => value is null))
+            throw new ArgumentException("Supply the complete observed stream key.");
 
-            // Keep complete-key values parameterized, as in ordinary captured-variable EF queries.
-            var keyParameter = Expression.Call(
-                typeof(EF),
-                nameof(EF.Parameter),
-                [property.ClrType],
-                Expression.Constant(keyValue, property.ClrType)
-            );
-            predicate = Expression.AndAlso(
-                predicate,
-                Expression.Equal(
-                    Expression.Property(parameter, property.PropertyInfo!),
-                    keyParameter
-                )
-            );
-        }
-
-        return Expression.Lambda<Func<TStoredEventRecord, bool>>(predicate, parameter);
+        return StreamKeyPredicate.Create<TStoredEventRecord>(
+            streamForeignKey.Properties,
+            keyValues
+        );
     }
 }

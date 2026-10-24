@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+namespace Gloaming.Samples.Wholesale.Inventory.Contracts;
 
 /// <summary>Durable Sales-to-Inventory intake. Completion means committed receipt, not a reservation decision.</summary>
 public interface IStockReservationIntake

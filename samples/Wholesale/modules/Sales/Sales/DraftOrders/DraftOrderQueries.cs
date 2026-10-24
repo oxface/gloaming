@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
 internal sealed class DraftOrderQueries(
     SalesDbContext database,

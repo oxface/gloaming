@@ -23,13 +23,14 @@ Changes in projection meaning require a separate consumer rollout/rebuild decisi
 
 Deferred capabilities include generated discovery, alternative serializers, AOT certification,
 other transport/deployment compatibility and schema-migration orchestration. No domain-event bus follows from
-this registry. EventSourcing maintenance workers, extra inline views and multi-stream/async
-projections remain separate deferred capabilities in their owning family's catalog.
+this registry. EventSourcing's explicit regeneration executor and separately selected
+[PostgreSQL feed/projection module](../../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+own persisted maintenance and secondary-generation backfill/cutover. They are independent of this
+codec; extra inline views and fleet orchestration remain consumer-owned.
 
 Evidence and adoption:
 
-- [Pure codec proofs](../../tests/EventSerializationTests/UpcastingTests.cs): explicit routing, optional defaults, strict fields, original-identity errors and JSON lifetime ownership.
-- [Standalone chained/nested adopter](../../samples/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs) and [literal proofs](../../samples/EventCodecDemo.Tests/UpcastingCompatibilityTests.cs).
-- [Inventory receipt upgrade](../../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs) and [PostgreSQL mixed-schema/rebuild proofs](../../../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.Upcasting.cs).
-- [Rendering message-payload adoption](../../../Gloaming.Messaging/docs/schema-compatibility.md) and its [fresh consumer proof report](../../../../docs/reports/queued-message-schema-compatibility.md): original-envelope deduplication, retained schemas, HTTP/RabbitMQ, operator retry and process recovery using the existing codec.
-- [Reviewed scope](../../../../docs/plans/event-payload-upcasting.md) and [dated slice report](../../../../docs/reports/event-payload-upcasting.md), separating new results from historical evidence.
+- [Codec tests](../../tests/EventSerializationTests/UpcastingTests.cs): explicit routing, defaults, strict fields, original-identity errors and JSON lifetime.
+- [Standalone adopter](../../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderSchemaEvolutionExample.cs) and [literal compatibility tests](../../tests/CodecAdoptionTests/UpcastingCompatibilityTests.cs).
+- [Inventory upgrade](../../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs) and [PostgreSQL replay tests](../../../../samples/Wholesale/IntegrationTests/EventPersistence/AppendTests.Upcasting.cs).
+- [Message-payload adoption](../../../Gloaming.Messaging/docs/schema-compatibility.md): retained schemas, original-envelope deduplication and consumer reader rollout.

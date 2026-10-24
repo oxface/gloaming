@@ -17,7 +17,7 @@ services.AddInboxFailurePolicy<RenderDbContext, RenderInboxFailurePolicy>("rende
 
 Implement `IInboxFailurePolicy<TDbContext>.Decide(InboxFailure)`. Return either
 `new InboxFailureDecision.RetryAfter(positiveDelay, safeCode)` or
-`new InboxFailureDecision.DeadLetter(safeCode)`. The [rendering policy](../samples/InboxDemo/RenderInboxFailurePolicy.cs)
+`new InboxFailureDecision.DeadLetter(safeCode)`. The [rendering policy](../samples/Delivery/Rendering/RenderInboxFailurePolicy.cs)
 classifies PostgreSQL serialization/deadlock failures and command conflicts. Its three-failure
 budget, delay and codes are consumer choices, not library defaults.
 
@@ -89,9 +89,8 @@ to an actually dead-lettered row at its observed ReceiptId and revision. It is n
 faulted worker. Stopping contains repeated selection but pauses all messages on that worker
 until it is restarted; it does not promise progress while accounting remains broken.
 
-This supervision adds no lease, durable started-at marker or global execution budget.
-Process death and other unrecorded attempts retain the limits above. See the
-[supervision report](../../../docs/reports/m2-inbox-failure-supervision.md) for current proofs.
+Supervision adds no lease, durable started-at marker or global execution budget.
+Process death and other unrecorded attempts retain the failure-accounting limits above.
 
 ## Authorized retry of retained work
 
@@ -167,7 +166,7 @@ and one conditional retry. It provides no payload editor, discard or mark-proces
 
 ## Schema and rollout
 
-The M2 retention continuation adds immutable nonnull UUID `receipt_id` with native
+Processed-receipt retention requires immutable nonnull UUID `receipt_id` with native
 `gen_random_uuid()` default and a nonempty constraint. Rendering, Inventory and Sales forward
 migrations backfill historical receipts without changing keys/envelopes/recovery state.
 Column-restricted inspection/retry roles must add receipt_id SELECT. Existing full inbox
@@ -185,9 +184,9 @@ where `processed_at IS NULL AND quarantined_at IS NOT NULL`. Tracked-save valida
 remain privileged and outside that guard.
 
 Historical pending/completed rows retain identity/content/status and start with zero *known*
-failures. Apply consumer-owned migrations before deploying the current binary. Stop pre-M2 processors
+failures. Apply consumer-owned migrations before deploying the current binary. Stop processors that ignore dead-letter state
 before relying on dead-letter state: their SQL ignores it. Mixed processor versions and rollback to
-binaries ignoring dead-letter state are unsupported. Checkpoint M2 storage remains compatible;
+binaries ignoring dead-letter state are unsupported. Existing failure-accounting storage remains compatible;
 the unreleased CLR/registration rename requires updating callers and provides no old-name aliases.
 
 Restricted processors need SELECT plus UPDATE of `processed_at`, `available_at`, `revision`,
@@ -196,12 +195,10 @@ Recovery also needs its retry fields including `redrive_count`, `last_redriven_a
 cannot distinguish trusted processor SQL from arbitrary SQL issued by the credential holder.
 Review application authority and RLS explicitly.
 
-Forward Rendering/Inventory/Sales migrations demonstrate storage changes. Existing restricted
-Sales roles need an explicit grant update; finite provisioning is not a role reconciler and startup
-performs no DDL. [Sales setup](../../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) documents
-that consumer. [InboxDemo](../samples/InboxDemo/README.md) shows optional operator usage;
-[the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md) records current evidence
-separately from the original M2 recovery/supervision results. Processed cleanup has its own
-[contract and evidence](inbox-retention.md); unprocessed/dead-lettered work is preserved.
-Payload editing, global execution caps and template presets remain unsupported. The selected
-[schema compatibility journey](schema-compatibility.md) retains consumer rollout policy.
+Rendering/Inventory/Sales migrations demonstrate storage changes. Restricted roles need
+explicit grant updates; finite provisioning is not a role reconciler and startup performs no DDL.
+[Sales setup](../../../samples/Wholesale/Worker/Broker/sales-inbox-rls.md) and the
+[operator fixture](../tests/Fixtures/InboxHost/README.md) show consumers.
+[Processed cleanup](inbox-retention.md) preserves unprocessed/dead-lettered work.
+Payload editing and global execution caps remain unsupported.
+[Schema compatibility](schema-compatibility.md) retains consumer rollout policy.

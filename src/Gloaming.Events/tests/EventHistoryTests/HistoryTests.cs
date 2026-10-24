@@ -55,6 +55,19 @@ public sealed class HistoryTests
     }
 
     [Fact]
+    public void RecordedTimesCompareInstantsWithoutRequiringZeroOffsets()
+    {
+        EventHistory.ValidateRange(
+            [
+                new(43, StartedAt.ToOffset(TimeSpan.FromHours(2))),
+                new(44, StartedAt.AddMinutes(1).ToOffset(TimeSpan.FromHours(-3))),
+            ],
+            42,
+            44
+        );
+    }
+
+    [Fact]
     public void RegressionWithinTheReturnedRangeIdentifiesTheOffendingPosition()
     {
         var failure = Assert.Throws<EventHistoryException>(() =>

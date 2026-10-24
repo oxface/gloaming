@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales.Migrations;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Sales.Migrations;
 
 /// <inheritdoc />
 public partial class InitialSales : Migration

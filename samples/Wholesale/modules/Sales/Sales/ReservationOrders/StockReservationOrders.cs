@@ -1,9 +1,9 @@
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging.Workflows;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using OrderView = ModulithFoundry.Samples.Wholesale.Sales.Contracts.StockReservationOrder;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using OrderView = Gloaming.Samples.Wholesale.Sales.Contracts.StockReservationOrder;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.ReservationOrders;
+namespace Gloaming.Samples.Wholesale.Sales.ReservationOrders;
 
 internal sealed class StockReservationOrders(
     SalesDbContext database,
@@ -53,6 +53,7 @@ internal sealed class StockReservationOrders(
 
     public async Task<OrderView> RetryCompensationAsync(
         Guid orderId,
+        Guid operationId,
         CancellationToken cancellationToken
     )
     {
@@ -62,14 +63,28 @@ internal sealed class StockReservationOrders(
         await using var transaction = await database.Database.BeginTransactionAsync(
             cancellationToken
         );
+        const string operation = "retry-reservation-compensation";
+        string input = SalesCommandReceipts.Input(new { OrderId = orderId });
+        var receipt = await SalesCommandReceipts.AcquireAsync<OrderView>(
+            database,
+            operation,
+            operationId,
+            input,
+            cancellationToken
+        );
+        if (receipt.Result is { } retained)
+            return retained;
+
         var snapshot = await workflow.SignalAsync(
             new(orderId, database.RequiredOrganizationKey),
             new RetryReservationRelease(),
             cancellationToken
         );
+        var result = ReservationState.Read(snapshot);
+        receipt.Retain(result);
         await database.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-        return ReservationState.Read(snapshot);
+        return result;
     }
 
     private void RequireCaller()

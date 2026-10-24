@@ -1,8 +1,8 @@
 using Gloaming.EventReactions;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
+namespace Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 
 internal sealed class ReserveCustomerAllowance(SalesDbContext database)
     : IEventReaction<DraftSubmitted>,

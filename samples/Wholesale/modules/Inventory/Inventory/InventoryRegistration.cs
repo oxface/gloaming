@@ -3,13 +3,13 @@ using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Messaging;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 public static class InventoryRegistration
 {

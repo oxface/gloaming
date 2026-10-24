@@ -1,17 +1,14 @@
 # ADR 0010: Durable intake and separate local inbox processing
 
-M2's [ADR 0018](0018-serialized-inbox-failure-recovery.md) supersedes the separate retry-write
-path below with savepoint rollback, serialized failure accounting and authorized conditional
-retry. The original I1 decision/evidence remains historical; retained intake/identity and local
-success atomicity are preserved.
-
-Status: interface and scope owner-approved, 2026-10-08. Implementation remains unstaged for
-line-by-line review. [Reviewed scope](../plans/inbox1-durable-intake-processing.md).
+Status: accepted and implemented. The original intake/local-success decision dates to
+2026-10-08. [ADR 0018](0018-serialized-inbox-failure-recovery.md) supplies the current
+savepoint/failure-accounting protocol; [ADR 0020](0020-inbox-expiry-and-receipt-generations.md)
+adds explicit receipt expiry and generation-conditional retry.
 
 Each receiving module owns one typed DbContext, schema/table and explicitly keyed handler
 registration. Inbox intake, processing and hosting are independently selected; an inbox-only
 consumer needs neither an outbox/publisher nor event sourcing, tenancy or actor packages.
-No new package or universal Gloaming transaction/metadata runtime is introduced.
+No universal Gloaming transaction/metadata runtime is introduced.
 
 Retain the complete admitted incoming envelope in a caller-owned native ReadCommitted
 transaction. Only its committed intake permits transport acknowledgement or successful HTTP
@@ -27,17 +24,16 @@ outgoing work share the transaction; external effects belong in the outbox. Nati
 release on connection loss, so no inbox lease, renewal or stale-token API is needed. Outbox
 publication retains ADR 0009's lease because transport acceptance occurs outside its transaction.
 
-Failed local work rolls back, including earlier saves. A separate conditional database-time
-retry update defers only pending work and cannot undo successor completion. Cancellation does
-not force this update; commit response loss can be ambiguous. Completed rows remain retained.
+Failed local work, including earlier saves, rolls back to the savepoint while the delivery
+lock survives. Confirmed failure accounting and the selected retry/dead-letter decision commit
+in that transaction. Cancellation/process loss may leave no recorded failure; commit response
+loss can be ambiguous. Completed receipts remain until explicit supported retention removes them.
 Business constraints/version predicates still protect different deliveries touching the same
 aggregate. The handler contract is for trusted local code, not a sandbox against manual commits.
 
 Optional sequential hosting uses fresh scopes and cooperative cancellation. Transport lifecycle,
 acknowledgements, setup/migrations, poison policy, retention, redrive, scaling and cross-module
-coordination remain explicit or deferred. Native RabbitMQ and HTTP samples demonstrate acceptance
-boundaries without moving transport code into Gloaming. T1 and the frozen archive are preserved.
+coordination remain explicit or deferred. Native RabbitMQ and HTTP consumers demonstrate acceptance
+boundaries; optional native session ownership is separate from transport routing/acknowledgement.
 
-[Library-local contract](../../src/Gloaming.Messaging/docs/inbox.md) and
-[new execution evidence](../reports/inbox1-durable-intake-processing.md) distinguish supported
-mechanisms, consumer policy and remaining proof gaps from archived receipt-only evidence.
+See the [library-local contract](../../src/Gloaming.Messaging/docs/inbox.md) for setup, guarantees and native provider/process proofs.

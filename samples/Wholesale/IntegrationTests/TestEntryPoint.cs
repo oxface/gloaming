@@ -1,8 +1,8 @@
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests;
+namespace Gloaming.Samples.Wholesale.IntegrationTests;
 
-// Historical finite fixture journeys remain executable process proofs, owned exclusively by this test project.
+// Finite fixture journeys and crash cuts are executable proofs owned exclusively by this test project.
 internal static class TestEntryPoint
 {
     public static async Task<int> Main(string[] args)
@@ -16,7 +16,13 @@ internal static class TestEntryPoint
                 );
             var fixtures = Path.Combine(AppContext.BaseDirectory, "Fixtures");
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
-            if (scenario == "schema-evolution")
+            if (scenario is "receipt-before-commit" or "receipt-after-commit")
+                await Reactions.CommandReceiptProcess.RunAsync(
+                    connection,
+                    scenario == "receipt-after-commit",
+                    deadline.Token
+                );
+            else if (scenario == "schema-evolution")
                 await SchemaEvolutionJourney.RunAsync(
                     connection,
                     fixtures,

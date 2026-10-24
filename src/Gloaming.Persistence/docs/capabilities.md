@@ -1,8 +1,6 @@
 # Persistence composition and capabilities
 
-Foundational scope, 2026-10-07; save wiring and A2 research reconciled 2026-10-16.
-This family guide and the package-local contracts travel with
-the source. Root plans/reports retain cross-cutting review and dated execution evidence.
+This family guide and package-local contracts describe supported ownership mappings, save integration and optional RLS.
 
 ## Supported composition
 
@@ -49,37 +47,9 @@ runtime credentials and deployed policies. An interceptor alone does not provide
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Consumer research
+## Consumer composition
 
-Optional PostgreSQL RLS and tenant/resource authorization composition are recorded in
-[A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
-[A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
-The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) and
-[primary-source matrix](../../../docs/reports/tenant-authorization-primary-sources.md) are now
-prepared for review. Optional RLS needs a restricted runtime role and transaction-local setup
-for every protected read/write/retry; current local credentials and raw transport paths do
-not provide that guarantee. Tenant equality supplies no within-tenant resource permissions.
-These findings add no supported library capability or approved interface. The later
-[A2.2 consumer proof](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md) now exercises
-five Sales tables with separate credentials, raw/bulk paths and physical-pool/transaction
-lifecycle controls. Its [report](../../../docs/reports/a2-2-sales-postgres-rls.md) records the
-setting-forgery limit and paths not adopted. The current library guarantees and dependencies
-above describe the provider-independent baseline; the later optional adapter below adds
-automatic transaction setup for its separately selected composition.
-
-[A2.3](../../../docs/reports/a2-3-postgres-tenant-context.md) subsequently extracts explicit
-setup into the optional Tenancy/PostgreSQL family adapter. Persistence acquires no dependency
-on it; ownership mapping/save validation and database policy/context setup remain separate.
-
-[A2.4](../../../docs/reports/a2-4-ownership-rls-capability.md) now supplies the optional ownership/RLS
-adapter with an independent PostgreSQL consumer. It keeps HasQueryFilter and tracked ownership
-checks, adds USING/WITH CHECK policy helpers and binds the operation tenant before EF queries
-and writes. Automatic setup requires an existing caller-owned transaction for reads and writes; the
-explicit transaction-local utility remains independently usable. Refer to the adapter's contract for required integration, role/migration
-obligations and rejected connection modes. This adds no default HTTP/worker or template rollout.
-
-The owner-selected [transaction refinement](../../../docs/reports/a2-5-transaction-rls-simplification.md)
-replaces the initial session/registry experiment: `.UseRls<TContext>(provider)` installs one
-native transaction/command interceptor. The existing owner begins the transaction and all
-its protected work receives local tenant context automatically. No per-transaction setup call
-or additional tenancy scope is required. Selected reads also require that transaction.
+[Sales isolation tests](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+and [HTTP setup](../../../samples/Wholesale/Api/README.md#optional-sales-http-row-security)
+exercise finite native policy deployment and setting-forgery limits. Tenant equality is not
+within-tenant permission; application authorization and default rollout remain consumer-owned.

@@ -1,9 +1,9 @@
 using Gloaming.Events.Serialization;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class StockPositionHistoryReader(InventoryDbContext database)
     : EventHistoryReader<IStockPositionEvent, EventStream, StoredEvent>(database, StreamType),

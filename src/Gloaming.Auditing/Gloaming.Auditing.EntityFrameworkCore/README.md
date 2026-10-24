@@ -23,9 +23,8 @@ services.AddScoped<IAudit<AppDbContext>, EfAudit<AppDbContext>>();
 ```
 
 Use `ConfigureAudit` in that context's `OnModelCreating`, with explicit schema/table choices.
-The returned native builder is editable; provide provider JSON mapping explicitly, or use
-[ConfigurePostgresAudit](../Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md)
-for PostgreSQL:
+The returned native builder is editable; provide provider JSON mapping explicitly.
+For PostgreSQL:
 
 ```csharp
 var audit = modelBuilder.ConfigureAudit("operations", "accepted_log");
@@ -33,7 +32,7 @@ audit.Property(row => row.Details).HasColumnType("jsonb"); // PostgreSQL consume
 audit.Property(row => row.Id).HasColumnName("audit_id"); // Optional native customization.
 ```
 
-The PostgreSQL helper performs the first two lines. ConfigureAudit includes the relational
+ConfigureAudit includes the relational
 index ix_audit_subject_timeline on TenantKey, SubjectType, SubjectKey, OccurredAt and Id.
 No additional setup call is required. Consumers can rename or replace the index through
 native EF model configuration. Ownership, query filters and additional indexes remain
@@ -122,7 +121,7 @@ no ambient context or automatic metadata fallback. Correlation, causation and tr
 omitted from audit until a concrete business use earns them. Diagnostic telemetry remains
 host-owned OTel setup; existing messaging metadata stays in inbox/outbox envelopes.
 
-Both modules receive the subject timeline index from ConfigurePostgresAudit, without a
+Both modules receive the subject timeline index from ConfigureAudit, without a
 separate indexing call. Consumers can query a tenant-visible item timeline using native EF:
 
 ```csharp
@@ -136,10 +135,9 @@ This assumes the consumer's tenant query filter and read authorization. Global e
 queried separately with SubjectKey == null. Time/ID supplies deterministic display ordering,
 not database commit order; no timeline endpoint, authorization or query service is added.
 
-Keep provided EF rows as classes with reference identity. A C# record would not give
-JsonElement content equality. The pending-envelope guard deliberately compares exact
-GetRawText values, including formatting; .NET's DeepEquals instead accepts equivalent JSON
-values. See [primary-source research](../../../docs/reports/e9-audit-context-research.md).
+Keep provided EF rows as classes with reference identity. The pending-envelope guard
+compares exact GetRawText values, including formatting. Structural JSON value equality is a
+different comparison contract.
 
 Source/action/outcome/reason/schema and detail disclosure have no library taxonomy.
 Audit IDs are unique per table and Stage is not idempotent. Delivery/business semantic
@@ -167,7 +165,7 @@ introduce V2 and its matching version. Preserve the V1 definition for readers of
 entries. A renderer can dispatch by source/action/SchemaVersion using consumer-owned native
 JSON deserialization. Additive compatibility is also a consumer decision. The library cannot
 infer a semantic breaking change from property names, CLR type names or a JSON hash. No
-audit codec, upcasting registry or automatic payload rewrite is added by this slice.
+audit codec, upcasting registry or automatic payload rewrite is added by this capability.
 
 ## Staging evidence and lifetime
 
@@ -204,10 +202,8 @@ be ambiguous. An unchanged already-saved tracked record is not evidence that a r
 operation can safely reuse its context.
 
 PostgreSQL proofs cover no implicit save, cross-connection visibility, explicit commit,
-rollback/disposal, participant faults, cancellation and fresh recovery; exact transaction/
-context association, native duplicate IDs, attribution and guarded tracked writes. See the
-[family contract](../docs/transactional-audit.md) and
-[dated report](../../../docs/reports/e9-explicit-transactional-audit.md).
+rollback, participant faults, cancellation, fresh recovery, context/transaction association,
+duplicate IDs and guarded tracked writes. See the [family contract](../docs/transactional-audit.md).
 
 The guard cannot detect a business change that omitted Stage, prove detail truth, prevent
 privileged SQL, grant permission or make records tamper-evident. Consumer-specific commit

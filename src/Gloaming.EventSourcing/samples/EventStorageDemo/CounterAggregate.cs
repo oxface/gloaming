@@ -1,6 +1,6 @@
 using Gloaming.EventSourcing;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 internal sealed class CounterAggregate : EventSourcedAggregate<CounterValue, CounterEvent>
 {

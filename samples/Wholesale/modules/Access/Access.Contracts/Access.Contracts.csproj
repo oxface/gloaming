@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.Access.Contracts</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.Access.Contracts</RootNamespace>
   </PropertyGroup>
 </Project>

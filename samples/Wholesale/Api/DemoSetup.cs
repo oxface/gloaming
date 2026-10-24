@@ -1,12 +1,11 @@
+using Gloaming.Samples.Wholesale.Access;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Access;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Finite disposable-demo setup. Native saves and transactions are visible here.
 public static class DemoSetup
@@ -38,15 +37,6 @@ public static class DemoSetup
             }
             if (fullDemo)
             {
-                var purchasingOptions = new DbContextOptionsBuilder<PurchasingDbContext>();
-                PurchasingDatabase.Configure(purchasingOptions, connection);
-                using var purchasingTenant = new TenantContextAccessor();
-                await using var purchasing = new PurchasingDbContext(
-                    purchasingOptions.Options,
-                    purchasingTenant
-                );
-                await purchasing.Database.MigrateAsync(cancellationToken);
-
                 var salesOptions = new DbContextOptionsBuilder<SalesDbContext>();
                 SalesDatabase.Configure(salesOptions, connection);
                 using var migrationTenant = new TenantContextAccessor();

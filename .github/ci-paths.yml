@@ -1,5 +1,5 @@
 # Explicit lane inputs, including dependent consumers. Update this map when project
-# references, linked fixtures or template source snapshots change.
+# references, linked fixtures or adoption proofs change.
 # some-with-excludes makes !**/*.md an exclusion across every positive pattern.
 
 shared:
@@ -10,20 +10,27 @@ shared:
   - 'global.json'
   - 'NuGet.Config'
   - '!**/*.md'
-  - '!templates/**'
 
 # New inputs outside the mapped roots conservatively request full coverage.
 unmapped:
   - '**'
   - '!**/*.md'
-  - '!src/Gloaming.{Auditing,ActorIdentity,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
+  - '!src/Gloaming.{Auditing,ActorIdentity,CommandReceipts,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
   - '!samples/Wholesale/**'
-  - '!src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - '!tests/ArchitectureTests/**'
-  - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
-  - '!templates/**'
-  - '!tools/template/**'
+  - '!tests/ContextCompositionTests/**'
+  - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
   - '!tools/release/**'
+
+EntityFrameworkCore:
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - '!**/*.md'
+
+CommandReceipts:
+  - 'src/Gloaming.CommandReceipts/**'
+  - 'src/Gloaming.EntityFrameworkCore/**'
+  - 'tests/Support/{PostgreSqlFixture,ChildHost}.cs'
+  - '!**/*.md'
 
 Auditing:
   - 'src/Gloaming.EntityFrameworkCore/**'
@@ -41,12 +48,13 @@ EventReactions:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging{,.EntityFrameworkCore,.EntityFrameworkCore.Postgres}/**'
   - 'src/Gloaming.EventReactions/**'
-  - 'src/Gloaming.EventReactions/samples/EventReactionsDemo/**'
   - 'tests/Support/PostgreSqlFixture.cs'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 Tenancy:
   - 'src/Gloaming.Tenancy/**'
+  - 'tests/ContextCompositionTests/**'
   - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
   - 'tests/Support/PostgreSqlFixture.cs'
   - '!**/*.md'
@@ -60,7 +68,7 @@ Persistence:
 
 Events:
   - 'src/Gloaming.Events/**'
-  - 'src/Gloaming.Events/samples/EventCodecDemo{,.Tests}/**'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 # Wholesale composes event sourcing, messaging and accepted-change audit.
@@ -74,12 +82,13 @@ EventSourcing:
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.EventSourcing/samples/EventStorageDemo{,.Tests}/**'
   - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 Messaging:
+  - 'src/Gloaming.CommandReceipts/Gloaming.*/**'
   - 'src/Gloaming.EntityFrameworkCore/**'
   - 'src/Gloaming.EventReactions/Gloaming.*/**'
   - 'src/Gloaming.Messaging/**'
@@ -90,7 +99,7 @@ Messaging:
   - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
   - 'src/Gloaming.Messaging/samples/**'
   - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
-  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'tests/Support/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
@@ -98,18 +107,10 @@ wholesale:
   - 'src/Gloaming.*/Gloaming.*/**'
   - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
   - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
-  - 'src/Gloaming.Messaging/samples/MessagingWorkerDemo.Tests/ChildHost.cs'
+  - 'tests/Support/ChildHost.cs'
   - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
   - '!**/*.md'
 
-template:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'tools/template/**'
-  - 'templates/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - '!**/*.md'
 
 runtime:
   - 'samples/Wholesale/**'
@@ -119,7 +120,6 @@ repository_dotnet:
   - 'src/**'
   - 'samples/**'
   - 'tests/**'
-  - 'templates/**'
   - '!**/*.md'
 
 # Package README links are artifact content, so this lane includes their changes.

@@ -1,6 +1,7 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
-// Changed is proposed state. The caller owns the native Sales transaction, save and commit.
+// New Changed results are proposals; an equal receipted retry returns its original accepted result.
+// The caller owns the native Sales transaction, save and commit.
 public interface IDraftOrderCommands
 {
     Task<DraftOrderChangeResult> CreateAsync(
@@ -20,7 +21,8 @@ public interface IDraftOrderCommands
     );
 }
 
-public sealed record SubmitDraftOrder(Guid Id, long ExpectedVersion);
+// Reuse OperationId only for equal retries. Omission selects the original unreceipted command.
+public sealed record SubmitDraftOrder(Guid Id, long ExpectedVersion, Guid? OperationId = null);
 
 public sealed record CreateDraftOrder(
     Guid Id,

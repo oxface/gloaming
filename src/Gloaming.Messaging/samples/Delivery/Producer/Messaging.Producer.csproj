@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../Exports/Messaging.Exports.csproj" />
+    <ProjectReference Include="../ServiceDefaults/Messaging.ServiceDefaults.csproj" />
+  </ItemGroup>
+</Project>

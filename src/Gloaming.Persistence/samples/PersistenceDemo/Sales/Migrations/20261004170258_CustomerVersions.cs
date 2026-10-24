@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales.Migrations;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Sales.Migrations;
 
 /// <inheritdoc />
 public partial class CustomerVersions : Migration

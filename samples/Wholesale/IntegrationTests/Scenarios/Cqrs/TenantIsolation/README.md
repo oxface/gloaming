@@ -61,11 +61,17 @@ WITH CHECK (organization_key = NULLIF(current_setting('app.tenant_key', true), '
 | `draft_orders` | SELECT, INSERT, UPDATE, DELETE |
 | `draft_order_lines` | SELECT, INSERT, UPDATE, DELETE |
 | `draft_order_grants` | SELECT only |
+| `command_receipts` | SELECT, INSERT only |
 
 The role gets schema USAGE and no Sales-schema CREATE, TRUNCATE, ownership or grant writes.
 The four business-table write grants allow the native DML proofs; production consumers
 should select privileges for their own actual paths. No privileges are granted on Inventory,
 allowances, audit, inbox, outbox, stream or workflow tables.
+
+Receipt proofs also replay an authorized submission retained by an administrative setup
+transaction. Runtime cannot replace/delete the result or insert foreign-Organization receipts;
+disabled EF filters still reveal only the admitted Organization. This adds no runtime allowance
+write privilege or general submission capability to this restricted profile.
 
 USING suppresses foreign existing rows; WITH CHECK rejects proposed foreign ownership.
 Missing/empty settings yield no matches and writes fail. Whitespace/unrecognized text also
@@ -117,11 +123,11 @@ need separate intake/claim/handler/completion designs: business setup cannot cov
 runs earlier or in another transaction. Default HTTP/AppHost credentials remain unchanged.
 
 Superusers and BYPASSRLS bypass policies. FORCE subjects ordinary owner reads to policies,
-but the owner retains DDL authority. A runtime credential holder can forge `app.tenant_key`;
+but the owner retains DDL authority. A runtime credential holder can forge app.tenant_key;
 it is trusted application input, not database authentication. Constraints can reveal hidden
-row existence, and session-level settings can reappear after a local setting ends. These
-limits are exercised, not assumed away. Read the [protection matrix and results](../../../../../../docs/reports/a2-2-sales-postgres-rls.md)
-and [pinned primary-source analysis](../../../../../../docs/reports/tenant-authorization-primary-sources.md).
+row existence, and session-level settings can reappear after a local setting ends.
+The [current RLS contract](../../../../../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+describes these enforcement boundaries.
 
 ## Verify
 
@@ -136,8 +142,6 @@ DOTNET_PROCESSOR_COUNT=4 \
   dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --filter-class '*TenantIsolationTests'
 ```
 
-The [A2.3 extraction](../../../../../../docs/reports/a2-3-postgres-tenant-context.md) now supplies
-the explicit setup utility. Its public extension is used directly by the executable and
-the transferred lifecycle proofs. Table inventory, policies, role provisioning and grants
-remain sample decisions; automatic transaction interception and default HTTP/worker adoption
-remain separate requirements.
+The optional [Tenancy/PostgreSQL utility](../../../../../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+supplies explicit transaction-local setup. Table inventory, policies, role provisioning and
+grants remain sample decisions. The executable invokes setup inside each native transaction.

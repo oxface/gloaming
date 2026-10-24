@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 /// <summary>Sales-owned progress for an independently committed Inventory stock issue.</summary>
 public interface IStockIssueRequests

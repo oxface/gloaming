@@ -1,6 +1,6 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class StockPositionStore
     : EventStore<StockPositionAggregate, IStockPositionEvent, EventStream, StoredEvent>

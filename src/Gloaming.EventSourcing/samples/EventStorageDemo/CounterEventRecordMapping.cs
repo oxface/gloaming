@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 internal sealed class CounterEventRecordMapping
     : EventRecordMapping<CounterEvent, EventStreamRecord, StoredEventRecord>

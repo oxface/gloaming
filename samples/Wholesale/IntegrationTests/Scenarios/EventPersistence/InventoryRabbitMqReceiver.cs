@@ -2,12 +2,12 @@ using System.Text;
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 /// <summary>Consumer-owned native admission, retained intake and acknowledgement after database commit.</summary>
 public sealed class InventoryRabbitMqReceiver(IChannel channel, IServiceScopeFactory scopes)

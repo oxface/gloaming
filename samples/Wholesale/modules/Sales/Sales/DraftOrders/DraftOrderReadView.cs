@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+namespace Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
 // Query-time shape over Sales-owned rows, never a mapped or persisted projection.
 internal sealed class DraftOrderReadView

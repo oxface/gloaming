@@ -1,6 +1,6 @@
 # Restricted Sales outbox dispatch
 
-`WorkflowDemo` includes an optional `dispatch-sales` role. It runs the existing native
+The Wholesale Worker includes an optional `dispatch-sales` role. It runs the existing native
 PostgreSQL outbox worker and RabbitMQ Sales command publisher with a separate database
 login. Its [context](SalesOutboxDbContext.cs) maps only `sales.outbox_messages`; it registers
 no business context, tenant accessor, inbox processing or deadline worker. The ordinary
@@ -97,12 +97,10 @@ storage before restarting. An accounting commit response may be lost after a rea
 fresh storage determines the retained state. Completion failures remain ambiguous and are
 never counted as publisher failures.
 
-Run the existing workflow test project to exercise the new proofs as well as the retained
-workflow journeys. The [slice report](../../../../docs/reports/a2-8-sales-outbox-dispatch.md)
-records fresh results and limitations. **No new reusable mechanism or template output is
-introduced:** context selection, role grants and executable composition remain sample policy.
-The [M2 outbox report](../../../../docs/reports/m2-outbox-dead-letters.md) records the new library
-accounting/retry proofs and restricted-credential follow-up separately from that A2.8 history.
+Run the Wholesale integration suite for dispatch and workflow proofs. Context selection,
+role grants and executable composition remain sample policy. The
+[outbox recovery contract](../../../../src/Gloaming.Messaging/docs/outbox-recovery.md)
+describes library failure accounting, inspection and conditional retry.
 
 ## Backlog inspection
 
@@ -121,8 +119,7 @@ tenant identities or broker connections are involved. Existing dispatch SELECT p
 suffice; there is no grant/schema change. A failed query fails inspection rather than
 reporting an empty queue. Native grants/RLS still define visible rows across tenants.
 
-Pending is partitioned into Eligible, Delayed and Leased; DeadLetters is separate. These
-observations do not establish transport acceptance or reserve work. The [family contract](../../../../src/Gloaming.Messaging/docs/outbox-observability.md)
-defines database-clock age, metadata-only reader grants and native consumer health/metrics.
-The [visibility report](../../../../docs/reports/outbox-operational-visibility.md) records the
-new restricted child-process proof separately from the earlier dispatch and recovery results.
+Pending is partitioned into Eligible, Delayed and Leased; DeadLetters is separate.
+These observations neither establish transport acceptance nor reserve work. The
+[family contract](../../../../src/Gloaming.Messaging/docs/outbox-observability.md) defines
+database-clock age, metadata-only reader grants and native consumer health/metrics.

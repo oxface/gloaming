@@ -3,10 +3,8 @@
 version: 2
 updates:
   - package-ecosystem: nuget
-    # The template has its own solution and central package/tool manifests.
     directories:
       - /
-      - /templates/state-stored
     schedule:
       interval: weekly
       day: monday
@@ -22,6 +20,7 @@ updates:
     groups:
       ef-core:
         patterns:
+          - Microsoft.EntityFrameworkCore
           - Microsoft.EntityFrameworkCore.*
           - Npgsql.EntityFrameworkCore.*
           - dotnet-ef
@@ -42,7 +41,7 @@ updates:
       testcontainers:
         patterns: [Testcontainers.*]
         update-types: [minor, patch]
-      # One dependency per PR, including majors, across root/template manifests.
+      # One dependency per PR, including majors, across the remaining manifests.
       # This does not combine unrelated packages into a catch-all update batch.
       individual-packages:
         patterns: ["*"]
@@ -64,30 +63,6 @@ updates:
       include: scope
     groups:
       repository-tools:
-        patterns: ["*"]
-        update-types: [minor, patch]
-
-  - package-ecosystem: npm
-    directory: /tools/template
-    # Typings must match the supported Node 24 runtime, including in CI.
-    # Remove this boundary as part of a deliberate tooling runtime upgrade.
-    ignore:
-      - dependency-name: "@types/node"
-        versions: [">=25.0.0"]
-    schedule:
-      interval: weekly
-      day: monday
-      time: "09:00"
-      timezone: Etc/UTC
-    cooldown:
-      default-days: 7
-      semver-major-days: 30
-    open-pull-requests-limit: 3
-    commit-message:
-      prefix: chore
-      include: scope
-    groups:
-      template-tools:
         patterns: ["*"]
         update-types: [minor, patch]
 
@@ -135,7 +110,6 @@ updates:
   - package-ecosystem: dotnet-sdk
     directories:
       - /
-      - /templates/state-stored
     schedule:
       interval: weekly
       day: monday
@@ -148,7 +122,7 @@ updates:
     commit-message:
       prefix: chore
       include: scope
-    # The same SDK upgrade belongs in both global.json files, in its own PR.
+    # Keep SDK upgrades in their own PR.
     groups:
       dotnet-sdk:
         patterns: ["*"]

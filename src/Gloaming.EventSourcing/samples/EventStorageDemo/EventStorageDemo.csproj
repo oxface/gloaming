@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ModulithFoundry.Samples.EventStorageDemo</RootNamespace>
+    <RootNamespace>Gloaming.Samples.EventStorageDemo</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />

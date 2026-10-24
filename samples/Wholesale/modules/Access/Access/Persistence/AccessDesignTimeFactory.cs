@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
+namespace Gloaming.Samples.Wholesale.Access.Persistence;
 
 public sealed class AccessDesignTimeFactory : IDesignTimeDbContextFactory<AccessDbContext>
 {

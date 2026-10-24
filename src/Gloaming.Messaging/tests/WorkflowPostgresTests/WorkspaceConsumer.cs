@@ -4,9 +4,9 @@ using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.Workflows;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 
 namespace Gloaming.Messaging.WorkflowPostgresTests;
 

@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 /// <summary>Durably reserves two distinct stock lines, compensating the first if the second is refused.</summary>
 public interface IStockReservationOrders
@@ -9,9 +9,10 @@ public interface IStockReservationOrders
     );
     Task<StockReservationOrder?> ReadAsync(Guid orderId, CancellationToken cancellationToken);
 
-    /// <summary>Explicit operator retry after a refused compensation. Database/transport failures retry through existing workers.</summary>
+    /// <summary>Explicit operator retry after a refused compensation. Reuse operationId for equal retries to recover the original result; a new operator decision requires a new identity.</summary>
     Task<StockReservationOrder> RetryCompensationAsync(
         Guid orderId,
+        Guid operationId,
         CancellationToken cancellationToken
     );
 }

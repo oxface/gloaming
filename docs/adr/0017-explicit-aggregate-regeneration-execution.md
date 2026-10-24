@@ -1,9 +1,8 @@
 # ADR 0017: Explicit aggregate regeneration execution
 
-Status: owner-approved interface and implementation scope, 2026-10-17, with approved native
-IProgress/scope-factory refinement on 2026-10-18. Extends the optional
-maintenance capability described in ADR 0008; it does not replace native optimistic concurrency
-or change direct rebuilder/store save ownership. [Reviewed surface](../plans/library-extraction.md#es3-optional-regeneration-executor-interface-review).
+Status: accepted and implemented, 2026-10-17. Extends the optional maintenance capability
+in ADR 0008 with explicit native scope-factory and IProgress integration. Native optimistic
+concurrency and direct rebuilder/store save ownership remain unchanged.
 
 Provide `AggregateRegenerator<TAggregate,TContext>` in the existing EventSourcing EF package.
 An explicit call delegates one complete maintenance operation: fresh scope/context per attempt,
@@ -33,8 +32,7 @@ Inventory's CLI supplies synchronous reporting; asynchronous handler errors are 
 outcomes. Consumers format returned terminal results. Restart explicitly replays from
 retained history, without external side effects or a resumable checkpoint.
 
-The consumer owns selected target/admission, retry values, progress presentation, scheduling,
+The consumer owns target/admission, retry values, progress presentation, scheduling,
 consistent reducer rollout and pause/drain policy. Full-prefix materialization and uninterrupted
 synchronous evolution remain bounded-scope limitations; no large-stream or mixed-version rollout
-guarantee follows. [New proofs and limitations](../reports/es3-aggregate-regeneration-operations.md)
-are distinct from the earlier consumer-only journey and external research.
+guarantee follows. See the [execution contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md).

@@ -1,10 +1,15 @@
 # Consumer worker recovery and shutdown
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 Gloaming owns retained work, row locks, committed claims and fenced lifecycle writes. The
 consumer owns its publisher/receiver, recovery choice, cancellation and process supervisor.
 Retrying an operation in a fresh database scope cannot repair a permanently closed channel.
 
-The [standalone worker](../samples/MessagingWorkerDemo/README.md) selects fail-stop
+The [standalone worker](../samples/Delivery/README.md) selects fail-stop
 using RabbitMQ.Client 7.2.2 and native Generic Host APIs. Optional
 [Gloaming.Messaging.RabbitMQ](../Gloaming.Messaging.RabbitMQ/README.md) now supplies shared native
 session/channel ownership, phase-timeout setup, terminal observation and cleanup. Queue/role,
@@ -43,9 +48,9 @@ its separately documented native host behavior. Ignore does not restart a faulte
 After recovery, launch the same executable/role/settings to obtain a fresh session:
 
 ```sh
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role dispatch
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role receive
-dotnet run --project src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj -- --role process
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role dispatch
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role receive
+dotnet run --project src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj -- --role process
 ```
 
 See the sample for connection settings. Do not hide setup/migration inside recovery, rewrite
@@ -89,15 +94,11 @@ eventual force termination; forced death can lose diagnostics and leave acceptan
 
 ## Evidence boundary
 
-The [closure report](../../../docs/reports/w1-broker-recovery-shutdown.md) records real
-PostgreSQL/RabbitMQ process evidence for live broker application outage, durable queue
-preservation, producer commits during outage and fresh-session progress. Native resource
-blocking establishes an actual stalled publication before SIGTERM, with a separate fifteen-
-second process-stop verification budget. This is evidence for the pinned native composition,
-not every network blackhole, cluster failover or arbitrary cancellation implementation.
-The subsequent [extraction report](../../../docs/reports/rabbitmq-session-lifecycle.md) records
-fresh public-session proofs and reruns of actual consumers through the optional package;
-earlier consumer-only results are not substituted for those new library/adoption executions.
+Process tests exercise PostgreSQL/RabbitMQ outage, retained queues, producer commits
+during outage and fresh-session progress. Native resource blocking establishes stalled publication
+before shutdown. These are bounded tests of the selected composition, not certification of
+every network blackhole, cluster failover or arbitrary cancellation implementation.
+The [session package](../Gloaming.Messaging.RabbitMQ/README.md) defines its own public lifecycle contract.
 
 The existing unavailable-collector scenario is reused with its one-second OTLP timeout and
 a separate fifteen-second budget for stopping the three worker roles. Its business-progress

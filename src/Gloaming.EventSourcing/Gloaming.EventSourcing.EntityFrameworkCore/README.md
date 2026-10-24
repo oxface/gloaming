@@ -25,8 +25,19 @@ Map one IInlineStateRecord row per complete stream key, its Version as a native 
 token, and its RecordedAt. ConfigureRequiredInlineState<TStreamRecord,TStoredEventRecord,TInlineStateRecord>(streamType)
 registers the required aggregate. Call ValidateEventStreamChanges() in **both** native
 SaveChanges(bool) and SaveChangesAsync(bool,CancellationToken) overrides before calling base.
-It validates complete event/state/header participation before SQL. It does not install itself
+It validates complete event/state/header metadata participation before SQL. An omitted append
+timestamp must already match its proposed stored value; this conditional native read preserves
+valid equal-time appends. Body semantics remain consumer-owned outside the maintenance proposal.
+It does not install itself
 or protect raw SQL, bulk updates, external writers or consumers which omit the save guard.
+For maintenance, modified header/state entries must preserve their complete observed original
+values so native column selection cannot omit reconstructed state. Unchanged entries must already
+have their complete reconstructed values stored in the original transaction. Premature acceptance and a saved repair undone by
+savepoint rollback are rejected. Healthy already-stored inline state and valid repeated saves
+remain supported. These native primary-key reads ignore EF query filters; database permissions
+and RLS still apply. The explicit guard performs synchronous reads even in an async save override.
+The registered capability and regeneration executor instead use cancellable async reads on their
+async paths. Native JSON values are compared structurally; UTC timestamp offsets remain exact.
 DbSet properties and context markers are unnecessary; native Set<T>() and Entry(instance) work.
 Use ordinary independent single-table rows with mapped unconverted CLR keys.
 
@@ -43,8 +54,8 @@ fills its complete key/version/time. It preserves EF's original header and state
 ~~~csharp
 await using var transaction = await database.Database.BeginTransactionAsync(token);
 var aggregate = await store.GetForWritingAsync(id, expectedVersion, token);
-aggregate ??= PurchaseOrderAggregate.Create(request);
-aggregate.SetLines(lines);
+aggregate ??= StockPositionAggregate.Create(openRequest);
+aggregate.Receive(receipts);
 await store.AppendAsync(aggregate, token);
 await database.SaveChangesAsync(token);
 await transaction.CommitAsync(token);
@@ -64,6 +75,10 @@ This package does not provide a projection engine.
 InlineStateReader<TStreamRecord,TInlineStateRecord>.ReadAsync supports filtered state lookup; Validate checks an
 already fetched row without another query. Consumers build Queries/Filters with native LINQ,
 including mapped predicates and joins. Read queries never repair stored state.
+
+Inline and history readers bind complete mapped key values as SQL parameters, as in native
+captured-variable predicates. This lets EF reuse a query shape as key values change. Both
+readers retain native query filters and no-tracking behavior.
 
 ## Bounded event history
 
@@ -165,6 +180,10 @@ capture instead raises a native concurrency exception. Healthy state need not be
 rewritten. Repair preserves facts, event version and recorded times, changing only the header's
 technical stamp. A private exact write association lets the native save guard accept this
 state replacement; it is not a public bypass or maintenance scheduling framework.
+An `Unchanged` tracking state alone is not evidence that the repair participated in saving.
+After `SaveChanges(false)`, accept the successfully saved changes before another save, as native
+EF requires for retaining the original optimistic tokens until acceptance. Do not accept a
+proposal that has not been saved; discard failed contexts and replay from fresh state.
 
 Every append and repair generates a new stamp. A stale writer can decide from pre-repair state,
 but its native header UPDATE loses after repair commits. An append can likewise invalidate an
@@ -263,9 +282,7 @@ writes can exhaust retries. Admission, retry values, logs, reducer rollout, any 
 window and scheduling remain consumer-owned. Bad retained facts and previously committed bad
 business decisions are not repaired by regenerating derived state.
 
-The [ES3 CLI guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md)
-documents the finite operator journey, and the [slice report](../../../docs/reports/es3-aggregate-regeneration-operations.md)
-separates new execution evidence from earlier research and consumer-only proofs.
+The [operator guide](../../../samples/Wholesale/Worker/Maintenance/stock-regeneration.md) demonstrates finite regeneration with explicit admission and execution options.
 
 ## Registration, errors and recovery
 
@@ -292,9 +309,7 @@ context use, automatic ambiguous-commit reconciliation or fencing of uncooperati
 Complete key/tenant admission remains consumer-owned. PostgreSQL tests exercise actual native
 SQL, rollback and fresh recovery.
 
-See [current capabilities and deferred directions](docs/capabilities.md),
+See [capabilities and supported limits](../docs/capabilities.md),
 [aggregate core](../Gloaming.EventSourcing/README.md),
-[standalone raw adoption](../samples/EventStorageDemo/README.md),
-[tenant-owned adoption](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md),
-[reviewed replacement](../../../docs/plans/es2-native-ef-simplification.md) and
-[dated ES2 evidence](../../../docs/reports/es2-rebuild-design.md).
+[standalone adoption](../samples/EventStorageDemo/README.md) and
+[tenant-owned composition](../../../samples/Wholesale/IntegrationTests/Scenarios/EventPersistence/README.md).

@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
+namespace Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 
 internal sealed class OrderAllowanceAggregate
 {

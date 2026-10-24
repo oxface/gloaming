@@ -20,14 +20,15 @@ For ownership-declared automatic PostgreSQL transaction setup, select the separa
 [Persistence/PostgreSQL adapter](../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md).
 The transaction-local utility above remains independently usable without ownership mapping.
 
+See the [native operation recipe](docs/composition.md) and its
+[cross-family composition proofs](../../tests/ContextCompositionTests/CompositionTests.cs).
+
 Library tests:
 
 - [TenantTests](tests/TenantTests/TenantTests.csproj)
 - [TenancyAspNetCoreTests](tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj)
 - [TenancyPostgresTests](tests/TenancyPostgresTests/TenancyPostgresTests.csproj)
 
-Run commands from the repository root. Restore/build the active solution, then test a selected
-project under this family's tests directory with `dotnet test --project <path> --no-build --no-restore`.
-PostgreSQL suites require a supported local container runtime. Repository-wide architecture
-checks remain in [tests/ArchitectureTests](../../tests/ArchitectureTests/ArchitectureTests.csproj);
-shared PostgreSQL test support remains repository-owned. See [development commands](../../docs/development.md).
+Run a selected project from the repository root using `dotnet test --project <path>`.
+The [test guide](../../tests/README.md) lists suite ownership, selection and infrastructure needs;
+[development commands](../../docs/development.md) cover native/container setup.

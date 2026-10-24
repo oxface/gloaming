@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 // Consumer-owned grants for one existing table, not a general role/provisioning framework.
 internal static class SalesDispatchDatabase

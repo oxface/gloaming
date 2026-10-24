@@ -2,8 +2,8 @@ using System.Text.Json;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.Workflows;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using static Gloaming.Messaging.WorkflowPostgresTests.WorkflowProof;
 
 namespace Gloaming.Messaging.WorkflowPostgresTests;

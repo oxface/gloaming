@@ -1,9 +1,9 @@
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
-using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Native save failures belong to the caller; unrelated constraints remain faults.
 public static class DraftOrderFailures

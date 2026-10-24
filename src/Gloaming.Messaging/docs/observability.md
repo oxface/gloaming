@@ -115,8 +115,8 @@ use their own consumer meter and explicitly expose observation age.
 
 ## Native host and transport wiring
 
-Optionally reference [Gloaming.Messaging.OpenTelemetry](../Gloaming.Messaging.OpenTelemetry/README.md)
-in the host to subscribe without repeating instrumentation names:
+Subscribe in the host using the native OpenTelemetry builders. The activity source and meter
+are both named `Gloaming.Messaging`; no Gloaming subscription package is needed:
 
 ```csharp
 using OpenTelemetry.Metrics;
@@ -126,16 +126,14 @@ using OpenTelemetry.Trace;
 // HTTP/runtime/database instrumentation and configured OTLP export.
 builder.AddServiceDefaults();
 builder.Services.AddOpenTelemetry()
-    .WithTracing(tracing => tracing.AddGloamingMessaging()
+    .WithTracing(tracing => tracing.AddSource("Gloaming.Messaging")
         .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber"))
-    .WithMetrics(metrics => metrics.AddGloamingMessaging());
+    .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
 ```
 
-Both extensions return the native builder and can be selected independently. Their only
-dependency is OpenTelemetry.Api; null builders throw ArgumentNullException. They do not
-build providers, configure logging/export/resources/sampling or subscribe to other sources.
-The existing technical packages do not depend on this optional adapter. Native
-`AddSource("Gloaming.Messaging")` and `AddMeter("Gloaming.Messaging")` remain equivalent.
+Trace and metric collection can be selected independently. The technical packages emit
+native .NET diagnostics and have no OpenTelemetry dependency. Hosts own the SDK and
+subscription configuration; the documented source and meter names are supported contracts.
 
 Select SDK/exporter packages, resources, sampling and OTLP export in the host. A producer
 can add ASP.NET Core instrumentation; DB instrumentation stays independently selectable.
@@ -152,7 +150,7 @@ parent/state pair, falling back to retained context when no activity exists. The
 native instrumentation can replace the parent with its child send context. The send span is a child of
 dispatch; incoming retention therefore points to that send span. The original envelope remains unchanged. This is why duplicate
 business delivery must tolerate changing tracing. No process-global propagator override is
-needed. Other transports are consumer-owned adapters, not guarantees of this slice.
+needed. Other transports are consumer-owned adapters, not guarantees of this capability.
 
 ## Using an OpenTelemetry sink
 
@@ -178,20 +176,14 @@ It does not create a separate inbox intake span; the sample enables native trans
 database instrumentation around that lane. Dashboard navigation is documented behavior;
 the automated process proof verifies actual OTLP data with a Collector, not dashboard UI.
 
-See [the separate host example](../samples/MessagingWorkerDemo/README.md) for executable
-OTLP configuration. Its tests use real PostgreSQL/RabbitMQ and an official test Collector,
-including process exit, completion/handler failure, new send spans, duplicate intake and
-unavailable collection. [The OBS1 report](../../../docs/reports/obs1-durable-message-observability.md)
-separates fresh results from earlier worker/recovery evidence.
+The [host example](../samples/Delivery/README.md) supplies native OTLP configuration.
+Its tests use PostgreSQL/RabbitMQ and a test Collector, including process exit, handler/completion
+failure, send spans, duplicate intake and unavailable collection.
 
-The [worker recovery/shutdown continuation](worker-recovery.md) adds consumer publication-start
-diagnostics and optional RabbitMQ integration diagnostics for native blocked/unblocked state
-and terminal session loss. These
-do not infer transport rejection or introduce metrics/accounting for every disconnect.
-The existing unreachable-collector process scenario now separately budgets all three worker
-stops at fifteen seconds with its existing one-second exporter timeout. That selected result
-is distinct from a promise to flush arbitrary exporters or bound arbitrary publisher code;
-see the [closure report](../../../docs/reports/w1-broker-recovery-shutdown.md).
+The [recovery contract](worker-recovery.md) describes publication-start diagnostics and
+native RabbitMQ blocked/unblocked/terminal-session events. They do not establish transport
+rejection or durable disconnect accounting. Selected process-stop/exporter budgets do not
+promise flushing or deadlines for arbitrary consumer code.
 
 Outbox backlog/oldest-age reads and consumer health/gauges are supported as described above.
 Inbox backlog, automatic alerts, dashboard inspection, durable telemetry, automatic

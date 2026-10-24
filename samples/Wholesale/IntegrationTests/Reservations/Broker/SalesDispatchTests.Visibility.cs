@@ -1,8 +1,8 @@
 using System.Text.Json;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 public sealed partial class SalesDispatchTests
 {

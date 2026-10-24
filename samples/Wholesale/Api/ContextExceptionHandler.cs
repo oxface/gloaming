@@ -4,7 +4,7 @@ using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Consumer-owned mappings. Unknown failures use native exception-handler fallback.
 internal sealed class ContextExceptionHandler(IProblemDetailsService problems) : IExceptionHandler

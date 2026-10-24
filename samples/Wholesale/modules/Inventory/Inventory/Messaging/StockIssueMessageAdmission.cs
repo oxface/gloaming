@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 /// <summary>Finite sample producer/Organization policy and explicit integration codec; not sender authentication.</summary>
 public static class StockIssueMessageAdmission

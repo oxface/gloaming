@@ -4,19 +4,25 @@ Sales owns customer profiles, drafts, customer allowances and its durable stock 
 Business Contracts contain ordinary intent/result/query types. Native module persistence,
 grants, business rules and transactions remain consumer-owned.
 
-## Public delivery directory
+The [command-receipt consumer](command-receipts.md) adds safe equal retries for explicitly
+selected draft submissions and operator compensation retries. Gloaming's independently selected
+CommandReceipts package owns the technical protocol; Sales owns permissions, logical identities,
+input/result meaning and native transaction composition.
 
-`AddCustomerProfiles` also registers `ICustomerDeliveryDirectory` and durable source publication.
-Actual profile edits now atomically enqueue `sales.customer-delivery-state` on the fixed
-`dispatch.customer-directory` route. Compose that route in any Sales outbox publisher alongside
-other selected workflows. `RegisterAsync` creates a real profile/address; `SetListedAsync`
-withdraws or relists its public state. Both require a trusted human and selected Organization.
+## Customer profiles
 
-The profile version explicitly orders this complete public directory state. Historical profiles
-are listed by the migration; source tombstones and immutable keys are retained permanently.
-The [Dispatch guide](../Dispatch/README.md) defines disclosure, population, eventual readiness,
-writer participation and unsupported deletion/ID-reuse policies. The
-[composition](../../Worker/Directory/README.md) demonstrates separate source/receiver databases.
+`AddCustomerProfiles` registers the native profile service and its explicit accepted-change
+audit. It does not register an outbox publisher or a directory export/listing service.
+Profile name, address and audit commit in the existing service-owned transaction. Failed
+saves roll back the operation; a retry uses a fresh scope. The profile version remains the
+native concurrency token for profile changes.
+
+Dispatch's public directory and Sales listing/publication policy are retired. The forward
+`RetireCustomerDirectory` migration drops only `delivery_listed`; all earlier Sales migrations
+remain. Profile/address data, audit records and existing outbox envelopes are preserved.
+Retired directory envelopes are not automatically deleted, redriven or consumed. `Down`
+recreates a default-true column; it cannot restore old listing decisions. Workflow outbox
+registration and dispatch remain explicit in the stock/reservation compositions.
 
 ## Private draft access
 
@@ -59,16 +65,16 @@ Draft visibility governs the lines/customer display fields returned here; indepe
 protected fields need their own selected capability and proof.
 
 The separate [opt-in PostgreSQL RLS consumer](../../IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
-adds database tenant equality on five Sales tables under restricted credentials and explicit
-transaction-local setup. It proves reads/existing-draft edits; ordinary module registration,
+adds database tenant equality on six Sales tables, including append-only command receipts,
+under restricted credentials and explicit transaction-local setup. It proves reads/existing-draft
+edits and receipt replay; ordinary module registration,
 default HTTP, creation/submission and workers do not adopt those credentials/policies. It supplies
 no within-tenant permission, authentication or protection from tenant-setting forgery by
 the credential holder.
 
-The later [A2.3 utility extraction](../../../../docs/reports/a2-3-postgres-tenant-context.md)
-replaces the executable's private setup helper with an optional Tenancy/PostgreSQL extension.
-Sales module registration and permission semantics remain unchanged; the executable owns
-that adapter reference and calls it explicitly inside each native transaction.
+The optional [Tenancy/PostgreSQL extension](../../../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
+establishes transaction-local context explicitly. The executable owns that adapter reference
+and invokes it inside each native transaction; Sales permissions remain module-owned.
 
 The separate [Sales HTTP RLS composition](../../Api/README.md#optional-sales-http-row-security)
 now calls `AddSalesDatabase(connection, useRowSecurity: true)`. A stateless native EF model
@@ -80,7 +86,7 @@ authorization checks. Its finite host installer supplies reviewed policies and r
 credentials; it does not enable grant administration, draft creation/submission, transport
 or workflow rights. The normal registration remains filter/save-validation based.
 
-The separate [WF2 reply processor](../../Worker/Broker/sales-inbox-rls.md) uses
+The separate [reservation reply processor](../../Worker/Broker/sales-inbox-rls.md) uses
 `AddSalesReservationReplyDatabase` and `AddAdmittedStockReservationReplies` with a host-established
 immutable Organization/system-actor scope. The inbox processor still owns its native transaction,
 saves and commit. A different stateless model selects workflow/inbox RLS and keeps named ownership
@@ -91,11 +97,6 @@ This consumer profile adds no Gloaming interface, schema migration or general wo
 
 ## Executable usage and evidence
 
-- [HTTP identity/admission consumer](../../Api/README.md#private-draft-permissions)
-  composes late native resource checks, queries and antiforgery-protected versioned edits.
-- [CQRS consumer](../../IntegrationTests/Scenarios/Cqrs/README.md) creates and reads drafts using the creator's grants;
-  its PostgreSQL cases exercise complete permitted selection and native snapshot timing.
-- [A2.1 scope](../../../../docs/plans/a2-1-sales-resource-permissions.md) and
-  [implementation report](../../../../docs/reports/a2-1-sales-resource-permissions.md) record
-  fresh proofs separately from the A2 assessment and the
-  [A2.2 optional RLS report](../../../../docs/reports/a2-2-sales-postgres-rls.md).
+- [HTTP identity/admission](../../Api/README.md#private-draft-permissions) composes late resource checks, queries and antiforgery-protected versioned edits.
+- [CQRS consumer](../../IntegrationTests/Scenarios/Cqrs/README.md) exercises complete permitted selection and native snapshot timing.
+- [Optional RLS setup](../../IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md) exercises restricted-role enforcement and its credential limits.

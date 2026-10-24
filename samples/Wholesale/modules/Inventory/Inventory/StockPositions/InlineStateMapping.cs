@@ -3,7 +3,7 @@ using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal static class InlineStateMapping
 {

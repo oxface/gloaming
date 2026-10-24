@@ -1,8 +1,8 @@
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 // The HTTP consumer owns save/commit; endpoint code still calls the business Contracts.
 internal sealed class DraftOrderEdits(SalesDbContext database, IDraftOrderCommands commands)
@@ -41,6 +41,10 @@ internal sealed class DraftOrderEdits(SalesDbContext database, IDraftOrderComman
             return result;
         }
         catch (DbUpdateConcurrencyException)
+        {
+            return new DraftOrderChangeResult.Conflict();
+        }
+        catch (CommandReceiptConflictException)
         {
             return new DraftOrderChangeResult.Conflict();
         }

@@ -1,10 +1,10 @@
-using System.Diagnostics;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using ModulithFoundry.Samples.Wholesale.Api;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -33,6 +33,8 @@ public sealed partial class CompositionTests
                 GRANT USAGE ON SCHEMA access, inventory TO "{accessRole}";
                 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA access TO "{accessRole}";
                 GRANT SELECT ON inventory.stock_availability TO "{accessRole}";
+                -- Seed the earlier publication grant; the finite installer must remove it.
+                GRANT SELECT, INSERT ON sales.outbox_messages TO "{salesRole}";
                 """
             );
             proof.SalesConnection = new NpgsqlConnectionStringBuilder(admin)
@@ -49,43 +51,25 @@ public sealed partial class CompositionTests
             }.ConnectionString;
             if (commandSetup)
             {
-                var start = new ProcessStartInfo("dotnet")
-                {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                };
-                start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
-                start.ArgumentList.Add("--initialize-sales-rls");
-                start.Environment["ConnectionStrings__Access"] = access;
-                start.Environment["ConnectionStrings__Sales"] = proof.SalesConnection;
-                start.Environment["ConnectionStrings__SalesMigrations"] = admin;
-                using var process =
-                    Process.Start(start)
-                    ?? throw new InvalidOperationException("Could not start Sales setup.");
-                Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-                Task<string> errors = process.StandardError.ReadToEndAsync(Token);
-                try
-                {
-                    await process
-                        .WaitForExitAsync(Token)
-                        .WaitAsync(TimeSpan.FromSeconds(30), Token);
-                    Assert.Equal(0, process.ExitCode);
-                    Assert.Empty(await errors);
-                    Assert.Contains(
-                        "HTTP host was not started",
-                        await output,
-                        StringComparison.Ordinal
-                    );
-                }
-                finally
-                {
-                    if (!process.HasExited)
+                await using var process = new ChildHost(
+                    typeof(DemoComposition).Assembly,
+                    new()
                     {
-                        process.Kill(entireProcessTree: true);
-                        await process.WaitForExitAsync(CancellationToken.None);
-                    }
-                }
+                        ["ConnectionStrings__Access"] = access,
+                        ["ConnectionStrings__Sales"] = proof.SalesConnection,
+                        ["ConnectionStrings__SalesMigrations"] = admin,
+                    },
+                    "--initialize-sales-rls"
+                );
+                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Token);
+                timeout.CancelAfter(TimeSpan.FromSeconds(30));
+                Assert.Equal(0, await process.WaitForExitAsync(timeout.Token));
+                Assert.Empty(process.StandardError);
+                Assert.Contains(
+                    "HTTP host was not started",
+                    process.StandardOutput,
+                    StringComparison.Ordinal
+                );
             }
             else
                 await SalesHttpRowSecurity.InstallAsync(admin, proof.SalesConnection, Token);
@@ -116,6 +100,7 @@ public sealed partial class CompositionTests
     {
         internal WebApplication App { get; set; } = null!;
         internal string SalesConnection { get; set; } = "";
+
         internal string SalesRole { get; } = salesRole;
 
         internal Task VerifyPrivilegedAccessAsync() =>

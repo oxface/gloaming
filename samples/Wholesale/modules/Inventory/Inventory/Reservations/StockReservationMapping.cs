@@ -3,7 +3,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Reservations;
+namespace Gloaming.Samples.Wholesale.Inventory.Reservations;
 
 internal static class StockReservationMapping
 {

@@ -1,7 +1,7 @@
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
 
-namespace ModulithFoundry.Samples.Wholesale.Access;
+namespace Gloaming.Samples.Wholesale.Access;
 
 // Only the explicitly invoked setup mode uses these disposable demonstration rows.
 public static class AccessDemoSeed

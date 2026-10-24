@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 // Stage demonstration rows; the caller establishes tenancy and owns save/commit.
 public static class InventoryDemoSeed

@@ -1,7 +1,6 @@
 # Lease fenced outbox failure accounting and operator retry
 
-Status: interface, scope and implementation approved by the owner on 2026-10-21;
-checkpointed as `6bcdf9c`. Extends [ADR 0009](0009-module-owned-transactional-outbox.md).
+Status: accepted and implemented, 2026-10-21. Extends [ADR 0009](0009-module-owned-transactional-outbox.md).
 
 ## Context
 
@@ -36,13 +35,11 @@ faults without another poll; native host supervision and consumer repair/restart
 recovery. Consumer code owns classification, budgets, acceptance, admission, operator authority,
 credentials, presentation and audit. Column grants do not enforce legal lifecycle transitions.
 
-The subsequently owner-selected [completion supervision follow-up](../plans/m2-outbox-completion-supervision.md)
-uses OutboxCompletionException for unconfirmed completion after normal publication return,
-retaining MessageId and the original InnerException. It also faults the optional worker
-without another poll. This signal preserves completion uncertainty and never triggers
-publisher-failure accounting or a compensating write. Requested worker shutdown ends normally;
-direct callers retain the typed stage/error signal, including completion-stage cancellation.
-The [separate report](../reports/m2-outbox-completion-supervision.md) records new proof evidence.
+OutboxCompletionException reports unconfirmed completion after normal publication return,
+retaining MessageId and the original InnerException. The optional worker faults without another
+poll. Completion uncertainty never triggers publisher-failure accounting or a compensating write.
+Requested worker shutdown ends normally; direct callers retain the typed stage/error signal,
+including completion-stage cancellation.
 
 ## Consequences
 
@@ -52,7 +49,6 @@ committed observations, not every execution or accepted delivery. An obsolete pu
 can still accept externally after successor dead-lettering or operator retry; its database
 writes remain fenced. Receiver deduplication is required.
 
-Payload editing, completed-message replay, retention, lease renewal, a generic administration
-framework and template presets are excluded. See the [current family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md),
-[reviewed proposal](../plans/m2-outbox-dead-letters.md) and
-[new evidence report](../reports/m2-outbox-dead-letters.md).
+Payload editing, completed-message replay and lease renewal are outside this capability.
+See the [current family contract](../../src/Gloaming.Messaging/docs/outbox-recovery.md);
+[completed-outbox retention](../../src/Gloaming.Messaging/docs/outbox-retention.md) has its own contract.

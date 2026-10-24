@@ -1,7 +1,6 @@
-> This is retained integration-test scenario documentation. The former standalone product
-> executable was retired by S1. Use the [Wholesale product](../../../README.md) and its
-> canonical API/worker/maintenance roles; this directory owns fixture/journey support only.
-> Run proofs with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
+> This directory owns fixtures and journeys for [Wholesale integration tests](../../README.md).
+> Use the [Wholesale application](../../../README.md) for API, worker and maintenance commands.
+> Run tests with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
 
 # Registered local domain reactions
 
@@ -49,8 +48,7 @@ Domain methods enforce invariants and native version predicates arbitrate legiti
 Arbitrary row changes, child-only writes and direct SQL bypass decisions; no automatic root-version
 advancement or fact/row mirror is inferred. Existing tenant validation still checks handler-created
 writes. Late persistence facts, external effects, same-context retries and uncertain commit recovery
-are outside local dispatch. D2.2 and template adoption remain separate.
+are outside local dispatch. Durable delivery is separately selected through Messaging.
 
-See the [package contract](../../../../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md)
-and [current report](../../../../../docs/reports/ef1-1-capability-composition.md). Earlier reports retain
-dated results for superseded implementations.
+
+See the [package contract](../../../../../src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/README.md) for current preparation/validation ordering.

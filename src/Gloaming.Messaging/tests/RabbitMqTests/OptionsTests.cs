@@ -1,6 +1,6 @@
 using Gloaming.Messaging.RabbitMQ;
 
-namespace ModulithFoundry.RabbitMqTests;
+namespace Gloaming.RabbitMqTests;
 
 public sealed class OptionsTests
 {

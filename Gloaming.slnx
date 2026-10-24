@@ -1,0 +1,150 @@
+<Solution>
+  <Folder Name="/Libraries/CommandReceipts/">
+    <Project Path="src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/CommandReceipts/Tests/">
+    <Project Path="src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj" />
+    <Project Path="src/Gloaming.CommandReceipts/tests/Fixtures/ReceiptDeployment/Current/ReceiptDeployment.Current.csproj" />
+    <Project Path="src/Gloaming.CommandReceipts/tests/Fixtures/ReceiptDeployment/Earlier/ReceiptDeployment.Earlier.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/CommandReceipts/Tests/Fixtures/" />
+  <Folder Name="/Libraries/EntityFrameworkCore/">
+    <Project Path="src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EntityFrameworkCore/Tests/">
+    <Project Path="src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventReactions/">
+    <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions/Gloaming.EventReactions.csproj" />
+    <Project Path="src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/Gloaming.EventReactions.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventReactions/Tests/">
+    <Project Path="src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj" />
+    <Project Path="src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Auditing/">
+    <Project Path="src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Auditing/Tests/">
+    <Project Path="src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Messaging/">
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Messaging/Tests/">
+    <Project Path="src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/MessagingTests/MessagingTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/" />
+  <Folder Name="/Libraries/ActorIdentity/">
+    <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/Gloaming.ActorIdentity.AspNetCore.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/Gloaming.ActorIdentity.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/ActorIdentity/Tests/">
+    <Project Path="src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj" />
+    <Project Path="src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Tenancy/">
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy/Gloaming.Tenancy.csproj" />
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/Gloaming.Tenancy.AspNetCore.csproj" />
+    <Project Path="src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Tenancy/Tests/">
+    <Project Path="src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj" />
+    <Project Path="src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Messaging/Tests/Fixtures/">
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Wakeups/Earlier/Wakeups.Earlier.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Wakeups/Wakeups.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Contributions/Contributions.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/EntityWork/EntityWork.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Recurrence/Recurrence.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Current/DueTimeIntent.Current.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Earlier/DueTimeIntent.Earlier.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Persistence/">
+    <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Persistence/Tests/">
+    <Project Path="src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj" />
+    <Project Path="src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Events/">
+    <Project Path="src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
+    <Project Path="src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Events/Tests/">
+    <Project Path="src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj" />
+    <Project Path="src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj" />
+    <Project Path="src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventSourcing/">
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/EventSourcing/Tests/">
+    <Project Path="src/Gloaming.EventSourcing/tests/Fixtures/EventFeed/EventFeed.Proof.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/Fixtures/EventFeed/Earlier/EventFeed.Earlier.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="samples/Wholesale/Worker/Wholesale.Worker.csproj" />
+    <Project Path="samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />
+    <Project Path="src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj" />
+    <Project Path="samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj" />
+    <Project Path="samples/Wholesale/AppHost/Wholesale.AppHost.csproj" />
+    <Project Path="samples/Wholesale/ServiceDefaults/Wholesale.ServiceDefaults.csproj" />
+    <Project Path="samples/Wholesale/Api/Wholesale.Api.csproj" />
+    <Project Path="src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
+  </Folder>
+  <Folder Name="/Sample modules/">
+    <Project Path="samples/Wholesale/modules/Sales/Sales/Sales.csproj" />
+    <Project Path="samples/Wholesale/modules/Sales/Sales.Contracts/Sales.Contracts.csproj" />
+    <Project Path="samples/Wholesale/modules/Access/Access/Access.csproj" />
+    <Project Path="samples/Wholesale/modules/Access/Access.Contracts/Access.Contracts.csproj" />
+    <Project Path="samples/Wholesale/modules/Inventory/Inventory/Inventory.csproj" />
+    <Project Path="samples/Wholesale/modules/Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/ContextCompositionTests/ContextCompositionTests.csproj" />
+    <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/Samples/EventReactionsDemo/">
+    <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Model/EventReactionsDemo.Model.csproj" />
+    <Project Path="src/Gloaming.EventReactions/samples/EventReactionsDemo/Consumer/EventReactionsDemo.csproj" />
+  </Folder>
+  <Folder Name="/Samples/Messaging/">
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Producer/Messaging.Producer.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/ServiceDefaults/Messaging.ServiceDefaults.csproj" />
+    <Project Path="src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Messaging/Tests/Consumers/">
+    <Project Path="src/Gloaming.Messaging/tests/DeliveryTests/DeliveryTests.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/BrokerJourney/Messaging.BrokerJourney.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/InboxHost/Messaging.InboxHost.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/OutboxHost/Messaging.OutboxHost.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/WorkflowDeployment/Current/WorkflowDeploymentDemo.Current.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/WorkflowDeployment/Earlier/WorkflowDeploymentDemo.Earlier.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/WorkflowDeploymentTests/WorkflowDeploymentTests.csproj" />
+  </Folder>
+</Solution>

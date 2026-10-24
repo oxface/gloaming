@@ -1,13 +1,13 @@
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.RichAggregate;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.DraftOrders;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.DraftOrders;
 
 public sealed partial class OrderTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

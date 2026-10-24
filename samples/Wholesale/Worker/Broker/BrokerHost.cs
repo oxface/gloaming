@@ -1,21 +1,22 @@
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.ServiceDefaults;
+using Gloaming.Samples.Wholesale.Worker.Broker;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.ServiceDefaults;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 internal static class BrokerHost
 {
@@ -67,8 +68,8 @@ internal static class BrokerHost
             builder.AddServiceDefaults();
             builder
                 .Services.AddOpenTelemetry()
-                .WithTracing(tracing => tracing.AddGloamingMessaging())
-                .WithMetrics(metrics => metrics.AddGloamingMessaging());
+                .WithTracing(tracing => tracing.AddSource("Gloaming.Messaging"))
+                .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
             using var replyHost = builder.Build();
             await replyHost.RunAsync();
             return;
@@ -157,9 +158,9 @@ internal static class BrokerHost
             builder
                 .Services.AddOpenTelemetry()
                 .WithTracing(tracing =>
-                    tracing.AddGloamingMessaging().AddSource("RabbitMQ.Client.Publisher")
+                    tracing.AddSource("Gloaming.Messaging").AddSource("RabbitMQ.Client.Publisher")
                 )
-                .WithMetrics(metrics => metrics.AddGloamingMessaging());
+                .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
             using var dispatchHost = builder.Build();
             await dispatchHost.RunAsync();
             return;
@@ -199,7 +200,11 @@ internal static class BrokerHost
                 var order = role switch
                 {
                     "read-order" => await orders.ReadAsync(id, startup.Token),
-                    "retry-compensation" => await orders.RetryCompensationAsync(id, startup.Token),
+                    "retry-compensation" => await orders.RetryCompensationAsync(
+                        id,
+                        Guid.Parse(Required("OperationId")),
+                        startup.Token
+                    ),
                     _ => await orders.StartAsync(
                         new(
                             id,
@@ -318,10 +323,10 @@ internal static class BrokerHost
             .Services.AddOpenTelemetry()
             .WithTracing(tracing =>
                 tracing
-                    .AddGloamingMessaging()
+                    .AddSource("Gloaming.Messaging")
                     .AddSource("RabbitMQ.Client.Publisher", "RabbitMQ.Client.Subscriber")
             )
-            .WithMetrics(metrics => metrics.AddGloamingMessaging());
+            .WithMetrics(metrics => metrics.AddMeter("Gloaming.Messaging"));
         builder.Services.AddPostgresOutboxDispatcher<SalesDbContext, SalesCommandPublisher>(
             SalesDispatchOptions()
         );

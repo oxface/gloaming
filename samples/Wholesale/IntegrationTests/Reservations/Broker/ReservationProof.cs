@@ -1,15 +1,15 @@
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Broker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 internal sealed class ReservationProof(WorkflowProof workflow) : IAsyncDisposable
 {
@@ -39,12 +39,16 @@ internal sealed class ReservationProof(WorkflowProof workflow) : IAsyncDisposabl
             .ReadAsync(id, token);
     }
 
-    internal async Task<StockReservationOrder> RetryAsync(Guid id, CancellationToken token)
+    internal async Task<StockReservationOrder> RetryAsync(
+        Guid id,
+        CancellationToken token,
+        Guid? operationId = null
+    )
     {
         await using var scope = workflow.Scope(actor: true);
         return await scope
             .ServiceProvider.GetRequiredService<IStockReservationOrders>()
-            .RetryCompensationAsync(id, token);
+            .RetryCompensationAsync(id, operationId ?? Guid.NewGuid(), token);
     }
 
     internal async Task<StockPositionHistory> StockAsync(

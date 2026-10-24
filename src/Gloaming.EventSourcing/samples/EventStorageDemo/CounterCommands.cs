@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 public sealed class CounterCommands(StorageDbContext database, TimeProvider timeProvider)
 {

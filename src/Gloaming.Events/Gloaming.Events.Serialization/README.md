@@ -28,8 +28,8 @@ IStockPositionEvent decoded = codec.Deserialize(
     stored.EventName, stored.SchemaVersion, stored.Payload);
 ```
 
-See the actual [Inventory](../samples/EventCodecDemo/Inventory/StockPositionExample.cs)
-and [Purchasing](../samples/EventCodecDemo/Purchasing/PurchaseOrderExample.cs)
+See the actual [Inventory](../tests/CodecAdoptionTests/Fixtures/Inventory/StockPositionExample.cs)
+and [Purchasing](../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderExample.cs)
 registration and [standalone consumer](../samples/EventCodecDemo/README.md).
 
 ## Guarantees and errors
@@ -79,10 +79,9 @@ registration middleware, domain-event collection, dispatch, persistence, transac
 generated application code or stream metadata. Other serialization engines, AOT support and
 transport/deployment topologies beyond the demonstrated consumer require separate proofs.
 
-The typed registration factory has one local CA1000 suppression: the family type belongs on
-the registration and the method selects its concrete event type. There is no global analyzer
-disable or extra factory facade. Review it with [the interface plan](../../../docs/plans/e4-event-serialization.md)
-and [proof report](../../../docs/reports/e4-event-serialization.md).
+The typed registration factory has one local CA1000 suppression: the family type belongs
+on the registration and its method selects the concrete event type. No global analyzer disable
+or extra factory facade is required.
 
 ## Explicit historical schema upgrades
 
@@ -104,7 +103,7 @@ Derive from `JsonEventUpcaster`, passing the durable name and source/target sche
 to its protected constructor, and override `JsonElement Upcast(JsonElement payload)`.
 The Inventory [receipt transformation](../../../samples/Wholesale/modules/Inventory/Inventory/StockPositions/ReceiptV1ToV2.cs)
 renames `quantity` to `receivedQuantity` without changing domain facts. The standalone
-[Purchasing example](../samples/EventCodecDemo/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
+[Purchasing example](../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderSchemaEvolutionExample.cs)
 chains a flat v1 through renamed v2 fields into a nested v3 shape. These transformations belong
 to their consumers; the codec owns route selection, ordered execution and terminal CLR dispatch.
 
@@ -137,7 +136,7 @@ upcasters: the registered runtime type determines the current write identity.
 
 ## Durable message payload adoption
 
-The [Rendering consumer](../../Gloaming.Messaging/samples/InboxDemo/RenderExportHandler.cs) also uses this existing
+The [Rendering consumer](../../Gloaming.Messaging/samples/Delivery/Rendering/RenderExportHandler.cs) also uses this existing
 codec for explicit exports.render message schemas. Its receiver-local v1-to-v2 transformation
 renames Pages to PageCount without changing the retained message. A concrete command record can
 serve as TEvent; no event base, marker interface or event-store dependency is required.
@@ -146,7 +145,7 @@ Only the receiving sample references Serialization. Messaging libraries and the 
 producer do not. Intake retains the original schema/payload for duplicate comparison; the
 handler decodes again during processing. EventDecodingException is translated into the
 consumer's admission/failure-policy boundary. Codec registrations do not grant operator authority
-or perform message retry. See the [executable journey](../../Gloaming.Messaging/samples/MessagingDemo/README.md#schema-compatibility-journey)
+or perform message retry. See the [executable journey](../../Gloaming.Messaging/tests/Fixtures/BrokerJourney/README.md#schema-compatibility-journey)
 and [Messaging contract](../../Gloaming.Messaging/docs/schema-compatibility.md) for the selected
 PostgreSQL/HTTP/RabbitMQ and deployment/rollback boundaries.
 
@@ -166,5 +165,9 @@ or automatic acceptance of historical schemas.
 
 Generated registration, alternative serializers and AOT remain deferred. See the
 [package capability record](docs/capabilities.md) for the supported boundary and proof links.
-See the [event-store capability context](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
+See the [event-store capability context](../../Gloaming.EventSourcing/docs/capabilities.md)
 for related persisted-history/projection obligations and separately deferred maintenance work.
+
+The focused [receipt executable](../samples/EventCodecDemo/README.md) reads literal v1/v2
+payloads, performs an explicit field rename and writes the current schema. Additional nested
+and history recipes are test-owned consumers, not required codec dependencies.

@@ -1,15 +1,14 @@
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 internal sealed class SalesDispatchProof(WorkflowProof workflow, string runtime) : IAsyncDisposable
 {

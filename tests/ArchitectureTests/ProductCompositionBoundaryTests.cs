@@ -1,12 +1,12 @@
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnitV3;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class ProductCompositionBoundaryTests
 {
@@ -18,8 +18,6 @@ public sealed class ProductCompositionBoundaryTests
         var sources = new[]
         {
             typeof(SalesDbContext).Assembly,
-            typeof(Samples.Wholesale.Dispatch.DispatchDbContext).Assembly,
-            typeof(Samples.Wholesale.Dispatch.Contracts.ICustomerDirectory).Assembly,
             typeof(InventoryDbContext).Assembly,
             typeof(IDraftOrderCommands).Assembly,
             typeof(Samples.Wholesale.Inventory.Contracts.IStockCatalog).Assembly,

@@ -1,1 +1,1 @@
-global using ModulithFoundry.Samples.EventReactions.Model;
+global using Gloaming.Samples.EventReactions.Model;

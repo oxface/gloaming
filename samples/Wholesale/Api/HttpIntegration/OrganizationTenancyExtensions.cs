@@ -1,6 +1,6 @@
 using Gloaming.Tenancy.AspNetCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 // Host-owned selection presets explicitly bind the Organization admission resolver.
 public static class OrganizationTenancyExtensions

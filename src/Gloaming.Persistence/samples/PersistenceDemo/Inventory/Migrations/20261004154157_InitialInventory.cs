@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory.Migrations;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Inventory.Migrations;
 
 /// <inheritdoc />
 public partial class InitialInventory : Migration

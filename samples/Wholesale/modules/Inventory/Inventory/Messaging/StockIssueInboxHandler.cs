@@ -1,10 +1,10 @@
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
+namespace Gloaming.Samples.Wholesale.Inventory.Messaging;
 
 internal sealed class StockIssueInboxHandler(
     ITenantContextInitializer tenancy,

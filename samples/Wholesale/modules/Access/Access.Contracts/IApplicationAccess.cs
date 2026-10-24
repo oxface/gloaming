@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Access.Contracts;
+namespace Gloaming.Samples.Wholesale.Access.Contracts;
 
 // The caller supplies trusted identity; these reads do not authenticate or grant permissions.
 public interface IApplicationAccess

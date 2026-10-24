@@ -5,7 +5,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
+    <ProjectReference Include="../../Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <Using Include="Xunit" />
   </ItemGroup>

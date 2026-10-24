@@ -1,11 +1,10 @@
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // A finite consumer composition. EF caches this model separately from ordinary Sales options;
 // this singleton captures no tenant or scoped service. Existing mappings/filters stay intact.
@@ -22,6 +21,5 @@ internal sealed class SalesRowSecurityModelCustomizer(ModelCustomizerDependencie
         modelBuilder.Entity<DraftOrderLineRow>().WithRls(setting);
         modelBuilder.Entity<DraftOrderGrantRow>().WithRls(setting);
         modelBuilder.Entity<AuditRecord>().WithRls(setting);
-        modelBuilder.Entity<OutboxMessageRecord>().WithRls(setting);
     }
 }

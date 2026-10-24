@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Worker.Maintenance;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
+namespace Gloaming.Samples.Wholesale.Worker.Maintenance;
 
 internal static class MaintenanceHost
 {

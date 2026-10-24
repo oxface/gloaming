@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 
 // Consumer-owned reference data, not a stock aggregate or reservation workflow.
 public sealed class StockReference

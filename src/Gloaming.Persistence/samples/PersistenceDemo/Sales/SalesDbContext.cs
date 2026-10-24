@@ -2,7 +2,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 
 public sealed class SalesDbContext(
     DbContextOptions<SalesDbContext> options,

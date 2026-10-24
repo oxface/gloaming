@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- ChildHost launches the copy beside the ASP.NET-based outbox test runner. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <Compile Include="../NativeDueIntents.cs" Link="NativeDueIntents.cs" />
+    <Compile Include="../Personnel.cs" Link="Personnel.cs" />
+    <Compile Include="../Growth.cs" Link="Growth.cs" />
+    <Compile Include="../Application.cs" Link="Application.cs" />
+    <ProjectReference Include="../../../../Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
+    <ProjectReference Include="../../../../../Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+  </ItemGroup>
+</Project>

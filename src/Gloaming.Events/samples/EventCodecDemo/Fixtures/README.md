@@ -1,12 +1,12 @@
 # Event codec literal fixtures
 
 Inventory `opened.v1.json` and `received.v1.json` are byte-for-byte copies of the frozen
-[`StockPositionEvents` fixtures](https://github.com/oxface/modulith-foundry/tree/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/ApplicationTests/Fixtures/StockPositionEvents)
+[`StockPositionEvents` fixtures](https://github.com/oxface/gloaming/tree/15d1ec6ce85f872e4547b37c33658dea76b25d03/tests/ApplicationTests/Fixtures/StockPositionEvents)
 at original checkpoint `15d1ec6`. Their durable aliases, identifiers, field names and decimal
 quantity are retained. The active build/runtime uses only these local copies.
 
 Purchasing `drafted.v1.json` and `line-set.v1.json` are new literal fixtures matching the
-archived [draft/line event contract](https://github.com/oxface/modulith-foundry/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Events/PurchaseOrderEvents.cs).
+archived [draft/line event contract](https://github.com/oxface/gloaming/blob/15d1ec6ce85f872e4547b37c33658dea76b25d03/modules/Purchasing/Purchasing/PurchaseOrders/Events/PurchaseOrderEvents.cs).
 The draft values also appear in the archived unknown-schema/missing-field persistence proof;
 there were no corresponding retained Purchasing JSON fixture files to relocate. The line
 values deliberately give quantity 2.5, unit price 12.5 and independently expected total 31.25.

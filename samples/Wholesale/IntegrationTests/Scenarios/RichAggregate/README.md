@@ -1,7 +1,6 @@
-> This is retained integration-test scenario documentation. The former standalone product
-> executable was retired by S1. Use the [Wholesale product](../../../README.md) and its
-> canonical API/worker/maintenance roles; this directory owns fixture/journey support only.
-> Run proofs with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
+> This directory owns fixtures and journeys for [Wholesale integration tests](../../README.md).
+> Use the [Wholesale application](../../../README.md) for API, worker and maintenance commands.
+> Run tests with `dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj`.
 
 # Rich state-stored aggregate with relational children
 
@@ -123,10 +122,7 @@ required-write/commit rollback, fresh-scope recovery, save overloads, tenant-bea
 native write bypass limits and migration over populated prior Sales storage. The executable
 journey is invoked directly by tests; no process-death/deployment claim follows.
 
-**No new reusable mechanism was proven.** Domain rules, Money/line values, row adaptation and the
-complete-candidate decisions remain consumer-owned. No arbitrary-graph mapper or default mirrored
-write guard is supplied. The later [registered event integration](../../../../../docs/reports/d2-1c-domain-event-integration-simplification.md)
-removes the old safeguard and supplies the shared save pipeline. T1 template and durable deferred
-reaction changes remain separate increments.
-[The D1.1 report](../../../../../docs/reports/d1-1-rich-state-stored-aggregate.md) records fresh evidence,
-review-worthy files and remaining gaps.
+Domain rules, Money/line values, row adaptation and complete-candidate decisions remain
+Sales policy. The [local reaction/save pipeline](../../../../../src/Gloaming.EventReactions/docs/local-dispatch.md)
+provides selected technical composition. No arbitrary-graph mapper or default mirrored write
+guard is supplied. Durable delivery is a separately selected Messaging capability.

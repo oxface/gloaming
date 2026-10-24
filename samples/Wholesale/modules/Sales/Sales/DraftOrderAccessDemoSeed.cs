@@ -1,8 +1,8 @@
 using Gloaming.ActorIdentity;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Explicit finite HTTP demo setup, not a grant-administration or reconciliation API.
 public static class DraftOrderAccessDemoSeed

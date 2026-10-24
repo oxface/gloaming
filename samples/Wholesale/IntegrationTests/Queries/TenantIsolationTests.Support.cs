@@ -1,10 +1,10 @@
 using System.Globalization;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs.TenantIsolation;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Queries;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Queries;
 
 public sealed partial class TenantIsolationTests
 {

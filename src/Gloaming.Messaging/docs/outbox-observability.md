@@ -52,7 +52,7 @@ no schema migration, additional index, permission reconciliation or grant expans
 
 ## Native sample health and metrics
 
-[OutboxDemo](../samples/OutboxDemo/README.md#backlog-and-health) supplies editable consumer
+[OutboxDemo](../tests/Fixtures/OutboxHost/README.md#backlog-and-health) supplies editable consumer
 wiring. Its authenticated `/operations/outbox/status` fixes exports.render and returns a live
 snapshot with no-store caching. Database errors, including EF-wrapped native connection faults,
 return 503 with no error details. Without its configured operator credential the route is absent.
@@ -71,7 +71,7 @@ than copying that topology assumption. Native StopHost usually shuts down on a w
 under Ignore the process can stay live while readiness reports the stopped worker. Neither
 health checks nor sampling restart workers or retry messages.
 
-The sample's IMeterFactory-owned meter is **ModulithFoundry.OutboxDemo.Outbox**:
+The sample's IMeterFactory-owned meter is **Gloaming.OutboxDemo.Outbox**:
 
 | Instrument | Unit |
 | --- | --- |
@@ -98,13 +98,13 @@ the coherent count partition. Exporters can retain a prior value after an instru
 absent, so interpret eligible count and observation age together. Multiple host replicas may
 observe the same backlog: summing their gauges double-counts that work. Select an observer or
 use an appropriate per-instance/max policy. Sampling frequency and aggregate-query cost need
-consumer workload assessment; this slice supplies no capacity benchmark.
+consumer workload assessment; this capability supplies no capacity benchmark.
 
 Subscribe through a native MeterListener or the host's selected OpenTelemetry SDK:
 
 ```csharp
 services.AddOpenTelemetry().WithMetrics(metrics =>
-    metrics.AddMeter("ModulithFoundry.OutboxDemo.Outbox"));
+    metrics.AddMeter("Gloaming.OutboxDemo.Outbox"));
 ```
 
 Host SDK/exporter dependencies and resource identity stay explicit. These consumer instruments
@@ -118,10 +118,6 @@ alone need not indicate an outage. Health responses, alert delivery, dashboards 
 restart policy are consumer responsibilities.
 
 [Restricted Sales inspection](../../../samples/Wholesale/Worker/Broker/sales-outbox-dispatch.md#backlog-inspection)
-uses the same callable read for three fixed command routes without opening a broker. The
-[slice report](../../../docs/reports/outbox-operational-visibility.md) distinguishes new
-PostgreSQL/native-metrics/HTTP/process evidence from earlier attempt telemetry and recovery
-proofs. Inbox backlog, automatic alert delivery, durable telemetry, payload editing, replay,
-inbox retention and lease renewal remain separate capabilities. Separately authorized
-[completed-outbox retention](outbox-retention.md) is now available; it does not change these
-backlog/worker observations or grant maintenance authority to this reader.
+uses the callable read for fixed routes without a broker. PostgreSQL, MeterListener, HTTP and
+process tests exercise the native composition. [Completed-outbox retention](outbox-retention.md)
+does not change these observations or grant maintenance authority to a metadata reader.

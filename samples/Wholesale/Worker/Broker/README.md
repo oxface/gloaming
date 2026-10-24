@@ -1,15 +1,13 @@
 # Durable stock-issue workflow
 
-The same host also runs [WF2's two-line reservation saga with compensation](compensating-reservations.md).
-Its separate commands and business state preserve the WF1 journey below.
+The same host also runs [two-line reservation saga with compensation](compensating-reservations.md).
+Its separate commands and business state support the stock-issue journey below.
 
-WorkflowBroker shares connection/channel ownership and cleanup through optional
+WorkflowBroker shares native connection/channel ownership and cleanup through optional
 [Gloaming.Messaging.RabbitMQ](../../../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/README.md).
-It retains native automatic recovery, separate confirm-enabled command/reply channels and
-an intake channel. It does not register the fail-stop observer. The host selects five-second
-native protocol/close values; routing, publication timers, retrying intake and process policy
-remain here. Native lifecycle compatibility and consumer adoption have
-[separate evidence](../../../../docs/reports/rabbitmq-session-lifecycle.md).
+It retains native automatic recovery, separate confirm-enabled command/reply channels and an
+intake channel. The host selects native timeout/close values, routing, publication budgets,
+retrying intake and process policy.
 
 For an independent Sales dispatcher with a database login limited to the existing outbox,
 use the optional [restricted dispatch role](sales-outbox-dispatch.md). Inbox processing and
@@ -19,10 +17,10 @@ The optional [RLS reservation-reply processor](sales-inbox-rls.md) assigns one a
 Organization to each worker instance, establishes fresh operation contexts automatically and
 preserves atomic workflow/outbox/inbox completion with restricted credentials.
 
-WF1 demonstrates Sales-owned progress across an independently committed Inventory command.
+The stock-issue journey demonstrates Sales-owned progress across an independently committed Inventory command.
 The modules communicate through their versioned Contracts using the existing Gloaming
-inbox/outbox. The executable owns transport and hosting. WF2 opts into the typed continuation
-runner; WF1 keeps its own business process without that dependency in its usage. No graph/replay
+inbox/outbox. The executable owns transport and hosting. The reservation journey opts into the typed continuation
+runner; the stock-issue journey keeps its own business process without that dependency in its usage. No graph/replay
 engine or workflow scheduler is supplied.
 
 Sales persists a request and one outgoing command together. Inventory processes that command
@@ -149,10 +147,10 @@ remain separate. Queue prefix/producer identity
 must remain stable across restarts; changing them is a deployment policy change.
 
 The host colocates roles for a small executable journey. Workers can be placed separately as
-demonstrated in W1; WF1 adds no generic host framework, scheduler, saga base class or replica
+demonstrated by the worker example; the journey adds no generic host framework, scheduler, saga base class or replica
 partitioning. It proves delivery identity and one workflow's semantic idempotency, not exactly
 once publication, distributed rollback, arbitrary compensation or ordered global delivery.
-There is no new template preset or Gloaming dependency on Sales/Inventory.
+Gloaming has no dependency on Sales or Inventory.
 
 ## Executable proofs
 
@@ -160,8 +158,6 @@ There is no new template preset or Gloaming dependency on Sales/Inventory.
 dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-progress --no-ansi
 ```
 
-Testcontainers supplies real PostgreSQL and RabbitMQ. Podman users can set
-`DOCKER_HOST=unix:///run/user/1000/podman/podman.sock`. Proofs use separately owned databases,
-database constraints/triggers for failures and races, and real executable child processes for
-death/restart. The [slice report](../../../../docs/reports/wf1-durable-inter-module-workflow.md)
-records fresh results separately from historical messaging evidence.
+Testcontainers supplies PostgreSQL and RabbitMQ. Use a reachable Docker-compatible socket.
+Proofs use separately owned databases, native constraints/triggers for failures and races,
+and actual executable children for death/restart.

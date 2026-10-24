@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 internal sealed class StockRow
 {

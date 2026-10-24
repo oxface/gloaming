@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../../../samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <ProjectReference Include="../../../Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
+  </ItemGroup>
+</Project>

@@ -2,19 +2,19 @@ using System.Data;
 using Gloaming.ActorIdentity;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Local;
 using Gloaming.Tenancy;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 internal sealed class LocalWorkflowProof(ServiceProvider services, string sales, string inventory)
     : IAsyncDisposable
@@ -36,7 +36,8 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
     internal static async Task<LocalWorkflowProof> CreateAsync(
         PostgreSqlFixture postgres,
         CancellationToken token,
-        DbCommandInterceptor? interceptor = null
+        DbCommandInterceptor? interceptor = null,
+        IInterceptor? salesInterceptor = null
     )
     {
         string sales = await postgres.CreateDatabaseAsync(token);
@@ -47,6 +48,11 @@ internal sealed class LocalWorkflowProof(ServiceProvider services, string sales,
         if (interceptor is not null)
             services.AddDbContext<InventoryDbContext>(options =>
                 options.AddInterceptors(interceptor)
+            );
+
+        if (salesInterceptor is not null)
+            services.AddDbContext<SalesDbContext>(options =>
+                options.AddInterceptors(salesInterceptor)
             );
 
         var provider = services.BuildServiceProvider(

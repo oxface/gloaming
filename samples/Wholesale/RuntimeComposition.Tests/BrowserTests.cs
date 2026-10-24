@@ -3,15 +3,15 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.AppHost;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.AppHost;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.RuntimeComposition.Tests;
+namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
 public sealed class BrowserTests
 {
@@ -117,6 +117,7 @@ public sealed class BrowserTests
             await using var audit = new NpgsqlCommand(
                 """
                 SELECT (SELECT count(*) FROM sales.audit_entries) = 1
+                    AND NOT has_table_privilege('wholesale_sales', 'sales.outbox_messages', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE')
                     AND EXISTS (SELECT 1 FROM sales.audit_entries WHERE tenant_key = 'wholesale-alpha'
                         AND actor_kind = 2 AND actor_key = 'application-alpha'
                         AND action = 'customer-profile.changed' AND (details->>'Version')::bigint = 2)
@@ -295,7 +296,6 @@ public sealed class BrowserTests
                             "draft_order_grants",
                             "draft_order_lines",
                             "draft_orders",
-                            "outbox_messages",
                         ],
                         policiesReader.GetFieldValue<string[]>(1)
                     );

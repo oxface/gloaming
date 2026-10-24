@@ -1,8 +1,6 @@
 # 0002: Establish HTTP actors after effective native authentication
 
-Status: accepted design direction in the owner-approved E3.1 plan, 2026-10-04.
-Implementation and registration helpers were owner-reviewed and checkpointed as `faefc0b`
-on 2026-10-05.
+Status: accepted and implemented, 2026-10-05.
 
 ## Context
 
@@ -33,7 +31,7 @@ authentication/authorization setup, middleware order and direct composition when
 
 The adapter depends only on ActorIdentity and the native ASP.NET Core framework. Both
 ActorIdentity and Tenancy remain independently adoptable package-free cores. Provider-specific
-cookie/OIDC setup and external-identity/account policy stay in the sample/template consumer.
+cookie/OIDC setup and external-identity/account policy stay in the consumer.
 
 ## Consequences and limits
 
@@ -46,6 +44,4 @@ One request has one immutable actor context. Principal replacement after publica
 rejected; mutation in place and identity-changing re-execution are outside this composition.
 Full remote OIDC/session topology and tenant admission need separate evidence.
 
-See [the approved interface plan](../plans/e3-1-http-actor-identity.md),
-[the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) and
-[the execution report](../reports/e3-1-http-actor-identity.md).
+See [the adapter recipe](../../src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/README.md) for setup and executable request proofs.

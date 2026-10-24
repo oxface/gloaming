@@ -1,6 +1,6 @@
 # Inbox expiry and receipt generations
 
-Status: interface/scope owner-approved on 2026-10-22; implementation prepared for review.
+Status: accepted and implemented, 2026-10-22.
 
 Processed inbox cleanup removes duplicate and incompatible-content evidence, so a later
 delivery with the same key can execute again. Use a new immutable ReceiptId for each intake
@@ -11,5 +11,4 @@ tombstone store or a sequence shared by every processing transition. This adds a
 schema migration and a pre-v1 caller change; no revision-only retry overload remains.
 
 Unprocessed and dead-lettered work is preserved. Retention duration, scheduling and business
-idempotency remain consumer-owned. See the [reviewed scope](../plans/m2-inbox-retention.md)
-and [current family contract](../../src/Gloaming.Messaging/docs/inbox-retention.md).
+idempotency remain consumer-owned. See the [current contract](../../src/Gloaming.Messaging/docs/inbox-retention.md).

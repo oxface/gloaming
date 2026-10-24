@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Access.Contracts;
+namespace Gloaming.Samples.Wholesale.Access.Contracts;
 
 public sealed record UserId
 {

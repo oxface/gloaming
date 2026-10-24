@@ -7,7 +7,7 @@ queued-payload upgrade or required serializer dependency.
 
 ## Executable adoption
 
-The [Exports/Rendering composition](../samples/MessagingDemo/README.md#schema-compatibility-journey)
+The [Exports/Rendering composition](../tests/Fixtures/BrokerJourney/README.md#schema-compatibility-journey)
 demonstrates one shape-only evolution, using two independent PostgreSQL databases and RabbitMQ:
 
 | Contract | Original JSON fields | Local business requirement |
@@ -30,7 +30,7 @@ await transaction.CommitAsync(cancellation);
 
 This is sample application policy. The constructor accepts exactly 1 or 2 before touching storage;
 IOutbox, dispatch/processing options and the lifecycle protocol gain no version-selection API.
-OutboxDemo uses ordinary native JSON and has no codec/event-store dependency.
+Exports uses ordinary native JSON and has no codec/event-store dependency.
 
 Rendering independently opts into existing Gloaming.Events.Serialization:
 
@@ -52,8 +52,8 @@ into its consumer-owned InvalidDataException boundary, preserving the inner diag
 Unsupported versions and malformed fields therefore follow the existing admission/failure policy.
 The codec supplies no transport acknowledgement, transaction, failure policy or operator authority.
 
-The [actual decoder](../samples/InboxDemo/RenderExportHandler.cs) is used both before
-intake and during retained processing. The optional codec belongs only to InboxDemo's dependency
+The [actual decoder](../samples/Delivery/Rendering/RenderExportHandler.cs) is used both before
+intake and during retained processing. The optional codec belongs only to Rendering's dependency
 graph; Messaging libraries remain codec-free, and inbox-only use still needs no event store.
 
 ## Original envelopes are the deduplication evidence
@@ -103,16 +103,14 @@ receiver deduplication remains necessary. See [outbox recovery](outbox-recovery.
 
 ## Proof scope and remaining limits
 
-The [slice report](../../../docs/reports/queued-message-schema-compatibility.md) records new
-literal-fixture, PostgreSQL, HTTP, RabbitMQ and actual child-process evidence, including retained
-v1 work, v2 writes, old-reader rejection, retry after reader replacement, killed workers and
-completion uncertainty. The finite CLI requires empty disposable module storage and rejects
-reuse; it supplies no completed-message replay or maintenance worker.
+[Schema process tests](../tests/DeliveryTests/Processes/SchemaCompatibilityProcessTests.cs)
+exercise retained V1 work, V2 writes, old-reader rejection, compatible replacement, killed workers
+and completion uncertainty. The finite fixture requires empty disposable module storage and
+rejects reuse; it supplies no completed-message replay or maintenance worker.
 
 This is one consumer contract's compatibility proof using existing libraries. Other payload
 meaning changes, CLR/native-JSON policies, transports, mixed deployment topologies and rollout
-automation require their own proofs. No new reusable mechanism, database migration, queue
-framework or template setup pattern was established by that slice. The later
+automation require their own proofs. The
 [processed-inbox retention contract](inbox-retention.md) makes receipt expiry explicit:
 original-envelope duplicate/content checks last only while the receipt remains; old delivery
 can execute again after deletion. Cleanup does not establish a safe historical-schema removal

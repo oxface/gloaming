@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Sales owns these limits and the single-address profile. This value has no persistence behavior.
 internal sealed record CustomerProfileDetails

@@ -1,5 +1,8 @@
 pre-commit:
   jobs:
+    - name: repository-references
+      glob: "*.{md,csproj,props,targets,slnx,ts,json,yml,yaml}"
+      run: npm --prefix tools/repository run check
     - name: audit-postgres-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-restore
@@ -8,10 +11,10 @@ pre-commit:
       run: dotnet csharpier check . --include-generated
     - name: active-dotnet-style
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet format style ModulithFoundry.slnx --verify-no-changes --no-restore
+      run: dotnet format style Gloaming.slnx --verify-no-changes --no-restore
     - name: active-dotnet-analyzers
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet format analyzers ModulithFoundry.slnx --verify-no-changes --no-restore
+      run: dotnet format analyzers Gloaming.slnx --verify-no-changes --no-restore
     - name: actor-identity-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-restore
@@ -26,7 +29,10 @@ pre-commit:
       run: dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-restore
     - name: context-composition-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Gloaming.Tenancy/samples/ContextDemo.Tests/ContextDemo.Tests.csproj --no-restore
+      run: dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj --no-restore
+    - name: ef-capability-tests
+      glob: "*.{cs,csproj,props,targets,slnx}"
+      run: dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-restore
     - name: ef-model-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-restore
@@ -38,7 +44,7 @@ pre-commit:
       run: dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-restore
     - name: event-codec-consumer-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
-      run: dotnet test --project src/Gloaming.Events/samples/EventCodecDemo.Tests/EventCodecDemo.Tests.csproj --no-restore
+      run: dotnet test --project src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj --no-restore
     - name: event-history-tests
       glob: "*.{cs,csproj,props,targets,slnx}"
       run: dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-restore

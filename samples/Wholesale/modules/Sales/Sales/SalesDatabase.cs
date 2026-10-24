@@ -1,4 +1,5 @@
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
 using Gloaming.EntityFrameworkCore;
 using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 public static class SalesDatabase
 {
@@ -23,6 +24,7 @@ public static class SalesDatabase
             context.RequiredOrganizationKey
         );
         services.AddAuditValidation<SalesDbContext>();
+        services.AddPostgresCommandReceipts<SalesDbContext>();
         services.AddInboxValidation<SalesDbContext>();
         services.AddOutboxValidation<SalesDbContext>();
         services.AddWorkflowValidation<SalesDbContext>();

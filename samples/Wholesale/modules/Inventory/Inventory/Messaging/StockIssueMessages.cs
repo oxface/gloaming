@@ -2,10 +2,10 @@ using System.Diagnostics;
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
+namespace Gloaming.Samples.Wholesale.Inventory.Messaging;
 
 /// <summary>Consumer-owned mapping from an accepted stock issue to its versioned integration envelope.</summary>
 /// <remarks>Chooses delivery identity, wire contract, routing and owner metadata; does not enqueue or publish.</remarks>

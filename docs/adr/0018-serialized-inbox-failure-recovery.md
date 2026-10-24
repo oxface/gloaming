@@ -1,11 +1,9 @@
 # ADR 0018: Serialized inbox failure accounting and conditional operator retry
 
-Status: interface/scope owner-approved, 2026-10-18; supervision approved 2026-10-20;
-dead-letter interface approved 2026-10-21.
-Implementation remains uncommitted for line-by-line owner review.
-[Reviewed scope](../plans/m2-inbox-failure-recovery.md),
-[current contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md),
-[fresh evidence](../reports/m2-inbox-failure-recovery.md).
+Status: accepted and implemented, 2026-10-18; supervision and dead-letter refinements
+follow the same protocol. Receipt-generation refinement is in
+[ADR 0020](0020-inbox-expiry-and-receipt-generations.md).
+See the [current contract](../../src/Gloaming.Messaging/docs/inbox-recovery.md).
 
 The existing post-transaction pending-only retry update protects successor completion but
 cannot safely own counters/dead-letter state alongside newer pending failures or operator redrive.
@@ -23,17 +21,15 @@ committed failure observations, not all executions. Commit response loss is ambi
 issue compensating failure writes after attempting completion/accounting commit. Fresh retained
 state governs the next operation.
 
-The [approved supervision follow-up](../plans/m2-inbox-failure-supervision.md) distinguishes
-unconfirmed failure accounting with InboxFailureAccountingException, derived from
-AggregateException and retaining delivery identity and both original errors. The optional
+InboxFailureAccountingException distinguishes unconfirmed failure accounting. It derives
+from AggregateException and retains delivery identity and both original errors. The optional
 inbox worker faults without polling again for that exception. Native host supervision applies
-the consumer's configured response; the library installs no host-wide setting. This rejects
-blind repeated handler execution when accounting is broken, while preserving the native
-transaction protocol. Consumer alerting, repair and restart remain required; stopping does
-not establish progress for unrelated messages on that worker or count unrecorded crashes.
+the consumer's configured response; the library installs no host-wide setting. Consumer alerting,
+repair and restart remain required. Stopping does not establish progress for unrelated messages
+or count unrecorded crashes.
 
 A separately registered typed recovery operation conditionally changes only an unprocessed,
-dead-lettered delivery at the observed revision. It preserves the entire envelope and lifetime
+dead-lettered delivery at the observed receipt generation and revision. It preserves the entire envelope and lifetime
 failure count, resets cycle failures and records redrive count/time. Revision increments on
 failure, completion and redrive prevent old requests reopening a later dead-letter state. PostgreSQL
 locking and condition rechecks arbitrate competitors.
@@ -47,9 +43,8 @@ precede deployment. Outbox recovery, retention, payload editing and schema evolu
 This supersedes ADR 0010's separate retry-write implementation, while preserving retained intake,
 deduplication, independent module commits and atomic successful local handling.
 
-The owner approved the [dead-letter follow-up](../plans/m2-inbox-dead-letters.md) on 2026-10-21.
-IInboxDeadLetters replaces the unreleased recovery interface and adds bounded metadata list/detail
-around the same conditional retry. DeadLetter/DeadLetteredAt replace public quarantine names;
-the original `quarantined_at` storage column and historical migrations remain. Live keyset paging
-uses database timestamp/UUID order, grants no authority and reserves no work. Consumer auth/RLS,
-repair and restart policy remain explicit. Forward migrations add only the lookup index.
+IInboxDeadLetters supplies bounded metadata list/detail and conditional retry.
+DeadLetter/DeadLetteredAt are public lifecycle names; the native quarantined_at column remains
+compatible with existing migrations. Live keyset paging uses database timestamp/UUID order,
+grants no authority and reserves no work. Consumer auth/RLS, repair and restart remain explicit.
+Forward migrations add the lookup index.

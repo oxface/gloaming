@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+namespace Gloaming.Samples.Wholesale.Inventory.Contracts;
 
 /// <summary>Reserves available stock under a stable business identity, independent of delivery identity.</summary>
 public sealed record ReserveStockV1(

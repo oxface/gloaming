@@ -1,7 +1,6 @@
 # Aggregate capability and deferred context
 
-Status: current interface and ownership, 2026-10-07. This document and the package README
-are the consumer contract; repository plans/reports contain dated review and proof evidence.
+This document and the package README define current interfaces, ownership and supported limits.
 
 ## Supported now
 
@@ -29,16 +28,16 @@ until the consumer's actual persistence commit. No automatic clearing/retry or d
 | Package | Selected responsibility |
 | --- | --- |
 | EventSourcing | Aggregate proposal/bookkeeping; no EF, JSON, HTTP, tenancy or host dependency. |
-| EventSourcing.EntityFrameworkCore | Optional native write store, ordered append, stream/envelope mappings and explicitly required inline projection participation. References this core and EF Relational. |
+| EventSourcing.EntityFrameworkCore | Optional native write store, bounded history reader, append/rebuild/regeneration and required inline aggregate participation. References this core, Events.History, EF Relational and DI abstractions. |
 | Events.Serialization | Optional explicit durable name/schema registry and native JSON codec. Used by Wholesale; not required by either EventSourcing package. |
-| Events.History | Optional ordered-range metadata validation. Used by Wholesale replay; not required by either EventSourcing package. |
+| Events.History | Package-free ordered-range metadata validation. Required by the EF adapter's bounded reader; independent of the aggregate core and JSON serialization. |
 
 The independent counter adopts core plus EF storage with direct JSON and its existing reader.
 Wholesale combines all four packages. The core itself does not fetch/replay events or validate
 a database observation. Native EF stores validate loaded state against a captured header; other
 consumers must supply their own corresponding guarantee. See the
 [optional EF setup](../../Gloaming.EventSourcing.EntityFrameworkCore/README.md) and
-[its capability record](../../Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md).
+[the family capability record](../../docs/capabilities.md).
 
 ## Deferred directions and limits
 
@@ -48,12 +47,12 @@ Encapsulated aggregate reducers and separately reusable pure evolution are consu
 Generic lifecycle extensions require a real caller and failure/recovery proof before selection.
 
 The optional EF package implements independent full replay into its one inline aggregate.
-Catch-up, snapshot-plus-tail, async/subscription processing, secondary/multi-stream
-projections, upcasting, command idempotency and ambiguous-commit recovery remain deferred.
-They concern persisted versions, compatibility and progress guarantees beyond this in-memory
-contract; their current context is in the EF capability record. A projected summary and the
+Snapshot-plus-tail and persisted progress are beyond this in-memory contract. Optional secondary/
+multi-stream processing now belongs to the separately selected PostgreSQL feed; upcasting and
+logical command idempotency belong to their independent selected packages. Their current
+contracts are linked from the family capability record. A projected summary and the
 aggregate's persisted state are views of the same stream, not additional command aggregates.
 
-Provider-specific locks and a possible EventSourcing.Postgres package are recorded candidates,
-not core dependencies or implemented interfaces. The [family folder](../../README.md) groups package documentation and tests; packages retain
+Provider-specific committed feed/projection operations are implemented in an independent optional
+PostgreSQL module, with no core dependency. The [family folder](../../README.md) groups package documentation and tests; packages retain
 independent contracts and dependencies.

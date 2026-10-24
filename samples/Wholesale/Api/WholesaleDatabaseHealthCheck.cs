@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 // Readiness is sample schema/connectivity policy. It never queries tenant business rows or repairs schema.
 internal sealed class WholesaleDatabaseHealthCheck(IConfiguration configuration) : IHealthCheck

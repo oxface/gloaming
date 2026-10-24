@@ -6,14 +6,14 @@ public surface, setup and obligations. [The transactional contract](docs/transac
 covers lifecycle and deferred capabilities.
 
 `Gloaming.Auditing.EntityFrameworkCore` depends on existing
-ActorIdentity values and native EF Relational. It needs no Tenancy, Persistence, Events,
-EventSourcing, Messaging, web, transport, hosting or provider package. Native DI remains
+ActorIdentity values, shared EF save coordination and native EF Relational. It needs no
+Tenancy, Persistence, Events, EventSourcing, Messaging, web, transport, hosting or provider package. Native DI remains
 consumer setup; no registration abstraction or unused DI package is added.
 
-[The optional PostgreSQL package](Gloaming.Auditing.EntityFrameworkCore.Postgres/README.md)
-adds `ConfigurePostgresAudit` with JSONB details mapping, keeping provider setup out of
-the owning DbContext. The relational mapping includes the tenant/type/item/time/ID timeline
-index by default. Ownership and native index customization remain consumer configuration.
+Use `ConfigureAudit` in the owning DbContext and select the native provider mapping, for
+example `audit.Property(row => row.Details).HasColumnType("jsonb")` with PostgreSQL. The
+relational mapping includes the tenant/type/item/time/ID timeline index by default.
+Ownership and native index customization remain consumer configuration.
 
 Executable consumers are the Wholesale Sales profile mutation and Inventory inbox stock
 issue. The independent `tests/AuditPostgresTests` executable adopts the same interface in an
@@ -23,8 +23,7 @@ ordinary tenantless EF context with custom mapping. Run it from the repository r
 dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj
 ```
 
-PostgreSQL is the exercised provider. [E9 execution evidence](../../docs/reports/e9-explicit-transactional-audit.md)
-is separate from archived audit evidence. Classification, authorization, required-audit
+PostgreSQL is the exercised provider. Classification, authorization, required-audit
 selection, disclosure, query visibility and retention remain consumer-owned.
 
 The sample's scoped `SalesAudit` and `InventoryAudit` wrappers capture actor/tenant from the

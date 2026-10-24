@@ -1,21 +1,21 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -211,42 +211,27 @@ public sealed partial class CompositionTests
     public async Task FiniteSetupNeedsNoOidcAndItsRowsAreUsedByHttpHost(bool fullDemo)
     {
         string connection = await postgres.CreateDatabaseAsync(Token);
-        var start = new ProcessStartInfo("dotnet")
-        {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        };
-        start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
-        start.ArgumentList.Add(fullDemo ? "--initialize-demo" : "--initialize-access");
-        start.Environment["ConnectionStrings__Access"] = connection;
-        start.Environment.Remove("Oidc__Authority");
-        start.Environment.Remove("Oidc__ClientId");
-        start.Environment.Remove("Oidc__ClientSecret");
-        using var process =
-            Process.Start(start)
-            ?? throw new InvalidOperationException("Could not start Access setup.");
-        Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-        Task<string> errors = process.StandardError.ReadToEndAsync(Token);
-        try
-        {
-            await process.WaitForExitAsync(Token).WaitAsync(TimeSpan.FromSeconds(30), Token);
-            Assert.True(process.ExitCode == 0, await errors);
-            Assert.Contains(
-                fullDemo
-                    ? "Wholesale demo initialized; HTTP host was not started."
-                    : "Access demo initialized; HTTP host was not started.",
-                await output
-            );
-        }
-        finally
-        {
-            if (!process.HasExited)
+        await using var process = new ChildHost(
+            typeof(DemoComposition).Assembly,
+            new()
             {
-                process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync(CancellationToken.None);
-            }
-        }
+                ["ConnectionStrings__Access"] = connection,
+                ["Oidc__Authority"] = "",
+                ["Oidc__ClientId"] = "",
+                ["Oidc__ClientSecret"] = "",
+            },
+            fullDemo ? "--initialize-demo" : "--initialize-access"
+        );
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+        Assert.True(await process.WaitForExitAsync(timeout.Token) == 0, process.StandardError);
+        Assert.Contains(
+            fullDemo
+                ? "Wholesale demo initialized; HTTP host was not started."
+                : "Access demo initialized; HTTP host was not started.",
+            process.StandardOutput
+        );
+
         await using var app = await StartAsync(connectionString: connection, initialize: false);
         await using var scope = app.Services.CreateAsyncScope();
         var database = scope.ServiceProvider.GetRequiredService<AccessDbContext>();

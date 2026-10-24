@@ -1,15 +1,13 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
+namespace Gloaming.Samples.Wholesale.Worker.Maintenance;
 
 // Trusted local operator entry. OS/database access is its admission boundary; it does not impersonate a human.
 public static class BusinessOperations
@@ -21,11 +19,9 @@ public static class BusinessOperations
         CancellationToken cancellationToken
     )
     {
-        var role = Required(configuration, "role");
         var organization = Required(configuration, "Organization");
         var operation = Required(configuration, "Operation");
-        var module = role == "inventory" ? "Inventory" : "Purchasing";
-        var connection = Required(configuration, "ConnectionStrings:" + module);
+        var connection = Required(configuration, "ConnectionStrings:Inventory");
         var services = new ServiceCollection();
         services.AddScoped<TenantContextAccessor>();
         services.AddScoped<ITenantContextAccessor>(provider =>
@@ -41,20 +37,9 @@ public static class BusinessOperations
         services.AddScoped<IActorContextInitializer>(provider =>
             provider.GetRequiredService<ActorContextAccessor>()
         );
-        if (role == "inventory")
-        {
-            services.AddInventoryDatabase(connection);
-            services.AddStockPositionCommands();
-            services.AddStockPositionQueries();
-        }
-        else if (role == "purchasing")
-        {
-            services.AddPurchasingDatabase(connection);
-            services.AddPurchaseOrderCommands();
-            services.AddPurchaseOrderQueries();
-        }
-        else
-            throw new ArgumentException("Choose --role inventory or purchasing.");
+        services.AddInventoryDatabase(connection);
+        services.AddStockPositionCommands();
+        services.AddStockPositionQueries();
 
         await using var provider = services.BuildServiceProvider(
             new ServiceProviderOptions { ValidateScopes = true, ValidateOnBuild = true }
@@ -67,22 +52,14 @@ public static class BusinessOperations
         operationServices
             .GetRequiredService<IActorContextInitializer>()
             .Initialize(new(Actor.System(new ActorId("wholesale.operations"))));
-        DbContext database =
-            role == "inventory"
-                ? operationServices.GetRequiredService<InventoryDbContext>()
-                : operationServices.GetRequiredService<PurchasingDbContext>();
+        var database = operationServices.GetRequiredService<InventoryDbContext>();
         // Runtime never migrates/seeds/resets storage. Provision module migrations separately.
         if (operation == "read")
         {
             var id = Guid.Parse(Required(configuration, "Id"));
-            object? current =
-                role == "inventory"
-                    ? await operationServices
-                        .GetRequiredService<IStockPositionQueries>()
-                        .ReadCurrentAsync(id, cancellationToken)
-                    : await operationServices
-                        .GetRequiredService<IPurchaseOrderQueries>()
-                        .ReadCurrentAsync(id, cancellationToken);
+            var current = await operationServices
+                .GetRequiredService<IStockPositionQueries>()
+                .ReadCurrentAsync(id, cancellationToken);
             Console.WriteLine(JsonSerializer.Serialize(current, Json));
             return current is null ? 2 : 0;
         }
@@ -93,49 +70,17 @@ public static class BusinessOperations
         await using var transaction = await database.Database.BeginTransactionAsync(
             cancellationToken
         );
-        object result;
-        bool changed;
-        if (role == "inventory")
+        var commands = operationServices.GetRequiredService<IStockPositionCommands>();
+        var result = operation switch
         {
-            var commands = operationServices.GetRequiredService<IStockPositionCommands>();
-            var outcome = operation switch
-            {
-                "open" => await commands.OpenAsync(
-                    Read<OpenStockPosition>(input),
-                    cancellationToken
-                ),
-                "receive" => await commands.ReceiveAsync(
-                    Read<ReceiveStock>(input),
-                    cancellationToken
-                ),
-                "issue" => await commands.IssueAsync(Read<IssueStock>(input), cancellationToken),
-                _ => throw new ArgumentException(
-                    "Inventory operations are open, receive, issue and read."
-                ),
-            };
-            result = outcome;
-            changed = outcome is StockPositionChangeResult.Changed;
-        }
-        else
-        {
-            var commands = operationServices.GetRequiredService<IPurchaseOrderCommands>();
-            var outcome = operation switch
-            {
-                "draft" => await commands.DraftAsync(
-                    Read<DraftPurchaseOrder>(input),
-                    cancellationToken
-                ),
-                "change-lines" => await commands.ChangeLinesAsync(
-                    Read<ChangePurchaseOrderLines>(input),
-                    cancellationToken
-                ),
-                _ => throw new ArgumentException(
-                    "Purchasing operations are draft, change-lines and read."
-                ),
-            };
-            result = outcome;
-            changed = outcome is PurchaseOrderChangeResult.Changed;
-        }
+            "open" => await commands.OpenAsync(Read<OpenStockPosition>(input), cancellationToken),
+            "receive" => await commands.ReceiveAsync(Read<ReceiveStock>(input), cancellationToken),
+            "issue" => await commands.IssueAsync(Read<IssueStock>(input), cancellationToken),
+            _ => throw new ArgumentException(
+                "Inventory operations are open, receive, issue and read."
+            ),
+        };
+        bool changed = result is StockPositionChangeResult.Changed;
 
         if (changed)
         {

@@ -1,6 +1,6 @@
 # Two-line reservation saga
 
-WF2 extends this editable host with Sales-owned progress and Inventory-owned reservations.
+The reservation journey uses this editable host with Sales-owned progress and Inventory-owned reservations.
 Each step commits in its module's database. Compensation is a later business operation.
 
 ```mermaid
@@ -90,10 +90,14 @@ version predicates and event-position constraints. These arbitrate writers; disc
 failed scopes. After an ambiguous commit response, read progress using the original identity.
 
 A refused release leaves NeedsAttention and CompensationRefusal alongside the original
-second-line Refusal. After investigation, call `RetryCompensationAsync(orderId)` or
-`--role retry-compensation --OrderId ...`. A new delivery targets the same reservation.
+second-line Refusal. After investigation, call `RetryCompensationAsync(orderId, operationId, token)` or
+`--role retry-compensation --OrderId ... --OperationId ...`. A new delivery targets the same reservation.
 Recorded attempt outcomes prevent an old refusal from overwriting a later success. Retry is
-accepted only from NeedsAttention; inspect current state after an ambiguous retry commit.
+accepted only from NeedsAttention. Retain the operation identity before calling and reuse it
+after an uncertain commit: Sales returns the original result without signaling again, including
+after another refusal pauses the workflow. A deliberately new retry needs a new operation ID.
+The [Sales receipt protocol](../../modules/Sales/command-receipts.md) owns this protection;
+the generic workflow `SignalAsync` contract is unchanged. Read current progress separately when needed.
 The sample supplies a system actor, but operator authorization/UI and reconciliation policy
 remain consumer responsibilities.
 
@@ -102,9 +106,6 @@ consuming reservations, expiry, cancellation, parallel lines, scheduling and poi
 are deferred. No timeout automatically reverses stock. Deployment owns producer authentication,
 queue permissions and DLQ policy; shared demo credentials do not authenticate modules.
 
-Gloaming supplies local processing, durable delivery and an optional typed continuation runner.
-The [new report](../../../../docs/reports/wf2-durable-continuations.md) distinguishes fresh protocol
-and consumer proofs from the [initial consumer-only run](../../../../docs/reports/wf2-compensating-workflow.md)
-and discarded [sequential experiment](../../../../docs/reports/wf2-sequential-saga-coordinator.md).
-Ordinary method bindings also support branching, as shown by the standalone workspace adopter.
-Parallel pending requests, deadlines and schedulers remain deferred.
+Gloaming supplies local processing, durable delivery and an optional typed continuation
+runner. Ordinary method bindings support branching, including the standalone workspace adopter.
+Parallel pending requests, workflow deadlines and schedulers remain unsupported.

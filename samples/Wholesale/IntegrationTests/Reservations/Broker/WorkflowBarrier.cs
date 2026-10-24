@@ -1,7 +1,7 @@
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
+using Gloaming.Samples.Wholesale.Worker.Broker;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Broker;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Broker;
 
 // Disposable-database trigger: observe a writer inside its native transaction before
 // allowing it to commit. This supplies deterministic races and death boundaries.

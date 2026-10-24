@@ -1,6 +1,10 @@
 using System.Net;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -8,12 +12,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -27,7 +27,7 @@ public sealed partial class CompositionTests
         SalesDatabase.Configure(options, connection);
         await using var database = new SalesDbContext(options.Options, tenant);
         await database.GetService<IMigrator>().MigrateAsync("20261005223044_InitialSales", Token);
-        // Seed the historical schema, not today's model (which now includes delivery listing).
+        // Seed the historical schema before applying the complete current migration chain.
         await database.Database.ExecuteSqlRawAsync(
             """
             INSERT INTO sales.customer_profiles (id, organization_key, code, display_name, version)

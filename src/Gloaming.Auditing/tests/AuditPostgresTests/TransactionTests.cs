@@ -1,7 +1,7 @@
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.Auditing.Tests;

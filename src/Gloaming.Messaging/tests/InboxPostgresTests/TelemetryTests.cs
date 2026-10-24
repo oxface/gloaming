@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.TestSupport;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using ModulithFoundry.Tests.Infrastructure;
 
 namespace Gloaming.Messaging.InboxTests;
 

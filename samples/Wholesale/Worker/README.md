@@ -1,5 +1,10 @@
 # Wholesale worker and operations
 
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
 This is the product's single worker/maintenance executable. It selects an explicit delivery
 mode or finite business operation; module Contracts, contexts and native transactions remain
 distinct. It does not reference the integration-test scenarios.
@@ -27,8 +32,7 @@ tenant and the `wholesale.operations` system actor; context establishment grants
 They are not externally authenticated APIs and do not impersonate a human.
 
 Provision storage using the API's finite product setup or module migrations first. Supply only
-the selected module's native database credential (`ConnectionStrings__Inventory` or
-`ConnectionStrings__Purchasing`), `--Organization`, `--Operation`, and a JSON `--Input` file for
+the Inventory native database credential (`ConnectionStrings__Inventory`), `--Organization`, `--Operation`, and a JSON `--Input` file for
 writes. Runtime never migrates, seeds or resets storage. Each accepted write saves and commits
 in its own owning native transaction; a business rejection does not save/commit.
 
@@ -37,8 +41,6 @@ dotnet run --project samples/Wholesale/Worker -- --role inventory --Organization
 dotnet run --project samples/Wholesale/Worker -- --role inventory --Organization wholesale-alpha --Operation receive --Input /absolute/path/receipt.json
 dotnet run --project samples/Wholesale/Worker -- --role inventory --Organization wholesale-alpha --Operation issue --Input /absolute/path/issue.json
 dotnet run --project samples/Wholesale/Worker -- --role inventory --Organization wholesale-alpha --Operation read --Id 8c6e282e-d9ec-455a-8fab-d114c176a7cd
-dotnet run --project samples/Wholesale/Worker -- --role purchasing --Organization wholesale-alpha --Operation draft --Input /absolute/path/purchase.json
-dotnet run --project samples/Wholesale/Worker -- --role purchasing --Organization wholesale-alpha --Operation change-lines --Input /absolute/path/lines.json
 ```
 
 Example stock-open input (all identities are caller-owned):
@@ -48,10 +50,9 @@ Example stock-open input (all identities are caller-owned):
 ```
 
 Receipt and issue inputs use `id`, `expectedVersion` and `receipts`/`issues`, each containing
-`quantity`; receipt entries may include `deliveryReference`. Purchasing draft input uses `id`,
-`code`, `supplierReference` and `currency`. Line replacement uses `id`, `expectedVersion` and
-`lines` containing `itemCode`, `quantity`, `unitPrice`. These are the existing module Contract
-shapes, not a second business implementation. Read uses `--Operation read --Id ...` for either module.
+`quantity`; receipt entries may include `deliveryReference`. These are the existing module
+Contract shapes. Read uses `--Operation read --Id ...`.
+
 
 Writes output JSON with `committed`, `outcome` and the native result. Exit 0 acknowledges commit;
 exit 2 reports a rejected business change or missing read target. Provider/commit failure can
@@ -62,5 +63,3 @@ The [stock-regeneration command](Maintenance/stock-regeneration.md) retains its 
 `--regenerate-stock <organization-key> <stock-position-id>` syntax, progress, cancellation and
 exit codes. It uses `WHOLESALE_DEMO_CONNECTION_STRING` for its existing Inventory target and
 never provisions storage.
-
-The [Directory role](Directory/README.md) populates and maintains Dispatch customer search, including receiver-only trusted queries and restricted Sales relay credentials.

@@ -1,16 +1,16 @@
 using System.Data;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Queries;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Queries;
 
 public sealed partial class QueryTests
 {

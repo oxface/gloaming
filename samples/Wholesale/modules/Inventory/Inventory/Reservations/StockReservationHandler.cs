@@ -4,12 +4,12 @@ using Gloaming.ActorIdentity;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.StockPositions;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Reservations;
+namespace Gloaming.Samples.Wholesale.Inventory.Reservations;
 
 internal sealed class StockReservationHandler(
     InventoryDbContext database,

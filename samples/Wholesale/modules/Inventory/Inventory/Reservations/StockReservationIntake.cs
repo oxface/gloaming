@@ -1,11 +1,11 @@
 using System.Text.Json;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Reservations;
+namespace Gloaming.Samples.Wholesale.Inventory.Reservations;
 
 internal sealed class StockReservationIntake(IServiceScopeFactory scopes) : IStockReservationIntake
 {

@@ -3,7 +3,7 @@ using System.Text;
 using Gloaming.Messaging;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
 /// <summary>Consumer-owned native RabbitMQ acceptance and route policy; no transport code lives in Gloaming.</summary>
 public sealed class InventoryRabbitMqPublisher(IChannel channel) : IMessagePublisher

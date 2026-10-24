@@ -2,11 +2,11 @@ using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Transactions;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Tests.Infrastructure;
 using static Gloaming.EventSourcing.Postgres.Tests.RebuildConsumer;
 using IsolationLevel = System.Data.IsolationLevel;
 

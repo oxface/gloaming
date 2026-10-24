@@ -1,7 +1,7 @@
 using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace ModulithFoundry.Samples.Wholesale.Api;
+namespace Gloaming.Samples.Wholesale.Api;
 
 public static class RuntimeHealthEndpoints
 {

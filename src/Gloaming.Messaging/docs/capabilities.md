@@ -1,35 +1,23 @@
 # Messaging capabilities and remaining work
 
-O1 supplies one bounded transactional-outbox capability. [Family setup](../README.md)
-and package READMEs define the public surface; [the O1 proposal](../../../docs/plans/outbox1-transactional-dispatch.md)
-records owner review and [the report](../../../docs/reports/outbox1-transactional-dispatch.md)
-records dated executions. O1 is owner-approved at checkpoint `2d7a865` and merged as
-`beafa4e`. I1 adds independently selected durable intake and separate transactional processing.
-Its [interface/scope](../../../docs/plans/inbox1-durable-intake-processing.md) is owner-approved;
-the implementation is checkpointed as `ecab884`, refined as `863456b` and merged as `0f4d8bf`.
-[Inbox setup and guarantees](inbox.md) and
-[the fresh execution report](../../../docs/reports/inbox1-durable-intake-processing.md) describe the current contract.
-M2 adds [durable failure accounting and operator retry](inbox-recovery.md) after owner
-interface review, with [separate current evidence](../../../docs/reports/m2-inbox-failure-recovery.md).
-Its [outbox continuation](outbox-recovery.md) adds lease-fenced publisher-exception accounting,
-consumer-selected dead letters and bounded inspection/conditional retry, with
-[new PostgreSQL/HTTP/process evidence](../../../docs/reports/m2-outbox-dead-letters.md).
-The [completion supervision follow-up](../../../docs/reports/m2-outbox-completion-supervision.md)
-adds OutboxCompletionException and stops the optional worker on unconfirmed completion.
-Native host options, consumer repair and external restart policy govern recovery.
-The [operational visibility slice](outbox-observability.md) adds a separately callable
-PostgreSQL route snapshot. Native sample gauges and health checks keep sampling, readiness
-policy and alert thresholds with the consumer; no new recovery or health framework is supplied.
-Separately authorized [completed-outbox retention](outbox-retention.md) now provides one
-bounded PostgreSQL deletion batch. Evidence windows and unique identities after deletion
-remain consumer obligations; inbox retention is independent.
-M2's [processed-inbox retention](inbox-retention.md) supplies exact-lane bounded cleanup and
-receipt-generation-aware operator retry. Deletion ends duplicate/content evidence and permits
-old delivery to execute again. Unprocessed/dead-lettered work remains. Consumer windows and
-scheduling are explicit. The owner approved retention's documented post-v1 supplied-feature
-deferrals with checkpoint 6510f9e, merged as 2e1ffac. The selected
-[broker recovery/shutdown continuation](../../../docs/reports/w1-broker-recovery-shutdown.md)
-has its own implementation evidence and change-set review.
+Worker registration and polling options are supplied by the explicitly selected
+[hosting package](../Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md), using the
+`Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
+operations remain independently usable without this package.
+
+The [native PostgreSQL wakeup recipe](../../../modular-monolith-patterns/postgres-wakeups.md)
+optionally shortens idle waits around those callable roles, with dedicated sessions, retained
+per-worker hints, reconnect registration and independent polling. It introduces no library runtime
+or dependency in provider-free hosting; eligibility and typed completion/accounting remain unchanged.
+
+The family separates [outbox enqueue/dispatch](../README.md), [inbox intake/processing](inbox.md),
+[inbox recovery](inbox-recovery.md), [outbox recovery](outbox-recovery.md) and optional workers.
+Completion/accounting uncertainty faults the selected worker; native host options and consumer
+repair/restart policy govern recovery. [Operational visibility](outbox-observability.md) supplies
+callable metadata reads; hosts choose sampling, readiness and alert thresholds.
+[Outbox retention](outbox-retention.md) and [inbox retention](inbox-retention.md) have separate
+authority and evidence-lifetime contracts. Deleting a processed receipt ends duplicate/content
+evidence and can permit old work to execute again. Unprocessed/dead-lettered work remains.
 
 [Queued-message schema compatibility](schema-compatibility.md) demonstrates retained v1 work
 and explicitly selected v2 writes through independent consumer contexts and HTTP/RabbitMQ.
@@ -37,6 +25,24 @@ Rendering opts into the existing JSON codec; Messaging packages gain no serializ
 Original-envelope deduplication, conditional retry and the outbox's acceptance uncertainty remain.
 
 ## Current composition
+
+[Finite due-time intents](due-intents.md) are independently selected in the PostgreSQL package:
+immutable occurrence/envelope storage, locked suppression and bounded atomic outbox handoff.
+Caller-owned native ReadCommitted transactions, explicit UTC cutoffs and native saves/commits
+remain visible. Scope is independent of optional envelope tenancy. Recurrence/calendar and
+supplied scheduling workers remain outside that finite contract.
+
+The optional [recurrence module](../Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/README.md)
+adds retained generation/progress, explicit interval or zoned cron definitions, bounded
+Skip/Coalesce/CatchUp and atomic finite-intent staging. It selects Cronos independently; consumers
+pin calendar inputs, select current business relevance and invoke their own polling. No scheduling
+worker or business calendar is installed.
+
+[Technical contribution sets](contributions.md) add immutable named content, explicit expected
+identities/required count and one same-transaction completion or eligible timeout notice. The
+consumer selects participant/quorum policy and separately applies business acceptance/current
+relevance. Existing continuation execution remains a single-pending-request model; this technical
+protocol can be composed with its consumer messages without adding a parallel workflow graph.
 
 Each module selects its own typed DbContext, schema/table, business/integration contracts,
 publisher and optional worker. A state-stored adopter needs no event sourcing or context
@@ -49,15 +55,14 @@ RepeatableRead/Serializable commit/rollback are exercised separately. Native ser
 errors (including Npgsql's transient-failure wrapper) propagate; consumers retry the whole
 decision in a fresh context when appropriate. No package escalates isolation or introduces
 a universal Gloaming transaction scope. Multiple DbContexts require explicit native shared
-connection/transaction setup to coordinate; O1 supports one owning producer context.
+connection/transaction setup to coordinate; the outbox supports one owning producer context.
 
 Dispatch commits a lease before transport work and fences completion/retry with its token
 and expiry. Expiry may allow a successor to publish while the old publisher is still running;
 fencing protects database completion, not external exactly-once effects. Best-effort ordering
 does not imply FIFO or a global backlog-empty assertion. Recovery tests use real PostgreSQL;
-they do not certify arbitrary providers. O1's original execution report supplies no abrupt
-process-kill claim; the W1 consumer process proofs described below cover the selected
-PostgreSQL/RabbitMQ host topology.
+they do not certify arbitrary providers. Consumer process proofs described below cover the
+selected PostgreSQL/RabbitMQ host topology.
 
 JSONB round trips preserve JSON values rather than original lexical form. The immutable
 envelope owns a JsonElement clone. Consumers may use direct native JSON or independently
@@ -126,7 +131,7 @@ The CLR members RouteKey and TenantKey map to the existing destination/owner_key
 
 A publisher may implement a database handoff as its transport. It must commit receiving intake
 before returning acceptance; the sender can still fail to record completion and repeat delivery.
-Receiving deduplication remains necessary. No database-handoff runtime is provided in O1.
+Receiving deduplication remains necessary. No database-handoff runtime is provided by this capability.
 
 ## Durable inbox intake and processing
 
@@ -138,7 +143,7 @@ The owner approved a retained incoming queue with independently selected tables/
    recognizes the retained identity and does not queue duplicate work.
 3. Callable processing and an optional worker invoke explicitly registered handlers in fresh
    scopes. Local business effects, processing completion and newly produced outbox work must
-   commit together. I1 holds a native row lock through bounded local
+   commit together. The processor holds a native row lock through bounded local
    processing rather than using an expiring claim; external effects are outgoing work.
 
 The receiving module owns its context and commit independently of the sender. A native
@@ -153,11 +158,10 @@ same delivery; native host supervision and consumer repair/restart policy govern
 This contains an accounting-fault loop, but does not guarantee progress while that worker is
 stopped or count unrecorded crashes. See [failure accounting and supervision](inbox-recovery.md).
 
-The current context-typed IInboxDeadLetters concentrates bounded metadata list/detail and
-the existing conditional retry. Native timestamp/UUID keyset paging reserves no work and
-observes live state. Rendering's authenticated operator endpoints and restricted Sales proofs
-exercise the interface; [the dead-letter report](../../../docs/reports/m2-inbox-dead-letters.md)
-records fresh paging, authority and checkpoint-migration evidence. No console or payload editor.
+Context-typed IInboxDeadLetters supplies bounded metadata list/detail and conditional
+retry. Native timestamp/UUID keyset paging reserves no work and observes live state.
+Rendering operator endpoints and restricted Sales tests exercise admission and storage.
+No operator console or payload editor is supplied.
 
 MessageId identifies one delivery and must remain stable on retry. Define deduplication
 scope explicitly: receiving module/handler identity matters when one delivery fans out.
@@ -168,72 +172,53 @@ Reused delivery identity with incompatible content requires an explicit conflict
 never silently treat it as an equivalent duplicate. The current Inventory adapter illustrates
 correlation by stock position; it does not invent causation when no incoming command ID exists.
 
-The archived inbox records a processed receipt with business effects; it is historical
-evidence for the simpler model, not proof of queued intake/processing. Do not implement both
-modes automatically. No generic acknowledgement facade is selected: ack is transport-specific
+Acknowledgement is transport-specific
 and belongs after the applicable database commit. Broker tags/channels and native failure
 semantics remain visible in the sample. Additional helpers must earn their interface.
 
 ## Separate worker composition
 
-[W1's native host](../samples/MessagingWorkerDemo/README.md) composes the existing library
-workers outside an [API-only producer](../samples/MessagingProducerDemo/README.md).
+[The native worker example](../samples/Delivery/README.md) composes the existing library
+workers outside an [API-only producer](../samples/Delivery/README.md).
 Explicit setup applies the existing module migrations and declares the durable queue; worker
 startup only checks its required tables/queue. Dispatch, broker intake and local processing
 are separate roles. Processing needs only its receiving module's connection. The host owns
 native connection/channel lifetime and each operation keeps the library's fresh DI scope.
 
-Real child-process proofs cover API exit before delivery, acknowledged retained work before
-independent processing, competing processor transactions, graceful SIGTERM/restart, processing
-death/rollback and publication death/lease expiry/redelivery/deduplication. This establishes
-the selected composition, not external exactly-once effects, a throughput benchmark or a
-deployment supervisor. Native intake remains sample code. Original W1 introduced no new
-library interface; existing typed composition, leases and row locks sufficed for that slice.
-[The W1 report](../../../docs/reports/w1-separate-worker-hosts.md) distinguishes these executions
-from historical O1/I1 results.
+Child-process tests cover producer exit, retained intake before processing, competing
+transactions, shutdown/restart, processing rollback and publication death/lease expiry/redelivery.
+They exercise the selected composition, not external exactly-once effects, throughput or an
+external deployment supervisor. Transport intake remains consumer code.
 
-The [worker recovery/shutdown contract](worker-recovery.md) adds consumer-owned native
-terminal-session observation and supervised fresh-process restart. Automatic RabbitMQ recovery
-stays disabled; ordinary publisher exceptions against an open session still use existing retry.
-Live broker outage/recovery, retained-message progress, actual blocked publication/SIGTERM and
-the existing unavailable-collector stop scenario have their own
-[closure evidence](../../../docs/reports/w1-broker-recovery-shutdown.md). Native attempt/RPC/close
-timeouts and selected process verification budgets are distinct; no arbitrary publisher or
-exporter deadline or persistence protocol is added.
+The [recovery/shutdown contract](worker-recovery.md) describes terminal-session observation
+and fresh-process restart. The worker disables automatic RabbitMQ recovery; ordinary publisher
+exceptions against an open session retain existing retry. Native RPC/close timeouts and test
+process budgets do not bound arbitrary publisher or exporter code.
 
-Optional [Gloaming.Messaging.RabbitMQ](../Gloaming.Messaging.RabbitMQ/README.md) subsequently
-extracts native session/channel ownership, acquired-resource cleanup, phase-timeout setup and
-one-time terminal observation. It returns native IChannel and uses an intentional-stop token/
-callback; no Generic Host/core/EF dependency or parallel publisher/recovery interface. The worker
-chooses fail-stop; finite and three-channel workflow adopters share cleanup while retaining their
-own lifetimes/native recovery. [Fresh extraction evidence](../../../docs/reports/rabbitmq-session-lifecycle.md)
-is separate from the original consumer-only proof.
+Optional [RabbitMQ integration](../Gloaming.Messaging.RabbitMQ/README.md) owns selected
+native resources, cleanup and terminal observation. It returns IChannel without Generic Host,
+Messaging core or EF dependencies. Consumers select fail-stop or native recovery and retain
+their own routes, lifetimes and restart policy.
 
 ## Current observability and workflow boundaries
 
 Host placement is consumer composition. Optional retained W3C context, native attempt
 activities, correlated failure logs and metrics are supported; see [observability](observability.md).
-Backlog observation, alert thresholds and dashboard UX remain deferred.
+[Outbox backlog observation](outbox-observability.md) is independently callable; alert thresholds
+and dashboard UX remain consumer policy.
 
-New-service snapshot/feed repopulation is a distinct planned capability. Current dispatch
-ordering and retained delivery rows do not provide a safe replay cursor or snapshot boundary.
-A producer-owned replay/export contract, retention rules and transactional receiver progress
-need separate proof; no bootstrap runtime is supplied. The owner closed B1 as the
-[retention/contract assessment](../../../docs/reports/b1-retention-and-contract-assessment.md)
-and rejected retaining the experiment code, tests, migration and reconstruction patch.
-Only research and [dated results](../../../docs/reports/b1-replayable-integration-feed.md)
-remain. Current Sales writes and setup have no feed dependency; no supported Messaging API
-or maintained bootstrap example was added. Neither generic state revisions nor historical
-replay follow from the existing envelope/outbox. Revisit implementation only for a concrete
-receiver need; B2 snapshot/bootstrap remains separate.
+Dispatch ordering and retained delivery rows supply no safe replay cursor or snapshot boundary.
+The separately selected [EventSourcing PostgreSQL module](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides a fixed-source committed feed and atomic secondary-projection progress. Whole-service
+bootstrap, business import and receiver-specific integration remain consumer-owned.
 
 Durable workflows begin with module-owned state and the existing messaging contracts. The
-[WF1 stock-issue consumer](../../../samples/Wholesale/Worker/Broker/README.md) demonstrates
+[Stock-issue consumer](../../../samples/Wholesale/Worker/Broker/README.md) demonstrates
 persisted request/reply progress, native EF request concurrency, semantic idempotency and
 overdue-state recovery. These are consumer policies composed with inbox/outbox, not a supplied
 saga engine or scheduler; see its separate dated report for the proven behavior.
 
-[WF2's reservation saga](../../../samples/Wholesale/Worker/Broker/compensating-reservations.md)
+[Reservation saga](../../../samples/Wholesale/Worker/Broker/compensating-reservations.md)
 adds sequential steps and an actual compensating release across separate module commits.
 The optional [durable continuation runner](workflows.md) now owns provided process storage,
 requested IDs, semantic reply matching, selected-method execution and atomic request enqueue.
@@ -250,8 +235,8 @@ deployment/rollback topologies require their own evidence; no rollout orchestrat
 Receipt-only mode if an adopter needs it;
 permanent inbox duplicate registries, dead-letter discard/purge and supplied cleanup scheduling;
 caps on executions including crashes, lost leases and ambiguous completion; lease renewal; parallel/batch dispatch;
-per-stream ordering; other DBMS providers; additional transports and local module handoff;
+per-stream ordering; other DBMS providers; additional transports and a generic local-handoff runtime;
 encryption/secrets; baggage/initiator propagation; generic workflow/timeout orchestration; cross-module
-transactions; template messaging presets. Event-sourcing maintenance/async projections remain
+transactions. Event-sourcing maintenance/async projections remain
 in their owning family. These capabilities need specific failure/consumer evidence, not only
 more interfaces. There is no required Gloaming root runtime.

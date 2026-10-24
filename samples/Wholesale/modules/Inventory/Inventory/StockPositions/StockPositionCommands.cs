@@ -1,10 +1,10 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Messaging;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory.Messaging;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class StockPositionCommands(
     IEventStore<StockPositionAggregate> store,

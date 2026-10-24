@@ -7,9 +7,9 @@ namespace Gloaming.Persistence.EntityFrameworkCore;
 
 internal static class TenantOwnershipMetadata
 {
-    internal const string PropertyAnnotation = "ModulithFoundry:TenantOwnershipProperty";
-    internal const string FilterAnnotation = "ModulithFoundry:TenantOwnershipFilter";
-    internal const string ContextMemberAnnotation = "ModulithFoundry:TenantContextMember";
+    internal const string PropertyAnnotation = "Gloaming:TenantOwnershipProperty";
+    internal const string FilterAnnotation = "Gloaming:TenantOwnershipFilter";
+    internal const string ContextMemberAnnotation = "Gloaming:TenantContextMember";
 
     internal static TenantOwnershipException Invalid(
         IReadOnlyEntityType entity,

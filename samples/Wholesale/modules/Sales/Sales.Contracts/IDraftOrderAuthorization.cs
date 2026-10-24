@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 // Actor and Organization come from the trusted, immutable operation context.
 // This check is also enforced by the draft queries and existing-resource commands.

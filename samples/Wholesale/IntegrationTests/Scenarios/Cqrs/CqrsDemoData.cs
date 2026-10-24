@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
 
 public static class CqrsDemoData
 {

@@ -3,7 +3,7 @@ using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
 using Gloaming.Tenancy;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 // Sales owns classification and disclosure; callers supply the accepted change only.
 internal sealed class SalesAudit(
@@ -35,26 +35,6 @@ internal sealed class SalesAudit(
                 JsonSerializer.SerializeToElement(
                     new ProfileChangedDetailsV1(addressId, previousVersion, version)
                 ),
-                tenantKey: tenancy.Current.RequireTenant().Value
-            )
-        );
-    }
-
-    internal void DirectoryChanged(Guid customerId, long version, bool listed, bool created)
-    {
-        var now = timeProvider.GetUtcNow();
-        audit.Stage(
-            new AuditEntry(
-                Guid.CreateVersion7(now),
-                now,
-                actor.Current,
-                "sales",
-                created ? "customer-directory.registered" : "customer-directory.listing-changed",
-                "customer",
-                customerId.ToString("D"),
-                "accepted",
-                1,
-                JsonSerializer.SerializeToElement(new { Version = version, Listed = listed }),
                 tenantKey: tenancy.Current.RequireTenant().Value
             )
         );

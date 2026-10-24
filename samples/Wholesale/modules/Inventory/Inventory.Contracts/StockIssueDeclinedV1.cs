@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+namespace Gloaming.Samples.Wholesale.Inventory.Contracts;
 
 /// <summary>Handled business refusal; no stock facts were appended.</summary>
 public sealed record StockIssueDeclinedV1(

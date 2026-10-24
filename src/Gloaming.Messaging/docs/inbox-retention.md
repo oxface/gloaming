@@ -126,15 +126,15 @@ policy. Consumer-native migrations remain explicit; no worker migrates on startu
 
 ## Executable adoption
 
-[InboxDemo](../samples/InboxDemo/README.md#processed-inbox-cleanup) supplies a separate
+[InboxDemo](../tests/Fixtures/InboxHost/README.md#processed-inbox-cleanup) supplies a separate
 finite `--cleanup` mode, explicit UTC cutoff/batch and checked maintenance connection. It emits
 one JSON result and exits without starting API/intake/processing/migration or telemetry loops.
 Its role check rejects owner/superuser/BYPASSRLS and expanded effective privileges as bounded
 sample policy, not universal database-security certification. Consumers may invoke it manually
 or schedule it using their existing infrastructure; no additional permanent worker is required.
 
-Dead letters remain retained for repair and authorized retry. Discard/purge, permanent duplicate
-registries, supplied scheduling, durable cumulative cleanup accounting and console/dashboard
-features are not implemented by this contract. Their proposed post-v1 disposition still needs
-the owner's explicit decision in the [M2 report](../../../docs/reports/m2-inbox-retention.md).
-See [completed-outbox cleanup](outbox-retention.md) for its different sender-history contract.
+Dead letters remain for repair and authorized retry. Discard/purge, permanent duplicate
+registries, supplied scheduling, durable cumulative cleanup accounting and operator consoles
+are not implemented. These supported limits grant neither permanent delivery suppression nor
+terminal-deletion support. [Completed-outbox cleanup](outbox-retention.md) has a different
+sender-history contract.

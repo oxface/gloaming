@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.EventReactions.Model;
+namespace Gloaming.Samples.EventReactions.Model;
 
 public sealed class AllowanceExceededException(decimal ceiling, decimal requested)
     : Exception("The accepted orders would exceed this consumer's allowance.")

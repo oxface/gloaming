@@ -3,15 +3,14 @@
 This editable sample AppHost composes PostgreSQL 18.6, its `wholesale` database, the existing
 HTTP API and a manually started `demo-setup` command. It requires the pinned Aspire CLI
 13.6.1, .NET from root `global.json`, a Docker-compatible engine and a native HTTPS
-development certificate. Root `aspire.config.json` selects this active AppHost rather than
-the archived graph. Explicit `--apphost` paths also work.
+development certificate. Root `aspire.config.json` selects this AppHost. Explicit `--apphost` paths also work.
 
 ```bash
 aspire_version="$(DOTNET_NOLOGO=true dotnet msbuild samples/Wholesale/AppHost/Wholesale.AppHost.csproj -getProperty:AspireHostingSDKVersion -nologo)"
 dotnet tool install --global Aspire.Cli --version "$aspire_version"
 dotnet dev-certs https
-dotnet restore ModulithFoundry.slnx
-dotnet build ModulithFoundry.slnx --no-restore
+dotnet restore Gloaming.slnx
+dotnet build Gloaming.slnx --no-restore
 ```
 
 If a matching CLI is already installed, use it. The
@@ -20,12 +19,9 @@ command. Native project-path references select the API without generated applica
 Build the solution before using `--no-build`; the AppHost itself has no API project reference.
 Do not rebuild running resources; stop the graph first.
 
-Keep the stable Aspire hosting/testing packages and AppHost SDK aligned. CI and the
-install command above obtain the CLI version from the native `AspireHostingSDKVersion`
-MSBuild property, so the workflow has no independent CLI version pin. Dependabot's
-NuGet update does not update the SDK attribute; review it when upgrading Aspire. Version 13.6.1
-includes the upstream fix for the one-minute DCP watch failure in 13.6.0; see the
-[upgrade verification](../../../docs/reports/aspire-watch-timeout-upgrade.md).
+Keep Aspire hosting/testing packages and the AppHost SDK aligned. CI and the install
+command obtain the CLI version from the native AspireHostingSDKVersion MSBuild property.
+Review the SDK attribute when upgrading Aspire; it is independent of package updates.
 
 ## Configure
 
@@ -147,13 +143,10 @@ secrets out of the API environment too; this is not a sandbox against arbitrary 
 
 Starting the graph alone creates no application logins, module schemas, RLS policies or seed rows. Normal HTTP startup
 only checks the finite runtime roles/catalog before accepting requests. This opt-in changes no
-middleware ordering, transaction ownership, Gloaming interfaces or template presets.
+middleware ordering, transaction ownership, Gloaming interfaces.
 The default graph retains its earlier single-credential composition and does **not** claim RLS.
 
-[Runtime proofs](../RuntimeComposition.Tests/RowSecurityRuntimeTests.cs),
-[browser proofs](../RuntimeComposition.Tests/BrowserTests.cs) and
-the [A2.7 report](../../../docs/reports/a2-7-aspire-sales-rls.md) distinguish current results
-from prior AppHost/browser evidence.
+See [runtime proofs](../RuntimeComposition.Tests/RowSecurityRuntimeTests.cs) and [browser proofs](../RuntimeComposition.Tests/BrowserTests.cs) for executable composition.
 
 ## Start and explicitly initialize
 
@@ -217,7 +210,6 @@ and failed business reads. There is no automatic repair, global HTTP retry polic
 shutdown worker. Local stop/cleanup was verified; exporter-outage delivery guarantees,
 production deployment, external providers and proxy/subdomain sessions remain separate proofs.
 
-See [runtime evidence](../../../docs/reports/e3-6-runtime-composition.md),
-[OIDC/browser evidence](../../../docs/reports/e3-7-oidc-browser-journey.md) and
-[test commands](../../../docs/development.md). The AppHost/health/ServiceDefaults source is
-editable template material; generated template output and the bootstrap CLI remain E10.
+See [test commands](../../../docs/development.md). AppHost, health and ServiceDefaults
+are consumer-owned setup examples; [application patterns](../../../modular-monolith-patterns/README.md)
+describe how to apply the structure in another repository.

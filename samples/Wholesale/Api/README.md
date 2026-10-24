@@ -10,8 +10,8 @@ DTOs), `change` (the existing line-edit DTOs) and `remove` (line IDs). Submissio
 antiforgery. Existing Edit grants govern line changes/submission; creating a draft grants Edit
 to its creator. Native module validation and required allowance reservation run before commit.
 
-Finite full product setup applies Purchasing migrations too and seeds EUR 1000 customer
-allowances. Exceeding an allowance returns Conflict with the draft/allowance rolled back.
+Finite full product setup applies Access, Sales and Inventory migrations and seeds EUR 1000
+customer allowances. Exceeding an allowance returns Conflict with the draft/allowance rolled back.
 No allowance administration API is supplied. The optional restricted Sales-RLS mode intentionally
 keeps existing-draft/profile operations and omits create/submit, preserving its limited grants;
 it has no blanket authority to create resource grants or update allowances.
@@ -40,7 +40,7 @@ classification, visibility and retention remain Sales policy; no denial auditing
 The internal SalesAudit wrapper captures established actor/tenant, clock and generated entry
 ID. Its named ProfileChangedDetailsV1 record keeps the payload fields and version constant
 together; business code supplies only the profile/version change. Audit stores no correlation,
-causation or trace IDs; native HTTP telemetry remains separate. ConfigurePostgresAudit maps JSONB; native module
+causation or trace IDs; native HTTP telemetry remains separate. Each owning DbContext selects JSONB through native EF mapping; native module
 mapping owns tenant visibility and
 the opt-in HasSubjectTimelineIndex helper and its native index customization.
 
@@ -279,11 +279,12 @@ customer version, and returns success after commit. Database failure or controll
 before commit rolls back both rows. A cancelled/lost HTTP response alone cannot establish
 whether a transaction committed; no durable receipt or idempotency contract is provided.
 
-## Template material, proofs and limits
+## Application composition, proofs and limits
 
 The executable setup, module/Contracts projects, native registration, public exception,
-HTTP resolvers, owned schemas/histories and response policy are editable template recipes. Generated template
-files and bootstrap CLI remain E10. Neither technical core nor HTTP adapter depends on Access.
+HTTP resolvers, owned schemas/histories and response policy are consumer-owned examples.
+Neither technical core nor HTTP adapter
+depends on Access. See the current [application patterns](../../../modular-monolith-patterns/README.md).
 
 [Composition proofs](../IntegrationTests/Api/CompositionTests.cs),
 [admission proofs](../IntegrationTests/Api/AdmissionTests.cs) and
@@ -300,28 +301,24 @@ proves Kestrel graph startup/manual setup and readiness during a database outage
 The compatibility proof starts from retained checkpoint SQL and preserves existing Access
 rows/history through module relocation and Inventory migration.
 
-Run the suite in the active PostgreSQL lane; it is no longer a container-free hook.
-Standalone actor/tenancy HTTP suites remain container-free. See
-[development commands](../../../docs/development.md) and
-[the E3.3 report](../../../docs/reports/e3-3-persisted-access.md) and
-[the E3.4 report](../../../docs/reports/e3-4-persisted-business-ingress.md) and
-[the E3.5 report](../../../docs/reports/e3-5-profile-mutation.md).
+The suite requires PostgreSQL; standalone actor/tenancy HTTP suites remain container-free.
+See [development commands](../../../docs/development.md).
 [Mutation proofs](../IntegrationTests/Api/ProfileTests.cs) and
-[Sales persistence proofs](../IntegrationTests/Api/ProfilePersistenceTests.cs) add real native
-antiforgery, exact application-actor rebinding, tenant/pair isolation, stale/competing edits,
-second-save database failure and cancellation at a blocked address UPDATE.
+[Sales persistence proofs](../IntegrationTests/Api/ProfilePersistenceTests.cs) exercise native
+antiforgery, actor rebinding, tenant/pair isolation, stale/competing edits, database failure
+and cancellation at a blocked address update.
 
-The [real browser journeys](../RuntimeComposition.Tests/BrowserTests.cs) exercise local
-Keycloak login/callback and native session cookies against HTTPS Kestrel, with no injected
-authentication cookie or OIDC form replay. Their scope/limits are recorded in
-[E3.7](../../../docs/plans/e3-7-oidc-browser-journey.md).
+The [browser journeys](../RuntimeComposition.Tests/BrowserTests.cs) exercise local
+Keycloak login/callback and native session cookies against HTTPS Kestrel without injected
+authentication cookies or OIDC form replay. See [runtime setup](../AppHost/README.md).
 
 Focused membership administration and private draft grants are supported as documented here.
 User creation/linking, invitations, general grant administration and configurable roles,
 logout/provider end-session, session invalidation, external provider/proxy topology, tenant-aware
 native authorization handlers and shared module transactions remain separate increments.
 The catalog read alone establishes no reservation/workflow guarantee; those have separate
-consumer proofs. E3.7's dated browser-provider evidence does not prove later permission features.
+consumer proofs. Browser tests cover provider login; focused integration tests cover resource
+permissions and membership changes.
 
 ## Private draft permissions
 
@@ -351,12 +348,10 @@ the creator's Edit grant in its existing transaction. System read requires its o
 and a human initiator contributes no authority. Sales commands retain their human requirement.
 The response's lines/customer display fields share draft visibility in this bounded sample.
 
-Count and page use separate native statements; choose RepeatableRead for one snapshot when
-required. Grant changes can affect a later statement while the actor/tenant stay fixed.
-This permission capability supplies no permission-at-commit fencing, grant administration/audit, export/AI selection
-or a role/group engine. See the [Sales capability guide](../modules/Sales/README.md),
-[scope](../../../docs/plans/a2-1-sales-resource-permissions.md) and
-[proof report](../../../docs/reports/a2-1-sales-resource-permissions.md).
+Count and page use separate native statements; choose RepeatableRead for one snapshot
+when required. Grant changes can affect a later statement while actor/tenant stay fixed.
+This capability supplies no permission-at-commit fence, grant editor, export/AI selection
+or role/group engine. See the [Sales guide](../modules/Sales/README.md).
 
 ## Optional Sales HTTP row security
 
@@ -374,9 +369,12 @@ another operation scope. Native command failures still produce server errors.
 | `customer_profiles`, `customer_addresses`, `draft_orders`, `draft_order_lines` | SELECT/INSERT/UPDATE/DELETE, tenant equality through USING and WITH CHECK. |
 | `draft_order_grants` | SELECT only, tenant equality; this HTTP composition edits existing drafts and does not create grants. |
 | `audit_entries` | SELECT/INSERT, tenant equality; accepted profile audit commits with its business rows. |
-| `outbox_messages` | SELECT/INSERT, tenant equality; complete public directory updates commit with profile changes. No HTTP dispatch/update/delete permission. |
-| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. |
+| Other Sales tables, including inbox/outbox/workflows | No runtime table privileges; no new RLS policy claim. Stock dispatch/reply workers use separate credentials. |
 | Access/Inventory | Separate restricted connection for global admission and catalog work; no Sales table privileges. No new RLS policy. |
+
+Finite setup revokes the HTTP role's old directory-publication outbox grants. Startup rejects
+unexpected transport table grants. Accepted profile edits now write profile/address/audit only;
+HTTP has no outbox publication role.
 
 Use a fresh disposable database, a migration-owner login and two separate runtime logins.
 Provision those logins independently, without superuser/BYPASSRLS/CREATEROLE/CREATEDB,
@@ -437,6 +435,5 @@ not proved by this composition. Direct module callers in this selected mode must
 own native Sales transaction around reads, resource checks and writes.
 
 [HTTP/PostgreSQL proofs](../IntegrationTests/Api/RowSecurityTests.cs) exercise native HTTP
-admission, actual restricted roles, Alpha/Beta/Alpha backend reuse, deliberately unfiltered SQL,
-exact varchar keys, read/list/edit permissions, raw write rejection and profile/audit rollback.
-The [slice report](../../../docs/reports/a2-6-sales-http-rls.md) records verification and limits.
+admission, restricted roles, backend reuse, unfiltered SQL, exact varchar keys, resource
+permissions, raw write rejection and profile/audit rollback.

@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 internal sealed class StockCatalog(InventoryDbContext database) : IStockCatalog
 {

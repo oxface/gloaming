@@ -1,10 +1,11 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.TestSupport;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 using static Gloaming.Messaging.Tests.OutboxProof;
 using static Gloaming.Messaging.Tests.OutboxRecoveryProof;

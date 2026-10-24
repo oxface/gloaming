@@ -1,6 +1,6 @@
-using ModulithFoundry.Samples.Wholesale.EventCodecDemo;
+using Gloaming.Samples.Wholesale.EventCodecDemo;
 
-if (args.Contains("--schema-evolution", StringComparer.Ordinal))
-    SchemaEvolutionJourneys.Run(Path.Combine(AppContext.BaseDirectory, "Fixtures"), Console.Out);
-else
-    DemoJourneys.Run(Path.Combine(AppContext.BaseDirectory, "Fixtures"), Console.Out);
+if (args.Length != 0)
+    throw new ArgumentException("This example takes no arguments.");
+
+CodecExample.Run(Path.Combine(AppContext.BaseDirectory, "Fixtures"), Console.Out);

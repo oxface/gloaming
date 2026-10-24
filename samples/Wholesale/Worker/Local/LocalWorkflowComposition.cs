@@ -1,12 +1,13 @@
 using Gloaming.Messaging.EntityFrameworkCore;
+using Gloaming.Messaging.EntityFrameworkCore.Hosting;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Worker.Local.Delivery;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Local;
+namespace Gloaming.Samples.Wholesale.Worker.Local;
 
 public static class LocalWorkflowComposition
 {

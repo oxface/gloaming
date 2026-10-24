@@ -1,16 +1,16 @@
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Auditing.EntityFrameworkCore.Postgres;
+using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
 using Gloaming.EventReactions.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.EntityFrameworkCore.Postgres;
 using Gloaming.Messaging.Workflows.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
-using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 public sealed class SalesDbContext(
     DbContextOptions<SalesDbContext> options,
@@ -32,6 +32,13 @@ public sealed class SalesDbContext(
         DraftOrderMapping.Configure(modelBuilder, () => RequiredOrganizationKey);
         DraftOrderGrantRow.Configure(modelBuilder, () => RequiredOrganizationKey);
         OrderAllowanceRow.Configure(modelBuilder, () => RequiredOrganizationKey);
+        var receipts = modelBuilder.ConfigureCommandReceipts("sales");
+        receipts.Property(row => row.ScopeKey).HasColumnName("organization_key");
+        receipts.HasTenantOwnership(
+            row => row.ScopeKey,
+            () => RequiredOrganizationKey,
+            "OrganizationScope"
+        );
         modelBuilder.ConfigureWorkflows("sales", "workflow_instances", "jsonb");
         StockIssues.StockIssueRequestMapping.Configure(
             modelBuilder.Entity<StockIssues.StockIssueRequestRow>(),
@@ -51,7 +58,8 @@ public sealed class SalesDbContext(
                 () => RequiredOrganizationKey,
                 "OrganizationScope"
             );
-        var audit = modelBuilder.ConfigurePostgresAudit("sales", "audit_entries");
+        var audit = modelBuilder.ConfigureAudit("sales", "audit_entries");
+        audit.Property(row => row.Details).HasColumnType("jsonb");
         audit.HasTenantOwnership(
             row => row.TenantKey!,
             () => RequiredOrganizationKey,
@@ -72,10 +80,6 @@ public sealed class SalesDbContext(
             .HasColumnName("version")
             .IsConcurrencyToken()
             .ValueGeneratedNever();
-        customer
-            .Property(row => row.DeliveryListed)
-            .HasColumnName("delivery_listed")
-            .HasDefaultValue(true);
         customer.HasIndex(row => new { row.OrganizationKey, row.Code }).IsUnique();
         customer.HasTenantOwnership(
             row => row.OrganizationKey,

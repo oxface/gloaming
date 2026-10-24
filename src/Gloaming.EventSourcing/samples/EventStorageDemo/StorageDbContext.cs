@@ -1,7 +1,7 @@
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 public sealed class StorageDbContext(DbContextOptions<StorageDbContext> options)
     : DbContext(options)

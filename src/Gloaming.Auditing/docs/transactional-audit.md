@@ -1,8 +1,6 @@
 # Transactional audit contract
 
-[Package setup and usage](../Gloaming.Auditing.EntityFrameworkCore/README.md) is independently
-adoptable. [The reviewed E9 scope](../../../docs/plans/e9-explicit-transactional-audit.md)
-records the comparison that earned this extraction.
+[Package setup and usage](../Gloaming.Auditing.EntityFrameworkCore/README.md) describes independent adoption.
 
 ## Native lifecycle
 
@@ -11,8 +9,9 @@ records the comparison that earned this extraction.
 2. Consumer explicitly constructs AuditEntry, directly or through its own contextual wrapper. Validation and JSON cloning finish before
    Stage tracks a provided AuditRecord. No clock, identity, tenant or classification fallback.
 3. Stage associates that row object with its exact context lease and native transaction.
-   Both save overrides explicitly validate added row/envelope/transaction association.
-   Modified/deleted tracked audits are rejected. No library SaveChanges interceptor exists.
+   Install shared capability save composition or explicitly validate both native save overrides
+   as documented in the package setup. Both paths validate added row/envelope/transaction
+   association and reject modified/deleted tracked audits.
 4. Consumer saves once or several times, then commits explicitly. Disposal never commits.
    A failed participant or cancellation rolls back business effects and audit; recovery uses
    a fresh operation/context. Consumer code owns retry and ambiguous commit reconciliation.
@@ -21,7 +20,7 @@ EF supplies atomicity within one owning transaction. Validation strengthens the 
 tracked-write protocol; it does not authorize arbitrary SQL or enforce all product policy.
 Do not use a DbContext concurrently, rebind actor/tenant within an operation, or nest/replace
 the transaction around staged entries. Sharing a connection across modules needs separate
-proof and is not supported by this slice.
+proof and is not supported by this capability.
 
 ## Consumer-owned selection and policy
 
@@ -45,11 +44,12 @@ EnsureCreated; the module consumers use reviewed forward migrations.
 
 SubjectKey is the optional item/aggregate identity; null allows a global/subject-wide event.
 ConfigureAudit supplies the native tenant/type/item/time/ID index by default as
-ix_audit_subject_timeline; ConfigurePostgresAudit inherits it. Consumers can rename or
+ix_audit_subject_timeline. Consumers can rename or
 replace it with native EF configuration.
 Read permission and tenant visibility remain consumer policy; there is no timeline service.
-The optional PostgreSQL package maps JSONB; generic relational mapping requires an explicit
-provider mapping. Both return editable native builders. Named V1 payload records keep schema
+PostgreSQL consumers select Details JSONB with native HasColumnType("jsonb").
+Relational mapping returns editable native builders and requires explicit
+provider configuration. Named V1 payload records keep schema
 version selection in each wrapper, beside the payload fields; callers provide business values.
 
 The finite broker journey displays the committed action, actor and reply identity. Audit
@@ -74,6 +74,3 @@ untrusted persisted data must check enum/key consistency before using it as appl
 | Tamper evidence | Defined threat model, database roles, integrity format/key management and independent verification. Tracked immutability is narrower. |
 | Other database providers | Actual provider JSON/time mapping, transaction/completion semantics, migrations and fault tests. |
 | Cross-module atomicity | Named workflow with shared native connection/enlistment/commit/failure proofs. |
-
-Historical archive proofs inform test intent; only current public-interface/consumer executions
-in [the report](../../../docs/reports/e9-explicit-transactional-audit.md) establish new guarantees.

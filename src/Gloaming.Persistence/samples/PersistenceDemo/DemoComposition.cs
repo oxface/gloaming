@@ -1,9 +1,9 @@
+using Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
+using Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo;
 
 public static class DemoComposition
 {

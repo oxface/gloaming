@@ -1,13 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
+using Gloaming.Samples.Wholesale.Api.Endpoints;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Api.Endpoints;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -98,20 +98,24 @@ public sealed partial class CompositionTests
         using (var response = await client.SendAsync(request, Token))
             response.EnsureSuccessStatusCode();
 
-        using (
-            var request = ProductOrderRequest(
-                session,
-                HttpMethod.Post,
-                path + "/submit",
-                new SubmitDraft(3)
-            )
-        )
-        using (var response = await client.SendAsync(request, Token))
+        Guid submissionId = Guid.NewGuid();
+        for (int attempt = 0; attempt < 2; attempt++)
         {
-            response.EnsureSuccessStatusCode();
-            var submitted = await response.Content.ReadFromJsonAsync<DraftOrder>(Token);
-            Assert.True(submitted!.IsSubmitted);
-            Assert.Equal(4, submitted.Version);
+            using (
+                var request = ProductOrderRequest(
+                    session,
+                    HttpMethod.Post,
+                    path + "/submit",
+                    new SubmitDraft(3, submissionId)
+                )
+            )
+            using (var response = await client.SendAsync(request, Token))
+            {
+                response.EnsureSuccessStatusCode();
+                var submitted = await response.Content.ReadFromJsonAsync<DraftOrder>(Token);
+                Assert.True(submitted!.IsSubmitted);
+                Assert.Equal(4, submitted.Version);
+            }
         }
 
         using (
@@ -119,7 +123,7 @@ public sealed partial class CompositionTests
                 session,
                 HttpMethod.Post,
                 path + "/submit",
-                new SubmitDraft(4)
+                new SubmitDraft(4, submissionId)
             )
         )
         using (var response = await client.SendAsync(request, Token))

@@ -2,7 +2,7 @@ using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Tenancy;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
+namespace Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 
 public sealed class InventoryDbContext(
     DbContextOptions<InventoryDbContext> options,

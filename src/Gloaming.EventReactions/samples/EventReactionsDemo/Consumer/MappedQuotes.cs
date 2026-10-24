@@ -3,7 +3,7 @@ using Gloaming.EventReactions.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ModulithFoundry.Samples.EventReactions;
+namespace Gloaming.Samples.EventReactions;
 
 public sealed class MappedQuotesModule { }
 

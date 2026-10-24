@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory;
+namespace Gloaming.Samples.Wholesale.Inventory;
 
 /// <summary>Consumer-owned reservation wire admission; transport binds the Sales producer.</summary>
 public static class StockReservationAdmission

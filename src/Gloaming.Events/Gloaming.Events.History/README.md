@@ -1,8 +1,11 @@
 # Ordered history range validation
 
 A package-free .NET 10 integrity utility for a consumer-selected range. It has no JSON,
-persistence, identity, tenancy, messaging or required event-type dependency. Wholesale replay paths compose it with the separate JSON codec;
-the provided EF event store and independent counter do not require this package.
+persistence, identity, tenancy, messaging or required event-type dependency. Wholesale replay
+paths compose it with the separate JSON codec. The
+[EventSourcing EF adapter](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md#bounded-event-history)
+references this package for its provided bounded history reader; the independent counter
+uses that reader without selecting the JSON codec.
 
 ## Explicit consumer usage
 
@@ -21,9 +24,10 @@ var state = MyDomain.Rehydrate(events);
 
 The validator receives only positions/timestamps. It has no payload generic, event base
 class, retained collection, selector, decoder or domain reducer. Native EF filtering,
-ordering and materialization belong to the consumer before this call. See the executable
-[Inventory](../samples/EventCodecDemo/Inventory/StockPositionHistoryExample.cs)
-and [Purchasing](../samples/EventCodecDemo/Purchasing/PurchaseOrderHistoryExample.cs)
+ordering and materialization belong to the consumer or its explicitly selected EventSourcing
+reader before this call. See the executable
+[Inventory](../tests/CodecAdoptionTests/Fixtures/Inventory/StockPositionHistoryExample.cs)
+and [Purchasing](../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderHistoryExample.cs)
 recipes; their current queries operate on fixture rows, not PostgreSQL.
 
 ## Contract and failures
@@ -36,6 +40,8 @@ A normal prefix uses lower bound 0, and a later range can start after a nonzero 
 A single `foreach` tracks the last validated version and previous recorded timestamp.
 Gaps, duplicate/reordered positions, missing tails and excess rows fail. Recorded timestamps
 must be nondecreasing within the returned range; equal times are allowed. The validator
+compares DateTimeOffset instants without requiring zero offsets. The EventSourcing EF reader
+separately requires UTC metadata and checks captured stream endpoints. This standalone utility
 does not compare the first row against an excluded predecessor or inspect excluded rows.
 
 `EventHistoryException` has a fixed payload-free message and these classifications:
@@ -61,21 +67,24 @@ Selection by version/time stays in consumer queries. For a time read, the sample
 the highest qualifying version within the supplied head, then reads the complete prefix through
 that version. Filtering rows by time alone could omit intermediate positions.
 
-Successful validation certifies only the supplied range. Full-stream integrity checks are
-explicit maintenance work; selected-range reads do not certify corruption elsewhere, correct
-tenant scoping, stream creation/update metadata or a committed captured head. The utility does
-not append, save, transact, retry or publish. Wholesale consumer suites exercise actual native EF queries, captured-head races and
-persistence on PostgreSQL; these are composition proofs beyond this utility alone. See [the plan](../../../docs/plans/e5-1-event-history.md)
-and [report](../../../docs/reports/e5-1-event-history.md).
+Successful validation certifies only the supplied range. Selected reads do not certify
+corruption elsewhere, tenant scoping, stream metadata or a committed captured head. The utility
+does not append, save, transact, retry or publish. Wholesale's native PostgreSQL suites exercise
+queries, captured-head races and persistence beyond this range validator.
 
-## Deferred direction and event-store composition
+## Event-store composition and remaining limits
 
 Wholesale's native replay paths use this validator after fetching the selected range, then
-decode through Events.Serialization and run their own reducers. The EF write store does not
-depend on this package; its independent counter has a local history validator/reader.
+decode through Events.Serialization and run their own reducers. The EF adapter's
+EventHistoryReader applies this same range validator before consumer-owned decoding. The
+[counter history reader](../../Gloaming.EventSourcing/samples/EventStorageDemo/CounterHistoryReader.cs)
+inherits it and decodes direct JSON. Required inline aggregate rebuilding and complete
+regeneration are also supplied by the EventSourcing adapter; they remain explicit maintenance.
 
-A generic history reader, snapshot-plus-tail loading, projection rebuild/catch-up and a safe
-global event feed remain deferred. Range success cannot establish excluded history or committed
-global progress. Any selected extension needs captured-head/tail, corruption and concurrent
-writer/progress proofs. See the [event-store capability record](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/docs/capabilities.md)
-for those pending contracts. Current metadata validation remains independently adoptable.
+Snapshot-plus-tail loading remains unsupported. This provider-free range validator supplies no
+secondary projector or committed feed: range success cannot establish excluded history or global
+progress. The separately selected [PostgreSQL feed module](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides fixed-source committed reads, bounded secondary/multi-stream projection turns and generation
+backfill/cutover under its native deployment and writer-lock contract. Current metadata validation
+remains independently adoptable; see the [event-store capability record](../../Gloaming.EventSourcing/docs/capabilities.md)
+for the remaining limits.

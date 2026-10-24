@@ -1,7 +1,7 @@
 using Gloaming.Persistence.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
+namespace Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 
 internal sealed class OrderAllowanceRow
 {

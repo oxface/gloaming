@@ -1,7 +1,7 @@
 using Gloaming.EventSourcing;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class StockPositionAggregate
     : EventSourcedAggregate<StockPositionState, IStockPositionEvent>

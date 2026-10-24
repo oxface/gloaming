@@ -1,12 +1,12 @@
+using Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
+using Gloaming.Samples.Wholesale.PersistenceDemo.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Inventory;
-using ModulithFoundry.Samples.Wholesale.PersistenceDemo.Sales;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class ModulePersistenceTests
 {

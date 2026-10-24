@@ -5,6 +5,29 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />
+    <Content
+      Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <None
+      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <ProjectReference Include="../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
+    <None
+      Include="../../src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj"
+      Link="ProjectDeclarations/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
+    <None
+      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj"
+      Link="ProjectDeclarations/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
     <ProjectReference Include="../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj" />
     <None
       Include="../../src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore.csproj"
@@ -21,19 +44,14 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/Gloaming.Auditing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/Gloaming.Messaging.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/OutboxDemo/OutboxDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingDemo/MessagingDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingProducerDemo/MessagingProducerDemo.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Messaging/samples/MessagingWorkerDemo/MessagingWorkerDemo.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Producer/Messaging.Producer.csproj" />
+    <ProjectReference Include="../../src/Gloaming.Messaging/samples/Delivery/Worker/Messaging.Worker.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.History/Gloaming.Events.History.csproj" />
     <ProjectReference Include="../../src/Gloaming.Events/Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
@@ -47,10 +65,8 @@
     <ProjectReference Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/Gloaming.Persistence.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/Gloaming.Persistence.EntityFrameworkCore.Postgres.csproj" />
-    <ProjectReference Include="../../src/Gloaming.Tenancy/samples/ContextDemo/ContextDemo.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Api/Wholesale.Api.csproj" />
     <ProjectReference Include="../../src/Gloaming.Persistence/samples/PersistenceDemo/PersistenceDemo.csproj" />
-    <ProjectReference Include="../../samples/Wholesale/modules/Purchasing/Purchasing/Purchasing.csproj" />
     <ProjectReference Include="../../samples/Wholesale/Worker/Wholesale.Worker.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
     <ProjectReference Include="../../src/Gloaming.EventSourcing/samples/EventStorageDemo/EventStorageDemo.csproj" />
@@ -63,18 +79,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj"
-      Link="ProjectDeclarations/PostgresTests.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
       Include="../../src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj"
       Link="ProjectDeclarations/Gloaming.Tenancy.EntityFrameworkCore.Postgres.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj"
-      Link="ProjectDeclarations/TenancyPostgresTests.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
@@ -88,23 +94,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows/Gloaming.Messaging.Workflows.csproj"
-      Link="ProjectDeclarations/Gloaming.Messaging.Workflows.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
       Include="../../src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj"
       Link="ProjectDeclarations/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.Messaging/Gloaming.Messaging.OpenTelemetry/Gloaming.Messaging.OpenTelemetry.csproj"
-      Link="ProjectDeclarations/Gloaming.Messaging.OpenTelemetry.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore.Postgres/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj"
-      Link="ProjectDeclarations/Gloaming.Auditing.EntityFrameworkCore.Postgres.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
@@ -113,13 +104,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj"
-      Link="ProjectDeclarations/AuditPostgresTests.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.Messaging/samples/InboxDemo/InboxDemo.csproj"
-      Link="ProjectDeclarations/InboxDemo.csproj"
+      Include="../../src/Gloaming.Messaging/samples/Delivery/Rendering/Messaging.Rendering.csproj"
+      Link="ProjectDeclarations/Messaging.Rendering.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
@@ -138,13 +124,8 @@
       CopyToOutputDirectory="PreserveNewest"
     />
     <None
-      Include="../../src/Gloaming.Messaging/samples/OutboxDemo/OutboxDemo.csproj"
-      Link="ProjectDeclarations/OutboxDemo.csproj"
-      CopyToOutputDirectory="PreserveNewest"
-    />
-    <None
-      Include="../../src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj"
-      Link="ProjectDeclarations/EventSourcingPostgresTests.csproj"
+      Include="../../src/Gloaming.Messaging/samples/Delivery/Exports/Messaging.Exports.csproj"
+      Link="ProjectDeclarations/Messaging.Exports.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
   </ItemGroup>
@@ -207,9 +188,18 @@
       Link="ProjectDeclarations/Gloaming.Messaging.RabbitMQ.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
+  </ItemGroup>
+  <ItemGroup>
     <None
-      Include="../../src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj"
-      Link="ProjectDeclarations/RabbitMqTests.csproj"
+      Include="../ContextCompositionTests/ContextCompositionTests.csproj"
+      Link="ProjectDeclarations/ContextCompositionTests.csproj"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+  <ItemGroup>
+    <None
+      Include="../../src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj"
+      Link="ProjectDeclarations/EventCodecDemo.csproj"
       CopyToOutputDirectory="PreserveNewest"
     />
   </ItemGroup>

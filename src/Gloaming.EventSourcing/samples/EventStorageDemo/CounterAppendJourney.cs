@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.EventStorageDemo;
+namespace Gloaming.Samples.EventStorageDemo;
 
 public static class CounterAppendJourney
 {
@@ -16,7 +16,7 @@ public static class CounterAppendJourney
         await using (var create = new StorageDbContext(options))
         {
             if (
-                await new CounterCommands(create, new CounterClock()).ReadAsync(
+                await new CounterCommands(create, TimeProvider.System).ReadAsync(
                     Id,
                     cancellationToken
                 )
@@ -30,10 +30,11 @@ public static class CounterAppendJourney
                 {
                     var result = await new CounterCommands(
                         create,
-                        new CounterClock()
+                        TimeProvider.System
                     ).StageStartAsync(Id, 10, cancellationToken);
                     if (result is not CounterChangeResult.Changed)
                         throw new InvalidOperationException("Counter creation did not stage.");
+
                     await create.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
                 }
@@ -44,9 +45,10 @@ public static class CounterAppendJourney
                 }
             }
         }
+
         await using (var edit = new StorageDbContext(options))
         {
-            var commands = new CounterCommands(edit, new CounterClock());
+            var commands = new CounterCommands(edit, TimeProvider.System);
             var current = (await commands.ReadAsync(Id, cancellationToken))!;
             if (current.Version == 1)
             {
@@ -63,6 +65,7 @@ public static class CounterAppendJourney
                     );
                     if (result is not CounterChangeResult.Changed)
                         throw new InvalidOperationException("Counter increases did not stage.");
+
                     await edit.SaveChangesAsync(cancellationToken);
                     await transaction.CommitAsync(cancellationToken);
                 }
@@ -73,12 +76,13 @@ public static class CounterAppendJourney
                 }
             }
         }
+
         await using var read = new StorageDbContext(options);
         var committed = (
-            await new CounterCommands(read, new CounterClock()).ReadAsync(Id, cancellationToken)
+            await new CounterCommands(read, TimeProvider.System).ReadAsync(Id, cancellationToken)
         )!;
         await using var rejection = await read.Database.BeginTransactionAsync(cancellationToken);
-        var rejected = await new CounterCommands(read, new CounterClock()).StageIncreaseAsync(
+        var rejected = await new CounterCommands(read, TimeProvider.System).StageIncreaseAsync(
             Id,
             committed.Version,
             [4],
@@ -86,6 +90,7 @@ public static class CounterAppendJourney
         );
         if (rejected is not CounterChangeResult.LimitExceeded)
             throw new InvalidOperationException("The counter ceiling did not reject the decision.");
+
         await rejection.RollbackAsync(cancellationToken);
         await output.WriteLineAsync(
             $"journal append: version={committed.Version}, value={committed.Value}, rejected=4"

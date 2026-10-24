@@ -1,8 +1,8 @@
 using System.Data.Common;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Cqrs;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Queries;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Queries;
 
 internal sealed class QueryProbe(Func<Task>? afterCount = null) : DbCommandInterceptor
 {

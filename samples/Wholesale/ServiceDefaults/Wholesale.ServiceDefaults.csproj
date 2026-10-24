@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.ServiceDefaults</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.ServiceDefaults</RootNamespace>
     <IsAspireSharedProject>true</IsAspireSharedProject>
   </PropertyGroup>
   <ItemGroup>

@@ -15,13 +15,13 @@ retain ordinary xUnit parallelism.
 | Folder | Retained obligation |
 | --- | --- |
 | `Api` | Native authentication/admission/antiforgery, membership concurrency, profiles/audit, private draft permissions, restricted HTTP credentials/RLS, historical Access migration and telemetry. New product draft lifecycle/allowance rollback assertions live here. |
-| `Domain` / `DraftOrders` | State-stored versus event-sourced domain decisions, relational children, root concurrency, complete candidate acceptance and rollback. |
-| `Reactions` | Required local allowance reactions, save/commit distinctions, cancellation, faults and rejected proposals. |
-| `Queries` | SQL filtering/joins, complete permitted counts/pages, caller-owned transaction snapshots and independent restricted-role RLS lifecycle proofs. |
+| `Domain` / `DraftOrders` | Immutable Sales profile/draft decisions, relational children, root concurrency, complete candidate acceptance and rollback; event-sourced decisions live with Inventory. |
+| `Reactions` | Required local allowance reactions, save/commit distinctions, cancellation, faults and rejected proposals; native Sales command-receipt concurrency and real crash/lost-response recovery. |
+| `Queries` | SQL filtering/joins, complete permitted counts/pages, caller-owned transaction snapshots and independent restricted-role RLS lifecycle/receipt replay proofs. |
 | `EventPersistence` | Literal histories, codecs/upcasting, exact native reads, append/rebuild/regeneration, inbox/outbox faults, real broker assertions, cancellation/process death/ambiguous commit. |
 | `Reservations/Broker` | Original stock-issue and compensation behavior, RabbitMQ/process recovery, Sales reply RLS/dead letters and restricted outbox dispatch/retention/migration assertions. |
-| `Reservations/Local` | Broker-free public intake, separate transactions, observation and the three real process-death handoff cuts. Child processes explicitly select `Transport=local`. |
-| `Scenarios` | Finite fixture/journey helpers retained from the five former slice executables. They call live module Contracts; no copied product implementation. |
+| `Reservations/Local` | Broker-free public intake, separate transactions, observation and the three real process-death handoff cuts; native Sales signal receipts and repeated operator decisions. Worker child processes explicitly select `Transport=local`. |
+| `Scenarios` | Finite fixture/journey helpers retained for active module proofs. They call live module Contracts; no copied product implementation. |
 
 `TestEntryPoint` selects only the two historical child scenarios (`--scenario history` and
 `--scenario schema-evolution`) before delegating ordinary execution to the installed xUnit/MTP
@@ -30,9 +30,11 @@ console. Their database comes from `WHOLESALE_SCENARIO_CONNECTION`; they have a 
 Normal tests never route to these branches accidentally. Canonical product commands have separate
 real-process coverage in `ProductOperationsTests`, and regeneration launches the real Worker.
 
-The Access SQL fixture stays byte-for-byte intact. Event fixture JSON remains owned by the
-independent Events consumer and is linked read-only into the output directory. Module migrations
-remain in their owning modules. The [slice report](../../../docs/reports/s1-wholesale-consolidation.md)
-maps the old projects and records fresh results separately from earlier slice evidence.
+The Access SQL fixture and literal event JSON are owned compatibility inputs. Event fixtures
+are linked read-only from the independent Events consumer. Module migrations remain in their
+owning modules. See the [test map](../../../tests/README.md) for current proof ownership.
 
-`Directory/` retains fourteen B2 population, transaction and wire proofs. API/Worker process adoption and broker/local route-selection tests prove the canonical product path.
+Local/broker route-exclusion proofs live in `Reservations/Local` and
+`Reservations/Broker`, using a synthetic unselected route. `Api/ProfileMigrationTests` proves
+the Sales retirement upgrade preserves profiles, audit and queued envelopes, removes listing
+storage and stops profile publication; native HTTP RLS proofs reject and revoke old outbox grants.

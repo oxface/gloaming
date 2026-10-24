@@ -15,6 +15,11 @@ public static class WorkflowCapabilityRegistration
         services.TryAddGloamingCapability<TContext>(
             "workflows",
             CapabilityPhase.Validate,
-            (_, context) => context.ValidateWorkflowChanges()
+            (_, context) => context.ValidateWorkflowChanges(),
+            (_, context, cancellationToken) =>
+                WorkflowSaveChangesExtensions.ValidateWorkflowChangesAsync(
+                    context,
+                    cancellationToken
+                )
         );
 }

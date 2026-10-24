@@ -63,7 +63,10 @@ dotnet run --project samples/Wholesale/Worker -- --transport local --role run
 ```
 
 In another terminal with the same environment, use `--role read --OrderId ...`, or explicitly invoke
-`--role retry-compensation --OrderId ...` after a refused compensation. The default Organization is
+`--role retry-compensation --OrderId ... --OperationId ...` after a refused compensation.
+Retain/reuse that operation ID for equal retries; a new operator decision needs a new ID.
+Sales retains the original result through its [receipt adoption](../../modules/Sales/command-receipts.md),
+so a repeated old retry cannot signal a later pause. The default Organization is
 wholesale-alpha; wholesale-beta is also admitted. Seed creates five units at version 2. The example
 requests two first-line units and six second-line units, reaching Compensated. Quantities of two on
 both lines reach Reserved. Stock IDs must be new. LeaseSeconds controls the native publication lease
@@ -88,8 +91,6 @@ mapping, not a transparent general transport. Delivery and processing remain sep
 and in-process placement does not create cross-module atomicity. Existing inbox retention/retry,
 outbox lease, workflow version and operator-signal limitations still apply. Poison work requires
 consumer intervention policy. Parallel workflow branches, expiry, cancellation and shared native
-transactions are outside this slice. No migrations or template presets are added.
+transactions are outside this example.
 
-See the [D2.3 research](../../../../docs/reports/d2-3-module-consistency-and-coordination.md),
-[D2.3a proof report](../../../../docs/reports/d2-3a-local-durable-module-delivery.md) and
-[workflow library contract](../../../../src/Gloaming.Messaging/docs/workflows.md).
+See the [workflow contract](../../../../src/Gloaming.Messaging/docs/workflows.md) for transaction ownership and supported local delivery composition.

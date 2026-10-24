@@ -1,17 +1,15 @@
 # ADR 0014: bounded explicit durable continuations
 
-Status: public interface and exact replacement scope accepted by the owner on 2026-10-12.
-Implementation awaits line-by-line code review. Supersedes [ADR 0013](0013-fixed-sequential-saga-progress.md)
-before the sequential experiment was checkpointed.
+Status: accepted and implemented, 2026-10-12.
 
-The owner approved the final reply/signal/input-pause names on 2026-10-13. Persisted numeric
-status values and continuation identities are retained.
+Persisted numeric status values and continuation identities are compatibility contracts.
 
 ## Decision
 
-Provide optional Messaging.Workflows definitions and a native EF adapter executing only a
-saved, typed continuation method. Do not replay an entry point, interpret a graph or generate a
-handler harness. Consumers use ordinary C# for branching and compensation, stable wire names
+Provide optional definitions and execution together in Gloaming.Messaging.Workflows.EntityFrameworkCore,
+retaining the two public namespaces. Definitions take its EF dependency; ordinary Messaging
+remains independent. Execute only a saved, typed continuation method. Do not replay an entry point,
+interpret a graph or generate a handler harness. Consumers use ordinary C# for branching and compensation, stable wire names
 for reply bindings, and explicit typed signal bindings for external input. Operator recovery
 is one consumer use of an input pause; the technical status does not imply business failure.
 
@@ -26,6 +24,15 @@ save validation binds those tracked proposals to their originating transaction. 
 own save/commit; existing inbox processing owns reply save/completion/commit. Existing outbox
 workers deliver requests. No workflow worker or transport dependency is introduced.
 
+Save validation verifies any unchanged process/request proposal against native stored values
+in that same transaction. Matching tracked values alone cannot distinguish completed writes
+from premature acceptance or savepoint rollback. JSON comparison remains semantic; generated
+request delivery fields are excluded. Repeated saves require native SELECT access to all mapped
+process/request columns. Native key lookup ignores EF filters while database permissions/RLS
+remain effective. Explicit validation stays synchronous; registered async validation awaits
+the native reads with cancellation. No new public lifecycle hook, schema or execution protocol
+is introduced.
+
 ## Consequences
 
 The library removes repeated operation bookkeeping and request enqueue mechanics while leaving
@@ -38,6 +45,4 @@ operations retain history indefinitely and have no throughput/pruning claim. Pos
 first proven database. Parallel joins, scheduling, deadlines, cancellation, durable operator
 signal receipts, replay/graph engines and generic compensation selection remain deferred.
 
-[Approved scope](../plans/wf2-durable-continuations.md),
-[current package-local contract](../../src/Gloaming.Messaging/docs/workflows.md), and
-[fresh evidence](../reports/wf2-durable-continuations.md).
+See the [package-local contract](../../src/Gloaming.Messaging/docs/workflows.md) and [deployment guidance](../../src/Gloaming.Messaging/docs/workflow-deployments.md).

@@ -1,10 +1,9 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Sales;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.Ddd;
 
 public static class DddComposition
 {
@@ -29,11 +28,7 @@ public static class DddComposition
             provider.GetRequiredService<ActorContextAccessor>()
         );
         services.AddSalesDatabase(connectionString);
-        services.AddPurchasingDatabase(connectionString);
         services.AddCustomerProfiles();
-        services.AddPurchaseOrderCommands();
-        services.AddPurchaseOrderQueries();
-        services.AddPurchaseOrderHistory();
         return services;
     }
 

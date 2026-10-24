@@ -83,22 +83,15 @@ checks its runtime configuration. Native SQL and bulk DML on the same transactio
 the database setting, but still need actual policies and business-specific protocols.
 
 A custom setting is mutable trusted input: a credential holder can forge another tenant.
-RLS tenant equality does not authenticate, admit membership, authorize resources within a
-tenant, validate aggregates or retract data already in memory. Read the
-[A2.2 protection matrix](../../../docs/reports/a2-2-sales-postgres-rls.md) for exercised bypass
-controls and [primary-source evidence](../../../docs/reports/tenant-authorization-primary-sources.md).
+RLS equality neither authenticates membership nor authorizes resources within a tenant.
+It does not validate aggregates or retract data already in memory. See the
+[Sales isolation fixture](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
+for executable enforcement and bypass boundaries.
 
 ## Executable consumers and proofs
 
-- [Independent PostgreSQL consumer](../tests/TenancyPostgresTests/ContextTests.cs): a plain
-  DbContext, alternate schema/discriminator/setting, actual restricted login and unusual opaque
-  key; commit/rollback, physical pool reuse, cancellation, missing requirements and server failure.
-- [Sales executable](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md): adopts this
-  extension in its explicit opt-in RLS composition. Its existing role/permission/raw/bulk/
-  savepoint/retry/reconnect/COPY proofs now cross the public utility.
-- [Extraction scope](../../../docs/plans/a2-3-postgres-tenant-context.md) and
-  [fresh report](../../../docs/reports/a2-3-postgres-tenant-context.md) distinguish the reusable
-  setup mechanism from consumer-owned policies and unsupported integration.
+- [Independent PostgreSQL tests](../tests/TenancyPostgresTests/ContextTests.cs): alternate schema/discriminator/setting, restricted login, opaque keys, pool reuse, cancellation and server failure.
+- [Sales fixture](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md): explicit transaction-local setup with policies, raw/bulk writes, savepoints and reconnect behavior.
 
 ```bash
 dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj
@@ -106,11 +99,8 @@ dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPos
 
 This suite runs in the Tenancy CI lane using PostgreSQL 18.6 Testcontainers. On the repository's
 rootless Podman workstation, use the socket environment in the
-[development guide](../../../docs/development.md#postgresql-tenant-context-utility).
+[development guide](../../../docs/development.md#tooling-and-infrastructure).
 
-The later [A2.4 capability research](../../../docs/reports/a2-4-rls-capability-reference-research.md)
-compares Bytefish's connection hook and Marten's fluent/schema/runtime split with an optional
-`HasTenantOwnership(...).WithRls()` integration. The separate optional
-[Persistence/PostgreSQL adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
-now supplies that fluent opt-in with automatic transaction-local setup. This package retains its explicit
-transaction-local contract and independence from ownership mapping; do not mix lifetime modes.
+The separate [Persistence/PostgreSQL adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+composes ownership mapping and automatic transaction-local setup. This package remains the
+independent explicit transaction-local utility; select one integration lifetime mode.

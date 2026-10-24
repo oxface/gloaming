@@ -1,28 +1,35 @@
 # Repository instructions
 
-Before choosing change scope, staging, preparing a pull request, or committing, read
-[the repository workflow](docs/conventions/repository.md).
+Read [the repository workflow](docs/conventions/repository.md) before choosing scope,
+staging, preparing a pull request or committing. Preserve the user's staged review snapshot;
+make implementation edits in the working tree.
 
 ## Library and sample work
 
 - Before changing C# code, read [the .NET conventions](docs/conventions/dotnet.md).
-- Before architecture, dependencies, or public-interface work, read
-  [the current design decisions](docs/design.md) and [the extraction plan](docs/plans/library-extraction.md).
-- Before changing shared terminology, read [the project glossary](CONTEXT.md). Keep it to
-  resolved definitions; implementation choices belong in the design documents.
-- Implement one reviewable capability with executable consumer usage and relevant proofs.
-  Library interfaces and implementations receive owner review line by line.
-- Keep sample business rules and module Contracts out of technical libraries. Establish
-  sample module ownership and domain language when the corresponding sample behavior is added.
-- Use the [retirement provenance](docs/reports/s1-archive-retirement.md) for historical source.
-  Historical plans and instructions do not authorize active implementation. Preserve current
-  owned fixtures and migrations; document compatibility repairs with their owning capability.
-- Record settled, hard-to-reverse architecture choices in `docs/adr/`. Proposed interfaces
-  remain in the extraction plan until reviewed.
+- Before architecture, dependencies or public interfaces, read [the design](docs/design.md)
+  and [library design conventions](docs/conventions/library-design.md).
+- Before changing shared terminology, read [the glossary](CONTEXT.md). Keep it to resolved
+  definitions; implementation decisions belong in design documents and ADRs.
+- Deliver one reviewable capability with executable consumer usage and relevant proofs.
+  Public library interfaces and implementations receive owner review line by line.
+- Keep business rules and module Contracts in their consuming application. Preserve owned
+  payload fixtures and migrations; explain compatibility repairs with their owning capability.
+- Record settled architecture choices in docs/adr/. Proposed interfaces remain proposals
+  until reviewed.
+- For application initialization, new modules or durable handoff, start with the
+  [modular monolith patterns](modular-monolith-patterns/README.md). These are application
+  guidance, not a required Gloaming runtime.
 
-## Slice reports
+## Documentation and handoff
 
-Report the outcome, verification, review-worthy files, and remaining gaps. Include what
-was proven or rejected, supporting evidence, extraction candidates versus consumer-owned
-policy, and library/template/sample findings. Distinguish new test results from historical
-evidence and proposals. Explicitly state when no new reusable mechanism was proven.
+Public documentation describes current setup, architecture, decisions, guarantees and limits.
+Library contracts belong beside their source; application patterns belong in their own folder.
+Research, comparisons, plans, execution reports and local work queues belong in ignored
+docs/internal/. Consult that directory only when it exists and the current task needs its
+working context; published documentation must stand alone without it.
+
+Report the outcome, relevant checks, review-worthy files and remaining gaps. Distinguish
+fresh test results from earlier evidence and proposed behavior. Identify reusable mechanisms
+and consumer-owned policy. State when a change establishes no new reusable mechanism.
+The owner must explicitly approve the exact complete change set before every commit.

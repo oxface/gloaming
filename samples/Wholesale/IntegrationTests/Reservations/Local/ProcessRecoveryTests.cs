@@ -1,9 +1,8 @@
-using ModulithFoundry.Samples.MessagingWorkerDemo.Tests;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Tests.Infrastructure;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Local;
+using Gloaming.Tests.Infrastructure;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reservations.Local;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reservations.Local;
 
 public sealed class ProcessRecoveryTests(PostgreSqlFixture postgres)
     : IClassFixture<PostgreSqlFixture>

@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
 using Gloaming.Auditing.EntityFrameworkCore;
-using Gloaming.Auditing.EntityFrameworkCore.Postgres;
 using Gloaming.EntityFrameworkCore;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
@@ -235,6 +234,8 @@ sealed class PackageDatabase(DbContextOptions<PackageDatabase> options, string t
         documents.Property(row => row.Id).ValueGeneratedNever();
         documents.HasTenantOwnership(row => row.Tenant, () => RequiredTenant, "Owner");
         model.ConfigurePostgresOutbox("package_proof", "outbox");
-        model.ConfigurePostgresAudit("package_proof", "audit");
+        model.ConfigureAudit("package_proof", "audit")
+            .Property(row => row.Details)
+            .HasColumnType("jsonb");
     }
 }

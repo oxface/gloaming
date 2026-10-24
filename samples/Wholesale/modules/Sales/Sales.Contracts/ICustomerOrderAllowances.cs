@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Sales.Contracts;
+namespace Gloaming.Samples.Wholesale.Sales.Contracts;
 
 // Opening is proposed setup; the caller owns the native Sales transaction and commit.
 public interface ICustomerOrderAllowances

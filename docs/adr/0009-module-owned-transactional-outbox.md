@@ -1,7 +1,6 @@
 # ADR 0009: Module-owned transactional outbox and independent dispatch
 
-Status: accepted and owner-reviewed, 2026-10-08. Approved checkpoint `2d7a865`, merged
-through PR #1 as `beafa4e`. [Reviewed scope](../plans/outbox1-transactional-dispatch.md).
+Status: accepted and implemented, 2026-10-08.
 
 Each adopting module owns its typed native DbContext, schema/table, business contracts and
 transaction. Explicit enqueue joins that context's existing transaction; business changes,
@@ -23,15 +22,10 @@ write. Delivery may repeat with stable identity; receiver idempotency remains ne
 The optional sequential hosted worker invokes this same operation in fresh scopes and does
 not apply migrations, activate producer publication or discover modules.
 
-O1 does not implement an inbox. The owner prefers durable intake followed by independent
-transactional processing: retain a complete envelope, commit intake, acknowledge transport,
-then later commit handler effects/completion/outgoing work together. That protocol needs its
-own reviewed interface and real two-module broker/database recovery proof; the
-[I1 interface/scope](../plans/inbox1-durable-intake-processing.md) received owner approval;
-[ADR 0010](0010-durable-inbox-local-processing.md) records the separate retained-intake protocol. MessageId identifies
-delivery; correlation groups related work and causation identifies immediate cause. They must
-not conflate delivery deduplication with semantic business-operation idempotency.
+Durable intake is independently selected. Retain a complete envelope, commit intake,
+acknowledge transport, then later commit local effects, completion and outgoing work together.
+[ADR 0010](0010-durable-inbox-local-processing.md) records that protocol. MessageId identifies
+delivery; correlation groups related work and causation identifies immediate cause.
+Delivery deduplication and logical business-action identity have different lifetimes.
 
-See [the library-local contract](../../src/Gloaming.Messaging/docs/capabilities.md) and
-[dated executions](../reports/outbox1-transactional-dispatch.md). T1 remains event/messaging-free;
-the archive, previous migrations, fixtures and existing event checkpoints are preserved.
+See the [library-local contract](../../src/Gloaming.Messaging/docs/capabilities.md) for independent enqueue, dispatch and intake composition.

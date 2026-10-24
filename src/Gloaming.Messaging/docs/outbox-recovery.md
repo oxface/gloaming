@@ -28,7 +28,7 @@ consumer-code obligations, not a sandbox against database misuse.
 
 Omission retains indefinite retry by the existing nonnegative OutboxDispatchOptions.RetryDelay,
 with code `publication-failed` and durable observations. There is no library poison threshold.
-[Exports' policy](../samples/OutboxDemo/ExportOutboxFailurePolicy.cs) illustrates consumer
+[Exports' policy](../tests/Fixtures/OutboxHost/ExportOutboxFailurePolicy.cs) illustrates consumer
 HTTP classification and a three-observation cycle budget; it does not govern RabbitMQ.
 Direct construction can append the named `failurePolicy:` argument; existing three/four-argument
 calls remain valid.
@@ -98,7 +98,7 @@ AddOutboxWorker logs a distinct critical diagnostic and faults without another d
 poll on either exception. Native HostOptions.BackgroundServiceExceptionBehavior governs the
 host: StopHost begins host shutdown; Ignore leaves this worker faulted and does not restart
 it. The library installs no host-wide option. Direct dispatcher callers own equivalent
-supervision. For example, the executable OutboxDemo host explicitly selects:
+supervision. For example, the executable outbox test host explicitly selects:
 
 ```csharp
 services.AddOutboxWorker<ExportDbContext>(
@@ -220,14 +220,10 @@ can use these column grants without payload SELECT. Column privileges do not enf
 legal lifecycle protocol: a credential able to set dead_lettered_at can issue arbitrary SQL
 to clear it. Database grants/RLS and trusted application authority remain separate obligations.
 
-[OutboxDemo](../samples/OutboxDemo/README.md) provides executable fixed-route operator
-endpoints and HTTP policy. [The slice report](../../../docs/reports/m2-outbox-dead-letters.md)
-separates new PostgreSQL/HTTP/process evidence from earlier O1 and inbox M2 results.
-The [completion supervision report](../../../docs/reports/m2-outbox-completion-supervision.md)
-records the subsequent native-host, cancellation, backend-death and restart proofs; this
-follow-up requires no schema, grant or registration changes.
-Payload editing, completed-message replay, lease renewal, a generic administration
-framework and a template preset are excluded.
+The [outbox host fixture](../tests/Fixtures/OutboxHost/README.md) supplies fixed-route
+operator endpoints and HTTP policy. Provider/process tests cover native completion/accounting
+supervision, cancellation, backend loss and fresh-process recovery. Payload editing,
+completed-message replay, lease renewal and a generic administration framework remain unsupported.
 
 Read-only [backlog snapshots and consumer worker health](outbox-observability.md) are separately
 available without acquiring claims or retry authority. Counts are observations; their age and

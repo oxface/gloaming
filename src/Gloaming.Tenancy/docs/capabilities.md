@@ -1,8 +1,6 @@
 # Tenancy composition and capabilities
 
-Foundational scope, 2026-10-07; A2 composition research reconciled 2026-10-16.
-This family guide and the package-local contracts travel with
-the source. Root plans/reports retain cross-cutting review and dated execution evidence.
+This family guide and package-local contracts describe supported context establishment and selected adapters.
 
 ## Supported composition
 
@@ -44,30 +42,10 @@ execution never grants unrestricted access.
 Deferred features need executable contract proofs before support can be claimed. No future
 package or interface is implemented by this repository relocation.
 
-## Consumer research
+## Consumer composition
 
-Tenant-aware resource authorization and native authorization ordering are recorded in
-[A2](../../../docs/plans/a2-tenant-resource-authorization-rls-research.md), alongside
-[A1 Access/resource authorization](../../../docs/plans/a1-access-resource-authorization-research.md).
-The [A2 assessment](../../../docs/reports/tenant-authorization-assessment.md) now traces the
-current composition: the optional actor evaluator establishes actor before native handlers;
-tenant admission still follows native authorization. Late consumer resource checks are the
-recommended first composition. Database RLS is a separate optional proof, not tenant admission
-or within-tenant permission. No middleware reordering, Access/FGA dependency, new supported
-capability or approved interface follows from this assessment.
-
-The later [A2.2 sample proof](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
-uses native PostgreSQL policies and explicit transaction-local setup with separate runtime
-credentials. Its [matrix](../../../docs/reports/a2-2-sales-postgres-rls.md) bounds database
-tenant isolation, setting forgery and paths not adopted. That original proof kept setup local.
-The owner subsequently selected
-[A2.3 extraction](../../../docs/reports/a2-3-postgres-tenant-context.md): the explicit setup
-utility is now an optional adapter, independently proven alongside the Sales adoption.
-RLS policies, runtime role checks and within-tenant permissions remain consumer-owned.
-
-The separately authorized [A2.4 ownership/RLS adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
-now connects this immutable accessor to `.HasTenantOwnership(...).WithRls(settingName)` and
-native transaction setup for ordinary scoped EF requests. It is optional Persistence/provider
-integration; core Tenancy and this family's explicit transaction-local utility gain no dependency
-on it. Its [report](../../../docs/reports/a2-4-ownership-rls-capability.md) records fresh read/write
-proofs, explicit policy migration obligations and unsupported connection modes.
+The [Persistence RLS adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+can establish immutable tenant context when a protected native transaction begins.
+This family's utility remains an independent explicit option. Roles, policies, admission,
+resource permission and transport trust remain consumer-owned; core Tenancy has no
+Access, authorization-engine or Persistence dependency.

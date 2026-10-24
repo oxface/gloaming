@@ -1,9 +1,9 @@
 <Project Sdk="Aspire.AppHost.Sdk/13.6.1">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ModulithFoundry.Samples.Wholesale.AppHost</RootNamespace>
+    <RootNamespace>Gloaming.Samples.Wholesale.AppHost</RootNamespace>
     <AspireUseCliBundle>true</AspireUseCliBundle>
-    <UserSecretsId>modulith-foundry-wholesale-runtime-1e2cd4af</UserSecretsId>
+    <UserSecretsId>gloaming-wholesale-runtime-1e2cd4af</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />

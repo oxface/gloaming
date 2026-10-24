@@ -1,7 +1,7 @@
 using Gloaming.Events.Serialization;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Inventory.StockPositions;
+namespace Gloaming.Samples.Wholesale.Inventory.StockPositions;
 
 internal sealed class StockPositionEventRecordMapping
     : EventRecordMapping<IStockPositionEvent, EventStream, StoredEvent>

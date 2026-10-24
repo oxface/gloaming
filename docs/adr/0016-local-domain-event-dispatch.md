@@ -1,8 +1,7 @@
 # ADR 0016: composable event capture and reactions before native save
 
-Status: the owner selected the EventReactions name and consolidated reshaping on 2026-10-15.
-Implementation remains subject to line-by-line review. This supersedes the earlier Gloaming.Domain
-package positioning and aggregate-bound collection, while preserving dated implementation evidence.
+Status: accepted and implemented. Owner-selected EventReactions consolidation, 2026-10-15,
+supersedes the earlier Gloaming.Domain positioning and aggregate-bound collection.
 
 Provide platform-only Gloaming.EventReactions and optional Gloaming.EventReactions.EntityFrameworkCore.
 The useful capability is ordered local capture/dispatch, not a Domain or DDD foundation. Consumers
@@ -23,10 +22,10 @@ owns the active transaction and commits after saving returns. Any failure requir
 Use bounded reactions for required atomic intra-module work and explicit application orchestration for
 complex dependencies. Registration is routing rather than a business dependency graph. Do not add
 a decider abstraction, business-history store or another event-sourcing model to justify this package.
-Those need separate consumer evidence. Durable saga state remains module-owned; recoverable direct
-module-contract delivery remains a separate D2.3 assessment.
+Those need separate consumer evidence. Durable saga state remains module-owned; the
+[local module delivery consumer](../../samples/Wholesale/Worker/Local/README.md) separately
+exercises retained intake and recovery across module commits.
 
-No Stage, acknowledgment, owned transaction, aggregate save guard, universal tracker protocol or
-late-event completion enforcement is added. Native false acceptance and callback/bulk-write bypasses
-remain visible limits. See the [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md)
-and [consolidated evidence](../reports/event-reactions-consolidation.md).
+The caller retains transaction and native save ownership. Callback/bulk-write bypasses
+remain explicit limits. See the [execution contract](../../src/Gloaming.EventReactions/docs/local-dispatch.md)
+for ordering and save integration.

@@ -1,4 +1,4 @@
-# Modulith Foundry
+# Gloaming
 
 The project's vocabulary for reusable capabilities, the applications that adopt them,
 and the identity of work performed in those applications.
@@ -6,20 +6,16 @@ and the identity of work performed in those applications.
 ## Language
 
 **Gloaming**:
-The independently adoptable .NET libraries developed in this repository. Modulith Foundry
-remains the repository, template and reference-sample identity.
-
-**Umbrine**:
-The ERP product to be built on the application template and Gloaming libraries developed
-here. Its name derives from Umbral; Umbrine and Gloaming share a darkness theme.
+The independently adoptable .NET libraries and the repository that develops them.
+Wholesale is the reference application.
 
 **Library segment**:
 A selected reusable capability presented to a consumer through its documented contract.
-_Avoid_: Foundry framework
+_Avoid_: Application framework
 
-**Template**:
-A customizable starting point for a consumer-owned application, assembled from exercised
-sample setup.
+**Application patterns**:
+Documents describing a preferred consumer-owned application structure and implementation
+tasks, adapted to the target repository and selected capabilities.
 _Avoid_: Application runtime
 
 **Reference sample**:
@@ -28,13 +24,23 @@ compose together.
 _Avoid_: Complete product
 
 **Consumer**:
-An application adopting a library segment or the template.
+An application adopting selected library capabilities and its own application structure.
 _Avoid_: Sample, business customer
 
 **EventReactions**:
 The Gloaming library family for local event capture and reactions, independent of an application's
 domain model.
 _Avoid_: DDD foundation, Reactive Streams
+
+**Committed feed**:
+An explicitly selected retained sequence of native source facts whose progress cannot skip an
+earlier unresolved capturing transaction. Its publication order is technical, not domain causality.
+_Avoid_: Allocated global identity, timestamp watermark, message delivery order
+
+**Projection generation**:
+One retained reducer compatibility identity, checkpoint and generation-qualified secondary output.
+The consumer separately selects which generation its readers observe.
+_Avoid_: Command aggregate, automatic reader deployment
 
 **Access model**:
 The product's model of users, Organizations, memberships, invitations, roles and permissions.
@@ -56,6 +62,29 @@ then be received and processed again.
 One lifetime of an inbox receipt, identified by ReceiptId. A duplicate or operator retry
 keeps that generation; receiving the delivery after receipt deletion creates another.
 _Avoid_: Message identity, operator authority
+
+**Command receipt**:
+Retained evidence for a consumer-selected logical action and its original business result.
+Different deliveries may represent that same action. Equal retained attempts recover the result;
+removing the evidence ends its duplicate protection. The receipt grants no authority.
+_Avoid_: Inbox receipt, entity identity, current business state
+
+**Due intent**:
+A retained finite occurrence and the original message to hand off when it becomes eligible.
+Its occurrence identity is distinct from delivery identity; handoff does not prove the work
+is still relevant or that its external effect completed.
+_Avoid_: Retry delay, business deadline, recurring schedule
+
+**Recurring generation**:
+One immutable version of a recurring schedule, with retained planning progress and stable nominal
+occurrence identities. Another generation does not implicitly supersede its business relevance.
+_Avoid_: Current business schedule, retry attempt, mutable calendar
+
+**Contribution set**:
+One retained work generation with explicit named contributors, their original content and a
+consumer-selected distinct count for technical completion. That completion is separate from
+business acceptance, permission and approval.
+_Avoid_: Human approval workflow, business quorum policy, delivery receipt
 
 **Application user**:
 A person represented by a stable product identity, independently of their login provider

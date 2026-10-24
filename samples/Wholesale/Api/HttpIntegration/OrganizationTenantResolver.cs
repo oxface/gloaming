@@ -1,9 +1,9 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Access.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.AspNetCore;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+namespace Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
 internal sealed class OrganizationTenantResolver(
     IApplicationAccess access,

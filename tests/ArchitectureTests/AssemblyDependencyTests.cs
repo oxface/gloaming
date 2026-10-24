@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Fluent.Syntax.Elements.Types;
 using ArchUnitNET.Loader;
@@ -15,19 +16,17 @@ using Gloaming.Tenancy.EntityFrameworkCore.Postgres;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class AssemblyDependencyTests
 {
     private const string Actor = "Gloaming.ActorIdentity";
     private const string Audit = "Gloaming.Auditing.EntityFrameworkCore";
-    private const string AuditPostgres = "Gloaming.Auditing.EntityFrameworkCore.Postgres";
     private const string ActorHttp = "Gloaming.ActorIdentity.AspNetCore";
     private const string Tenancy = "Gloaming.Tenancy";
     private const string TenancyHttp = "Gloaming.Tenancy.AspNetCore";
     private const string TenancyPostgres = "Gloaming.Tenancy.EntityFrameworkCore.Postgres";
     private const string Persistence = "Gloaming.Persistence.EntityFrameworkCore";
-    private const string ContextSample = "ContextDemo";
     private const string PersistenceSample = "PersistenceDemo";
     private const string HttpSample = "Wholesale.Api";
     private const string EventSerialization = "Gloaming.Events.Serialization";
@@ -41,40 +40,92 @@ public sealed class AssemblyDependencyTests
     private static readonly Architecture Architecture = new ArchLoader()
         .LoadAssemblies(
             typeof(ActorId).Assembly,
+            typeof(Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.CommandReceiptKey).Assembly,
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly,
-            typeof(Gloaming.Auditing.EntityFrameworkCore.Postgres.PostgresAuditModelExtensions).Assembly,
             typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
             typeof(Gloaming.Messaging.RabbitMQ.RabbitMqSession).Assembly,
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
-            typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
+            typeof(Gloaming.Messaging.EntityFrameworkCore.Hosting.OutboxWorkerOptions).Assembly,
             typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
-            typeof(Samples.OutboxDemo.DemoJourneys).Assembly,
-            typeof(Samples.InboxDemo.InboxDemoHost).Assembly,
-            typeof(Samples.MessagingDemo.MessagingJourney).Assembly,
-            typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly,
-            typeof(Samples.MessagingWorkerDemo.WorkerAssemblyMarker).Assembly,
+            typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+            typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+            typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly,
+            typeof(Samples.Messaging.Worker.WorkerAssemblyMarker).Assembly,
             typeof(ActorContextMiddleware).Assembly,
             typeof(TenantId).Assembly,
             typeof(TenantContextMiddleware).Assembly,
             typeof(TenantDatabaseContextExtensions).Assembly,
             typeof(Gloaming.EntityFrameworkCore.CapabilityConfiguration).Assembly,
             typeof(Samples.Wholesale.Sales.SalesDatabase).Assembly,
+            typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
             typeof(Samples.Wholesale.Access.AccessRegistration).Assembly,
             typeof(TenantOwnershipExtensions).Assembly,
             typeof(Gloaming.Persistence.EntityFrameworkCore.Postgres.TenantRowSecurityExtensions).Assembly,
             typeof(SerializedEvent).Assembly,
             typeof(EventHistory).Assembly,
             typeof(IEventStreamRecord).Assembly,
+            typeof(Gloaming.EventSourcing.EntityFrameworkCore.Postgres.FeedCursor).Assembly,
             typeof(IEventSourcedAggregate<>).Assembly,
-            typeof(Samples.EventStorageDemo.DemoJourneys).Assembly,
-            typeof(Samples.Wholesale.EventCodecDemo.DemoJourneys).Assembly,
+            typeof(Samples.EventStorageDemo.CounterCommands).Assembly,
+            typeof(Samples.Wholesale.EventCodecDemo.CodecExample).Assembly,
             typeof(Samples.Wholesale.Worker.Maintenance.StockRegeneration).Assembly,
-            typeof(Samples.Wholesale.ContextDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.PersistenceDemo.DemoComposition).Assembly,
             typeof(Samples.Wholesale.Api.DemoComposition).Assembly
         )
         .Build();
+
+    [Fact]
+    public void CommandReceiptsAreIndependentOfAdmissionMessagingAndConsumerBusinessTypes()
+    {
+        foreach (
+            string forbidden in new[]
+            {
+                Actor,
+                Tenancy,
+                Persistence,
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Sales",
+                "Access",
+                "Inventory",
+            }
+        )
+            NoDependency("Gloaming.CommandReceipts.EntityFrameworkCore.Postgres", forbidden)
+                .Check(Architecture);
+    }
+
+    [Fact]
+    public void WorkerHostingRemainsIndependentOfProviderAndOptionalForCallableLibraries()
+    {
+        const string hosting = "Gloaming.Messaging.EntityFrameworkCore.Hosting";
+        foreach (
+            string callable in new[]
+            {
+                "Gloaming.Messaging",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.EntityFrameworkCore",
+            }
+        )
+            NoDependency(callable, hosting).Check(Architecture);
+
+        foreach (
+            string forbidden in new[]
+            {
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                "Gloaming.Messaging.RabbitMQ",
+                "Sales",
+                "Access",
+                "Messaging.Exports",
+                "Messaging.Rendering",
+            }
+        )
+            NoDependency(hosting, forbidden).Check(Architecture);
+    }
 
     [Fact]
     public void PostgresOwnershipIntegrationIsOptionalWithoutApplicationAuthorizationDependencies()
@@ -87,7 +138,6 @@ public sealed class AssemblyDependencyTests
                 ActorHttp,
                 TenancyHttp,
                 Audit,
-                AuditPostgres,
                 "Sales",
                 "Access",
                 "Gloaming.Messaging",
@@ -118,8 +168,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 Audit,
-                AuditPostgres,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 "Gloaming.EntityFrameworkCore",
@@ -136,45 +184,49 @@ public sealed class AssemblyDependencyTests
     }
 
     [Fact]
-    public void WorkflowCoreAndRunnerRemainOptionalWithoutTransportOrModuleDependencies()
+    public void ContinuationsRemainOptionalWithoutTransportHostingOrModuleDependencies()
     {
+        const string library = "Gloaming.Messaging.Workflows.EntityFrameworkCore";
         foreach (
-            string library in new[]
+            string forbidden in new[]
             {
-                "Gloaming.Messaging.Workflows",
-                "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+                Actor,
+                Tenancy,
+                Persistence,
+                EventSerialization,
+                History,
+                AggregateCore,
+                Storage,
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+                "Gloaming.Messaging.RabbitMQ",
+                "Sales",
+                "Access",
             }
         )
-        {
-            foreach (
-                string forbidden in new[]
-                {
-                    Actor,
-                    Tenancy,
-                    Persistence,
-                    EventSerialization,
-                    History,
-                    AggregateCore,
-                    Storage,
-                    "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                }
-            )
-                NoDependency(library, forbidden).Check(Architecture);
-        }
+            NoDependency(library, forbidden).Check(Architecture);
 
         Assert.DoesNotContain(
             typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly.GetReferencedAssemblies(),
             reference =>
-                reference.Name!.StartsWith(
-                    "Microsoft.EntityFrameworkCore",
+                reference.Name!.StartsWith("Npgsql", StringComparison.Ordinal)
+                || reference.Name.StartsWith(
+                    "Microsoft.Extensions.Hosting",
                     StringComparison.Ordinal
                 )
-                || reference.Name.StartsWith("Npgsql", StringComparison.Ordinal)
                 || reference.Name.StartsWith("RabbitMQ", StringComparison.Ordinal)
         );
-        NoDependency("Gloaming.Messaging", "Gloaming.Messaging.Workflows").Check(Architecture);
-        NoDependency("Gloaming.Messaging.EntityFrameworkCore", "Gloaming.Messaging.Workflows")
-            .Check(Architecture);
+        foreach (
+            string independent in new[]
+            {
+                "Gloaming.Messaging",
+                "Gloaming.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore",
+                "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
+            }
+        )
+            NoDependency(independent, library).Check(Architecture);
     }
 
     [Theory]
@@ -185,15 +237,11 @@ public sealed class AssemblyDependencyTests
     [InlineData(Tenancy, Actor)]
     [InlineData(Persistence, Actor)]
     [InlineData(Persistence, Tenancy)]
-    [InlineData(Actor, ContextSample)]
     [InlineData(Actor, PersistenceSample)]
-    [InlineData(Tenancy, ContextSample)]
     [InlineData(Tenancy, PersistenceSample)]
-    [InlineData(Persistence, ContextSample)]
     [InlineData(Persistence, PersistenceSample)]
     [InlineData(ActorHttp, Tenancy)]
     [InlineData(ActorHttp, Persistence)]
-    [InlineData(ActorHttp, ContextSample)]
     [InlineData(ActorHttp, PersistenceSample)]
     [InlineData(ActorHttp, HttpSample)]
     [InlineData(Actor, HttpSample)]
@@ -202,7 +250,6 @@ public sealed class AssemblyDependencyTests
     [InlineData(TenancyHttp, Actor)]
     [InlineData(TenancyHttp, ActorHttp)]
     [InlineData(TenancyHttp, Persistence)]
-    [InlineData(TenancyHttp, ContextSample)]
     [InlineData(TenancyHttp, PersistenceSample)]
     [InlineData(TenancyHttp, HttpSample)]
     [InlineData(ActorHttp, TenancyHttp)]
@@ -228,7 +275,6 @@ public sealed class AssemblyDependencyTests
                 History,
                 AggregateCore,
                 Storage,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -237,22 +283,18 @@ public sealed class AssemblyDependencyTests
                 "Gloaming.Messaging",
                 "Gloaming.Messaging.EntityFrameworkCore",
                 "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-                "OutboxDemo",
-                "InboxDemo",
-                "MessagingDemo",
+                "Messaging.Exports",
+                "Messaging.Rendering",
             }
         )
         {
             NoDependency(Audit, forbidden).Check(Architecture);
-            NoDependency(AuditPostgres, forbidden).Check(Architecture);
             if (forbidden.StartsWith("Gloaming.", StringComparison.Ordinal))
             {
                 NoDependency(forbidden, Audit).Check(Architecture);
-                NoDependency(forbidden, AuditPostgres).Check(Architecture);
             }
         }
 
-        NoDependency(Audit, AuditPostgres).Check(Architecture);
         Assert.DoesNotContain(
             typeof(Gloaming.Auditing.EntityFrameworkCore.AuditRecord).Assembly.GetReferencedAssemblies(),
             assembly =>
@@ -272,7 +314,6 @@ public sealed class AssemblyDependencyTests
                 Tenancy,
                 TenancyHttp,
                 Persistence,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -310,15 +351,13 @@ public sealed class AssemblyDependencyTests
                     History,
                     AggregateCore,
                     Storage,
-                    ContextSample,
                     PersistenceSample,
                     HttpSample,
                     EventPersistenceSample,
-                    "OutboxDemo",
-                    "InboxDemo",
-                    "MessagingDemo",
-                    "MessagingProducerDemo",
-                    "MessagingWorkerDemo",
+                    "Messaging.Exports",
+                    "Messaging.Rendering",
+                    "Messaging.Producer",
+                    "Messaging.Worker",
                 }
             )
                 NoDependency(layer, forbidden).Check(Architecture);
@@ -344,17 +383,17 @@ public sealed class AssemblyDependencyTests
             }
         )
         {
-            NoDependency("OutboxDemo", forbidden).Check(Architecture);
-            NoDependency("InboxDemo", forbidden).Check(Architecture);
+            NoDependency("Messaging.Exports", forbidden).Check(Architecture);
+            NoDependency("Messaging.Rendering", forbidden).Check(Architecture);
         }
 
         // Only the receiving sample opts into historical payload decoding; Messaging stays codec-free.
-        NoDependency("OutboxDemo", EventSerialization).Check(Architecture);
+        NoDependency("Messaging.Exports", EventSerialization).Check(Architecture);
         Assert.Contains(
-            typeof(Samples.InboxDemo.InboxDemoHost).Assembly.GetReferencedAssemblies(),
+            typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly.GetReferencedAssemblies(),
             reference => reference.Name == EventSerialization
         );
-        NoDependency("InboxDemo", "OutboxDemo").Check(Architecture);
+        NoDependency("Messaging.Rendering", "Messaging.Exports").Check(Architecture);
     }
 
     [Fact]
@@ -375,12 +414,11 @@ public sealed class AssemblyDependencyTests
         foreach (
             var module in new[]
             {
-                typeof(Samples.OutboxDemo.ExportDbContext).Assembly,
-                typeof(Samples.InboxDemo.RenderDbContext).Assembly,
-                typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly,
+                typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+                typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+                typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly,
                 typeof(Samples.Wholesale.Sales.SalesDbContext).Assembly,
                 typeof(Samples.Wholesale.Inventory.InventoryDbContext).Assembly,
-                typeof(Samples.Wholesale.Dispatch.DispatchDbContext).Assembly,
             }
         )
             Assert.DoesNotContain(
@@ -395,22 +433,61 @@ public sealed class AssemblyDependencyTests
         foreach (
             string forbidden in new[]
             {
-                "InboxDemo",
-                "MessagingDemo",
-                "MessagingWorkerDemo",
+                "Messaging.Rendering",
+                "Messaging.Worker",
+                "Gloaming.Messaging.EntityFrameworkCore.Hosting",
                 "RabbitMQ.Client",
             }
         )
             Assert.DoesNotContain(
-                typeof(Samples.MessagingProducerDemo.ProducerAssemblyMarker).Assembly.GetReferencedAssemblies(),
+                typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly.GetReferencedAssemblies(),
                 reference => reference.Name == forbidden
             );
 
-        foreach (string module in new[] { "OutboxDemo", "InboxDemo", "MessagingDemo" })
+        foreach (string module in new[] { "Messaging.Exports", "Messaging.Rendering" })
         {
-            NoDependency(module, "MessagingProducerDemo").Check(Architecture);
-            NoDependency(module, "MessagingWorkerDemo").Check(Architecture);
+            NoDependency(module, "Messaging.Producer").Check(Architecture);
+            NoDependency(module, "Messaging.Worker").Check(Architecture);
         }
+
+        foreach (
+            var module in new[]
+            {
+                typeof(Samples.Messaging.Exports.ExportDbContext).Assembly,
+                typeof(Samples.Messaging.Rendering.RenderDbContext).Assembly,
+            }
+        )
+            Assert.DoesNotContain(
+                module.GetReferencedAssemblies(),
+                reference =>
+                    reference.Name == "Gloaming.Messaging.EntityFrameworkCore.Hosting"
+                    || reference.Name!.StartsWith(
+                        "Microsoft.Extensions.Hosting",
+                        StringComparison.Ordinal
+                    )
+                    || reference.Name.StartsWith("Microsoft.AspNetCore", StringComparison.Ordinal)
+            );
+
+        // Check the producer's complete runtime graph: an indirect module dependency
+        // previously pulled the optional worker package into this API-only host.
+        using var dependencies = JsonDocument.Parse(
+            File.ReadAllText(
+                Path.ChangeExtension(
+                    typeof(Samples.Messaging.Producer.ProducerAssemblyMarker).Assembly.Location,
+                    ".deps.json"
+                )
+            )
+        );
+        Assert.DoesNotContain(
+            dependencies.RootElement.GetProperty("libraries").EnumerateObject(),
+            library =>
+                library.Name.StartsWith(
+                    "Gloaming.Messaging.EntityFrameworkCore.Hosting/",
+                    StringComparison.Ordinal
+                )
+                || library.Name.StartsWith("Gloaming.Messaging.RabbitMQ/", StringComparison.Ordinal)
+                || library.Name.StartsWith("RabbitMQ.Client/", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -425,7 +502,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -452,7 +528,6 @@ public sealed class AssemblyDependencyTests
                 EventSerialization,
                 History,
                 Storage,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -481,7 +556,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,
@@ -504,7 +578,6 @@ public sealed class AssemblyDependencyTests
                 TenancyHttp,
                 Persistence,
                 EventSerialization,
-                ContextSample,
                 PersistenceSample,
                 HttpSample,
                 CodecSample,

@@ -1,17 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Gloaming.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gloaming.EventSourcing.EntityFrameworkCore;
 
 /// <summary>Explicit model declaration and native save-boundary validation; no saving or transaction wrapper.</summary>
 public static class RequiredInlineStateExtensions
 {
-    private const string Prefix = "ModulithFoundry:RequiredInlineState:";
+    private const string Prefix = "Gloaming:RequiredInlineState:";
 
     /// <summary>Declares the required stream/event/inline-state save association for one stable stream discriminator.</summary>
     public static ModelBuilder ConfigureRequiredInlineState<TStream, TStoredEvent, TState>(
@@ -96,14 +94,39 @@ public static class RequiredInlineStateExtensions
 
     private static string AnnotationName(string family) => Prefix + "main:" + family;
 
-    /// <summary>Call from both native save override paths. Validates tracked writes before issuing SQL.</summary>
+    /// <summary>Validates tracked writes, reading native values for omitted append timestamps and unchanged maintenance participants; call from both save overrides.</summary>
     public static void ValidateEventStreamChanges(this DbContext database)
     {
         ArgumentNullException.ThrowIfNull(database);
+
         database.ChangeTracker.DetectChanges();
         EntityEntry[] entries = database.ChangeTracker.Entries().ToArray();
-        if (ValidateMaintenanceWrite(database, entries))
+        if (MaintenanceWriteRegistry.Validate(database, entries))
             return;
+
+        foreach (var entry in ValidateAppends(database, entries))
+            ValidateStoredTimestamp(entry, entry.GetDatabaseValues());
+    }
+
+    internal static async Task ValidateEventStreamChangesAsync(
+        DbContext database,
+        CancellationToken cancellationToken
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        database.ChangeTracker.DetectChanges();
+        EntityEntry[] entries = database.ChangeTracker.Entries().ToArray();
+        if (await MaintenanceWriteRegistry.ValidateAsync(database, entries, cancellationToken))
+            return;
+
+        foreach (var entry in ValidateAppends(database, entries))
+            ValidateStoredTimestamp(entry, await entry.GetDatabaseValuesAsync(cancellationToken));
+    }
+
+    private static List<EntityEntry> ValidateAppends(DbContext database, EntityEntry[] entries)
+    {
+        List<EntityEntry> timestampWrites = [];
         foreach (var streamModel in database.Model.GetEntityTypes())
         {
             foreach (
@@ -144,11 +167,47 @@ public static class RequiredInlineStateExtensions
                         streamKey,
                         eventReference,
                         stateReference,
-                        family
+                        family,
+                        timestampWrites
                     );
                 ValidateStateWrites(headers, states, streamKey, stateReference, family);
             }
         }
+
+        return timestampWrites;
+    }
+
+    private static void ValidateStoredTimestamp(EntityEntry entry, PropertyValues? stored)
+    {
+        // Let native concurrency predicates classify a missing or concurrently advanced row.
+        if (
+            stored is null
+            || !Equals(
+                stored[nameof(IEventStreamRecord.Version)],
+                entry.Property(nameof(IEventStreamRecord.Version)).OriginalValue
+            )
+        )
+            return;
+
+        bool header = entry.Entity is IEventStreamRecord;
+        if (
+            header
+            && !Equals(
+                stored[nameof(IEventStreamRecord.ConcurrencyStamp)],
+                entry.Property(nameof(IEventStreamRecord.ConcurrencyStamp)).OriginalValue
+            )
+        )
+            return;
+
+        string timestamp = header
+            ? nameof(IEventStreamRecord.UpdatedAt)
+            : nameof(IInlineStateRecord.RecordedAt);
+        if (
+            stored[timestamp] is not DateTimeOffset time
+            || entry.Property(timestamp).CurrentValue is not DateTimeOffset proposed
+            || !time.EqualsExact(proposed)
+        )
+            Fail("An omitted append timestamp must already match its proposed stored metadata.");
     }
 
     private static void ValidateInsertedEvents(
@@ -179,7 +238,8 @@ public static class RequiredInlineStateExtensions
         IKey streamKey,
         IForeignKey eventReference,
         IForeignKey stateReference,
-        string family
+        string family,
+        List<EntityEntry> timestampWrites
     )
     {
         var stream = (IEventStreamRecord)header.Entity;
@@ -240,11 +300,18 @@ public static class RequiredInlineStateExtensions
         )
             Fail("Preserve the stream key, creation time and original version token.");
         object?[] key = InlineStateMetadata.Values(header, streamKey.Properties);
-        ValidateRequiredState(header, stream, previous, key, states, stateReference);
+        var state = ValidateRequiredState(header, stream, previous, key, states, stateReference);
         ValidateEventRange(header, stream, previous, key, events, eventReference);
+        if (header.State == EntityState.Modified)
+        {
+            if (!header.Property(nameof(IEventStreamRecord.UpdatedAt)).IsModified)
+                timestampWrites.Add(header);
+            if (!state.Property(nameof(IInlineStateRecord.RecordedAt)).IsModified)
+                timestampWrites.Add(state);
+        }
     }
 
-    private static void ValidateRequiredState(
+    private static EntityEntry ValidateRequiredState(
         EntityEntry header,
         IEventStreamRecord stream,
         long previous,
@@ -272,6 +339,8 @@ public static class RequiredInlineStateExtensions
             )
         )
             Fail("Preserve the observed inline key/version token.");
+
+        return state;
     }
 
     private static void ValidateEventRange(
@@ -342,146 +411,4 @@ public static class RequiredInlineStateExtensions
 
     [DoesNotReturn]
     private static void Fail(string message) => throw new InvalidOperationException(message);
-
-    // Only library replay may replace state without appending facts. Remember its exact native write
-    // for the caller's save guard; scheduling, retries and completion remain outside this record.
-    private static readonly ConditionalWeakTable<DbContext, MaintenanceWrite> MaintenanceWrites =
-        new();
-
-    internal static bool HasMaintenanceWrite(DbContext database) =>
-        MaintenanceWrites.TryGetValue(database, out _);
-
-    internal static void RequireMaintenanceWrite(
-        DbContext database,
-        Guid id,
-        IDbContextTransaction transaction
-    )
-    {
-        if (
-            !MaintenanceWrites.TryGetValue(database, out var repair)
-            || !ReferenceEquals(repair.Transaction, transaction)
-            || repair.Header.Entity is not IEventStreamRecord header
-            || header.Id != id
-        )
-            Fail(
-                "The provided rebuilder must stage this target in the selected native context/transaction."
-            );
-
-        database.ChangeTracker.DetectChanges();
-        ValidateMaintenanceWrite(database, database.ChangeTracker.Entries().ToArray());
-    }
-
-    internal static bool IsMaintenanceConflict(
-        DbContext database,
-        IDbContextTransaction transaction,
-        DbUpdateConcurrencyException failure
-    ) =>
-        MaintenanceWrites.TryGetValue(database, out var repair)
-        && ReferenceEquals(repair.Transaction, transaction)
-        && failure.Entries.Count > 0
-        && failure.Entries.All(entry =>
-            ReferenceEquals(entry.Context, database)
-            && (
-                ReferenceEquals(entry.Entity, repair.Header.Entity)
-                || ReferenceEquals(entry.Entity, repair.State.Entity)
-            )
-        );
-
-    internal static void RecordMaintenanceWrite(
-        DbContext database,
-        IEventStreamRecord header,
-        IInlineStateRecord state,
-        IDbContextTransaction transaction
-    )
-    {
-        database.ChangeTracker.DetectChanges();
-        MaintenanceWrites.Add(
-            database,
-            new(database.Entry(header), database.Entry(state), transaction)
-        );
-    }
-
-    private static bool ValidateMaintenanceWrite(DbContext database, EntityEntry[] entries)
-    {
-        if (!MaintenanceWrites.TryGetValue(database, out var repair))
-            return false;
-        if (
-            !ReferenceEquals(repair.Transaction, database.Database.CurrentTransaction)
-            || entries.Length != 2
-            || !entries.Any(entry => ReferenceEquals(entry.Entity, repair.Header.Entity))
-            || !entries.Any(entry => ReferenceEquals(entry.Entity, repair.State.Entity))
-        )
-            Fail("Save the exact maintenance header/state in its original transaction.");
-        foreach (var entry in entries)
-        {
-            var expected = ReferenceEquals(entry.Entity, repair.Header.Entity)
-                ? repair.HeaderValues
-                : repair.StateValues;
-            if (
-                entry.State
-                    is not (EntityState.Added or EntityState.Modified or EntityState.Unchanged)
-                || !expected.Properties.All(property =>
-                    expected[property] is DateTimeOffset recordedTime
-                        ? entry.Property(property.Name).CurrentValue is DateTimeOffset currentTime
-                            && recordedTime.EqualsExact(currentTime)
-                        : Equals(expected[property], entry.Property(property.Name).CurrentValue)
-                )
-            )
-                Fail("The maintenance replacement changed after reconstruction.");
-        }
-        var header = repair.Header;
-        var state = repair.State;
-        if (
-            header.State == EntityState.Modified
-            && (
-                header.Properties.Any(property =>
-                    property.IsModified
-                    && property.Metadata.Name != nameof(IEventStreamRecord.ConcurrencyStamp)
-                )
-                || !Equals(
-                    header.Property(nameof(IEventStreamRecord.ConcurrencyStamp)).OriginalValue,
-                    repair.OriginalStamp
-                )
-            )
-        )
-            Fail(
-                "Repair changes only the concurrency stamp, preserving its observed original token."
-            );
-        if (
-            state.State == EntityState.Modified
-            && (
-                !Equals(
-                    state.Property(nameof(IInlineStateRecord.Version)).OriginalValue,
-                    repair.OriginalStateVersion
-                )
-                || !InlineStateMetadata
-                    .Values(state, state.Metadata.FindPrimaryKey()!.Properties, true)
-                    .SequenceEqual(
-                        InlineStateMetadata.Values(
-                            state,
-                            state.Metadata.FindPrimaryKey()!.Properties
-                        )
-                    )
-            )
-        )
-            Fail("Preserve the observed maintenance state key/version.");
-        return true;
-    }
-
-    private sealed class MaintenanceWrite(
-        EntityEntry header,
-        EntityEntry state,
-        IDbContextTransaction transaction
-    )
-    {
-        internal EntityEntry Header { get; } = header;
-        internal EntityEntry State { get; } = state;
-        internal PropertyValues HeaderValues { get; } = header.CurrentValues.Clone();
-        internal PropertyValues StateValues { get; } = state.CurrentValues.Clone();
-        internal object? OriginalStamp { get; } =
-            header.Property(nameof(IEventStreamRecord.ConcurrencyStamp)).OriginalValue;
-        internal object? OriginalStateVersion { get; } =
-            state.Property(nameof(IInlineStateRecord.Version)).OriginalValue;
-        internal IDbContextTransaction Transaction { get; } = transaction;
-    }
 }

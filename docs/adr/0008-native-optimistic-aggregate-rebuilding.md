@@ -1,9 +1,8 @@
 # ADR 0008: Native optimistic aggregate rebuilding
 
-Status: owner-approved replacement, 2026-10-07. Supersedes
-[ADR 0007](0007-pre-read-admission-for-inline-rebuilding.md) and the public two-phase append
-mechanism described in ADR 0005; the aggregate contract and transactional required-state
-choice remain. [Reviewed scope](../plans/es2-native-ef-simplification.md).
+Status: accepted and implemented, 2026-10-07. Replaces cooperative pre-read admission
+and the earlier two-phase append surface. The aggregate bookkeeping contract and required
+transactional inline state remain.
 
 Add an application-managed Guid ConcurrencyStamp on the stream header alongside the native
 Version concurrency token. Every append and full rebuild changes the stamp. Repair preserves
@@ -24,12 +23,18 @@ state to the native EF unit of work. Remove public prepared handles and the advi
 package. A private exact maintenance-write association belongs in the native save guard; no public
 bypass or reusable permit framework is introduced. SaveChanges and commit remain consumer-owned.
 
-The shared EF package references Relational and DI abstractions without a provider dependency.
-PostgreSQL is the tested runtime. A future concrete pessimistic-locking obligation may justify
-*.Postgres anew; no empty abstraction/package is retained. Scheduling, scaling, retry/window
-policy, upcasting, catch-up, secondary/multi-stream projections and a maintenance worker remain
-separate capabilities with their own proof obligations. T1 remains event-free.
+Maintenance association, proposal validation and conflict identity live together in a private
+module. An unchanged participant must match its native stored values in the original transaction;
+tracking state cannot stand in for successful persistence or survive a rolled-back savepoint.
+The synchronous guard uses native synchronous reads, while registered async saves and the
+optional executor use cancellable async reads. This preserves healthy stored state and accepted
+repeated saves without adding a public lifecycle hook or changing the storage model.
 
-[Current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md)
-and [dated executions](../reports/es2-single-stream-rebuilding.md) distinguish this contract from
-historical gate/SQL diagnostics.
+The shared EF package references Relational and DI abstractions without a provider dependency.
+PostgreSQL is the tested runtime. ADR0028 subsequently adds a separately selected committed
+feed/projection protocol with its own native write-lock cost; it changes neither this adapter's
+dependencies nor optimistic rebuilding. Scheduling, scaling, retry/window policy, upcasting and
+secondary projection workers remain separate selections with their own contracts. State-stored
+adopters need no event-sourcing dependency.
+
+See the [current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md) and its native provider tests.

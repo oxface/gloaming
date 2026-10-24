@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
+using Gloaming.Samples.Wholesale.Worker.Local;
 using Gloaming.Tenancy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Local;
+namespace Gloaming.Samples.Wholesale.Worker.Local;
 
 internal static class LocalHost
 {
@@ -68,7 +68,11 @@ internal static class LocalHost
         var result = role switch
         {
             "read" => await orders.ReadAsync(orderId, startup.Token),
-            "retry-compensation" => await orders.RetryCompensationAsync(orderId, startup.Token),
+            "retry-compensation" => await orders.RetryCompensationAsync(
+                orderId,
+                Guid.Parse(Required("OperationId")),
+                startup.Token
+            ),
             _ => await orders.StartAsync(
                 new(
                     orderId,

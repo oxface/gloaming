@@ -1,7 +1,8 @@
 # 0021: Optional native RabbitMQ session lifecycle
 
-Date: 2026-10-22. Status: accepted by owner interface/scope approval; implementation is
-prepared for exact change-set review. [Reviewed scope](../plans/rabbitmq-session-lifecycle.md).
+Date: 2026-10-22. Status: accepted and implemented in the optional native RabbitMQ session package.
+The original owner-approved scope dates to 2026-10-22; current setup and limits are
+[in the package contract](../../src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/README.md).
 
 ## Context
 
@@ -45,7 +46,3 @@ lease fencing/expiry, identity-preserving retries and receipt lifetime remain un
 phase timeouts do not promise arbitrary publisher/exporter or process shutdown deadlines.
 Native automatic-recovery compatibility is tested for live broker application restart; every
 network blackhole, permanent topology failure and whole-workflow outage is not certified.
-
-The [implementation report](../reports/rabbitmq-session-lifecycle.md) separates fresh public-
-interface/adoption proofs from the earlier consumer-only evidence. No template preset,
-database schema/grant, dependency version or generic recovery framework follows from this decision.

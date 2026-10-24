@@ -1,10 +1,10 @@
 using Gloaming.Auditing.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
 
-namespace ModulithFoundry.Samples.Wholesale.Access;
+namespace Gloaming.Samples.Wholesale.Access;
 
 public static class AccessRegistration
 {

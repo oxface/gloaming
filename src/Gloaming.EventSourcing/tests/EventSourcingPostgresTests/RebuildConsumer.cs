@@ -1,9 +1,9 @@
 using System.Data.Common;
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ModulithFoundry.Tests.Infrastructure;
 using Npgsql;
 
 namespace Gloaming.EventSourcing.Postgres.Tests;
@@ -28,7 +28,10 @@ internal sealed class BalanceRow : IInlineStateRecord
     public JsonElement State { get; set; }
 }
 
-internal sealed class LedgerDatabase(DbContextOptions<LedgerDatabase> options) : DbContext(options)
+internal sealed class LedgerDatabase(
+    DbContextOptions<LedgerDatabase> options,
+    bool useCoordinator = false
+) : DbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
@@ -51,7 +54,9 @@ internal sealed class LedgerDatabase(DbContextOptions<LedgerDatabase> options) :
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        this.ValidateEventStreamChanges();
+        if (!useCoordinator)
+            this.ValidateEventStreamChanges();
+
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
@@ -60,7 +65,9 @@ internal sealed class LedgerDatabase(DbContextOptions<LedgerDatabase> options) :
         CancellationToken cancellationToken = default
     )
     {
-        this.ValidateEventStreamChanges();
+        if (!useCoordinator)
+            this.ValidateEventStreamChanges();
+
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }
@@ -96,8 +103,12 @@ internal sealed class Ledger(Guid id, long version, Balance? state)
 
 internal sealed class LedgerStore : EventStore<Ledger, Movement, LedgerStream, StoredEventRecord>
 {
-    internal LedgerStore(LedgerDatabase database, bool failCandidate = false)
-        : base(database, new Records(), new FrozenClock())
+    internal LedgerStore(
+        LedgerDatabase database,
+        bool failCandidate = false,
+        TimeProvider? clock = null
+    )
+        : base(database, new Records(), clock ?? new FrozenClock())
     {
         ConfigureInlineState(new LedgerStateMapping(failCandidate));
     }

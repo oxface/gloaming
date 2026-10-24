@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { createHash, randomBytes } from "node:crypto";
+import { createHash } from "node:crypto";
 import {
   existsSync,
   mkdirSync,
@@ -21,13 +21,14 @@ import {
   sep,
 } from "node:path";
 import { XMLParser, XMLValidator } from "fast-xml-parser";
+import { libraryPackages } from "./packages.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
 const connection = process.env.GLOAMING_PACKAGE_TEST_CONNECTION_STRING;
 assert(
   connection,
-  "Set GLOAMING_PACKAGE_TEST_CONNECTION_STRING to a PostgreSQL connection with CREATEDB permission; full verification never skips PostgreSQL.",
+  "Set GLOAMING_PACKAGE_TEST_CONNECTION_STRING to a PostgreSQL connection with CREATEDB and CREATEROLE permissions; full verification never skips PostgreSQL.",
 );
 assert.equal(
   process.argv.length,
@@ -36,7 +37,6 @@ assert.equal(
 );
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-package-proof-"));
 const feed = join(scratch, "feed");
-const version = `1.0.0-local.${Date.now()}.${randomBytes(4).toString("hex")}`;
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "",
@@ -97,6 +97,14 @@ interface Project {
       | { ProjectReference?: { Include: string } | { Include: string }[] }[];
   };
 }
+
+interface ConsumerProfile {
+  name: string;
+  source: string | undefined;
+  ids: string[];
+  external: { id: string; version: string }[];
+  gloamingClosure?: string[];
+}
 interface Dependency {
   id: string;
   version: string;
@@ -132,32 +140,12 @@ interface Assets {
   };
 }
 
-const packages = readdirSync(join(root, "src"), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory() && entry.name.startsWith("Gloaming."))
-  .flatMap((family) =>
-    readdirSync(join(root, "src", family.name), { withFileTypes: true })
-      .filter(
-        (entry) => entry.isDirectory() && entry.name.startsWith("Gloaming."),
-      )
-      .map((entry) => ({
-        id: entry.name,
-        project: join(
-          root,
-          "src",
-          family.name,
-          entry.name,
-          `${entry.name}.csproj`,
-        ),
-      })),
-  )
-  .sort((left, right) => left.id.localeCompare(right.id));
+const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  23,
+  24,
   "Review the package inventory when adding/removing libraries.",
 );
-for (const item of packages)
-  assert(existsSync(item.project), `Missing library project: ${item.project}`);
 
 function readmeFor(project: string): string {
   const local = join(dirname(project), "README.md");
@@ -196,14 +184,14 @@ function renderReadme(file: string): string {
         !repoPath.startsWith("../"),
         `README link escapes repository: ${target}`,
       );
-      return `](https://github.com/oxface/modulith-foundry/blob/main/${repoPath}${fragment ? `#${fragment}` : ""})`;
+      return `](https://github.com/oxface/gloaming/blob/main/${repoPath}${fragment ? `#${fragment}` : ""})`;
     },
   );
 }
 
 const indexBefore = run("git", ["diff", "--cached", "--binary"]);
 mkdirSync(feed);
-console.log(`Local package proof ${version}; artifacts and logs: ${scratch}`);
+console.log(`Local package proof; artifacts and logs: ${scratch}`);
 
 try {
   // Exercise the native SDK task against independent literal expectations, including
@@ -252,18 +240,30 @@ try {
   for (const item of packages) {
     const rendered = join(scratch, `${item.id}.README.md`);
     writeFileSync(rendered, renderReadme(readmeFor(item.project)));
-    run(dotnet, [
-      "pack",
-      item.project,
-      "--configuration",
-      "Release",
-      "--output",
-      feed,
-      `-p:PackageVersion=${version}`,
-      `-p:Version=${version}`,
-      "--nologo",
-    ]);
   }
+  run(process.execPath, [
+    join(import.meta.dirname, "pack.ts"),
+    "--output",
+    feed,
+  ]);
+  const snapshots = readdirSync(feed).filter((file) =>
+    /^gloaming\..+\.json$/.test(file),
+  );
+  assert.equal(snapshots.length, 1, "Expected one completed local snapshot.");
+  const snapshot = JSON.parse(
+    readFileSync(join(feed, snapshots[0]!), "utf8"),
+  ) as {
+    version: string;
+    feed: string;
+    packages: string[];
+  };
+  const version = snapshot.version;
+  assert.match(version, /^\d+\.\d+\.\d+-local\.\d+\.g[0-9a-f]{8}$/);
+  assert.equal(snapshot.feed, feed);
+  assert.deepEqual(
+    snapshot.packages,
+    packages.map((item) => item.id),
+  );
   const archives = readdirSync(feed).filter((file) => file.endsWith(".nupkg"));
   assert.equal(archives.length, packages.length);
   const unzip = join(scratch, "unzip.proj");
@@ -297,10 +297,7 @@ try {
     assert.equal(metadata.license.type, "expression");
     assert.equal(metadata.license["#text"], "Apache-2.0");
     assert.equal(metadata.repository.type, "git");
-    assert.equal(
-      metadata.repository.url,
-      "https://github.com/oxface/modulith-foundry",
-    );
+    assert.equal(metadata.repository.url, "https://github.com/oxface/gloaming");
     assert.equal(metadata.readme, "README.md");
     assert.equal(
       readFileSync(join(extracted, "README.md"), "utf8"),
@@ -351,18 +348,146 @@ try {
   );
   const packageCache = join(scratch, "nuget-packages");
   const consumerEnv = { ...process.env, NUGET_PACKAGES: packageCache };
-  const profiles = [
+  const dependencyInjection = {
+    id: "Microsoft.Extensions.DependencyInjection",
+    version: "10.0.12",
+  };
+  const postgresProvider = {
+    id: "Npgsql.EntityFrameworkCore.PostgreSQL",
+    version: "10.0.3",
+  };
+  const profiles: ConsumerProfile[] = [
     {
       name: "core",
       source: "Core.cs",
       ids: ["Gloaming.ActorIdentity", "Gloaming.Tenancy"],
-      external: false,
+      external: [],
     },
     {
       name: "events",
       source: "Events.cs",
       ids: ["Gloaming.Events.Serialization", "Gloaming.Events.History"],
-      external: false,
+      external: [],
+    },
+    {
+      name: "event-storage",
+      source: "EventStorage.cs",
+      ids: ["Gloaming.EventSourcing.EntityFrameworkCore"],
+      external: [postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Events.History",
+        "Gloaming.EventSourcing",
+        "Gloaming.EventSourcing.EntityFrameworkCore",
+      ],
+    },
+    {
+      name: "event-feed",
+      source: "EventFeed.cs",
+      ids: ["Gloaming.EventSourcing.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection],
+      gloamingClosure: ["Gloaming.EventSourcing.EntityFrameworkCore.Postgres"],
+    },
+    {
+      name: "event-reactions",
+      source: "EventReactions.cs",
+      ids: ["Gloaming.EventReactions.EntityFrameworkCore"],
+      external: [dependencyInjection, postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.EventReactions",
+        "Gloaming.EventReactions.EntityFrameworkCore",
+      ],
+    },
+    {
+      name: "http-establishment",
+      source: "HttpEstablishment.cs",
+      ids: ["Gloaming.ActorIdentity.AspNetCore", "Gloaming.Tenancy.AspNetCore"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.ActorIdentity",
+        "Gloaming.ActorIdentity.AspNetCore",
+        "Gloaming.Tenancy",
+        "Gloaming.Tenancy.AspNetCore",
+      ],
+    },
+    {
+      name: "row-security",
+      source: "RowSecurity.cs",
+      ids: ["Gloaming.Persistence.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection, postgresProvider],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore.Postgres",
+        "Gloaming.Tenancy",
+      ],
+    },
+    {
+      name: "due-intents",
+      source: "DueIntents.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "recurrence",
+      source: "Recurrence.cs",
+      ids: ["Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+        "Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "contributions",
+      source: "Contributions.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "wakeups",
+      source: "Wakeups.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "personnel-slice",
+      source: "PersonnelSlice.cs",
+      ids: [
+        "Gloaming.Tenancy",
+        "Gloaming.Persistence.EntityFrameworkCore",
+        "Gloaming.Auditing.EntityFrameworkCore",
+      ],
+      external: [postgresProvider],
+      gloamingClosure: [
+        "Gloaming.ActorIdentity",
+        "Gloaming.Auditing.EntityFrameworkCore",
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
+        "Gloaming.Tenancy",
+      ],
     },
     {
       name: "postgres",
@@ -370,15 +495,36 @@ try {
       ids: [
         "Gloaming.Persistence.EntityFrameworkCore",
         "Gloaming.Messaging.EntityFrameworkCore.Postgres",
-        "Gloaming.Auditing.EntityFrameworkCore.Postgres",
+        "Gloaming.Auditing.EntityFrameworkCore",
       ],
-      external: true,
+      external: [dependencyInjection],
+    },
+    {
+      name: "hosting",
+      source: "Hosting.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Hosting"],
+      external: [dependencyInjection],
+    },
+    {
+      name: "workflows",
+      source: "Workflows.cs",
+      ids: [
+        "Gloaming.Messaging.Workflows.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+      external: [dependencyInjection],
     },
     {
       name: "all-packages",
       source: undefined,
       ids: packages.map((item) => item.id),
-      external: false,
+      external: [],
+    },
+    {
+      name: "command-receipts",
+      source: "CommandReceipts.cs",
+      ids: ["Gloaming.CommandReceipts.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection],
     },
   ];
   for (const profile of profiles) {
@@ -391,11 +537,11 @@ try {
             join(import.meta.dirname, "consumers", profile.source),
             "utf8",
           )
-        : 'Console.WriteLine("PASS all 23 package references compile together");',
+        : `Console.WriteLine("PASS all ${packages.length} package references compile together");`,
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),
-      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external ? '<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.12"/>' : ""}</ItemGroup></Project>`,
+      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external.map(({ id, version }) => `<PackageReference Include="${id}" Version="${version}"/>`).join("")}</ItemGroup></Project>`,
     );
     run(
       dotnet,
@@ -449,6 +595,26 @@ try {
       [...expected].sort(),
       `Unrelated Gloaming family introduced into ${profile.name}`,
     );
+    assert.equal(
+      Object.keys(assets.libraries).some((name) =>
+        name.startsWith("Microsoft.Extensions.Hosting.Abstractions/"),
+      ),
+      expected.has("Gloaming.Messaging.EntityFrameworkCore.Hosting"),
+      `Hosting dependency must follow explicit worker selection in ${profile.name}`,
+    );
+    if (profile.name === "workflows")
+      assert(
+        !Object.keys(assets.libraries).some((name) =>
+          name.startsWith("RabbitMQ.Client/"),
+        ),
+        "Continuation execution must not select a transport client.",
+      );
+    if (profile.gloamingClosure)
+      assert.deepEqual(
+        gloaming.map(([name]) => name.split("/")[0]!).sort(),
+        [...profile.gloamingClosure].sort(),
+        `${profile.name} must remain independently adoptable without other Gloaming families.`,
+      );
     for (const [name, library] of gloaming) {
       assert.equal(name.split("/")[1], version);
       assert(

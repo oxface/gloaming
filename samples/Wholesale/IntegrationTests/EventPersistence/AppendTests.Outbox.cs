@@ -1,24 +1,24 @@
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 public sealed partial class AppendTests
 {
     [Fact]
     public async Task AcceptedIssueCommitsOneNotificationForTheWholeBatchAndRejectionEmitsNothing()
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var provider = Provider(connection);
         await using (var rejected = Scope(provider, Alpha))
         {
-            var database = Context(rejected, true);
+            var database = Context(rejected);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.IsType<StockPositionChangeResult.InsufficientStock>(
                 await IssueAsync(rejected, 3, [3, 3])
@@ -26,22 +26,22 @@ public sealed partial class AppendTests
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await AssertOutboxAsync(provider, 0);
         await using (var writer = Scope(provider, Alpha))
         {
-            var database = Context(writer, true);
+            var database = Context(writer);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Assert.Equal((5, 2m), Proposed(await IssueAsync(writer, 3, [2, 1])));
             await database.SaveChangesAsync(Token);
             await AssertOutboxAsync(provider, 0);
             await transaction.CommitAsync(Token);
         }
-        await AssertReadAsync(provider, true, (5, 2m));
-        Assert.Equal(5, await EventCountAsync(connection, true));
+
+        await AssertReadAsync(provider, (5, 2m));
+        Assert.Equal(5, await EventCountAsync(connection));
         await using var read = Scope(provider, Alpha);
-        var row = Assert.Single(
-            await Context(read, true).Set<OutboxMessageRecord>().ToArrayAsync(Token)
-        );
+        var row = Assert.Single(await Context(read).Set<OutboxMessageRecord>().ToArrayAsync(Token));
         Assert.Equal(Alpha, row.TenantKey);
         Assert.Equal(row.MessageId, row.Payload.GetProperty("messageId").GetGuid());
         Assert.Equal(5, row.Payload.GetProperty("version").GetInt64());
@@ -49,7 +49,7 @@ public sealed partial class AppendTests
         Assert.Equal(2m, row.Payload.GetProperty("remainingQuantity").GetDecimal());
         Assert.Equal(Changed, row.Payload.GetProperty("recordedAt").GetDateTimeOffset());
         await using var foreign = Scope(provider, Beta);
-        Assert.Empty(await Context(foreign, true).Set<OutboxMessageRecord>().ToArrayAsync(Token));
+        Assert.Empty(await Context(foreign).Set<OutboxMessageRecord>().ToArrayAsync(Token));
     }
 
     [Theory]
@@ -61,30 +61,31 @@ public sealed partial class AppendTests
         string fault
     )
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         if (fault == "outbox")
             await ExecuteAsync(
                 connection,
                 "ALTER TABLE inventory.outbox_messages ADD CONSTRAINT test_outbox CHECK (schema_version > 1)"
             );
         else
-            await FaultAsync(connection, true, fault);
+            await FaultAsync(connection, fault);
         await using var provider = Provider(connection);
         await using (var writer = Scope(provider, Alpha))
         {
-            var database = Context(writer, true);
+            var database = Context(writer);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Proposed(await IssueAsync(writer, 3, [2, 1]));
             await Assert.ThrowsAsync<DbUpdateException>(() => database.SaveChangesAsync(Token));
             await transaction.RollbackAsync(Token);
         }
-        await AssertReadAsync(provider, true, (3, 5m));
-        Assert.Equal(3, await EventCountAsync(connection, true));
+
+        await AssertReadAsync(provider, (3, 5m));
+        Assert.Equal(3, await EventCountAsync(connection));
         await AssertOutboxAsync(provider, 0);
         string table = fault switch
         {
             "outbox" => "outbox_messages",
-            "current" => CurrentTable(true),
+            "current" => CurrentTable,
             "header" => "event_streams",
             _ => "events",
         };
@@ -100,7 +101,7 @@ public sealed partial class AppendTests
             $"ALTER TABLE inventory.{table} DROP CONSTRAINT {constraint}"
         );
         await using var fresh = Scope(provider, Alpha);
-        var recovered = Context(fresh, true);
+        var recovered = Context(fresh);
         await using var recovery = await recovered.Database.BeginTransactionAsync(Token);
         Proposed(await IssueAsync(fresh, 3, [2, 1]));
         await recovered.SaveChangesAsync(Token);
@@ -111,22 +112,23 @@ public sealed partial class AppendTests
     [Fact]
     public async Task RollbackAndCompetingIssuesLeaveOnlyTheWinningNotificationAndRebuildHasNoExternalEffects()
     {
-        string connection = await SeedAsync(true);
+        string connection = await SeedAsync();
         await using var provider = RebuildProvider(connection);
         await using (var rolledBack = Scope(provider, Alpha))
         {
-            var database = Context(rolledBack, true);
+            var database = Context(rolledBack);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
             Proposed(await IssueAsync(rolledBack, 3, [1]));
             await database.SaveChangesAsync(Token);
             await transaction.RollbackAsync(Token);
         }
+
         await AssertOutboxAsync(provider, 0);
         await using (var winner = Scope(provider, Alpha))
         await using (var loser = Scope(provider, Alpha))
         {
-            var first = Context(winner, true);
-            var second = Context(loser, true);
+            var first = Context(winner);
+            var second = Context(loser);
             await using var winningTransaction = await first.Database.BeginTransactionAsync(Token);
             await using var losingTransaction = await second.Database.BeginTransactionAsync(Token);
             Proposed(await IssueAsync(winner, 3, [4]));
@@ -136,19 +138,21 @@ public sealed partial class AppendTests
             var conflict = await Assert.ThrowsAnyAsync<DbUpdateException>(() =>
                 second.SaveChangesAsync(Token)
             );
-            Assert.True(IsConflict(true, conflict));
+            Assert.True(IsConflict(conflict));
             await losingTransaction.RollbackAsync(Token);
         }
-        await AssertReadAsync(provider, true, (4, 1m));
+
+        await AssertReadAsync(provider, (4, 1m));
         await AssertOutboxAsync(provider, 1);
         await using (var repair = Scope(provider, Alpha))
         {
-            var database = Context(repair, true);
+            var database = Context(repair);
             await using var transaction = await database.Database.BeginTransactionAsync(Token);
-            Rebuilt(await RebuildAsync(repair, true));
+            Rebuilt(await RebuildAsync(repair));
             await database.SaveChangesAsync(Token);
             await transaction.CommitAsync(Token);
         }
+
         await AssertOutboxAsync(provider, 1);
     }
 
@@ -180,9 +184,6 @@ public sealed partial class AppendTests
     private static async Task AssertOutboxAsync(ServiceProvider provider, int expected)
     {
         await using var scope = Scope(provider, Alpha);
-        Assert.Equal(
-            expected,
-            await Context(scope, true).Set<OutboxMessageRecord>().CountAsync(Token)
-        );
+        Assert.Equal(expected, await Context(scope).Set<OutboxMessageRecord>().CountAsync(Token));
     }
 }

@@ -1,7 +1,7 @@
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Api.HttpIntegration;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Api.HttpIntegration;
 
-namespace ModulithFoundry.Samples.Wholesale.Api.Endpoints;
+namespace Gloaming.Samples.Wholesale.Api.Endpoints;
 
 public static class MembershipEndpoints
 {

@@ -69,10 +69,7 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
             ?? throw new InvalidOperationException(
                 "Rebuilding requires an explicit native transaction."
             );
-        if (
-            database.ChangeTracker.Entries().Any()
-            || RequiredInlineStateExtensions.HasMaintenanceWrite(database)
-        )
+        if (database.ChangeTracker.Entries().Any() || MaintenanceWriteRegistry.HasWrite(database))
             throw new InvalidOperationException("Rebuild once in a fresh operation context.");
 
         var observedStream = await database
@@ -180,12 +177,7 @@ public abstract class AggregateRebuilder<TAggregate, TEvent, TStreamRecord, TInl
         database.Set<TStreamRecord>().Attach(observedStream);
         observedStream.ConcurrencyStamp = Guid.NewGuid();
         var state = writer.AddOrUpdate(persistedStateRow, candidate);
-        RequiredInlineStateExtensions.RecordMaintenanceWrite(
-            database,
-            observedStream,
-            state,
-            transaction
-        );
+        MaintenanceWriteRegistry.Record(database, observedStream, state, transaction);
         return new(observedStream.Version, observedStream.UpdatedAt);
     }
 }

@@ -1,7 +1,12 @@
 # Durable continuations
 
-Optional `Gloaming.Messaging.Workflows` and `Gloaming.Messaging.Workflows.EntityFrameworkCore`
-execute named consumer methods from a stored process. A new reply invokes only its saved
+The optional `Gloaming.Messaging.Workflows.EntityFrameworkCore` package supplies definitions
+and native EF execution together. The `Gloaming.Messaging.Workflows` and
+`Gloaming.Messaging.Workflows.EntityFrameworkCore` namespaces are unchanged. Definition-only
+consumers also take the EF dependency; ordinary messaging/hosting consumers do not depend
+on this package.
+
+Execute named consumer methods from a stored process. A new reply invokes only its saved
 continuation. Start and earlier methods are not replayed. Business branching and compensation
 are ordinary C# decisions; there is no graph interpreter, scheduler or workflow worker.
 
@@ -24,19 +29,19 @@ by this package. Shared native transactions through Contracts are a separate ato
 an automatic consequence of workflow persistence. Compensation itself is consumer-owned business
 behavior and may fail or require an operator; durable state does not guarantee eventual success.
 
-The [D2.3 comparison](../../../docs/reports/d2-3-module-consistency-and-coordination.md) separates
-process state, delivery and transaction ownership. The
-[local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md) now demonstrates
-broker-free delivery through public module intake Contracts using existing inbox/outbox seams.
-Its [proof report](../../../docs/reports/d2-3a-local-durable-module-delivery.md) records adoption
-and process-death evidence without adding a general transport or extending this package to arbitrary
-direct calls. Shared native transaction adoption remains a separate proof.
+The [local reservation consumer](../../../samples/Wholesale/Worker/Local/README.md)
+demonstrates broker-free delivery through public module intake Contracts and existing inbox/outbox
+roles. It does not extend workflow execution to arbitrary independently committing direct calls.
+Shared native transaction composition has its own atomicity obligations.
 
 ## Setup and execution
 
 A module registers its own typed context, existing typed outbox and definition:
 
 ```csharp
+using Gloaming.Messaging.Workflows;
+using Gloaming.Messaging.Workflows.EntityFrameworkCore;
+
 services.AddWorkflow<OrdersDbContext, StartOrder, OrderState>(_ =>
     new WorkflowBuilder<StartOrder, OrderState>("order", 1, Json)
         .StartWith(Start)
@@ -146,6 +151,23 @@ portable CLR LINQ queries over the typed JSON state are not supplied.
 - EF only tracks changes. The caller's save/commit or existing inbox processor provides atomic
   persistence. There is no distributed transaction or exactly-once external effect claim.
 
+An `Unchanged` tracked process or request is not proof that its write participated in the
+transaction. Save validation reads its native stored values in the originating transaction
+and compares the captured proposal; JSON comparison is semantic, including JSONB round trips.
+Missing or different stored values reject premature acceptance and detect a turn undone by
+savepoint rollback. Request comparison excludes database-generated delivery fields. Ordinary
+first saves of an `Added`/`Modified` process with an `Added` request need no verification reads.
+
+These complete-primary-key reads use native EF mappings and ignore EF query filters; database
+permissions/RLS still apply. Repeated saves require SELECT access to all mapped columns in
+the process/request records, including the request payload. This is integrity verification,
+not tenant/resource admission. Consumers retain credentials, policies and transaction setup.
+The explicit `ValidateWorkflowChanges` guard is synchronous, including when called from an
+async override. The optional `AddWorkflowValidation<TContext>` integration uses async reads
+and the save cancellation token during native async saving. Valid repeated saves are supported;
+after `SaveChanges(false)` or its async form, call native `AcceptAllChanges` before another save.
+Dispose failed scopes rather than restoring tracked proposals for another attempt.
+
 Consumer JSON options are copied/frozen and bindings are copied at construction/build. Use
 explicit `[JsonRequired]` fields and consumer validation where missing fields would otherwise
 become a valid-looking default. No payload/state upcasting or automatic definition migration is
@@ -182,14 +204,7 @@ separate consumer decisions and proofs before runtime expansion.
 
 ## Executable references
 
-- [Sales bindings](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs)
-  perform two stock reservations and explicitly release the first after second-line refusal.
-- [Sales application](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOrders.cs)
-  shows explicit start/read/operator save/commit. Its [reply handler](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs)
-  retains producer/tenant/actor admission.
-- [Standalone workspace consumer](../tests/WorkflowPostgresTests/WorkspaceConsumer.cs) owns a different
-  schema, tenantless metadata, JSON and contracts. Existing-resource inspection branches differently
-  and refuses activation without releasing a resource it did not create.
-- [Protocol/transaction/inbox proofs](../tests/WorkflowPostgresTests) exercise real PostgreSQL.
-  [The dated slice report](../../../docs/reports/wf2-durable-continuations.md) separates these results
-  from historical sequential-policy evidence.
+- [Sales bindings](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/ReservationWorkflow.cs) reserve two stock lines and compensate explicitly after refusal.
+- [Sales application](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationOrders.cs) owns start/read/operator save/commit; its [reply handler](../../../samples/Wholesale/modules/Sales/Sales/ReservationOrders/StockReservationReplyHandler.cs) retains admission.
+- [Workspace consumer](../tests/WorkflowPostgresTests/WorkspaceConsumer.cs) owns a different schema, JSON, contracts and business branches.
+- [Native protocol tests](../tests/WorkflowPostgresTests) and [compiled deployments](../tests/WorkflowDeploymentTests) exercise PostgreSQL composition and compatible consumer replacement.

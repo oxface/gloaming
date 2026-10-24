@@ -5,13 +5,13 @@ using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
 using Gloaming.Messaging.EntityFrameworkCore;
 using Gloaming.Messaging.RabbitMQ;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Sales;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Sales;
 using RabbitMQ.Client;
 
-namespace ModulithFoundry.Samples.Wholesale.Worker.Broker;
+namespace Gloaming.Samples.Wholesale.Worker.Broker;
 
 /// <summary>Native sample routing and acknowledgement. Owns separate channels for concurrent hosted roles.</summary>
 public sealed class WorkflowBroker : IAsyncDisposable

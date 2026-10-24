@@ -1,9 +1,9 @@
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.DraftOrders;
-using ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.DomainEvents;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.DraftOrders;
+using Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Reactions;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Reactions;
 
 public sealed class DomainTests
 {

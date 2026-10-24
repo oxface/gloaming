@@ -1,4 +1,4 @@
-namespace ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+namespace Gloaming.Samples.Wholesale.Inventory.Contracts;
 
 // Staging changes the caller's native context only. Staged is not committed success.
 public interface IStockPositionCommands

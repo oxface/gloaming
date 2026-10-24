@@ -13,8 +13,8 @@
     <Authors>oxface</Authors>
     <Description>Independently adoptable $(MSBuildProjectName) capabilities for native .NET applications.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/oxface/modulith-foundry</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/oxface/modulith-foundry</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/oxface/gloaming</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/oxface/gloaming</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

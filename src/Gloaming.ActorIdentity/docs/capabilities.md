@@ -1,7 +1,6 @@
 # ActorIdentity composition and capabilities
 
-Current scope, 2026-10-07. This family guide and the package-local contracts travel with
-the source. Root plans/reports retain cross-cutting review and dated execution evidence.
+This family guide and package-local contracts describe current capabilities, setup and supported limits.
 
 ## Supported composition
 

@@ -1,8 +1,8 @@
-using System.Diagnostics;
-using ModulithFoundry.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Tests.Infrastructure;
 using Npgsql;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.Api;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.Api;
 
 public sealed partial class CompositionTests
 {
@@ -14,57 +14,32 @@ public sealed partial class CompositionTests
         string key
     )
     {
-        var start = new ProcessStartInfo("dotnet")
+        var environment = new Dictionary<string, string>
         {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
+            ["ConnectionStrings__Access"] =
+                "Host=127.0.0.1;Port=1;Database=unused;Username=runtime",
+            ["ConnectionStrings__Sales"] = "Host=127.0.0.1;Port=1;Database=unused;Username=runtime",
+            ["ConnectionStrings__Setup"] = "",
+            ["ConnectionStrings__SalesMigrations"] = "",
+            ["Parameters__postgres-password"] = "",
         };
-        start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
-        start.Environment["ConnectionStrings__Access"] =
-            "Host=127.0.0.1;Port=1;Database=unused;Username=runtime";
-        start.Environment["ConnectionStrings__Sales"] =
-            "Host=127.0.0.1;Port=1;Database=unused;Username=runtime";
-        foreach (
-            string provisionKey in new[]
-            {
-                "ConnectionStrings__Setup",
-                "ConnectionStrings__SalesMigrations",
-                "Parameters__postgres-password",
-            }
-        )
-            start.Environment[provisionKey] = "";
+        environment[key] = "deliberately-forbidden-provisioning-value";
+        await using var process = new ChildHost(typeof(DemoComposition).Assembly, environment);
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
 
-        start.Environment[key] = "deliberately-forbidden-provisioning-value";
-        using var process =
-            Process.Start(start)
-            ?? throw new InvalidOperationException("Could not start the guarded HTTP host.");
-        Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-        Task<string> errors = process.StandardError.ReadToEndAsync(Token);
-        try
-        {
-            await process.WaitForExitAsync(Token).WaitAsync(TimeSpan.FromSeconds(30), Token);
-            Assert.NotEqual(0, process.ExitCode);
-            Assert.Contains(
-                "Keep provisioning credentials out",
-                await errors,
-                StringComparison.Ordinal
-            );
-            Assert.DoesNotContain(
-                "deliberately-forbidden-provisioning-value",
-                await errors,
-                StringComparison.Ordinal
-            );
-            Assert.DoesNotContain("Now listening", await output, StringComparison.Ordinal);
-        }
-        finally
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync(CancellationToken.None);
-            }
-        }
+        Assert.NotEqual(0, await process.WaitForExitAsync(timeout.Token));
+        Assert.Contains(
+            "Keep provisioning credentials out",
+            process.StandardError,
+            StringComparison.Ordinal
+        );
+        Assert.DoesNotContain(
+            "deliberately-forbidden-provisioning-value",
+            process.StandardError,
+            StringComparison.Ordinal
+        );
+        Assert.DoesNotContain("Now listening", process.StandardOutput, StringComparison.Ordinal);
     }
 
     [Theory]
@@ -74,43 +49,28 @@ public sealed partial class CompositionTests
     public async Task InvalidExplicitDemoIdentityInputsFailBeforeCreatingSchema(string fault)
     {
         string connection = await postgres.CreateDatabaseAsync(Token);
-        var start = new ProcessStartInfo("dotnet")
-        {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        };
-        start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
-        start.ArgumentList.Add("--initialize-demo");
-        start.Environment["ConnectionStrings__Access"] = connection;
-        start.Environment["DemoIdentity__Issuer"] =
-            fault == "insecure-issuer" ? "http://identity.test" : "https://identity.test";
-        start.Environment["DemoIdentity__AlphaSubject"] = "alpha-subject";
-        if (fault == "partial")
-            start.Environment.Remove("DemoIdentity__BetaSubject");
-        else
-            start.Environment["DemoIdentity__BetaSubject"] =
-                fault == "duplicate-subjects" ? "alpha-subject" : "beta-subject";
-        using var process =
-            Process.Start(start)
-            ?? throw new InvalidOperationException("Could not start demo setup.");
-        Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-        Task<string> errors = process.StandardError.ReadToEndAsync(Token);
-        try
-        {
-            await process.WaitForExitAsync(Token).WaitAsync(TimeSpan.FromSeconds(30), Token);
-            Assert.NotEqual(0, process.ExitCode);
-            Assert.Contains("Configure a HTTPS DemoIdentity:Issuer", await errors);
-            Assert.DoesNotContain("demo initialized", await output);
-        }
-        finally
-        {
-            if (!process.HasExited)
+        await using var process = new ChildHost(
+            typeof(DemoComposition).Assembly,
+            new()
             {
-                process.Kill(entireProcessTree: true);
-                await process.WaitForExitAsync(CancellationToken.None);
-            }
-        }
+                ["ConnectionStrings__Access"] = connection,
+                ["DemoIdentity__Issuer"] =
+                    fault == "insecure-issuer" ? "http://identity.test" : "https://identity.test",
+                ["DemoIdentity__AlphaSubject"] = "alpha-subject",
+                ["DemoIdentity__BetaSubject"] =
+                    fault == "partial" ? ""
+                    : fault == "duplicate-subjects" ? "alpha-subject"
+                    : "beta-subject",
+            },
+            "--initialize-demo"
+        );
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+
+        Assert.NotEqual(0, await process.WaitForExitAsync(timeout.Token));
+        Assert.Contains("Configure a HTTPS DemoIdentity:Issuer", process.StandardError);
+        Assert.DoesNotContain("demo initialized", process.StandardOutput);
+
         await using var database = new NpgsqlConnection(connection);
         await database.OpenAsync(Token);
         await using var command = new NpgsqlCommand(

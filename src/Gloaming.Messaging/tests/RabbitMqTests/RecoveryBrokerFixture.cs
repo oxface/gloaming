@@ -1,6 +1,6 @@
 using Testcontainers.RabbitMq;
 
-namespace ModulithFoundry.RabbitMqTests;
+namespace Gloaming.RabbitMqTests;
 
 // Native outage controls are isolated from all other RabbitMQ proofs.
 public sealed class RecoveryBrokerFixture : IAsyncLifetime

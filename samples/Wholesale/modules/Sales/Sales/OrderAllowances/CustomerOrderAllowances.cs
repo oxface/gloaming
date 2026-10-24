@@ -1,8 +1,8 @@
 using Gloaming.ActorIdentity;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales.OrderAllowances;
+namespace Gloaming.Samples.Wholesale.Sales.OrderAllowances;
 
 internal sealed class CustomerOrderAllowances(SalesDbContext database, IActorContextAccessor actor)
     : ICustomerOrderAllowances

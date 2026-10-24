@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Messaging;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
 
-namespace ModulithFoundry.Samples.Wholesale.Sales;
+namespace Gloaming.Samples.Wholesale.Sales;
 
 /// <summary>Inventory reservation outcomes admitted to the Sales-owned process lane.</summary>
 public static class StockReservationReplyAdmission

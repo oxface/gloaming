@@ -1,7 +1,7 @@
+using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 using Microsoft.Extensions.DependencyInjection;
-using ModulithFoundry.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 
-namespace ModulithFoundry.Samples.Wholesale.IntegrationTests.EventPersistence;
+namespace Gloaming.Samples.Wholesale.IntegrationTests.EventPersistence;
 
 internal sealed class TestClock : TimeProvider
 {

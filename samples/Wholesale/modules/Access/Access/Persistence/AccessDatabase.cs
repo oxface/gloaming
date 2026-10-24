@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ModulithFoundry.Samples.Wholesale.Access.Persistence;
+namespace Gloaming.Samples.Wholesale.Access.Persistence;
 
 public static class AccessDatabase
 {

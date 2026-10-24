@@ -1,8 +1,7 @@
+using Gloaming.Samples.Wholesale.Worker.Broker;
+using Gloaming.Samples.Wholesale.Worker.Local;
+using Gloaming.Samples.Wholesale.Worker.Maintenance;
 using Microsoft.Extensions.Configuration;
-using ModulithFoundry.Samples.Wholesale.Worker.Broker;
-using ModulithFoundry.Samples.Wholesale.Worker.Directory;
-using ModulithFoundry.Samples.Wholesale.Worker.Local;
-using ModulithFoundry.Samples.Wholesale.Worker.Maintenance;
 
 if (args.FirstOrDefault() == "--regenerate-stock")
 {
@@ -14,13 +13,7 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .AddCommandLine(args)
     .Build();
-if (configuration["role"] == "directory")
-{
-    await DirectoryHost.RunAsync(args);
-    return;
-}
-
-if (configuration["role"] is "inventory" or "purchasing")
+if (configuration["role"] == "inventory")
 {
     using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(60));
     Environment.ExitCode = await BusinessOperations.RunAsync(configuration, deadline.Token);

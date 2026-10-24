@@ -8,25 +8,21 @@ using Gloaming.Events.Serialization;
 using Gloaming.EventSourcing;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Persistence.EntityFrameworkCore;
+using Gloaming.Samples.Wholesale.Access.Contracts;
+using Gloaming.Samples.Wholesale.Access.Persistence;
+using Gloaming.Samples.Wholesale.Api;
+using Gloaming.Samples.Wholesale.Inventory;
+using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Samples.Wholesale.Sales;
+using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Gloaming.Tenancy;
 using Gloaming.Tenancy.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using ModulithFoundry.Samples.Wholesale.Access.Contracts;
-using ModulithFoundry.Samples.Wholesale.Access.Persistence;
-using ModulithFoundry.Samples.Wholesale.Api;
-using ModulithFoundry.Samples.Wholesale.Dispatch;
-using ModulithFoundry.Samples.Wholesale.Dispatch.Contracts;
-using ModulithFoundry.Samples.Wholesale.Inventory;
-using ModulithFoundry.Samples.Wholesale.Inventory.Contracts;
-using ModulithFoundry.Samples.Wholesale.Purchasing;
-using ModulithFoundry.Samples.Wholesale.Purchasing.Contracts;
-using ModulithFoundry.Samples.Wholesale.Sales;
-using ModulithFoundry.Samples.Wholesale.Sales.Contracts;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ReflectionAssembly = System.Reflection.Assembly;
 
-namespace ModulithFoundry.ArchitectureTests;
+namespace Gloaming.ArchitectureTests;
 
 public sealed class SampleModuleBoundaryTests
 {
@@ -35,16 +31,12 @@ public sealed class SampleModuleBoundaryTests
         typeof(AccessDbContext).Assembly,
         typeof(InventoryDbContext).Assembly,
         typeof(SalesDbContext).Assembly,
-        typeof(PurchasingDbContext).Assembly,
-        typeof(DispatchDbContext).Assembly,
     ];
     private static readonly ReflectionAssembly[] Contracts =
     [
         typeof(IApplicationAccess).Assembly,
         typeof(IStockCatalog).Assembly,
         typeof(ICustomerProfiles).Assembly,
-        typeof(IPurchaseOrderHistory).Assembly,
-        typeof(ICustomerDirectory).Assembly,
     ];
     private static readonly ReflectionAssembly[] Libraries =
     [
@@ -59,7 +51,6 @@ public sealed class SampleModuleBoundaryTests
         typeof(IEventSourcedAggregate<>).Assembly,
         typeof(Gloaming.Messaging.OutgoingMessage).Assembly,
         typeof(Gloaming.Messaging.Workflows.WorkflowStatus).Assembly,
-        typeof(Gloaming.Messaging.Workflows.EntityFrameworkCore.WorkflowModelBuilderExtensions).Assembly,
         typeof(Gloaming.Messaging.EntityFrameworkCore.IOutbox<>).Assembly,
         typeof(Gloaming.Messaging.EntityFrameworkCore.Postgres.PostgresOutboxDispatcher<>).Assembly,
     ];
@@ -79,22 +70,6 @@ public sealed class SampleModuleBoundaryTests
         .Build();
 
     [Theory]
-    [InlineData("Dispatch", "Access")]
-    [InlineData("Dispatch", "Sales")]
-    [InlineData("Dispatch", "Inventory")]
-    [InlineData("Dispatch", "Purchasing")]
-    [InlineData("Dispatch", "Wholesale.Api")]
-    [InlineData("Access", "Dispatch")]
-    [InlineData("Sales", "Dispatch")]
-    [InlineData("Inventory", "Dispatch")]
-    [InlineData("Purchasing", "Dispatch")]
-    [InlineData("Purchasing", "Access")]
-    [InlineData("Access", "Purchasing")]
-    [InlineData("Purchasing", "Inventory")]
-    [InlineData("Inventory", "Purchasing")]
-    [InlineData("Purchasing", "Sales")]
-    [InlineData("Sales", "Purchasing")]
-    [InlineData("Purchasing", "Wholesale.Api")]
     [InlineData("Access", "Sales")]
     [InlineData("Sales", "Access")]
     [InlineData("Inventory", "Sales")]
@@ -108,8 +83,6 @@ public sealed class SampleModuleBoundaryTests
         NoDependency(ReflectionAssembly.Load(module), ReflectionAssembly.Load(forbidden));
 
     [Theory]
-    [InlineData("Dispatch.Contracts")]
-    [InlineData("Purchasing.Contracts")]
     [InlineData("Access.Contracts")]
     [InlineData("Inventory.Contracts")]
     [InlineData("Sales.Contracts")]
@@ -155,7 +128,7 @@ public sealed class SampleModuleBoundaryTests
     {
         var endpoints = Types()
             .That()
-            .ResideInNamespace("ModulithFoundry.Samples.Wholesale.Api.Endpoints");
+            .ResideInNamespace("Gloaming.Samples.Wholesale.Api.Endpoints");
         Assert.NotEmpty(endpoints.GetObjects(Architecture));
         foreach (ReflectionAssembly forbidden in Modules)
             endpoints
@@ -164,12 +137,12 @@ public sealed class SampleModuleBoundaryTests
                 .Check(Architecture);
     }
 
-    [Theory]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery")]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory.Delivery")]
-    public void RelaysUseContractsWithoutModulePersistenceOrBrokerDependencies(string namespaceName)
+    [Fact]
+    public void RelaysUseContractsWithoutModulePersistenceOrBrokerDependencies()
     {
-        var relays = Types().That().ResideInNamespace(namespaceName);
+        var relays = Types()
+            .That()
+            .ResideInNamespace("Gloaming.Samples.Wholesale.Worker.Local.Delivery");
         Assert.NotEmpty(relays.GetObjects(Architecture));
         foreach (ReflectionAssembly forbidden in Modules.Append(typeof(DbContext).Assembly))
             relays
@@ -191,10 +164,8 @@ public sealed class SampleModuleBoundaryTests
     }
 
     [Theory]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local")]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Local.Delivery")]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory")]
-    [InlineData("ModulithFoundry.Samples.Wholesale.Worker.Directory.Delivery")]
+    [InlineData("Gloaming.Samples.Wholesale.Worker.Local")]
+    [InlineData("Gloaming.Samples.Wholesale.Worker.Local.Delivery")]
     public void EveryLocalTransportComponentRemainsIndependentOfBrokerApis(string namespaceName)
     {
         var components = Types().That().ResideInNamespace(namespaceName);
