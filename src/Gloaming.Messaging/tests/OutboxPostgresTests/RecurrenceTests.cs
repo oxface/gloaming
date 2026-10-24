@@ -901,7 +901,7 @@ public sealed class RecurrenceTests(PostgreSqlFixture postgres)
         await database.SaveChangesAsync(Token);
         int before = interceptor.Reads;
         Assert.Equal(0, await database.SaveChangesAsync(Token));
-        Assert.True(interceptor.Reads >= before + 2);
+        Assert.Equal(before + 2, interceptor.Reads);
         using var cancelled = new CancellationTokenSource();
         cancelled.Cancel();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>

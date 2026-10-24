@@ -99,7 +99,7 @@ dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPos
 
 This suite runs in the Tenancy CI lane using PostgreSQL 18.6 Testcontainers. On the repository's
 rootless Podman workstation, use the socket environment in the
-[development guide](../../../docs/development.md#tooling-and-infrastructure).
+[development guide](../../../docs/development.md#native-provider-and-process-tests).
 
 The separate [Persistence/PostgreSQL adapter](../../Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
 composes ownership mapping and automatic transaction-local setup. This package remains the

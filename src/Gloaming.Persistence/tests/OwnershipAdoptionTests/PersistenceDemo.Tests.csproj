@@ -9,6 +9,7 @@
     <PackageReference Include="Testcontainers.PostgreSql" />
     <ProjectReference Include="../../samples/PersistenceDemo/PersistenceDemo.csproj" />
     <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="ChildHost.cs" />
     <Using Include="Xunit" />
   </ItemGroup>
 </Project>

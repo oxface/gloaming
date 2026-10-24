@@ -133,8 +133,8 @@ public static class PostgresContributionConfiguration
         return services.TryAddGloamingCapability<TContext>(
             Capability,
             CapabilityPhase.Validate,
-            (_, database) => database.ValidateContributionChanges(),
-            (_, database, token) => database.ValidateContributionChangesAsync(token)
+            (_, database) => ContributionScope.For(database).Validate(database),
+            (_, database, token) => ContributionScope.For(database).ValidateAsync(database, token)
         );
     }
 

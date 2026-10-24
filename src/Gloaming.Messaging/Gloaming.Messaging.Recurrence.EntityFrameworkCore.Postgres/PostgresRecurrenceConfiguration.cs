@@ -73,8 +73,8 @@ public static class PostgresRecurrenceConfiguration
         return services.TryAddGloamingCapability<TContext>(
             Capability,
             CapabilityPhase.Validate,
-            (_, database) => database.ValidateRecurrenceChanges(),
-            (_, database, token) => database.ValidateRecurrenceChangesAsync(token)
+            (_, database) => RecurrenceScope.For(database).Validate(database),
+            (_, database, token) => RecurrenceScope.For(database).ValidateAsync(database, token)
         );
     }
 

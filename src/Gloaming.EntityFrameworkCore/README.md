@@ -49,6 +49,11 @@ feature-owned; choose unique keys. The first binding for a context/key wins, lik
 All model requirements must have bindings before any preparation executes. Unselected bindings
 are not executed. Selection uses the completed model on each save, without a static CLR-type cache.
 
+Messaging's due-intent, recurrence and contribution registration helpers select their dependencies
+as separate bindings. Each selected protocol validates once per save rather than recursively
+executing complete manual validators. The manual validators still include their dependency checks;
+choose one save integration for a context.
+
 This is a two-phase save coordinator. Validators inspect completed candidates and should not introduce
 new domain decisions. External context overrides/events/interceptors retain their native order.
 Gloaming cannot reorder them. Earlier suppression is rejected for required capabilities; later

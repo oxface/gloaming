@@ -92,8 +92,10 @@ public static class PostgresDueIntentConfiguration
         return services.TryAddGloamingCapability<TContext>(
             Capability,
             CapabilityPhase.Validate,
-            (_, database) => database.ValidateDueIntentChanges(),
-            (_, database, token) => database.ValidateDueIntentChangesAsync(token)
+            // Outbox validation has its own binding; manual validators remain complete.
+            (_, database) => DueIntentScope.For(database).Validate(database, includeOutbox: false),
+            (_, database, token) =>
+                DueIntentScope.For(database).ValidateAsync(database, token, includeOutbox: false)
         );
     }
 

@@ -65,11 +65,11 @@ internal sealed class DueIntentScope
         );
     }
 
-    internal void Validate(DbContext database)
+    internal void Validate(DbContext database, bool includeOutbox = true)
     {
         try
         {
-            foreach (var entry in ValidateTracked(database))
+            foreach (var entry in ValidateTracked(database, includeOutbox))
                 RequireStored(entry, entry.GetDatabaseValues());
         }
         catch
@@ -79,13 +79,17 @@ internal sealed class DueIntentScope
         }
     }
 
-    internal async Task ValidateAsync(DbContext database, CancellationToken token)
+    internal async Task ValidateAsync(
+        DbContext database,
+        CancellationToken token,
+        bool includeOutbox = true
+    )
     {
         try
         {
             token.ThrowIfCancellationRequested();
 
-            foreach (var entry in ValidateTracked(database))
+            foreach (var entry in ValidateTracked(database, includeOutbox))
                 RequireStored(entry, await entry.GetDatabaseValuesAsync(token));
         }
         catch
@@ -95,11 +99,13 @@ internal sealed class DueIntentScope
         }
     }
 
-    private List<EntityEntry> ValidateTracked(DbContext database)
+    private List<EntityEntry> ValidateTracked(DbContext database, bool includeOutbox)
     {
         _ = new DueIntentStorage(database);
         database.ChangeTracker.DetectChanges();
-        database.ValidateOutboxChanges();
+        if (includeOutbox)
+            database.ValidateOutboxChanges();
+
         if (Failed)
             throw new InvalidOperationException(
                 "Dispose failed due-intent operation state before recovery."

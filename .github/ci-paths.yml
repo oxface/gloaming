@@ -64,6 +64,7 @@ Persistence:
   - 'src/Gloaming.Persistence/**'
   - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
   - 'tests/Support/PostgreSqlFixture.cs'
+  - 'tests/Support/ChildHost.cs'
   - '!**/*.md'
 
 Events:
@@ -112,8 +113,29 @@ wholesale:
   - '!**/*.md'
 
 
+# The runtime graph consumes these library implementations through Wholesale's
+# project references. tools/repository/ci-selection.test.ts checks that closure.
 runtime:
   - 'samples/Wholesale/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/**'
+  - 'src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/**'
+  - 'src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventReactions/Gloaming.EventReactions/**'
+  - 'src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing/**'
+  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/**'
+  - 'src/Gloaming.Events/Gloaming.Events.History/**'
+  - 'src/Gloaming.Events/Gloaming.Events.Serialization/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/**'
   - '!**/*.md'
 
 repository_dotnet:
