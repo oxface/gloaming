@@ -5,6 +5,11 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Fixtures/EventFeed/EventFeed.Proof.csproj" />
+    <ProjectReference Include="../Fixtures/EventFeed/Earlier/EventFeed.Earlier.csproj" />
+    <Compile Include="../../../../tests/Support/ChildHost.cs" Link="ChildHost.cs" />
+    <ProjectReference Include="../../Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <ProjectReference Include="../../Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="xunit.v3.mtp-v2" />

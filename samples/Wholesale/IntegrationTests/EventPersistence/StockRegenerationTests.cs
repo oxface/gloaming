@@ -1,5 +1,4 @@
 using System.Data.Common;
-using System.Diagnostics;
 using System.Text.Json;
 using Gloaming.EventSourcing.EntityFrameworkCore;
 using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
@@ -262,10 +261,11 @@ public sealed class StockRegenerationTests(PostgreSqlFixture postgres)
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [InlineData("interrupt")]
+    [InlineData("kill")]
+    [InlineData("cancelled-wait")]
     public async Task InterruptedExecutableRollsBackAndTheSameCommandRestartsInANewProcess(
-        bool graceful
+        string interruption
     )
     {
         string connection = await SeedAsync();
@@ -289,52 +289,57 @@ public sealed class StockRegenerationTests(PostgreSqlFixture postgres)
         )
             await command.ExecuteScalarAsync(Token);
 
-        using (var child = StartProcess(connection))
+        var child = StartProcess(connection);
+        await using (child)
         {
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(Token);
             timeout.CancelAfter(TimeSpan.FromSeconds(30));
-            try
+            Assert.Equal(
+                "started",
+                Phase(await child.WaitForOutputAsync("\"phase\":\"started\"", timeout.Token))
+            );
+            Assert.Equal(
+                "replayed",
+                Phase(await child.WaitForOutputAsync("\"phase\":\"replayed\"", timeout.Token))
+            );
+            await WaitForBlockedProcessAsync(connection);
+            if (interruption == "interrupt")
             {
+                // The executable's real Ctrl+C/SIGINT path on the Linux CI host.
+                await child.SignalAsync("-INT", timeout.Token);
                 Assert.Equal(
-                    "started",
-                    Phase((await child.StandardOutput.ReadLineAsync(timeout.Token))!)
+                    "cancelled",
+                    Phase(await child.WaitForOutputAsync("\"phase\":\"cancelled\"", timeout.Token))
                 );
-                Assert.Equal(
-                    "replayed",
-                    Phase((await child.StandardOutput.ReadLineAsync(timeout.Token))!)
-                );
-                await WaitForBlockedProcessAsync(connection);
-                if (graceful)
-                {
-                    // The executable's real Ctrl+C/SIGINT path on the Linux CI host.
-                    var signal = new ProcessStartInfo("kill") { UseShellExecute = false };
-                    signal.ArgumentList.Add("-INT");
-                    signal.ArgumentList.Add(
-                        child.Id.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                    );
-                    using var sender = Process.Start(signal)!;
-                    await sender.WaitForExitAsync(timeout.Token);
-                    Assert.Equal(0, sender.ExitCode);
-                    Assert.Equal(
-                        "cancelled",
-                        Phase((await child.StandardOutput.ReadLineAsync(timeout.Token))!)
-                    );
-                }
-                else
-                    child.Kill(entireProcessTree: true);
-
-                await child.WaitForExitAsync(timeout.Token);
-                if (graceful)
-                    Assert.Equal(130, child.ExitCode);
-                else
-                    Assert.NotEqual(0, child.ExitCode);
+                Assert.Equal(130, await child.WaitForExitAsync(timeout.Token));
             }
-            finally
+            else if (interruption == "kill")
             {
-                if (!child.HasExited)
-                    child.Kill(entireProcessTree: true);
+                await child.KillAsync(timeout.Token);
+                Assert.NotEqual(0, await child.WaitForExitAsync(timeout.Token));
+            }
+            else
+            {
+                using var cancelled = new CancellationTokenSource();
+                await cancelled.CancelAsync();
+                await Assert.ThrowsAsync<TimeoutException>(() =>
+                    child.WaitForExitAsync(cancelled.Token)
+                );
+                // Dispose must kill/drain the blocked process with its own live cleanup budget.
             }
         }
+
+        string[] expectedPhases =
+            interruption == "interrupt"
+                ? ["started", "replayed", "cancelled"]
+                : ["started", "replayed"];
+        Assert.Equal(
+            expectedPhases,
+            child
+                .StandardOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Take(expectedPhases.Length)
+                .Select(Phase)
+        );
 
         await transaction.RollbackAsync(Token);
         Assert.Equal(
@@ -353,12 +358,13 @@ public sealed class StockRegenerationTests(PostgreSqlFixture postgres)
         );
         for (int repeat = 0; repeat < 2; repeat++)
         {
-            using var restarted = StartProcess(connection);
-            string output = await restarted.StandardOutput.ReadToEndAsync(Token);
-            string error = await restarted.StandardError.ReadToEndAsync(Token);
-            await restarted.WaitForExitAsync(Token);
-            Assert.True(restarted.ExitCode == 0, error + output);
-            Assert.Contains("\"phase\":\"completed\"", output, StringComparison.Ordinal);
+            await using var restarted = StartProcess(connection);
+            Assert.True(await restarted.WaitForExitAsync(Token) == 0, restarted.Output);
+            Assert.Contains(
+                "\"phase\":\"completed\"",
+                restarted.StandardOutput,
+                StringComparison.Ordinal
+            );
         }
 
         Assert.Equal((3L, 5m), await ReadAsync(connection));
@@ -652,26 +658,20 @@ public sealed class StockRegenerationTests(PostgreSqlFixture postgres)
         await command.ExecuteNonQueryAsync(Token);
     }
 
-    private static Process StartProcess(string connection)
-    {
-        var start = new ProcessStartInfo("dotnet")
-        {
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
-        start.ArgumentList.Add(typeof(StockRegeneration).Assembly.Location);
-        start.ArgumentList.Add("--regenerate-stock");
-        start.ArgumentList.Add(Owner);
-        start.ArgumentList.Add(Id.ToString());
-        start.Environment["WHOLESALE_DEMO_CONNECTION_STRING"] = new NpgsqlConnectionStringBuilder(
-            connection
-        )
-        {
-            ApplicationName = "es3-child",
-        }.ConnectionString;
-        return Process.Start(start)!;
-    }
+    private static ChildHost StartProcess(string connection) =>
+        new(
+            typeof(StockRegeneration).Assembly,
+            new()
+            {
+                ["WHOLESALE_DEMO_CONNECTION_STRING"] = new NpgsqlConnectionStringBuilder(connection)
+                {
+                    ApplicationName = "es3-child",
+                }.ConnectionString,
+            },
+            "--regenerate-stock",
+            Owner,
+            Id.ToString()
+        );
 
     private static async Task WaitForBlockedProcessAsync(string connection)
     {

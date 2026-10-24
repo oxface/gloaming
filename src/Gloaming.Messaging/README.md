@@ -8,7 +8,8 @@ selected sequential workers. Transport configuration and business contracts belo
 | [Gloaming.Messaging](Gloaming.Messaging/README.md) | Provider-free incoming/outgoing envelopes, publication interface and internal native trace/metric instrumentation. BCL only. |
 | [Gloaming.Messaging.EntityFrameworkCore](Gloaming.Messaging.EntityFrameworkCore/README.md) | Provided records, mapping/save guards, typed callable roles and keyed handlers; no worker/Hosting dependency. |
 | [Gloaming.Messaging.EntityFrameworkCore.Hosting](Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md) | Optional sequential workers, polling options, fresh scopes and native host supervision. |
-| [Gloaming.Messaging.EntityFrameworkCore.Postgres](Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md) | JSONB/database-time mapping, outbox leases, inbox deduplication and locked transactional processing. |
+| [Gloaming.Messaging.EntityFrameworkCore.Postgres](Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md) | JSONB/database-time mapping, outbox leases, inbox deduplication, locked local processing, finite due-time handoff and [technical contribution sets](docs/contributions.md). |
+| [Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres](Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/README.md) | Optional retained recurring generations, bounded forward calendar planning and atomic finite-intent staging. Selects Cronos; no worker. |
 | [Gloaming.Messaging.RabbitMQ](Gloaming.Messaging.RabbitMQ/README.md) | Optional native connection/channel ownership, phase timeouts, terminal observation and cleanup; independent of core/EF/Generic Host. |
 | [Gloaming.Messaging.Workflows.EntityFrameworkCore](Gloaming.Messaging.Workflows.EntityFrameworkCore/README.md) | Optional bounded continuation definitions and native EF execution: provided process table, typed runner, atomic request enqueue and concurrency. |
 
@@ -40,8 +41,10 @@ and the explicit possibility of delivery re-execution once duplicate evidence is
 See [retained-message schema compatibility](docs/schema-compatibility.md) for an optional existing
 JSON codec, original-envelope deduplication and a concrete reader-before-writer consumer rollout.
 See [durable continuation setup and consumer ownership](docs/workflows.md) for the optional runner.
-The test-owned [native due-time experiment](tests/Fixtures/DueTimeIntent/README.md) explores
-finite occurrence release and stale-generation rejection. It is not a supported scheduling API.
+See [finite durable due-time intents](docs/due-intents.md) for explicit occurrence staging,
+suppression and bounded atomic outbox handoff. The test-owned
+[Personnel/Growth consumers](tests/Fixtures/DueTimeIntent/README.md) preserve their own
+generation, relevance and receiver policy.
 
 Tests run from the repository root:
 

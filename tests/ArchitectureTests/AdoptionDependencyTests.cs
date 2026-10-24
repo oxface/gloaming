@@ -281,8 +281,21 @@ public sealed class AdoptionDependencyTests
     }
 
     [Fact]
-    public void MessagingLayersDeclareOnlyUsedContractsAndNativeDependencies()
+    public void OptionalProtocolsAndMessagingDeclareOnlyUsedContractsAndNativeDependencies()
     {
+        Check(
+            "Gloaming.EventSourcing.EntityFrameworkCore.Postgres",
+            [],
+            [
+                "Npgsql.EntityFrameworkCore.PostgreSQL",
+                "Microsoft.Extensions.DependencyInjection.Abstractions",
+            ]
+        );
+        Check(
+            "Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres",
+            ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+            ["Cronos"]
+        );
         Check(
             "Gloaming.Messaging.Workflows.EntityFrameworkCore",
             [

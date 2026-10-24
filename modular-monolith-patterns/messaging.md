@@ -34,11 +34,19 @@ transaction; follow its savepoint, failure-accounting and cancellation contract.
 
 Use the callable storage/dispatch/processing roles directly or select the separate Hosting
 package. The application decides polling, supervision and process restart.
+
+For optional PostgreSQL notifications around callable roles, follow
+[the native wakeup recipe](postgres-wakeups.md). Preserve independent polling, fresh scopes and
+terminal completion/accounting supervision; notification payloads never select business work.
 Broker-free adapters must still preserve retained intent, stable identity, admitted intake and
 recoverable response delivery. A direct independently committing method call alone does not.
 
 Done: native tests prove producer rollback, receiver deduplication, redelivery after uncertain
 acceptance, competing processing and recovery after process death.
+
+For different deliveries targeting one entity, compose the native
+[entity-work exclusion recipe](entity-work.md). It keeps a complete consumer key locked through
+the original transaction; it does not supply FIFO, retained deduplication or business authority.
 
 ## Logical command receipts
 
@@ -62,9 +70,20 @@ no completed receipt, and a fresh authorized retry recovers an uncertain committ
 
 Select the optional continuation runner only for its supported saved-method/request-reply model.
 Business branching, compensation, response validation and operator authority stay in the module.
-One pending request is supported; parallel joins, human-workflow assignment and scheduler/deadline
-semantics require their own design. Keep unsupported features explicit.
+One pending request is supported. For parallel named replies, select the separate
+[technical contribution protocol](../src/Gloaming.Messaging/docs/contributions.md) and explicitly
+choose participant/count policy and outcome messages. Business approval, strict deadline policy
+and human-workflow assignment remain module decisions; no parallel workflow graph is supplied.
 
 A due-time signal is an invitation to reconsider current business state, not authority to
 complete a task. Generation/current-state checks remain necessary after cancellation or reassignment.
-Gloaming currently supplies no public scheduling API.
+Select [finite due-time intents](../src/Gloaming.Messaging/docs/due-intents.md) when a module
+needs retained occurrence identity, suppression and bounded outbox handoff. The module still
+owns its clock, source rules, transaction/save/commit and polling. This finite mechanism does
+not supply a calendar, human assignment or workflow deadline policy.
+
+Select the optional [recurrence module](../src/Gloaming.Messaging/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/README.md)
+when repeated technical work needs retained planning progress. Pin and verify calendar inputs,
+choose Skip/Coalesce/bounded CatchUp explicitly, and keep current-generation relevance in the
+module. The module invokes planning/stopping in fresh native transactions; recurrence does not
+install a worker or select business recipients and holidays.

@@ -1,6 +1,7 @@
 # EventSourcing family
 
-Aggregate bookkeeping, optional native EF writes, bounded event history and explicit single-stream rebuilding.
+Aggregate bookkeeping, optional native EF writes, bounded event history, explicit single-stream
+rebuilding and separately selected PostgreSQL secondary projection generations.
 
 This directory groups source, documentation and library tests. Each package retains its own
 public contract and dependencies; the family is not an umbrella runtime package.
@@ -9,6 +10,7 @@ public contract and dependencies; the family is not an umbrella runtime package.
 | --- | --- |
 | [Gloaming.EventSourcing](Gloaming.EventSourcing/README.md) | Package-free aggregate contract and optional immutable state/pending-event base. |
 | [Gloaming.EventSourcing.EntityFrameworkCore](Gloaming.EventSourcing.EntityFrameworkCore/README.md) | References the core, Events.History, EF Core Relational and DI abstractions; provided IEventStore, bounded EventHistoryReader, independent AggregateRebuilder, optional complete AggregateRegenerator, scoped role registration, stream/envelope mapping, ordered append and one required inline aggregate state/save validation. |
+| [Gloaming.EventSourcing.EntityFrameworkCore.Postgres](Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md) | Optional native committed feed, bounded transactional secondary/multi-stream projections and conditional generation cutover. References Npgsql EF and DI abstractions only; consumer-owned source/output schemas, deployment and reducers. |
 
 [Current capabilities, consumer obligations and deferred context](docs/capabilities.md)
 explain composition. Follow the selected package's README for explicit setup and errors.

@@ -143,7 +143,7 @@ interface Assets {
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  22,
+  24,
   "Review the package inventory when adding/removing libraries.",
 );
 
@@ -382,6 +382,13 @@ try {
       ],
     },
     {
+      name: "event-feed",
+      source: "EventFeed.cs",
+      ids: ["Gloaming.EventSourcing.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection],
+      gloamingClosure: ["Gloaming.EventSourcing.EntityFrameworkCore.Postgres"],
+    },
+    {
       name: "event-reactions",
       source: "EventReactions.cs",
       ids: ["Gloaming.EventReactions.EntityFrameworkCore"],
@@ -413,6 +420,72 @@ try {
         "Gloaming.EntityFrameworkCore",
         "Gloaming.Persistence.EntityFrameworkCore",
         "Gloaming.Persistence.EntityFrameworkCore.Postgres",
+        "Gloaming.Tenancy",
+      ],
+    },
+    {
+      name: "due-intents",
+      source: "DueIntents.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "recurrence",
+      source: "Recurrence.cs",
+      ids: ["Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+        "Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "contributions",
+      source: "Contributions.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "wakeups",
+      source: "Wakeups.cs",
+      ids: ["Gloaming.Messaging.EntityFrameworkCore.Postgres"],
+      external: [dependencyInjection],
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Messaging",
+        "Gloaming.Messaging.EntityFrameworkCore",
+        "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+      ],
+    },
+    {
+      name: "personnel-slice",
+      source: "PersonnelSlice.cs",
+      ids: [
+        "Gloaming.Tenancy",
+        "Gloaming.Persistence.EntityFrameworkCore",
+        "Gloaming.Auditing.EntityFrameworkCore",
+      ],
+      external: [postgresProvider],
+      gloamingClosure: [
+        "Gloaming.ActorIdentity",
+        "Gloaming.Auditing.EntityFrameworkCore",
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
         "Gloaming.Tenancy",
       ],
     },

@@ -107,7 +107,7 @@ npm --prefix tools/release run verify
 before packing; PostgreSQL is never silently skipped. `DOTNET_HOST_PATH` can select
 a particular `dotnet` executable; otherwise it must be on `PATH`.
 
-The harness invokes the same pack-only command for the 22 `Gloaming.*` library
+The harness invokes the same pack-only command for the 24 `Gloaming.*` library
 projects, using a unique local prerelease version and a temporary feed. Ordinary
 `dotnet pack` uses the repository's native SDK
 [`Directory.Build.targets`](../../src/Directory.Build.targets) to render each
@@ -125,7 +125,7 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Eleven clean executable consumers are created outside the repository:
+Seventeen clean executable consumers are created outside the repository:
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -135,6 +135,9 @@ Eleven clean executable consumers are created outside the repository:
   composite keys, filters, direct JSON and manual save overrides. Prove append visibility,
   sync/async saves, rollback, required inline participation, bounded history, explicit repair,
   retained-fact preservation, a stale-writer conflict and a fresh post-repair append. The
+  same consumer rejects suppression of either maintenance participant through both native save
+  forms and an unchanged repair undone by a savepoint, while accepting genuine saved repeated
+  repairs after false-acceptance saving. The
   resolved Gloaming graph contains only EventSourcing, its EF adapter, Events.History and
   Gloaming.EntityFrameworkCore.
 - Event reactions: select the EF reaction adapter, native DI and Npgsql; collect tracked,
@@ -158,6 +161,25 @@ Eleven clean executable consumers are created outside the repository:
   tenancy/transactions fail before business work. The Gloaming graph contains only
   Persistence.EntityFrameworkCore, its PostgreSQL adapter, Gloaming.EntityFrameworkCore
   and Tenancy. Credentials, migrations and tenant admission remain consumer-owned.
+- Finite due-time intents: independently select the PostgreSQL messaging package with manual
+  sync/async save validation. Migrate a populated earlier consumer layout, preserving original
+  keys, lifecycle, due instants and opaque payloads. Use a separately provisioned restricted
+  module worker; verify its native role/table grants and denied deletion. Exercise the exact
+  eligibility boundary, retained cancellation/release, caller rollback, false-acceptance/repeated
+  saves, suppression of either handoff participant, savepoint rollback and fresh recovery.
+  A tenantless envelope uses an independent technical scope. The historical layout is owned
+  experiment data, not two released library versions; this module-wide login proves grants,
+  not tenant RLS or business admission.
+- Disposable Personnel slice: independently select Tenancy, EF ownership and Auditing with
+  native Npgsql and manual save guards. Deploy a consumer-owned versioned migration. Exercise
+  current membership and business permission checks, equal person IDs in two organizations,
+  suspension affecting new operations in only one organization, filtered business/history
+  reads and exact actor/time/before/after audit values. Both native save forms exercise rollback
+  after SQL, a database constraint failure and fresh-context recovery. This Umbrine-inspired
+  proof establishes no new reusable mechanism or Umbrine implementation. Its simplified
+  permissions, admission timing and history disclosure are consumer policy; database RLS,
+  authentication, concurrent permission revocation and Umbrine's production migrations remain
+  separate adoption obligations.
 - PostgreSQL ownership, outbox and audit: consumer-owned mapping and wiring,
   unsaved/uncommitted invisibility, native commit and rollback, failed later save
   after earlier business SQL, fresh-context recovery, tenant filters and foreign
@@ -172,7 +194,25 @@ Eleven clean executable consumers are created outside the repository:
   overrides without DI/hosting, commit an effect/result and replay it from a fresh context;
   retain valid repeated saves after false-acceptance saving and reject suppressed unsaved
   receipt proposals in both native save forms.
-- All packages: restore, compile and execute with all 22 packages selected.
+- Recurrence: two independent elapsed-maintenance/zoned-indication adapters, populated finite
+  upgrade, restricted runtime role, literal v1 identities/partial cursor, native participant and
+  savepoint rejection, fresh recovery and bounded cancellation. Selects only the optional
+  recurrence package and its four-package finite/outbox closure; no Hosting dependency.
+- Contributions: populated finite upgrade, literal retained v1 roster/content/full terminal
+  envelope, restricted immutable-content grants, native participant/original-value/savepoint
+  rejection, true/false stored acceptance, fresh completion and finite timeout. Selects only
+  PostgreSQL messaging and its three-package closure; no recurrence/Hosting dependency.
+- Committed event feed: populated owned migrations, literal initial-format cursor/checkpoint,
+  restricted nonsuperuser migration owner and separate writer/projector grants; captured unchanged
+  native writes, full retained wire content, independent balance/count reducers, bounded backfill
+  and conditional generation cutover. Selects only the optional PostgreSQL feed package and native
+  DI, with no other Gloaming dependency.
+- All packages: restore, compile and execute with all 24 packages selected.
+- Native wakeup composition: both actual typed inbox/outbox roles, restricted runtime grants,
+  dedicated committed LISTEN registration, separate bounded retained hints, original wire values
+  and offline polling. Its initial fixture schema is independent of populated migration/process
+  proofs in the native suite. Selects PostgreSQL messaging's four-package closure and native DI;
+  no Hosting dependency or new reusable library mechanism.
 
 Each generated project references exact package versions and restores Gloaming only
 from the temporary local feed. The profiles share one fresh isolated package cache for

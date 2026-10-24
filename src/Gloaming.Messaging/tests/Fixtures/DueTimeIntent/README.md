@@ -1,13 +1,15 @@
-# Native due-time consumer experiment
+# Finite due-time consumers
 
-These test-owned consumers exercise native one-off due-time intent, outbox handoff and
-stale-generation rejection. They are not a public scheduling API. Two small domain models keep
+These test-owned consumers adopt the public finite occurrence protocol, outbox handoff and
+stale-generation rejection. Two small domain models keep
 different relevance rules: probation reminders become obsolete, while review preparation uses
 an approved-closure anchor. Their behavior is fixture policy, not a general workflow engine.
 
 ## Protocol and consumer boundaries
 
-[NativeDueIntents](NativeDueIntents.cs) stores a due occurrence with its original wire envelope.
+[NativeDueIntents](NativeDueIntents.cs) is test composition around the
+[public PostgreSQL operations](../../../Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresDueIntents.cs),
+which store a due occurrence with its original wire envelope.
 Its key is admitted scope, source schedule and occurrence generation; outgoing delivery has a
 separate stable ID. Stage, Suppress and bounded Release use the caller's fresh PostgreSQL
 ReadCommitted transaction. Release selects at most 100 eligible rows in one scope using
@@ -60,16 +62,18 @@ notification provider reconciliation are outside the proof.
 
 Each consumer owns its typed DbContext, business tables, due-intent table, command receipts and
 provided outbox in a separate schema. Both native SaveChanges overrides validate the selected
-receipt/outbox capabilities. The experiment uses native mutable timer rows; it does not supply
-library immutability/model/transaction-separation guards for arbitrary callers.
+receipt, due-intent and outbox capabilities. The provided occurrence model and handoff guards
+belong to the library; source generation, relevance and notification policy remain here.
 
-Tests create empty disposable databases using native EF schema scripts. No populated timer
-migration, restricted credential/RLS installation or released scheduler upgrade is certified.
+These process/race tests create empty disposable databases using native EF schema scripts.
+The independent [package consumer](../../../../../tools/release/consumers/DueIntents.cs)
+separately exercises a populated consumer migration and restricted module grants. Neither
+certifies tenant RLS or two released scheduler library versions.
 Scopes are explicitly constrained in every lookup; this is query-isolation evidence, not an
 authorization system. Keep current source/generation decisions under the same native transaction.
 Discard a failed/cancelled context and reconcile from fresh state.
 
-The selected experiment retains pending, cancelled and released rows for module lifetime.
+The selected protocol retains pending, cancelled and released rows for module lifetime.
 There is no expiry/pruner. Removing a pending row loses that wake-up; deleting retained rows,
 reusing occurrence IDs or reconstructing history is an explicit owner action outside this
 protocol. Receiver notification intents retain their occurrence uniqueness evidence.
@@ -99,4 +103,6 @@ Run the existing outbox suite; its CI Messaging lane owns these tests:
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj
 ~~~
 
-Public scheduling extraction is not selected; the fixtures establish only their native consumer behavior.
+See the [finite library contract](../../../docs/due-intents.md) for complete setup, transaction,
+clock, failure, lifetime and deployment obligations. Consumer correctness remains distinct
+from the independent public-interface and package proofs.

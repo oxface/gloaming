@@ -23,10 +23,18 @@ state to the native EF unit of work. Remove public prepared handles and the advi
 package. A private exact maintenance-write association belongs in the native save guard; no public
 bypass or reusable permit framework is introduced. SaveChanges and commit remain consumer-owned.
 
+Maintenance association, proposal validation and conflict identity live together in a private
+module. An unchanged participant must match its native stored values in the original transaction;
+tracking state cannot stand in for successful persistence or survive a rolled-back savepoint.
+The synchronous guard uses native synchronous reads, while registered async saves and the
+optional executor use cancellable async reads. This preserves healthy stored state and accepted
+repeated saves without adding a public lifecycle hook or changing the storage model.
+
 The shared EF package references Relational and DI abstractions without a provider dependency.
-PostgreSQL is the tested runtime. A future concrete pessimistic-locking obligation may justify
-*.Postgres anew; no empty abstraction/package is retained. Scheduling, scaling, retry/window
-policy, upcasting, catch-up, secondary/multi-stream projections and a maintenance worker remain
-separate capabilities with their own proof obligations. State-stored adopters need no event-sourcing dependency.
+PostgreSQL is the tested runtime. ADR0028 subsequently adds a separately selected committed
+feed/projection protocol with its own native write-lock cost; it changes neither this adapter's
+dependencies nor optimistic rebuilding. Scheduling, scaling, retry/window policy, upcasting and
+secondary projection workers remain separate selections with their own contracts. State-stored
+adopters need no event-sourcing dependency.
 
 See the [current consumer contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/README.md) and its native provider tests.

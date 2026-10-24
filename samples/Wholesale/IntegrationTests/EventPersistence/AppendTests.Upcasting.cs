@@ -1,9 +1,9 @@
-using System.Diagnostics;
 using System.Text.Json;
 using Gloaming.Events.Serialization;
 using Gloaming.Samples.Wholesale.IntegrationTests.Scenarios.EventPersistence;
 using Gloaming.Samples.Wholesale.Inventory;
 using Gloaming.Samples.Wholesale.Inventory.Contracts;
+using Gloaming.Tests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -208,23 +208,15 @@ public sealed partial class AppendTests
             + Environment.NewLine;
         for (int run = 0; run < 2; run++)
         {
-            var start = new ProcessStartInfo("dotnet")
-            {
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-            };
-            start.ArgumentList.Add(typeof(SchemaEvolutionJourney).Assembly.Location);
-            start.ArgumentList.Add("--scenario");
-            start.ArgumentList.Add("schema-evolution");
-            start.Environment["WHOLESALE_SCENARIO_CONNECTION"] = connection;
-            using var process = Process.Start(start)!;
-            Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-            Task<string> error = process.StandardError.ReadToEndAsync(Token);
-            await process.WaitForExitAsync(Token);
-            Assert.Equal(0, process.ExitCode);
-            Assert.Empty(await error);
-            Assert.Equal(expected, await output);
+            await using var process = new ChildHost(
+                typeof(SchemaEvolutionJourney).Assembly,
+                new() { ["WHOLESALE_SCENARIO_CONNECTION"] = connection },
+                "--scenario",
+                "schema-evolution"
+            );
+            Assert.Equal(0, await process.WaitForExitAsync(Token));
+            Assert.Empty(process.StandardError);
+            Assert.Equal(expected, process.StandardOutput);
         }
     }
 

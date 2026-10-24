@@ -83,6 +83,7 @@ public static class CommandReceiptConfiguration
     internal static void ValidateIdentifier(string identifier)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
+
         if (
             identifier.Contains('\0', StringComparison.Ordinal)
             || Encoding.UTF8.GetByteCount(identifier) > 63

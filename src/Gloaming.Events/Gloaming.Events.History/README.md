@@ -81,8 +81,10 @@ EventHistoryReader applies this same range validator before consumer-owned decod
 inherits it and decodes direct JSON. Required inline aggregate rebuilding and complete
 regeneration are also supplied by the EventSourcing adapter; they remain explicit maintenance.
 
-Snapshot-plus-tail loading, secondary/multi-stream projections, catch-up and a safe global
-event feed remain deferred. Range success cannot establish excluded history or committed
-global progress. Any selected extension needs captured-head/tail, corruption and concurrent
-writer/progress proofs. See the [event-store capability record](../../Gloaming.EventSourcing/docs/capabilities.md)
-for those pending contracts. Current metadata validation remains independently adoptable.
+Snapshot-plus-tail loading remains unsupported. This provider-free range validator supplies no
+secondary projector or committed feed: range success cannot establish excluded history or global
+progress. The separately selected [PostgreSQL feed module](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides fixed-source committed reads, bounded secondary/multi-stream projection turns and generation
+backfill/cutover under its native deployment and writer-lock contract. Current metadata validation
+remains independently adoptable; see the [event-store capability record](../../Gloaming.EventSourcing/docs/capabilities.md)
+for the remaining limits.

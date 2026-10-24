@@ -25,7 +25,9 @@ Registered async validation awaits native verification reads with the save cance
 Register `AddWorkflow<TDbContext,TStart,TState>`, configure `ConfigureWorkflows(schema, table,
 jsonColumnType)` in the owning context, and install `ValidateWorkflowChanges()` in both native
 save overrides alongside existing inbox/outbox guards. PostgreSQL JSONB is the verified provider.
-The explicit guard remains synchronous. For an unchanged retained process/request proposal,
+The explicit guard remains synchronous. Modified process proposals must preserve all observed
+original values so native column selection cannot omit part of a proposed turn.
+For an unchanged retained process/request proposal,
 validation verifies its stored values in the original transaction; premature acceptance or
 missing/changed storage fails. These complete-key reads ignore EF query filters, retain database
 permissions/RLS and require SELECT on all mapped columns, including the request payload. Normal

@@ -5,6 +5,11 @@ Worker registration and polling options are supplied by the explicitly selected
 `Gloaming.Messaging.EntityFrameworkCore.Hosting` namespace. Callable persistence/delivery
 operations remain independently usable without this package.
 
+The [native PostgreSQL wakeup recipe](../../../modular-monolith-patterns/postgres-wakeups.md)
+optionally shortens idle waits around those callable roles, with dedicated sessions, retained
+per-worker hints, reconnect registration and independent polling. It introduces no library runtime
+or dependency in provider-free hosting; eligibility and typed completion/accounting remain unchanged.
+
 The family separates [outbox enqueue/dispatch](../README.md), [inbox intake/processing](inbox.md),
 [inbox recovery](inbox-recovery.md), [outbox recovery](outbox-recovery.md) and optional workers.
 Completion/accounting uncertainty faults the selected worker; native host options and consumer
@@ -20,6 +25,24 @@ Rendering opts into the existing JSON codec; Messaging packages gain no serializ
 Original-envelope deduplication, conditional retry and the outbox's acceptance uncertainty remain.
 
 ## Current composition
+
+[Finite due-time intents](due-intents.md) are independently selected in the PostgreSQL package:
+immutable occurrence/envelope storage, locked suppression and bounded atomic outbox handoff.
+Caller-owned native ReadCommitted transactions, explicit UTC cutoffs and native saves/commits
+remain visible. Scope is independent of optional envelope tenancy. Recurrence/calendar and
+supplied scheduling workers remain outside that finite contract.
+
+The optional [recurrence module](../Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/README.md)
+adds retained generation/progress, explicit interval or zoned cron definitions, bounded
+Skip/Coalesce/CatchUp and atomic finite-intent staging. It selects Cronos independently; consumers
+pin calendar inputs, select current business relevance and invoke their own polling. No scheduling
+worker or business calendar is installed.
+
+[Technical contribution sets](contributions.md) add immutable named content, explicit expected
+identities/required count and one same-transaction completion or eligible timeout notice. The
+consumer selects participant/quorum policy and separately applies business acceptance/current
+relevance. Existing continuation execution remains a single-pending-request model; this technical
+protocol can be composed with its consumer messages without adding a parallel workflow graph.
 
 Each module selects its own typed DbContext, schema/table, business/integration contracts,
 publisher and optional worker. A state-stored adopter needs no event sourcing or context
@@ -184,9 +207,10 @@ activities, correlated failure logs and metrics are supported; see [observabilit
 [Outbox backlog observation](outbox-observability.md) is independently callable; alert thresholds
 and dashboard UX remain consumer policy.
 
-New-service snapshot/feed repopulation is unsupported. Dispatch ordering and retained
-delivery rows supply no safe replay cursor or snapshot boundary. Such a mechanism needs an
-explicit receiver contract, retention boundary and atomic receiver progress.
+Dispatch ordering and retained delivery rows supply no safe replay cursor or snapshot boundary.
+The separately selected [EventSourcing PostgreSQL module](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides a fixed-source committed feed and atomic secondary-projection progress. Whole-service
+bootstrap, business import and receiver-specific integration remain consumer-owned.
 
 Durable workflows begin with module-owned state and the existing messaging contracts. The
 [Stock-issue consumer](../../../samples/Wholesale/Worker/Broker/README.md) demonstrates

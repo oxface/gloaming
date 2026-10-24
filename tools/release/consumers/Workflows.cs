@@ -104,8 +104,14 @@ try
         pending = await Runner(started).StartAsync(key, input);
         await started.SaveChangesAsync(acceptAllChangesOnSuccess: false);
         started.ChangeTracker.AcceptAllChanges();
-        Check(started.SaveChanges() == 0, "A later sync save must preserve the committed proposal.");
-        Check(await started.SaveChangesAsync() == 0, "A later async save must preserve the proposal.");
+        Check(
+            started.SaveChanges() == 0,
+            "A later sync save must preserve the committed proposal."
+        );
+        Check(
+            await started.SaveChangesAsync() == 0,
+            "A later async save must preserve the proposal."
+        );
         await transaction.CommitAsync();
     }
 
@@ -124,6 +130,37 @@ try
         correlationId: key.Id.ToString("D"),
         causationId: pending.PendingCommandId!.Value.ToString("D")
     );
+    foreach (bool asynchronous in new[] { false, true })
+    {
+        await using var omitted = Open();
+        await using var transaction = await omitted.Database.BeginTransactionAsync();
+        await Runner(omitted).HandleReplyAsync(key, reply);
+        var process = omitted.ChangeTracker.Entries<WorkflowInstanceRecord>().Single();
+        process.Property(row => row.State).OriginalValue = process.Entity.State;
+        process.Property(row => row.State).IsModified = false;
+        bool rejected = false;
+        try
+        {
+            if (asynchronous)
+                await omitted.SaveChangesAsync();
+            else
+                omitted.SaveChanges();
+        }
+        catch (InvalidOperationException)
+        {
+            rejected = true;
+        }
+
+        Check(rejected, "Neither native save may omit proposed state by changing original values.");
+        await transaction.RollbackAsync();
+        await using var observer = Open();
+        var retained = await Runner(observer).ReadAsync(key);
+        Check(
+            retained is { Version: 1, State.Accepted: false },
+            "Rejected partial completion preserves the original pending process."
+        );
+    }
+
     await using (var continued = Open())
     await using (var transaction = await continued.Database.BeginTransactionAsync())
     {
@@ -160,8 +197,8 @@ try
     }
 
     Check(
-        starts == 2 && continuations == 1,
-        "Only the rolled-back start is repeated; a retained outcome does not rerun its continuation."
+        starts == 2 && continuations == 3,
+        "Rolled-back proposals can rerun; a retained outcome does not rerun its continuation."
     );
 
     foreach (bool asynchronous in new[] { false, true })
@@ -171,15 +208,19 @@ try
         await using var transaction = await blocked.Database.BeginTransactionAsync();
         await Runner(blocked).StartAsync(new(Guid.NewGuid()), input);
         if (suppressProcess)
-            blocked.ChangeTracker.Entries<WorkflowInstanceRecord>().Single().State = EntityState.Unchanged;
+            blocked.ChangeTracker.Entries<WorkflowInstanceRecord>().Single().State =
+                EntityState.Unchanged;
         else
-            blocked.ChangeTracker.Entries<OutboxMessageRecord>().Single().State = EntityState.Unchanged;
+            blocked.ChangeTracker.Entries<OutboxMessageRecord>().Single().State =
+                EntityState.Unchanged;
 
         bool rejected = false;
         try
         {
-            if (asynchronous) await blocked.SaveChangesAsync();
-            else blocked.SaveChanges();
+            if (asynchronous)
+                await blocked.SaveChangesAsync();
+            else
+                blocked.SaveChanges();
         }
         catch (InvalidOperationException)
         {
@@ -192,8 +233,14 @@ try
 
     await using (var final = Open())
     {
-        Check(await final.Set<WorkflowInstanceRecord>().CountAsync() == 1, "Suppression must retain no process.");
-        Check(await final.Set<OutboxMessageRecord>().CountAsync() == 1, "Suppression must retain no request.");
+        Check(
+            await final.Set<WorkflowInstanceRecord>().CountAsync() == 1,
+            "Suppression must retain no process."
+        );
+        Check(
+            await final.Set<OutboxMessageRecord>().CountAsync() == 1,
+            "Suppression must retain no request."
+        );
     }
     Console.WriteLine(
         "PASS combined continuations: native rollback/commit, fresh recovery and duplicate outcomes"

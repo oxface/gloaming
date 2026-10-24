@@ -137,7 +137,12 @@ public sealed class AggregateRegenerator<TAggregate, TContext>
                 result = new(AggregateRegenerationStatus.NotFound, attempt, null, null);
             else
             {
-                RequiredInlineStateExtensions.RequireMaintenanceWrite(database, id, transaction);
+                await MaintenanceWriteRegistry.RequireAsync(
+                    database,
+                    id,
+                    transaction,
+                    cancellationToken
+                );
                 progress?.Report(new(attempt, AggregateRegenerationPhase.Replayed, capturedHead));
 
                 saving = true;
@@ -164,11 +169,7 @@ public sealed class AggregateRegenerator<TAggregate, TContext>
                         && capture.Matches(database, id, transaction)
                     || saving
                         && failure is DbUpdateConcurrencyException concurrency
-                        && RequiredInlineStateExtensions.IsMaintenanceConflict(
-                            database,
-                            transaction,
-                            concurrency
-                        )
+                        && MaintenanceWriteRegistry.IsConflict(database, transaction, concurrency)
                 );
 
             var status =

@@ -24,6 +24,12 @@ contracts define current public interfaces, setup and supported limits.
 | [0020 Receipt generations](0020-inbox-expiry-and-receipt-generations.md) | Explicit expiry ends evidence; old operator authority cannot match a new receipt. |
 | [0021 Native RabbitMQ session](0021-optional-rabbitmq-session-lifecycle.md) | Optional resource/setup/cleanup ownership; consumer transport/restart policy. |
 | [0023 Logical command receipts](0023-logical-command-receipts.md) | Explicit full-key serialization/retained results; native save/commit and module-lifetime evidence. |
+| [0024 Finite due-time intents](0024-finite-due-intent-handoff.md) | Retained occurrence identity, locked suppression and atomic bounded outbox handoff; consumer clock and business policy. |
+| [0025 Bounded recurring intents](0025-bounded-recurring-intents.md) | Optional retained generation/progress and forward calendar evaluation; explicit missed choices and atomic finite staging. |
+| [0026 Native entity-work exclusion](0026-native-entity-work-exclusion.md) | Ordinary transaction advisory locks and a full-key consumer protocol; no new wrapper or FIFO guarantee. |
+| [0027 Technical contribution completion](0027-technical-contribution-completion.md) | Retained named content, consumer-selected technical count and one atomic completion/timeout notice; business acceptance remains consumer-owned. |
+| [0028 Committed feed and projection generations](0028-committed-feed-and-projection-generations.md) | Explicit serialized capture, bounded transactional secondary projections and fenced generation selection; consumer source/output/deployment policy. |
+| [0029 Native queue wakeups](0029-native-queue-wakeups.md) | Optional dedicated LISTEN/NOTIFY composition and retained per-worker hints; polling remains authoritative, no new wrapper/runtime. |
 
 ADR numbers are stable and are not reused. Gaps preserve earlier decision identities.
 Current records explain accepted choices; package-local contracts define supported setup and limits.

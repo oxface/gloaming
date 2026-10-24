@@ -32,6 +32,16 @@ The Gloaming library family for local event capture and reactions, independent o
 domain model.
 _Avoid_: DDD foundation, Reactive Streams
 
+**Committed feed**:
+An explicitly selected retained sequence of native source facts whose progress cannot skip an
+earlier unresolved capturing transaction. Its publication order is technical, not domain causality.
+_Avoid_: Allocated global identity, timestamp watermark, message delivery order
+
+**Projection generation**:
+One retained reducer compatibility identity, checkpoint and generation-qualified secondary output.
+The consumer separately selects which generation its readers observe.
+_Avoid_: Command aggregate, automatic reader deployment
+
 **Access model**:
 The product's model of users, Organizations, memberships, invitations, roles and permissions.
 _Avoid_: Execution context, authentication provider
@@ -58,6 +68,23 @@ Retained evidence for a consumer-selected logical action and its original busine
 Different deliveries may represent that same action. Equal retained attempts recover the result;
 removing the evidence ends its duplicate protection. The receipt grants no authority.
 _Avoid_: Inbox receipt, entity identity, current business state
+
+**Due intent**:
+A retained finite occurrence and the original message to hand off when it becomes eligible.
+Its occurrence identity is distinct from delivery identity; handoff does not prove the work
+is still relevant or that its external effect completed.
+_Avoid_: Retry delay, business deadline, recurring schedule
+
+**Recurring generation**:
+One immutable version of a recurring schedule, with retained planning progress and stable nominal
+occurrence identities. Another generation does not implicitly supersede its business relevance.
+_Avoid_: Current business schedule, retry attempt, mutable calendar
+
+**Contribution set**:
+One retained work generation with explicit named contributors, their original content and a
+consumer-selected distinct count for technical completion. That completion is separate from
+business acceptance, permission and approval.
+_Avoid_: Human approval workflow, business quorum policy, delivery receipt
 
 **Application user**:
 A person represented by a stable product identity, independently of their login provider

@@ -115,7 +115,11 @@ try
             await damage
                 .Set<CounterRow>()
                 .Where(row => row.StreamId == id)
-                .ExecuteUpdateAsync(set => set.SetProperty(row => row.Amount, -999), token);
+                .ExecuteUpdateAsync(
+                    set =>
+                        set.SetProperty(row => row.Amount, -999).SetProperty(row => row.Version, 1),
+                    token
+                );
 
         await using (var ordinary = Open())
         {
@@ -128,12 +132,46 @@ try
         var damaged = await Observe();
         Check(damaged.State.Amount == -999, "Ordinary loading must not repair damaged state.");
 
+        // A native tracking flag cannot substitute for either required maintenance write.
+        foreach (bool asynchronous in new[] { false, true })
+        {
+            foreach (bool suppressHeader in new[] { false, true })
+            {
+                await using var database = Open();
+                await using var transaction = await database.Database.BeginTransactionAsync(token);
+                await new CounterRebuilder(database).RebuildAsync(id, token);
+                object participant = suppressHeader
+                    ? database.ChangeTracker.Entries<StreamRow>().Single().Entity
+                    : database.ChangeTracker.Entries<CounterRow>().Single().Entity;
+                database.Entry(participant).State = EntityState.Unchanged;
+                await ExpectAsync<InvalidOperationException>(() => Save(database, asynchronous));
+            }
+
+            await using var omitted = Open();
+            await using var omittedTransaction = await omitted.Database.BeginTransactionAsync(
+                token
+            );
+            await new CounterRebuilder(omitted).RebuildAsync(id, token);
+            var state = omitted.ChangeTracker.Entries<CounterRow>().Single();
+            state.Property(row => row.Amount).OriginalValue = state.Entity.Amount;
+            state.Property(row => row.Amount).IsModified = false;
+            await ExpectAsync<InvalidOperationException>(() => Save(omitted, asynchronous));
+        }
+
+        Check(
+            Unchanged(damaged, await Observe()),
+            "Rejected maintenance must preserve the complete damaged snapshot."
+        );
+
         await using (var database = Open())
         {
             await using var transaction = await database.Database.BeginTransactionAsync(token);
+            await transaction.CreateSavepointAsync("before_repair", token);
             var result = await new CounterRebuilder(database).RebuildAsync(id, token);
             Check(result?.Version == 2, "Explicit repair must capture the existing event version.");
             await database.SaveChangesAsync(token);
+            await transaction.RollbackToSavepointAsync("before_repair", token);
+            await ExpectAsync<InvalidOperationException>(() => database.SaveChangesAsync(token));
             await transaction.RollbackAsync(token);
         }
 
@@ -147,7 +185,10 @@ try
             await using var transaction = await database.Database.BeginTransactionAsync(token);
             var result = await new CounterRebuilder(database).RebuildAsync(id, token);
             Check(result?.Version == 2, "Repair must keep the captured event version.");
+            database.SaveChanges(acceptAllChangesOnSuccess: false);
+            database.ChangeTracker.AcceptAllChanges();
             database.SaveChanges();
+            await database.SaveChangesAsync(token);
             await transaction.CommitAsync(token);
         }
 
@@ -182,6 +223,40 @@ try
         Unchanged(otherOwner, await Observe("second-owner")),
         "Repair must preserve the other owner's same-ID stream."
     );
+
+    var beforeOmittedTimestamp = await Observe();
+    foreach (bool asynchronous in new[] { false, true })
+    foreach (bool omitHeader in new[] { false, true })
+    {
+        await using var database = Open();
+        await using var transaction = await database.Database.BeginTransactionAsync(token);
+        var store = new CounterStore(
+            database,
+            new FixedClock(original.Header.UpdatedAt.AddMinutes(1))
+        );
+        var counter = (await store.GetForWritingAsync(id, 2, token))!;
+        counter.Increase(1);
+        await store.AppendAsync(counter, token);
+        if (omitHeader)
+        {
+            var header = database.ChangeTracker.Entries<StreamRow>().Single();
+            header.Property(row => row.UpdatedAt).OriginalValue = header.Entity.UpdatedAt;
+            header.Property(row => row.UpdatedAt).IsModified = false;
+        }
+        else
+        {
+            var state = database.ChangeTracker.Entries<CounterRow>().Single();
+            state.Property(row => row.RecordedAt).OriginalValue = state.Entity.RecordedAt;
+            state.Property(row => row.RecordedAt).IsModified = false;
+        }
+
+        await ExpectAsync<InvalidOperationException>(() => Save(database, asynchronous));
+        await transaction.RollbackAsync(token);
+        Check(
+            Unchanged(beforeOmittedTimestamp, await Observe()),
+            "Rejected timestamp omission preserves complete stream/state/fact metadata."
+        );
+    }
 
     // A fresh decision after repair must still append through the ordinary store.
     await using (var database = Open())
@@ -295,6 +370,15 @@ finally
 {
     await using var drop = new NpgsqlCommand($"DROP DATABASE {name} WITH (FORCE)", admin);
     await drop.ExecuteNonQueryAsync(CancellationToken.None);
+}
+
+Task Save(CounterDatabase database, bool asynchronous)
+{
+    if (asynchronous)
+        return database.SaveChangesAsync(token);
+
+    database.SaveChanges();
+    return Task.CompletedTask;
 }
 
 static void Check(bool condition, string message)
@@ -451,8 +535,8 @@ sealed class CounterStore : EventStore<Counter, Delta, StreamRow, EventRow>
 {
     private readonly CounterDatabase database;
 
-    internal CounterStore(CounterDatabase database)
-        : base(database, new Records(), TimeProvider.System)
+    internal CounterStore(CounterDatabase database, TimeProvider? clock = null)
+        : base(database, new Records(), clock ?? TimeProvider.System)
     {
         this.database = database;
         ConfigureInlineState(new StateMapping());
@@ -508,4 +592,9 @@ sealed class CounterRebuilder(CounterDatabase database)
 {
     protected override Counter Rehydrate(StreamRow stream, IReadOnlyList<Delta> events) =>
         new(stream.Id, stream.Version, new(events.Sum(item => item.Amount)));
+}
+
+sealed class FixedClock(DateTimeOffset now) : TimeProvider
+{
+    public override DateTimeOffset GetUtcNow() => now;
 }

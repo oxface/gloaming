@@ -31,7 +31,11 @@ selection visible.
 
 ## Deferred context
 
-Generated discovery, AOT, other serializers, snapshots and safe global feeds are deferred.
+Generated discovery, AOT, other serializers and snapshot-plus-tail loading remain unsupported here.
+These provider-free utilities supply no committed feed. The separately selected
+[PostgreSQL EventSourcing module](../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+provides fixed-source committed reads, secondary projections and generation backfill/cutover with
+its explicit deployment and writer-lock costs.
 History itself has no loader; the optional EventSourcing EF adapter provides bounded native
 prefix loading. Compatibility needs literal
 historical payload tests; persisted progress and concurrency claims need real database proofs. The

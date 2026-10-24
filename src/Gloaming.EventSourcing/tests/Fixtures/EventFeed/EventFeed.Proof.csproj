@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Earlier/**/*.cs" />
+    <ProjectReference Include="../../../Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+</Project>

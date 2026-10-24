@@ -29,6 +29,7 @@
     <Project Path="src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/">
+    <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/Gloaming.Messaging.RabbitMQ.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/Gloaming.Messaging.Workflows.EntityFrameworkCore.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging/Gloaming.Messaging.csproj" />
@@ -64,6 +65,11 @@
     <Project Path="src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj" />
   </Folder>
   <Folder Name="/Libraries/Messaging/Tests/Fixtures/">
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Wakeups/Earlier/Wakeups.Earlier.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Wakeups/Wakeups.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Contributions/Contributions.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/EntityWork/EntityWork.Proof.csproj" />
+    <Project Path="src/Gloaming.Messaging/tests/Fixtures/Recurrence/Recurrence.Proof.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Current/DueTimeIntent.Current.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/Earlier/DueTimeIntent.Earlier.csproj" />
   </Folder>
@@ -87,10 +93,13 @@
     <Project Path="src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/">
+    <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />
     <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing/Gloaming.EventSourcing.csproj" />
     <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/Gloaming.EventSourcing.EntityFrameworkCore.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/Tests/">
+    <Project Path="src/Gloaming.EventSourcing/tests/Fixtures/EventFeed/EventFeed.Proof.csproj" />
+    <Project Path="src/Gloaming.EventSourcing/tests/Fixtures/EventFeed/Earlier/EventFeed.Earlier.csproj" />
     <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj" />
     <Project Path="src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj" />

@@ -18,7 +18,7 @@ documentation and tests; it does not introduce an umbrella dependency or applica
 | [CommandReceipts](src/Gloaming.CommandReceipts/README.md) | Logical action/result retention and cooperating-writer serialization in caller-owned EF/PostgreSQL transactions. |
 | [Events](src/Gloaming.Events/README.md) | Independent JSON serialization/upcasting and event-history utilities. |
 | [EventReactions](src/Gloaming.EventReactions/README.md) | Local event buffers, ordered reactions and optional EF preparation. |
-| [EventSourcing](src/Gloaming.EventSourcing/README.md) | Aggregate bookkeeping and optional native EF write/rebuild operations. |
+| [EventSourcing](src/Gloaming.EventSourcing/README.md) | Aggregate bookkeeping, optional native EF write/rebuild operations and PostgreSQL committed feed/secondary projection generations. |
 | [Auditing](src/Gloaming.Auditing/README.md) | Explicit accepted-change envelopes and transactional EF staging. |
 | [Messaging](src/Gloaming.Messaging/README.md) | Incoming/outgoing envelopes, callable inbox/outbox roles, optional polling hosts, PostgreSQL delivery and bounded continuations. |
 
@@ -33,7 +33,7 @@ npm --prefix tools/release run pack
 The command reports the completed version and folder feed. Follow the
 [consumer source-mapping setup](tools/release/README.md#consume-from-another-repository) and
 [development guide](docs/development.md); no remote package service is required.
-The heavier release verifier checks all archives and eleven isolated package-only consumers.
+The heavier release verifier checks all archives and seventeen isolated package-only consumers.
 
 [Modular monolith patterns](modular-monolith-patterns/README.md) describe how to initialize
 or adapt an application and add named modules, state-stored or event-sourced aggregates,

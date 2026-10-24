@@ -27,6 +27,7 @@ public sealed record CommandReceiptKey
     internal static void ValidateText(string text, int maximum)
     {
         ArgumentException.ThrowIfNullOrEmpty(text);
+
         if (text.Length > maximum || text.Contains('\0', StringComparison.Ordinal))
             throw new ArgumentException(
                 "Receipt key text exceeds its limit or contains NUL.",

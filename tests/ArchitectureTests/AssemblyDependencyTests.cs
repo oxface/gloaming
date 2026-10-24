@@ -65,6 +65,7 @@ public sealed class AssemblyDependencyTests
             typeof(SerializedEvent).Assembly,
             typeof(EventHistory).Assembly,
             typeof(IEventStreamRecord).Assembly,
+            typeof(Gloaming.EventSourcing.EntityFrameworkCore.Postgres.FeedCursor).Assembly,
             typeof(IEventSourcedAggregate<>).Assembly,
             typeof(Samples.EventStorageDemo.CounterCommands).Assembly,
             typeof(Samples.Wholesale.EventCodecDemo.CodecExample).Assembly,

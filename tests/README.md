@@ -47,9 +47,12 @@ The [development guide](../docs/development.md) documents native local/container
 
 ## What each kind of test establishes
 
-The outbox suite also owns a [native due-time consumer experiment](../src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/README.md).
-Its clock/cancellation/generation/process proofs establish consumer behavior using existing
-outbox and command-receipt contracts, not a new supported scheduler capability.
+The outbox suite also owns [finite due-time consumers](../src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/README.md).
+Their clock/cancellation/generation/process proofs adopt the public occurrence protocol while
+preserving consumer policy. Independent
+[contract cases](../src/Gloaming.Messaging/tests/OutboxPostgresTests/DueIntentContractTests.cs)
+and the [package-only migration/grant proof](../tools/release/consumers/DueIntents.cs) protect
+the library interface and deployment obligations separately.
 
 Direct library-contract tests use public APIs with independent expected outcomes, such as
 [immutable actor establishment](../src/Gloaming.ActorIdentity/tests/ActorIdentityTests/AccessorTests.cs),
@@ -73,9 +76,10 @@ not a complete API/branch coverage measurement or a production-capacity certific
 Unit, provider, package-only and process tests can exercise the same API while protecting
 different failures. A fake publisher cannot prove broker acceptance uncertainty; an in-process
 rollback cannot prove abrupt process recovery; ProjectReference builds cannot prove the
-[eleven package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
+[seventeen package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
 the [native event-storage consumer](../tools/release/consumers/EventStorage.cs),
 [local reaction composition](../tools/release/consumers/EventReactions.cs),
+[the disposable Personnel composition](../tools/release/consumers/PersonnelSlice.cs),
 [native HTTP establishment](../tools/release/consumers/HttpEstablishment.cs), and
 [restricted PostgreSQL row security](../tools/release/consumers/RowSecurity.cs).
 Historic literals and populated migration fixtures need independent expected outcomes and
@@ -89,6 +93,9 @@ those test projects, not library dependency or runtime isolation guarantees. Dec
 do not evaluate every MSBuild import/condition; ordinary package adoption is a separate proof.
 
 Keep a test when it catches a supported library/integration mistake or retained sample behavior.
+The shared process harness retains separate redacted output streams and bounds process/output
+cleanup independently of a cancelled test deadline. The regeneration process proof covers
+SIGINT, process death and cancellation of its parent's wait, then restarts the same command.
 Prune framework-only demonstrations, private implementation mirrors and duplicate fixture
 assertions after tracing their obligation to an active proof. Sample business rules do not
 become Gloaming guarantees. No test-count target or framework feature-parity list decides scope.

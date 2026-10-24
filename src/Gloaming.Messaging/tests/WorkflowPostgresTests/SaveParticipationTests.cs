@@ -15,6 +15,44 @@ namespace Gloaming.Messaging.WorkflowPostgresTests;
 public sealed class SaveParticipationTests(PostgreSqlFixture fixture)
 {
     [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task OriginalValueChangesCannotOmitTheProposedContinuationState(bool asynchronous)
+    {
+        string connection = await Database(fixture);
+        var methods = new WorkspaceMethods();
+        var first = await Start(connection, methods, new(Guid.NewGuid()));
+        await using (var db = Context(connection))
+        {
+            await using var tx = await db.Database.BeginTransactionAsync(Token);
+            await Runner(db, methods).HandleReplyAsync(first.Key, Reply(first, true), Token);
+            var process = db.ChangeTracker.Entries<WorkflowInstanceRecord>().Single();
+            process.Property(row => row.State).OriginalValue = process.Entity.State;
+            process.Property(row => row.State).IsModified = false;
+
+            if (asynchronous)
+                await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                    db.SaveChangesAsync(Token)
+                );
+            else
+                Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+        }
+
+        await using (var observer = Context(connection))
+        {
+            Assert.Equal(first, await Runner(observer, methods).ReadAsync(first.Key, Token));
+            Assert.Equal(1, await observer.Set<OutboxMessageRecord>().CountAsync(Token));
+        }
+
+        var recovered = await Continue(connection, methods, first, true);
+        Assert.Equal(2, recovered.Version);
+        Assert.Equal("activate", recovered.State.Phase);
+        await using var final = Context(connection);
+        Assert.Equal(recovered, await Runner(final, methods).ReadAsync(first.Key, Token));
+        Assert.Equal(2, await final.Set<OutboxMessageRecord>().CountAsync(Token));
+    }
+
+    [Theory]
     [InlineData(false, false, "process")]
     [InlineData(false, true, "process")]
     [InlineData(false, false, "request")]

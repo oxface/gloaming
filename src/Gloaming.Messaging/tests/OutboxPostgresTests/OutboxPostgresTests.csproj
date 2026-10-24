@@ -5,6 +5,12 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="../Fixtures/Wakeups/Earlier/Wakeups.Earlier.csproj" />
+    <ProjectReference Include="../Fixtures/Wakeups/Wakeups.Proof.csproj" />
+    <ProjectReference Include="../Fixtures/Contributions/Contributions.Proof.csproj" />
+    <ProjectReference Include="../Fixtures/EntityWork/EntityWork.Proof.csproj" />
+    <ProjectReference Include="../Fixtures/Recurrence/Recurrence.Proof.csproj" />
+    <ProjectReference Include="../../Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres/Gloaming.Messaging.Recurrence.EntityFrameworkCore.Postgres.csproj" />
     <ProjectReference Include="../Fixtures/DueTimeIntent/Earlier/DueTimeIntent.Earlier.csproj" />
     <ProjectReference Include="../Fixtures/DueTimeIntent/Current/DueTimeIntent.Current.csproj" />
     <ProjectReference Include="../../Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />

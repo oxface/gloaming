@@ -23,8 +23,10 @@ Changes in projection meaning require a separate consumer rollout/rebuild decisi
 
 Deferred capabilities include generated discovery, alternative serializers, AOT certification,
 other transport/deployment compatibility and schema-migration orchestration. No domain-event bus follows from
-this registry. EventSourcing maintenance workers, extra inline views and multi-stream/async
-projections remain separate deferred capabilities in their owning family's catalog.
+this registry. EventSourcing's explicit regeneration executor and separately selected
+[PostgreSQL feed/projection module](../../../Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
+own persisted maintenance and secondary-generation backfill/cutover. They are independent of this
+codec; extra inline views and fleet orchestration remain consumer-owned.
 
 Evidence and adoption:
 

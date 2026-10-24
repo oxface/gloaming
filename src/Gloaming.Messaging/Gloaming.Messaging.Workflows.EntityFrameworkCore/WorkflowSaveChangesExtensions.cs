@@ -107,6 +107,13 @@ public static class WorkflowSaveChangesExtensions
                     "The observed workflow concurrency tokens must not be changed."
                 );
 
+            if (entry.State == EntityState.Modified)
+                ValidateValues(
+                    entry.OriginalValues,
+                    proposal.OriginalValues,
+                    "Preserve all observed workflow values so native column selection cannot omit a proposed turn."
+                );
+
             if (proposal.Command is not null)
             {
                 var request = database.Entry(proposal.Command);
@@ -186,7 +193,13 @@ internal static class WorkflowChangeRegistry
                     property => property.Metadata.Name,
                     property => property.CurrentValue
                 );
-        For(database).Add(new(row, command, transaction, values, commandValues));
+        var originalValues = database
+            .Entry(row)
+            .Properties.ToDictionary(
+                property => property.Metadata.Name,
+                property => property.OriginalValue
+            );
+        For(database).Add(new(row, command, transaction, values, originalValues, commandValues));
     }
 }
 
@@ -201,5 +214,6 @@ internal sealed record WorkflowProposal(
     OutboxMessageRecord? Command,
     IDbContextTransaction Transaction,
     Dictionary<string, object?> Values,
+    Dictionary<string, object?> OriginalValues,
     Dictionary<string, object?>? CommandValues
 );

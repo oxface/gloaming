@@ -24,18 +24,20 @@ internal abstract class NativeDatabase(DbContextOptions options) : DbContext(opt
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         this.ValidateCommandReceiptChanges();
-        this.ValidateOutboxChanges();
+        this.ValidateDueIntentChanges();
+
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
-    public override Task<int> SaveChangesAsync(
+    public override async Task<int> SaveChangesAsync(
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default
     )
     {
         this.ValidateCommandReceiptChanges();
-        this.ValidateOutboxChanges();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        await this.ValidateDueIntentChangesAsync(cancellationToken);
+
+        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }
 

@@ -15,6 +15,11 @@ public static class EventStreamCapabilityRegistration
         services.TryAddGloamingCapability<TContext>(
             "event-streams",
             CapabilityPhase.Validate,
-            (_, context) => context.ValidateEventStreamChanges()
+            (_, context) => context.ValidateEventStreamChanges(),
+            (_, context, cancellationToken) =>
+                RequiredInlineStateExtensions.ValidateEventStreamChangesAsync(
+                    context,
+                    cancellationToken
+                )
         );
 }

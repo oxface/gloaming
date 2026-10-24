@@ -4,6 +4,20 @@ References the Messaging EF layer and native Npgsql EF. No RabbitMQ/Rebus transp
 business contract dependency. PostgreSQL is explicit: incompatible provider/model setup
 fails when resolving the producer/dispatcher, before publication.
 
+The optional [native queue-wakeup recipe](../../../modular-monolith-patterns/postgres-wakeups.md)
+composes callable inbox/outbox roles with dedicated LISTEN sessions and per-worker retained hints.
+Polling remains authoritative. This application guidance adds no library interface or Hosting
+dependency; consumers own notification migration, credentials, endpoints and supervision.
+
+Optional [finite due-time intents](../docs/due-intents.md) use the same package and owning
+outbox. Explicit Stage/Suppress/Release operations retain occurrences and perform bounded
+atomic handoff; source policy, clock, native transaction/save/commit and worker composition
+remain consumer-owned. Select ConfigurePostgresDueIntents and its save validation separately.
+
+Optional [technical contribution sets](../docs/contributions.md) retain named content and one
+completion/timeout notice with consumer-selected participant/count policy. Select their own
+mapping/save guards; no workflow runner, recurrence package or business approval model is required.
+
 ```csharp
 // In the module's native OnModelCreating:
 model.ConfigurePostgresOutbox("inventory", "outbox_messages");

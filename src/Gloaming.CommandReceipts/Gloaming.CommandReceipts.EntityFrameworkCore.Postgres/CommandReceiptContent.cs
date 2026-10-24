@@ -8,6 +8,7 @@ public sealed record CommandReceiptContent
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(formatVersion, 1);
         ArgumentNullException.ThrowIfNull(payload);
+
         if (payload.Contains('\0', StringComparison.Ordinal))
             throw new ArgumentException("PostgreSQL text cannot contain NUL.", nameof(payload));
 

@@ -10,6 +10,8 @@ internal sealed class ChildHost : IAsyncDisposable
 {
     private readonly Process process;
     private readonly ConcurrentQueue<string> output = new();
+    private readonly ConcurrentQueue<string> standardOutput = new();
+    private readonly ConcurrentQueue<string> standardError = new();
     private readonly Task[] drains;
     private readonly string[] secrets;
 
@@ -62,10 +64,18 @@ internal sealed class ChildHost : IAsyncDisposable
         process =
             Process.Start(start)
             ?? throw new InvalidOperationException("Child host did not start.");
-        drains = [DrainAsync(process.StandardOutput), DrainAsync(process.StandardError)];
+        drains =
+        [
+            DrainAsync(process.StandardOutput, standardOutput),
+            DrainAsync(process.StandardError, standardError),
+        ];
     }
 
     internal string Output => string.Join(Environment.NewLine, output);
+
+    // Finite executable assertions retain the separate streams and native line endings.
+    internal string StandardOutput => Lines(standardOutput);
+    internal string StandardError => Lines(standardError);
 
     internal async Task<string> WaitForOutputAsync(string fragment, CancellationToken cancellation)
     {
@@ -77,12 +87,22 @@ internal sealed class ChildHost : IAsyncDisposable
             if (line is not null)
                 return line;
 
-            Assert.False(
-                process.HasExited,
-                $"Host exited before '{fragment}'.{Environment.NewLine}{Output}"
-            );
             try
             {
+                if (process.HasExited)
+                {
+                    // Exit can precede the drain publishing the child's final line.
+                    await Task.WhenAll(drains).WaitAsync(cancellation);
+                    line = output.FirstOrDefault(value =>
+                        value.Contains(fragment, StringComparison.Ordinal)
+                    );
+                    Assert.True(
+                        line is not null,
+                        $"Host exited before '{fragment}'.{Environment.NewLine}{Output}"
+                    );
+                    return line;
+                }
+
                 await Task.Delay(50, cancellation);
             }
             catch (OperationCanceledException failure) when (cancellation.IsCancellationRequested)
@@ -100,22 +120,28 @@ internal sealed class ChildHost : IAsyncDisposable
         try
         {
             await process.WaitForExitAsync(cancellation);
+            await Task.WhenAll(drains).WaitAsync(cancellation);
         }
         catch (OperationCanceledException failure) when (cancellation.IsCancellationRequested)
         {
             throw new TimeoutException($"Host did not exit.{Environment.NewLine}{Output}", failure);
         }
 
-        await Task.WhenAll(drains);
         return process.ExitCode;
     }
 
     internal async Task StopAsync(CancellationToken cancellation)
     {
+        await SignalAsync("-TERM", cancellation);
+        Assert.True(await WaitForExitAsync(cancellation) == 0, Output);
+    }
+
+    internal async Task SignalAsync(string name, CancellationToken cancellation)
+    {
         if (!process.HasExited)
         {
             var signal = new ProcessStartInfo("kill") { UseShellExecute = false };
-            signal.ArgumentList.Add("-TERM");
+            signal.ArgumentList.Add(name);
             signal.ArgumentList.Add(
                 process.Id.ToString(System.Globalization.CultureInfo.InvariantCulture)
             );
@@ -123,8 +149,6 @@ internal sealed class ChildHost : IAsyncDisposable
             await sender.WaitForExitAsync(cancellation);
             Assert.Equal(0, sender.ExitCode);
         }
-
-        Assert.True(await WaitForExitAsync(cancellation) == 0, Output);
     }
 
     internal async Task KillAsync(CancellationToken cancellation)
@@ -150,7 +174,10 @@ internal sealed class ChildHost : IAsyncDisposable
         }
     }
 
-    private async Task DrainAsync(StreamReader reader)
+    private static string Lines(ConcurrentQueue<string> lines) =>
+        string.Concat(lines.Select(line => line + Environment.NewLine));
+
+    private async Task DrainAsync(StreamReader reader, ConcurrentQueue<string> stream)
     {
         while (await reader.ReadLineAsync() is { } line)
         {
@@ -158,6 +185,7 @@ internal sealed class ChildHost : IAsyncDisposable
                 line = line.Replace(secret, "[connection redacted]", StringComparison.Ordinal);
 
             output.Enqueue(line);
+            stream.Enqueue(line);
         }
     }
 }

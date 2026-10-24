@@ -25,8 +25,19 @@ Map one IInlineStateRecord row per complete stream key, its Version as a native 
 token, and its RecordedAt. ConfigureRequiredInlineState<TStreamRecord,TStoredEventRecord,TInlineStateRecord>(streamType)
 registers the required aggregate. Call ValidateEventStreamChanges() in **both** native
 SaveChanges(bool) and SaveChangesAsync(bool,CancellationToken) overrides before calling base.
-It validates complete event/state/header participation before SQL. It does not install itself
+It validates complete event/state/header metadata participation before SQL. An omitted append
+timestamp must already match its proposed stored value; this conditional native read preserves
+valid equal-time appends. Body semantics remain consumer-owned outside the maintenance proposal.
+It does not install itself
 or protect raw SQL, bulk updates, external writers or consumers which omit the save guard.
+For maintenance, modified header/state entries must preserve their complete observed original
+values so native column selection cannot omit reconstructed state. Unchanged entries must already
+have their complete reconstructed values stored in the original transaction. Premature acceptance and a saved repair undone by
+savepoint rollback are rejected. Healthy already-stored inline state and valid repeated saves
+remain supported. These native primary-key reads ignore EF query filters; database permissions
+and RLS still apply. The explicit guard performs synchronous reads even in an async save override.
+The registered capability and regeneration executor instead use cancellable async reads on their
+async paths. Native JSON values are compared structurally; UTC timestamp offsets remain exact.
 DbSet properties and context markers are unnecessary; native Set<T>() and Entry(instance) work.
 Use ordinary independent single-table rows with mapped unconverted CLR keys.
 
@@ -169,6 +180,10 @@ capture instead raises a native concurrency exception. Healthy state need not be
 rewritten. Repair preserves facts, event version and recorded times, changing only the header's
 technical stamp. A private exact write association lets the native save guard accept this
 state replacement; it is not a public bypass or maintenance scheduling framework.
+An `Unchanged` tracking state alone is not evidence that the repair participated in saving.
+After `SaveChanges(false)`, accept the successfully saved changes before another save, as native
+EF requires for retaining the original optimistic tokens until acceptance. Do not accept a
+proposal that has not been saved; discard failed contexts and replay from fresh state.
 
 Every append and repair generates a new stamp. A stale writer can decide from pre-repair state,
 but its native header UPDATE loses after repair commits. An append can likewise invalidate an

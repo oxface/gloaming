@@ -47,12 +47,12 @@ Encapsulated aggregate reducers and separately reusable pure evolution are consu
 Generic lifecycle extensions require a real caller and failure/recovery proof before selection.
 
 The optional EF package implements independent full replay into its one inline aggregate.
-Catch-up, snapshot-plus-tail, async/subscription processing, secondary/multi-stream
-projections, upcasting, command idempotency and ambiguous-commit recovery remain deferred.
-They concern persisted versions, compatibility and progress guarantees beyond this in-memory
-contract; their current context is in the family capability record. A projected summary and the
+Snapshot-plus-tail and persisted progress are beyond this in-memory contract. Optional secondary/
+multi-stream processing now belongs to the separately selected PostgreSQL feed; upcasting and
+logical command idempotency belong to their independent selected packages. Their current
+contracts are linked from the family capability record. A projected summary and the
 aggregate's persisted state are views of the same stream, not additional command aggregates.
 
-Provider-specific locks and a possible EventSourcing.Postgres package are recorded candidates,
-not core dependencies or implemented interfaces. The [family folder](../../README.md) groups package documentation and tests; packages retain
+Provider-specific committed feed/projection operations are implemented in an independent optional
+PostgreSQL module, with no core dependency. The [family folder](../../README.md) groups package documentation and tests; packages retain
 independent contracts and dependencies.
