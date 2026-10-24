@@ -11,6 +11,8 @@
     <PackageReference Include="Aspire.Hosting.Keycloak" />
     <!-- Security floor for Aspire/StreamJsonRpc's transitive MessagePack dependency. -->
     <PackageReference Include="MessagePack" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
   </ItemGroup>
