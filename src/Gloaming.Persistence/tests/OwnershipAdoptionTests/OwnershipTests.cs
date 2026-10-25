@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Gloaming.Persistence.EntityFrameworkCore;
 using Gloaming.Samples.Wholesale.PersistenceDemo.Inventory;
 using Gloaming.Tenancy;
@@ -254,34 +253,14 @@ public sealed class OwnershipTests(PostgreSqlFixture postgres) : IClassFixture<P
 
         async Task<string[]> RunAsync()
         {
-            var start = new ProcessStartInfo("dotnet")
-            {
-                WorkingDirectory = AppContext.BaseDirectory,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-            };
-            start.ArgumentList.Add(typeof(DemoComposition).Assembly.Location);
-            start.Environment["WHOLESALE_DEMO_CONNECTION_STRING"] = connection;
-            using var process =
-                Process.Start(start)
-                ?? throw new InvalidOperationException("Could not start the demo.");
-            try
-            {
-                Task<string> output = process.StandardOutput.ReadToEndAsync(Token);
-                Task<string> errors = process.StandardError.ReadToEndAsync(Token);
-                await process.WaitForExitAsync(Token).WaitAsync(TimeSpan.FromSeconds(30), Token);
-                Assert.True(process.ExitCode == 0, await errors);
-                return (await output).Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
-            }
-            finally
-            {
-                if (!process.HasExited)
-                {
-                    process.Kill(entireProcessTree: true);
-                    await process.WaitForExitAsync(CancellationToken.None);
-                }
-            }
+            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
+            deadline.CancelAfter(TimeSpan.FromSeconds(30));
+            await using var child = new ChildHost(
+                typeof(DemoComposition).Assembly,
+                new() { ["WHOLESALE_DEMO_CONNECTION_STRING"] = connection }
+            );
+            Assert.True(await child.WaitForExitAsync(deadline.Token) == 0, child.Output);
+            return child.StandardOutput.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
         }
     }
 

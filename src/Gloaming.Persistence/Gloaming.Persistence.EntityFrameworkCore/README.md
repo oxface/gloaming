@@ -104,8 +104,9 @@ Raw SQL, bulk writes, `IgnoreQueryFilters`, foreign tracked entities/identity-ma
 privileged maintenance and arbitrary same-process code remain consumer responsibilities.
 The proofs use native PostgreSQL text/UUID comparison. Custom collations, key comparers
 and storage strategies need their own proofs of consistent identity semantics. The library
-neither opens transactions, saves, commits, retries nor registers services. Native saves/transactions remain
-visible; no ambient scope, base DbContext or automatic stamping is introduced.
+neither opens transactions, saves, commits nor retries. Registration is explicit: select the
+save-coordinator extension above or invoke validation through the native overrides. Native
+saves/transactions remain visible; no ambient scope, base DbContext or automatic stamping is introduced.
 
 See the [ownership consumer](../samples/PersistenceDemo/README.md) and [family capabilities](../docs/capabilities.md) for executable usage and supported mappings.
 
@@ -116,23 +117,21 @@ foreign or changed ownership rather than filling it. Raw/bulk writes remain outs
 provider-independent adapter's tracked-save validation. Tenant transfer, additional providers
 and complex/shared/inherited mapping shapes need their own proofs.
 
-The optional [PostgreSQL adapter](../Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
-now adds `.HasTenantOwnership(...).WithRls(settingName)`, explicit read/write policy migration
-helpers and automatic scoped transaction setup through a native transaction interceptor. This package stays
-independent of Tenancy and Npgsql. `FindTenantOwnershipProperty` exposes the declared property
-for optional integrations without duplicating private annotation names.
+## Optional PostgreSQL row security
+
+The separate [PostgreSQL adapter](../Gloaming.Persistence.EntityFrameworkCore.Postgres/README.md)
+adds `.HasTenantOwnership(...).WithRls(settingName)`, explicit read/write policy migration
+helpers and transaction-local context setup through `UseRls` and a native interceptor. Transactions
+remain caller-owned. This base ownership package stays independent of Tenancy and Npgsql;
+`FindTenantOwnershipProperty` exposes its declared property for optional integrations.
 
 The [Sales isolation fixture](../../../samples/Wholesale/IntegrationTests/Scenarios/Cqrs/TenantIsolation/README.md)
 demonstrates restricted policies and native setup. RLS does not enforce within-tenant permissions
 or contain a credential holder who can forge the custom tenant setting.
 
-That consumer now uses the separate
+The explicit transaction-setup recipe uses the independent
 [Tenancy/PostgreSQL context utility](../../Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/README.md)
-for explicit transaction setup. This Persistence adapter remains independent of Tenancy and
-Npgsql and does not generate policies or automatically bind context.
-
-
-
-The optional provider adapter uses UseRls with caller-owned transactions. The shared save
-coordinator retains its own dependencies/interfaces; native transaction setup belongs to the
-provider adapter.
+instead of automatic interceptor setup. Choose one integration lifetime mode. The base ownership
+package generates no policies and binds no tenant context; provider-specific setup belongs to
+the selected optional package. The shared save coordinator retains its own dependencies and
+does not perform transaction setup.

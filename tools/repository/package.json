@@ -7,7 +7,7 @@
   },
   "scripts": {
     "references": "node check-references.ts",
-    "test": "node --test references.test.ts",
+    "test": "node --test *.test.ts",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write '*.ts' '*.json' '*.md'",
     "format:check": "prettier --check '*.ts' '*.json' '*.md'",
@@ -16,9 +16,13 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
+    "@types/js-yaml": "4.0.9",
     "@types/node": "24.19.2",
+    "@types/picomatch": "2.3.4",
+    "js-yaml": "4.3.2",
+    "lefthook": "2.2.2",
+    "picomatch": "2.3.2",
     "prettier": "3.9.10",
-    "typescript": "7.0.2",
-    "lefthook": "2.2.2"
+    "typescript": "7.0.2"
   }
 }

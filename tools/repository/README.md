@@ -8,7 +8,7 @@ npm ci --prefix tools/repository --ignore-scripts
 npm --prefix tools/repository run check
 ```
 
-`check` verifies TypeScript types, tooling formatting, reference-checker regression cases and
+`check` verifies TypeScript types, tooling formatting, reference/CI-selection regression cases and
 local references. CI runs it for every change, including documentation-only PRs. The
 pre-commit hook selects it for documentation, project and tooling inputs.
 
@@ -63,8 +63,16 @@ integrity. Changes inside mapped roots follow their explicit filters.
 
 Repository integrity always runs lightweight tooling/reference checks and commitlint;
 its .NET checks run for relevant code/build changes. Update the path map when project
-dependencies, linked fixtures, consumers or adoption proofs change. Wholesale runtime retains
-sample/shared-input and manual selection rather than running for every library-only change.
+dependencies, linked fixtures, consumers or adoption proofs change. Wholesale runtime includes
+the library implementations in its actual project-reference closure. Family-only tests and
+unconsumed optional libraries retain their focused lanes. Documentation-only changes do not
+select runtime unless dispatched manually.
+
+`npm --prefix tools/repository test` checks representative path-selection cases and walks the
+runtime test project's literal ProjectReferences to verify every consumed library selects runtime.
+The cases use the pinned action's picomatch major version and `dot: true` matching with
+`some-with-excludes`; they also check the declared manual/shared/unmapped fallbacks. This is
+a local policy check, not execution of GitHub's expression engine or a general MSBuild evaluator.
 
 Expensive jobs keep stable check names and use job conditions. The reusable selection workflow
 still has lightweight setup overhead for documentation-only changes. Host CI remains the
