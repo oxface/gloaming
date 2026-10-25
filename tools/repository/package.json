@@ -19,7 +19,7 @@
     "@types/js-yaml": "4.0.9",
     "@types/node": "24.19.2",
     "@types/picomatch": "2.3.4",
-    "js-yaml": "4.3.2",
+    "js-yaml": "5.4.2",
     "lefthook": "2.2.2",
     "picomatch": "2.3.2",
     "prettier": "3.9.10",
