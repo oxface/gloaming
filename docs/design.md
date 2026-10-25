@@ -73,7 +73,10 @@ Select only the documented package closure. ActorIdentity and Tenancy cores are 
 and package-free. Persistence ownership requires neither context family. Event sourcing needs
 no messaging; state-stored modules need no event-sourcing types. Technical libraries reference
 no sample Contracts. PostgreSQL and RabbitMQ guarantees have real provider proofs; those
-results do not certify other providers or a transport matrix.
+results do not certify other providers or a transport matrix. The
+[native Kafka application recipe](../modular-monolith-patterns/kafka.md) has a separate
+package-only provider/process proof for its selected single-node composition; it adds no
+Kafka runtime/package or general transport matrix.
 
 Callable messaging persistence/delivery remains usable without Hosting abstractions. The
 explicit [hosting package](../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/README.md)

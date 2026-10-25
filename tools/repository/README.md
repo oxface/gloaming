@@ -12,6 +12,29 @@ npm --prefix tools/repository run check
 local references. CI runs it for every change, including documentation-only PRs. The
 pre-commit hook selects it for documentation, project and tooling inputs.
 
+## Local commit checks
+
+The pre-commit hook runs the lightweight repository checks above and CSharpier for relevant
+files. Commit-message validation runs separately through commitlint. These checks require the
+pinned Node/SDK and restored tools, with no database or broker needed.
+
+Native tests, full-solution style/analyzer verification and package adoption run in the selected
+PR workflows. Run relevant checks before review using the
+[development commands](../../docs/development.md#repository-checks) and
+[test map](../../tests/README.md); committing does not execute those suites.
+
+## Dependency updates
+
+Dependabot groups EF Core, dotnet-ef and Microsoft.Extensions/ASP.NET Core servicing updates
+together because EF patch releases can raise their minimum dependency versions. Central package
+pins and the EF tool version travel in that update. SDK, Aspire and telemetry updates retain
+their own groups.
+
+Library project declarations describe the packages their code uses. Review a bot-added
+PackageReference against that contract rather than widening architecture assertions to accept
+it automatically. Restore, architecture tests and package-only consumers verify the resulting
+graph. Release consumers read their direct DI/provider versions from the central package file.
+
 ## Local references
 
 `npm --prefix tools/repository run references` discovers the repository from the working

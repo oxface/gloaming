@@ -125,3 +125,42 @@ test("shared process and provider fixture changes select the persistence adopter
   ])
     assert(matches("Persistence", path), `${path} must select Persistence`);
 });
+
+test("Kafka adapter, wire fixtures and recipe select native package adoption", () => {
+  for (const path of [
+    "tools/release/verify-kafka.ts",
+    "tools/release/consumers/Kafka/KafkaAdapter.cs",
+    "tools/release/consumers/Kafka/Fixtures/changed.v1.json",
+    "modular-monolith-patterns/kafka.md",
+    "src/Gloaming.Messaging/Gloaming.Messaging/IMessagePublisher.cs",
+    "src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresInbox.cs",
+  ])
+    assert(
+      matches("packages", path),
+      `${path} must select native package proofs`,
+    );
+
+  const workflow = load(
+    readFileSync(resolve(root, ".github/workflows/packages.yml"), "utf8"),
+  ) as {
+    jobs: {
+      kafka: {
+        needs: string;
+        if: string;
+        env: { GLOAMING_CONTAINER_RUNTIME: string };
+        steps: { run?: string }[];
+      };
+    };
+  };
+  assert.equal(workflow.jobs.kafka.needs, "changes");
+  assert(
+    workflow.jobs.kafka.if.includes("needs.changes.outputs.packages == 'true'"),
+  );
+  assert(workflow.jobs.kafka.if.includes("needs.changes.result != 'success'"));
+  assert.equal(workflow.jobs.kafka.env.GLOAMING_CONTAINER_RUNTIME, "docker");
+  assert(
+    workflow.jobs.kafka.steps.some(
+      (step) => step.run === "npm --prefix tools/release run verify:kafka",
+    ),
+  );
+});

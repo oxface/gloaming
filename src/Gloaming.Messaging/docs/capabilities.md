@@ -227,6 +227,17 @@ and existing inbox/outbox workers remain explicit. No workflow worker, scheduler
 is supplied. The independent tenantless workspace adopter takes a different existing-resource
 branch and does not release resources it did not create.
 
+## Native Kafka recipe
+
+The [Kafka application recipe](../../../modular-monolith-patterns/kafka.md) composes existing
+inbox/outbox interfaces with native Confluent clients. Its separate
+[package-only provider/process proof](../../../tools/release/consumers/Kafka/README.md) covers
+sequential commit-before-offset intake, native acknowledgement loss, process death, local
+rollback, poison disposition, live group ownership loss and broker restart. It adds no Kafka
+package or reusable mechanism. Producer trust, source retention, migrations, quarantine,
+replay and host lifecycle remain consumer-owned. The single-node classic-group topology
+does not certify parallel intake, HA, managed-service security or throughput.
+
 ## Deferred capabilities
 
 The schema compatibility guide proves one consumer evolution. Different contract changes and

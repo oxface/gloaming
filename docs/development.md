@@ -40,6 +40,23 @@ Use the [test map](../tests/README.md) to find family suites and their provider 
 If a constrained environment requires serial builds, build separately with -m:1, then run
 tests with --no-build. MSBuild arguments are not test-runner arguments.
 
+## Native Kafka package proof
+
+The separate [Kafka recipe](../modular-monolith-patterns/kafka.md) uses a local Docker or Podman
+CLI, the pinned SDK/Node and real task-owned Kafka/PostgreSQL containers. It packs current libraries
+and builds an external consumer with a fresh package cache. It is not an additional native
+Microsoft Testing Platform project:
+
+~~~bash
+npm --prefix tools/release run verify:kafka
+# Select Podman explicitly if both CLIs are installed:
+GLOAMING_CONTAINER_RUNTIME=podman npm --prefix tools/release run verify:kafka
+~~~
+
+See the [consumer guide](../tools/release/consumers/Kafka/README.md) for execution, retained
+evidence, resource ownership and the selected topology. Native provider/process, ordinary
+package and this Kafka package profile protect different integration obligations.
+
 ## Run the reference application
 
 The [sample guide](../samples/Wholesale/README.md), [API setup](../samples/Wholesale/Api/README.md)
