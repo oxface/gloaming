@@ -234,7 +234,8 @@ sealed class PackageDatabase(DbContextOptions<PackageDatabase> options, string t
         documents.Property(row => row.Id).ValueGeneratedNever();
         documents.HasTenantOwnership(row => row.Tenant, () => RequiredTenant, "Owner");
         model.ConfigurePostgresOutbox("package_proof", "outbox");
-        model.ConfigureAudit("package_proof", "audit")
+        model
+            .ConfigureAudit("package_proof", "audit")
             .Property(row => row.Details)
             .HasColumnType("jsonb");
     }

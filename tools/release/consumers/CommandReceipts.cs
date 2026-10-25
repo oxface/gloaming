@@ -2,8 +2,10 @@ using Gloaming.CommandReceipts.EntityFrameworkCore.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-var supplied = Environment.GetEnvironmentVariable("GLOAMING_PACKAGE_TEST_CONNECTION_STRING")
+var supplied =
+    Environment.GetEnvironmentVariable("GLOAMING_PACKAGE_TEST_CONNECTION_STRING")
     ?? throw new InvalidOperationException("A disposable PostgreSQL server is required.");
+
 string name = "gloaming_receipts_" + Guid.NewGuid().ToString("N");
 var settings = new NpgsqlConnectionStringBuilder(supplied) { Pooling = false };
 await using var admin = new NpgsqlConnection(settings.ConnectionString);
@@ -14,7 +16,9 @@ await using (var create = new NpgsqlCommand($"CREATE DATABASE {name}", admin))
 try
 {
     settings.Database = name;
-    var options = new DbContextOptionsBuilder<ReceiptDatabase>().UseNpgsql(settings.ConnectionString).Options;
+    var options = new DbContextOptionsBuilder<ReceiptDatabase>()
+        .UseNpgsql(settings.ConnectionString)
+        .Options;
     await using (var setup = new ReceiptDatabase(options))
         await setup.Database.EnsureCreatedAsync();
 
@@ -23,15 +27,21 @@ try
     {
         await using var database = new ReceiptDatabase(options);
         await using var transaction = await database.Database.BeginTransactionAsync();
-        var receipt = await new PostgresCommandReceipts<ReceiptDatabase>(database).AcquireAsync(key, "stable-input");
+        var receipt = await new PostgresCommandReceipts<ReceiptDatabase>(database).AcquireAsync(
+            key,
+            "stable-input"
+        );
         if (receipt.Result is { } retained)
         {
             if (attempt != 1 || retained != new CommandReceiptContent(1, "published"))
-                throw new InvalidOperationException("The package did not replay its original result.");
+                throw new InvalidOperationException(
+                    "The package did not replay its original result."
+                );
         }
         else
         {
-            if (attempt != 0) throw new InvalidOperationException("The receipt disappeared.");
+            if (attempt != 0)
+                throw new InvalidOperationException("The receipt disappeared.");
 
             database.Add(new Effect { Id = key.OperationId });
             receipt.Retain(new(1, "published"));
@@ -49,16 +59,21 @@ try
         await using var database = new ReceiptDatabase(options);
         await using var transaction = await database.Database.BeginTransactionAsync();
         var pendingKey = new CommandReceiptKey("admitted", "suppressed", Guid.NewGuid());
-        var receipt = await new PostgresCommandReceipts<ReceiptDatabase>(database)
-            .AcquireAsync(pendingKey, "stable-input");
+        var receipt = await new PostgresCommandReceipts<ReceiptDatabase>(database).AcquireAsync(
+            pendingKey,
+            "stable-input"
+        );
         database.Add(new Effect { Id = pendingKey.OperationId });
         receipt.Retain(new(1, "must-not-commit"));
-        database.ChangeTracker.Entries<CommandReceiptRecord>().Single().State = EntityState.Unchanged;
+        database.ChangeTracker.Entries<CommandReceiptRecord>().Single().State =
+            EntityState.Unchanged;
         bool rejected = false;
         try
         {
-            if (asynchronous) await database.SaveChangesAsync();
-            else database.SaveChanges();
+            if (asynchronous)
+                await database.SaveChangesAsync();
+            else
+                database.SaveChanges();
         }
         catch (InvalidOperationException)
         {
@@ -72,7 +87,10 @@ try
     }
 
     await using var read = new ReceiptDatabase(options);
-    if (await read.Set<Effect>().CountAsync() != 1 || await read.Set<CommandReceiptRecord>().CountAsync() != 1)
+    if (
+        await read.Set<Effect>().CountAsync() != 1
+        || await read.Set<CommandReceiptRecord>().CountAsync() != 1
+    )
         throw new InvalidOperationException("The package repeated a retained business effect.");
 
     Console.WriteLine("Command receipt package adoption passed.");
@@ -98,7 +116,10 @@ sealed class ReceiptDatabase(DbContextOptions<ReceiptDatabase> options) : DbCont
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
-    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default
+    )
     {
         this.ValidateCommandReceiptChanges();
 

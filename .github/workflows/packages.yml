@@ -58,6 +58,8 @@ jobs:
           package-manager-cache: false
       - name: Install package verification tooling
         run: npm ci --prefix tools/release --ignore-scripts
+      - name: Restore pinned .NET tools
+        run: dotnet tool restore
       - name: Check TypeScript and formatting
         run: npm --prefix tools/release run check
       - name: Prove local package artifacts and external consumers
@@ -90,6 +92,8 @@ jobs:
           package-manager-cache: false
       - name: Install package verification tooling
         run: npm ci --prefix tools/release --ignore-scripts
+      - name: Restore pinned .NET tools
+        run: dotnet tool restore
       - name: Check TypeScript and formatting
         run: npm --prefix tools/release run check
       - name: Prove native Kafka delivery from packed libraries
