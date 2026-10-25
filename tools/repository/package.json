@@ -14,8 +14,8 @@
     "check": "npm run typecheck && npm run format:check && npm test && npm run references"
   },
   "devDependencies": {
-    "@commitlint/cli": "21.2.3",
-    "@commitlint/config-conventional": "21.2.3",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@types/js-yaml": "4.0.9",
     "@types/node": "24.19.2",
     "@types/picomatch": "2.3.4",
