@@ -97,6 +97,7 @@ its existing tables and roles are not changed. Scratch databases and the RLS log
 are removed in finally. Use a disposable PostgreSQL server.
 
 ```sh
+dotnet tool restore
 npm --prefix tools/release ci
 npm --prefix tools/release run check
 # Supply the connection through your environment/secret manager, never command arguments.
@@ -106,6 +107,12 @@ npm --prefix tools/release run verify
 `GLOAMING_PACKAGE_TEST_CONNECTION_STRING` is required. Missing configuration fails
 before packing; PostgreSQL is never silently skipped. `DOTNET_HOST_PATH` can select
 a particular `dotnet` executable; otherwise it must be on `PATH`.
+
+Release-tool checks run TypeScript/Prettier, CSharpier over the retained C# consumers and
+lifecycle fixtures, and the tooling tests. Restore the pinned .NET tools before running them.
+`npm --prefix tools/release run format` formats both the tooling and those C# sources.
+The root CSharpier check also includes these sources; build output and npm dependencies remain
+excluded. Both package CI jobs restore the tools and run these checks.
 
 The harness invokes the same pack-only command for the 24 `Gloaming.*` library
 projects, using a unique local prerelease version and a temporary feed. Ordinary

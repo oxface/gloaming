@@ -93,6 +93,7 @@ For a new consuming application, start with
 
 ~~~bash
 npm --prefix tools/repository run check
+npm --prefix tools/release run check
 dotnet csharpier check . --include-generated
 dotnet format style Gloaming.slnx --verify-no-changes --no-restore
 dotnet format analyzers Gloaming.slnx --verify-no-changes --no-restore
@@ -100,6 +101,8 @@ dotnet format analyzers Gloaming.slnx --verify-no-changes --no-restore
 
 [Repository tooling](../tools/repository/README.md) checks public Markdown and literal
 project/source links. Ignored local notes do not participate in published documentation.
+The [release-tool checks](../tools/release/README.md#full-package-adoption-proof) also format-check
+the retained package-consumer C# sources and exercise helper lifecycles without a database or broker.
 
 The [main workflow](../.github/workflows/ci.yml) selects family suites, architecture and
 dependent consumers using [explicit path inputs](../.github/ci-paths.yml). Shared tooling,
