@@ -68,3 +68,11 @@ See [durable message observability](docs/observability.md) for optional W3C cont
 activity/meter names, failure logs and host-owned exporter configuration.
 
 See [outbox route selection](docs/route-selection.md) when independently composed publishers share one module outbox.
+
+## Native Kafka adoption
+
+The [application recipe](../../modular-monolith-patterns/kafka.md) and its
+[package-only consumer](../../tools/release/consumers/Kafka/README.md) demonstrate native Kafka
+publication and sequential durable intake over the existing interfaces. This adds no Gloaming
+Kafka package, runtime or serializer dependency. Consumer groups, trust, wire contracts,
+quarantine, retention and production topology stay with the application.

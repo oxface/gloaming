@@ -30,6 +30,7 @@ contracts define current public interfaces, setup and supported limits.
 | [0027 Technical contribution completion](0027-technical-contribution-completion.md) | Retained named content, consumer-selected technical count and one atomic completion/timeout notice; business acceptance remains consumer-owned. |
 | [0028 Committed feed and projection generations](0028-committed-feed-and-projection-generations.md) | Explicit serialized capture, bounded transactional secondary projections and fenced generation selection; consumer source/output/deployment policy. |
 | [0029 Native queue wakeups](0029-native-queue-wakeups.md) | Optional dedicated LISTEN/NOTIFY composition and retained per-worker hints; polling remains authoritative, no new wrapper/runtime. |
+| [0030 Native Kafka recipe](0030-native-kafka-delivery-recipe.md) | Existing inbox/outbox interfaces, native clients and sequential commit-before-offset intake; consumer policy and no new library mechanism. |
 
 ADR numbers are stable and are not reused. Gaps preserve earlier decision identities.
 Current records explain accepted choices; package-local contracts define supported setup and limits.

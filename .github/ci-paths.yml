@@ -151,3 +151,4 @@ packages:
   - 'src/Gloaming.*/docs/**'
   - 'src/Directory.Build.props'
   - 'tools/release/**'
+  - 'modular-monolith-patterns/kafka.md'

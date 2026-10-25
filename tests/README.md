@@ -45,6 +45,16 @@ The [explicit path map](../.github/ci-paths.yml) selects dependent lanes. Comman
 not proof of scheduling or passing results; manual full selection remains the integration gate.
 The [development guide](../docs/development.md) documents native local/container prerequisites.
 
+## Native Kafka package profile
+
+A separate [native Kafka consumer](../tools/release/consumers/Kafka/README.md) is generated outside
+the checkout and consumes the freshly packed libraries through exact PackageReferences. It is
+not a thirty-third native test project or an eighteenth profile silently added to the ordinary
+PostgreSQL-only command. Run `npm --prefix tools/release run verify:kafka`; its explicit
+[package CI job](../.github/workflows/packages.yml) requires a local container CLI and owns the
+selected Kafka/PostgreSQL process, acknowledgement, offset, rollback, quarantine and restart
+proofs. The [recipe](../modular-monolith-patterns/kafka.md) owns setup and supported limits.
+
 ## What each kind of test establishes
 
 The outbox suite also owns [finite due-time consumers](../src/Gloaming.Messaging/tests/Fixtures/DueTimeIntent/README.md).

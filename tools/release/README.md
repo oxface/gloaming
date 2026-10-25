@@ -235,3 +235,43 @@ The PostgreSQL ownership/outbox/audit profile exercises EF filters and tracked-s
 validation. The separate row-security profile proves bypass-SQL isolation for its one
 explicitly deployed table and restricted login; it does not certify a consumer's full
 schema, credential inventory, membership policy or external transaction pooler.
+
+## Native Kafka package profile
+
+Run the independently selected native transport proof with the same SDK/Node requirements
+and a local Docker or Podman CLI (Linux x64 is the tested topology):
+
+```sh
+npm --prefix tools/release run verify:kafka
+# Optional explicit local runtime selection:
+GLOAMING_CONTAINER_RUNTIME=podman npm --prefix tools/release run verify:kafka
+```
+
+No database/broker connection or external account is required. The runner creates its own
+Kafka 4.3.1 and PostgreSQL 18.6 containers using pinned image digests and isolated local ports,
+restarts only its owned broker, then removes its containers and anonymous volumes on ordinary
+success/failure. Release-tool checks exercise cleanup failures separately from native delivery.
+It never skips unavailable infrastructure. Image/NuGet network access may be needed.
+Forced termination of the runner is outside ordinary cleanup; its printed directory/log
+identifies the uniquely named proof resources.
+
+This command packs a new snapshot with the same pack-only tool, builds the
+[retained Kafka consumer](consumers/Kafka/README.md) outside the checkout and restores its four
+Gloaming packages from a source-mapped feed into a fresh isolated cache, with zero
+ProjectReferences. Other than native DI and Confluent.Kafka 2.16.0, the consumer selects only
+the existing PostgreSQL messaging closure. No production package gains a Kafka dependency.
+
+The [public recipe](../../modular-monolith-patterns/kafka.md) describes the actual protocol and
+limits. Provider/process scenarios include native broker acceptance with lost acknowledgements,
+process death before outbox completion and around intake commit, local effect rollback,
+retained-content conflicts, durable poison disposition, live classic-group ownership loss,
+broker restart, cancellation/native close and an owned literal v1 reader. The database
+uncertainty probe uses a native post-commit observer, not PostgreSQL wire interception.
+
+The printed temporary directory retains archive/source hashes, exact package closure,
+redacted execution.log, results.json, manifest.json and separate cleanup.json. No credentials
+are written to configuration files. The index and staged snapshot are checked before/after.
+Source hashes describe the copied inputs used for compilation; a successful manifest is written
+only after native outcomes, cleanup and index preservation pass.
+The command does not publish remotely, stage files or modify a consuming application.
+The ordinary `verify` command remains the separate seventeen-profile PostgreSQL-only proof.

@@ -19,7 +19,8 @@ A request can be as small as:
    working public behavior and current project conventions unless the request changes them.
 3. For initialization or missing host infrastructure, follow [bootstrap](bootstrap.md).
    For requested modules/aggregates, follow [modules](modules.md) and the relevant persistence
-   branch. Follow [messaging](messaging.md) when durable handoff or command receipts are selected.
+   branch. Follow [messaging](messaging.md) when durable handoff or command receipts are selected. For Kafka transport adoption, use the
+   [native Kafka recipe](kafka.md).
 4. Resolve [library integration](gloaming.md) against the package versions actually being used.
    Essential contracts remain with each library. Implement one runnable path through the selected
    modules, native persistence and host.
