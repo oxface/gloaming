@@ -27,6 +27,10 @@ A request can be as small as:
 5. Complete [verification](verification.md). Record the resulting module map, infrastructure and
    transaction ownership in the target application's architecture documentation.
 
+For a first protected state-stored module, follow the [first-module walkthrough](first-module.md).
+It connects package selection, HTTP context, native persistence, audit and the first acceptance
+checks using existing executable examples.
+
 The target repository's instructions and explicit user decisions take precedence over these
 defaults. Ask for missing decisions that change business meaning or require credentials; continue
 independent setup while those answers are pending. State ordinary technical assumptions clearly.

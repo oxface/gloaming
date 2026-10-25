@@ -16,6 +16,23 @@ below. When the matching source is available locally, inspect it and its executa
 Check the chosen package version's API, target framework and native provider dependencies.
 Keep application project references inside the application; consume technical libraries as packages.
 
+### Read contracts for the adopted version
+
+Record the exact Gloaming package version and source revision in the application's setup
+documentation. Start with the README included in that package. Read the `repository` element's
+`commit` attribute in the `.nuspec` inside the `.nupkg` archive to identify its source revision;
+packages from one local snapshot should agree. The local version's random suffix is not a Git
+revision.
+
+The published source links in these patterns point to `main` for navigation. For the adopted
+snapshot, replace `/blob/main/` with `/blob/<recorded-commit>/`, or inspect that revision in a
+separate local checkout. Use the matching contracts and examples when implementing API calls,
+model configuration and save guards. Later changes on `main` do not change an already packed
+snapshot.
+
+For one protected EF/PostgreSQL operation, the [first-module walkthrough](first-module.md)
+identifies the selected packages and executable examples.
+
 | Requirement | Contract and selection |
 | --- | --- |
 | Actor/initiator attribution | [ActorIdentity](https://github.com/oxface/gloaming/blob/main/src/Gloaming.ActorIdentity/README.md), with optional native HTTP establishment |

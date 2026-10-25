@@ -77,7 +77,7 @@ requires a coordinated writer rollout; old and new lock keys would not exclude e
 
 ## Executable evidence
 
-The [native-only worker fixture](../src/Gloaming.Messaging/tests/Fixtures/EntityWork/README.md)
+The [native-only worker fixture](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Messaging/tests/Fixtures/EntityWork/README.md)
 references Npgsql without Gloaming packages. Two real worker processes prove same-key exclusion
 with an observed ungranted native advisory lock; different module/scope/entity keys proceed while
 the first transaction stays open. Other cases cover commit while the process stays alive,
@@ -86,7 +86,7 @@ and restricted ordinary runtime grants with denied retention deletion. Literal f
 vectors retain the native composition protocol. These tests establish this PostgreSQL/Linux
 composition, not arbitrary providers or host topologies.
 
-Run the owning provider suite:
+From the Gloaming repository root, run the owning provider suite:
 
 ```bash
 dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj
