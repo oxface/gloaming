@@ -67,6 +67,9 @@ Follow [modules](modules.md). Register every module explicitly in Server and the
 Worker/Migrator. The host supplies native options; a module does not discover other modules,
 choose global transport or configure the application's authentication provider.
 
+The [first-module walkthrough](first-module.md) connects these steps for one protected
+state-stored operation with transactional audit.
+
 Wire the first real endpoint/operation for each requested module. Keep sample aggregate behavior
 minimal when the request supplies only names.
 

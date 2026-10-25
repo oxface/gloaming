@@ -5,7 +5,7 @@ interfaces. The application owns the native Confluent client, routing, wire cont
 trusted producer mapping, consumer group, bootstrap position and poison-record policy.
 This recipe adds no Gloaming package, runtime or reusable library mechanism.
 
-The executable [package-only consumer](../tools/release/consumers/Kafka/README.md) demonstrates
+The executable [package-only consumer](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/README.md) demonstrates
 one sequential intake loop with Confluent.Kafka 2.16.0, Kafka 4.3.1 and PostgreSQL 18.6.
 Its record format, table names and sample effects are consumer-owned examples.
 
@@ -14,11 +14,11 @@ Its record format, table names and sample effects are consumer-owned examples.
 Enqueue `OutgoingMessage` in the producer module's ordinary native transaction. Save business
 state and outbox work, then commit. Dispatch runs independently and claims work before invoking
 the publisher; no producer database transaction spans Kafka I/O. See the
-[PostgreSQL messaging contract](../src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md).
+[PostgreSQL messaging contract](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/README.md).
 
 The host owns a native `IProducer<byte[], byte[]>` configured with `Acks.All` and
 `EnableIdempotence = true`. Supply it to the consumer's
-[KafkaPublisher](../tools/release/consumers/Kafka/KafkaAdapter.cs) and reuse it for its selected
+[KafkaPublisher](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/KafkaAdapter.cs) and reuse it for its selected
 lifetime. Keep credentials/TLS, native timeouts and disposal in host composition.
 `PublishAsync` validates the selected route, serializes the retained envelope and awaits
 `ProduceAsync`. It returns normally only when the report says `PersistenceStatus.Persisted`.
@@ -51,9 +51,9 @@ For each record:
    separately through `IInboxProcessor<TContext>` with its own fresh scopes and atomic local
    effects/completion. Do not hold Kafka intake across slow external work.
 
-The [native adapter](../tools/release/consumers/Kafka/KafkaAdapter.cs) contains the complete
+The [native adapter](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/KafkaAdapter.cs) contains the complete
 receive/commit composition. Both native EF save forms call the selected guards in the
-[consumer mappings](../tools/release/consumers/Kafka/Database.cs). Production schema placement,
+[consumer mappings](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/Database.cs). Production schema placement,
 migrations, grants, tenant admission and reader permissions stay with the application.
 
 If intake fails, stop that consumer attempt or deliberately seek/retry the same record before
@@ -70,7 +70,7 @@ backoff and readiness; the proof observes an actual live group handoff and rejec
 ## Reject or retain poison work deliberately
 
 Malformed or conflicting records have not entered accepted intake. The library's
-[inbox dead letters](../src/Gloaming.Messaging/docs/inbox-recovery.md) instead describe failures
+[inbox dead letters](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Messaging/docs/inbox-recovery.md) instead describe failures
 after accepted intake; they cannot dispose an undecodable Kafka record.
 
 The executable example first proves fail-stop at a conflicting offset while later valid work
@@ -115,11 +115,11 @@ npm --prefix tools/release run verify:kafka
 GLOAMING_CONTAINER_RUNTIME=podman npm --prefix tools/release run verify:kafka
 ```
 
-The [runner](../tools/release/verify-kafka.ts) packs current libraries, restores an external
+The [runner](https://github.com/oxface/gloaming/blob/main/tools/release/verify-kafka.ts) packs current libraries, restores an external
 consumer through source mapping into a fresh cache, verifies its exact four-package Gloaming
 closure and zero ProjectReferences, then provisions its own isolated broker and PostgreSQL.
 It retains source/archive hashes, redacted logs, per-scenario outcomes and cleanup evidence.
-The [package workflow](../.github/workflows/packages.yml) owns this native transport profile;
+The [package workflow](https://github.com/oxface/gloaming/blob/main/.github/workflows/packages.yml) owns this native transport profile;
 the ordinary seventeen-profile package command remains PostgreSQL-only.
 
 The selected proofs cover process death before/after intake commit, accepted publication before

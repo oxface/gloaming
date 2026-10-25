@@ -82,11 +82,11 @@ exactly-once, FIFO, zero-latency or always-available-listener guarantee.
 
 ## Executable owners
 
-The [native application fixture](../src/Gloaming.Messaging/tests/Fixtures/Wakeups/README.md) contains
-the complete pump, typed callers and fault supervisor. [Provider tests](../src/Gloaming.Messaging/tests/OutboxPostgresTests/WakeupTests.cs)
+The [native application fixture](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Messaging/tests/Fixtures/Wakeups/README.md) contains
+the complete pump, typed callers and fault supervisor. [Provider tests](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Messaging/tests/OutboxPostgresTests/WakeupTests.cs)
 cover actual queue processing, disconnected fallback/reconnect, cancellation, pooled reset,
 notification-before-wait, bounded coalescing, restricted grants and separately compiled earlier
-writes across trigger installation/removal. The [independent package consumer](../tools/release/consumers/Wakeups.cs)
+writes across trigger installation/removal. The [independent package consumer](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Wakeups.cs)
 uses both real callable roles and native notifications from NuGet packages without Hosting.
 
 Native semantics are described in [PostgreSQL LISTEN](https://www.postgresql.org/docs/18/sql-listen.html),
