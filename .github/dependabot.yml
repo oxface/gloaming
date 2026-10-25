@@ -18,15 +18,14 @@ updates:
       prefix: chore
       include: scope
     groups:
-      ef-core:
+      # EF's servicing releases raise Microsoft.Extensions dependency floors.
+      # Update their direct pins together instead of adding unused project roots.
+      dotnet-servicing:
         patterns:
           - Microsoft.EntityFrameworkCore
           - Microsoft.EntityFrameworkCore.*
           - Npgsql.EntityFrameworkCore.*
           - dotnet-ef
-        update-types: [minor, patch]
-      dotnet-platform:
-        patterns:
           - Microsoft.AspNetCore.*
           - Microsoft.Extensions.*
         update-types: [minor, patch]

@@ -348,14 +348,29 @@ try {
   );
   const packageCache = join(scratch, "nuget-packages");
   const consumerEnv = { ...process.env, NUGET_PACKAGES: packageCache };
-  const dependencyInjection = {
-    id: "Microsoft.Extensions.DependencyInjection",
-    version: "10.0.12",
+  const central = readXml(join(root, "Directory.Packages.props")) as {
+    Project: {
+      ItemGroup:
+        | { PackageVersion: { Include: string; Version: string }[] }
+        | { PackageVersion: { Include: string; Version: string }[] }[];
+    };
   };
-  const postgresProvider = {
-    id: "Npgsql.EntityFrameworkCore.PostgreSQL",
-    version: "10.0.3",
-  };
+  const nativeVersions = array(central.Project.ItemGroup).flatMap((group) =>
+    array(group.PackageVersion),
+  );
+  function nativePackage(id: string): { id: string; version: string } {
+    const entries = nativeVersions.filter((entry) => entry.Include === id);
+    assert.equal(entries.length, 1, `Expected one central version for ${id}.`);
+    const version = entries[0]!.Version;
+    assert(typeof version === "string" && version.length > 0);
+    return { id, version };
+  }
+  const dependencyInjection = nativePackage(
+    "Microsoft.Extensions.DependencyInjection",
+  );
+  const postgresProvider = nativePackage(
+    "Npgsql.EntityFrameworkCore.PostgreSQL",
+  );
   const profiles: ConsumerProfile[] = [
     {
       name: "core",
