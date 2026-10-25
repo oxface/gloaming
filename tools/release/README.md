@@ -251,6 +251,9 @@ No database/broker connection or external account is required. The runner create
 Kafka 4.3.1 and PostgreSQL 18.6 containers using pinned image digests and isolated local ports,
 restarts only its owned broker, then removes its containers and anonymous volumes on ordinary
 success/failure. Release-tool checks exercise cleanup failures separately from native delivery.
+`npm --prefix tools/release run check` also compiles the actual frame proxy with the pinned SDK
+and exercises loopback TCP resets, cancellation during connection setup and propagation of
+unexpected relay faults. These lifecycle checks need no broker or database.
 It never skips unavailable infrastructure. Image/NuGet network access may be needed.
 Forced termination of the runner is outside ordinary cleanup; its printed directory/log
 identifies the uniquely named proof resources.

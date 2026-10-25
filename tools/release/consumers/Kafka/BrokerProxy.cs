@@ -9,7 +9,6 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
 {
     private readonly TcpListener listener = new(IPAddress.Loopback, port);
     private readonly CancellationTokenSource stopping = new();
-    private readonly ConcurrentBag<TcpClient> clients = [];
     private readonly ConcurrentBag<Task> sessions = [];
     private Task accept = Task.CompletedTask;
     private int dropping;
@@ -34,7 +33,6 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
             while (!stopping.IsCancellationRequested)
             {
                 var client = await listener.AcceptTcpClientAsync(stopping.Token);
-                clients.Add(client);
                 sessions.Add(RelayAsync(client));
             }
         }
@@ -50,24 +48,15 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
         {
             try
             {
-                clients.Add(server);
                 var target = new Uri("tcp://" + upstream);
                 await server.ConnectAsync(target.Host, target.Port, pair.Token);
+                // A forwarding task can observe a reset before the reverse task starts.
+                // Acquire both streams before either task can change socket state.
+                var clientStream = client.GetStream();
+                var serverStream = server.GetStream();
                 var requests = new ConcurrentDictionary<int, short>();
-                var send = ForwardAsync(
-                    client.GetStream(),
-                    server.GetStream(),
-                    requests,
-                    true,
-                    pair.Token
-                );
-                var receive = ForwardAsync(
-                    server.GetStream(),
-                    client.GetStream(),
-                    requests,
-                    false,
-                    pair.Token
-                );
+                var send = ForwardAsync(clientStream, serverStream, requests, true, pair.Token);
+                var receive = ForwardAsync(serverStream, clientStream, requests, false, pair.Token);
                 try
                 {
                     await Task.WhenAny(send, receive);
@@ -130,12 +119,17 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
     {
         await stopping.CancelAsync();
         listener.Stop();
-        foreach (var client in clients)
-            client.Dispose();
-
         using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        await accept.WaitAsync(cleanup.Token);
-        await Task.WhenAll(sessions).WaitAsync(cleanup.Token);
-        stopping.Dispose();
+        try
+        {
+            // Relays own their sockets through connect, forwarding and cancellation.
+            // Drain acceptance before taking the complete set of sessions to await.
+            await accept.WaitAsync(cleanup.Token);
+            await Task.WhenAll(sessions).WaitAsync(cleanup.Token);
+        }
+        finally
+        {
+            stopping.Dispose();
+        }
     }
 }
