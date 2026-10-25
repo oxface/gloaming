@@ -7,6 +7,11 @@ and Inventory plus native API, worker, migration/setup and Aspire composition.
 ## Build
 
 Use the .NET SDK selected by global.json and Node selected by the tooling package manifests.
+The SDK uses `patch` roll-forward: prefer the specified version, or use a later installed
+patch in the same feature band when that version is absent. CI installs the specified SDK
+instead of resolving a moving latest-patch channel. Update the version in global.json to
+change the SDK installed by CI.
+
 Restore the pinned tools and dependencies:
 
 ~~~bash
