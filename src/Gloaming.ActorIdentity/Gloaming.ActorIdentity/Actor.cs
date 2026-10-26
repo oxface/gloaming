@@ -22,6 +22,7 @@ public sealed record Actor
     public static Actor Human(ActorId id)
     {
         ArgumentNullException.ThrowIfNull(id);
+
         return new Actor(ActorKind.Human, id);
     }
 
@@ -29,6 +30,7 @@ public sealed record Actor
     public static Actor System(ActorId id)
     {
         ArgumentNullException.ThrowIfNull(id);
+
         return new Actor(ActorKind.System, id);
     }
 }

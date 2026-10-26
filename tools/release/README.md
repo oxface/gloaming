@@ -221,12 +221,18 @@ Seventeen clean executable consumers are created outside the repository:
   proofs in the native suite. Selects PostgreSQL messaging's four-package closure and native DI;
   no Hosting dependency or new reusable library mechanism.
 
-Each generated project references exact package versions and restores Gloaming only
-from the temporary local feed. The profiles share one fresh isolated package cache for
-the verification run. Assets must contain
-package dependencies and zero project references. The resolved Gloaming graph must
-match only the selected roots and their declared dependency closure. Consumers
-contain their own small application code, not copied library implementations.
+Both verification commands use [the package-proof module](package-proof.ts) to validate the
+completed snapshot, pin the consumer SDK through the repository's `global.json`, configure
+source mapping and restore into one fresh isolated package cache per run. Every selected
+Gloaming package must have the snapshot version and cache metadata naming that run's local
+feed. Assets must contain package dependencies, zero project references and only the isolated
+cache. The resolved Gloaming graph must match the profile's expected dependency closure.
+Negative fixtures exercise wrong sources/caches, project references, snapshot versions and
+dependency closures. Archive contents, native consumer behavior and resource cleanup remain
+with their owning profiles; the helper adds no production dependency or consumer runtime.
+
+Each generated project references exact Gloaming package versions. Consumers contain their own
+small application code, not copied library implementations.
 
 Commands run without a shell, use bounded execution time and retain redacted logs.
 The final `manifest.json` records archive SHA-256 values, package dependencies,
