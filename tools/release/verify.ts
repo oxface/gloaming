@@ -6,7 +6,6 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
-  readdirSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -22,6 +21,7 @@ import {
 } from "node:path";
 import { XMLParser, XMLValidator } from "fast-xml-parser";
 import { libraryPackages } from "./packages.ts";
+import { nativePackage, preparePackageProof } from "./package-proof.ts";
 
 const root = resolve(import.meta.dirname, "../..");
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
@@ -36,7 +36,6 @@ assert.equal(
   "Usage: node tools/release/verify.ts (no arguments)",
 );
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-package-proof-"));
-const feed = join(scratch, "feed");
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "",
@@ -126,20 +125,6 @@ interface Nuspec {
     };
   };
 }
-interface Assets {
-  libraries: Record<string, { type: string; path: string }>;
-  packageFolders: Record<string, unknown>;
-  project: {
-    restore: {
-      originalTargetFrameworks: string[];
-      frameworks: Record<
-        string,
-        { projectReferences: Record<string, unknown> }
-      >;
-    };
-  };
-}
-
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
@@ -190,7 +175,6 @@ function renderReadme(file: string): string {
 }
 
 const indexBefore = run("git", ["diff", "--cached", "--binary"]);
-mkdirSync(feed);
 console.log(`Local package proof; artifacts and logs: ${scratch}`);
 
 try {
@@ -241,31 +225,8 @@ try {
     const rendered = join(scratch, `${item.id}.README.md`);
     writeFileSync(rendered, renderReadme(readmeFor(item.project)));
   }
-  run(process.execPath, [
-    join(import.meta.dirname, "pack.ts"),
-    "--output",
-    feed,
-  ]);
-  const snapshots = readdirSync(feed).filter((file) =>
-    /^gloaming\..+\.json$/.test(file),
-  );
-  assert.equal(snapshots.length, 1, "Expected one completed local snapshot.");
-  const snapshot = JSON.parse(
-    readFileSync(join(feed, snapshots[0]!), "utf8"),
-  ) as {
-    version: string;
-    feed: string;
-    packages: string[];
-  };
-  const version = snapshot.version;
-  assert.match(version, /^\d+\.\d+\.\d+-local\.\d+\.g[0-9a-f]{8}$/);
-  assert.equal(snapshot.feed, feed);
-  assert.deepEqual(
-    snapshot.packages,
-    packages.map((item) => item.id),
-  );
-  const archives = readdirSync(feed).filter((file) => file.endsWith(".nupkg"));
-  assert.equal(archives.length, packages.length);
+  const proof = preparePackageProof(root, scratch, run);
+  const { version, feed, env: consumerEnv } = proof;
   const unzip = join(scratch, "unzip.proj");
   writeFileSync(
     unzip,
@@ -341,34 +302,12 @@ try {
     });
   }
 
-  const config = join(scratch, "NuGet.Config");
-  writeFileSync(
-    config,
-    `<configuration><packageSources><clear/><add key="local" value="${xml(feed)}"/><add key="nuget.org" value="https://api.nuget.org/v3/index.json"/></packageSources><packageSourceMapping><clear/><packageSource key="local"><package pattern="Gloaming.*"/></packageSource><packageSource key="nuget.org"><package pattern="*"/></packageSource></packageSourceMapping></configuration>`,
-  );
-  const packageCache = join(scratch, "nuget-packages");
-  const consumerEnv = { ...process.env, NUGET_PACKAGES: packageCache };
-  const central = readXml(join(root, "Directory.Packages.props")) as {
-    Project: {
-      ItemGroup:
-        | { PackageVersion: { Include: string; Version: string }[] }
-        | { PackageVersion: { Include: string; Version: string }[] }[];
-    };
-  };
-  const nativeVersions = array(central.Project.ItemGroup).flatMap((group) =>
-    array(group.PackageVersion),
-  );
-  function nativePackage(id: string): { id: string; version: string } {
-    const entries = nativeVersions.filter((entry) => entry.Include === id);
-    assert.equal(entries.length, 1, `Expected one central version for ${id}.`);
-    const version = entries[0]!.Version;
-    assert(typeof version === "string" && version.length > 0);
-    return { id, version };
-  }
   const dependencyInjection = nativePackage(
+    root,
     "Microsoft.Extensions.DependencyInjection",
   );
   const postgresProvider = nativePackage(
+    root,
     "Npgsql.EntityFrameworkCore.PostgreSQL",
   );
   const profiles: ConsumerProfile[] = [
@@ -558,37 +497,6 @@ try {
       join(directory, "Consumer.csproj"),
       `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external.map(({ id, version }) => `<PackageReference Include="${id}" Version="${version}"/>`).join("")}</ItemGroup></Project>`,
     );
-    run(
-      dotnet,
-      [
-        "restore",
-        "Consumer.csproj",
-        "--configfile",
-        config,
-        "--no-cache",
-        "--nologo",
-      ],
-      directory,
-      consumerEnv,
-    );
-    const assets = JSON.parse(
-      readFileSync(join(directory, "obj", "project.assets.json"), "utf8"),
-    ) as Assets;
-    const gloaming = Object.entries(assets.libraries).filter(([name]) =>
-      name.startsWith("Gloaming."),
-    );
-    for (const [name, library] of Object.entries(assets.libraries))
-      assert.equal(
-        library.type,
-        "package",
-        `Project/source dependency in ${profile.name}: ${name}`,
-      );
-    for (const framework of Object.values(assets.project.restore.frameworks))
-      assert.equal(
-        Object.keys(framework.projectReferences).length,
-        0,
-        `ProjectReference in ${profile.name}`,
-      );
     const expected = new Set(profile.ids);
     // Expand the reviewed project graph only for the selected roots.
     const expand = (id: string): void => {
@@ -605,13 +513,11 @@ try {
       }
     };
     for (const id of profile.ids) expand(id);
-    assert.deepEqual(
-      gloaming.map(([name]) => name.split("/")[0]!).sort(),
-      [...expected].sort(),
-      `Unrelated Gloaming family introduced into ${profile.name}`,
-    );
+
+    const restored = proof.restore(directory, [...expected]);
+    const { gloaming } = restored;
     assert.equal(
-      Object.keys(assets.libraries).some((name) =>
+      restored.packages.some((name) =>
         name.startsWith("Microsoft.Extensions.Hosting.Abstractions/"),
       ),
       expected.has("Gloaming.Messaging.EntityFrameworkCore.Hosting"),
@@ -619,24 +525,15 @@ try {
     );
     if (profile.name === "workflows")
       assert(
-        !Object.keys(assets.libraries).some((name) =>
-          name.startsWith("RabbitMQ.Client/"),
-        ),
+        !restored.packages.some((name) => name.startsWith("RabbitMQ.Client/")),
         "Continuation execution must not select a transport client.",
       );
     if (profile.gloamingClosure)
       assert.deepEqual(
-        gloaming.map(([name]) => name.split("/")[0]!).sort(),
+        gloaming.map((name) => name.split("/")[0]!).sort(),
         [...profile.gloamingClosure].sort(),
         `${profile.name} must remain independently adoptable without other Gloaming families.`,
       );
-    for (const [name, library] of gloaming) {
-      assert.equal(name.split("/")[1], version);
-      assert(
-        existsSync(join(packageCache, library.path, ".nupkg.metadata")),
-        `Package not restored into isolated cache: ${name}`,
-      );
-    }
     run(
       dotnet,
       [

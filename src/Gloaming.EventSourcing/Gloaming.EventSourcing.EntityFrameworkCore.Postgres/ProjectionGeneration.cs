@@ -38,9 +38,10 @@ public sealed class ProjectionGeneration<TContext>
     internal static void Identity(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
+
         if (value.Length > 256 || value.Contains('\0'))
             throw new ArgumentException(
-                "Use a nonempty ordinal identity of at most256 characters without NUL."
+                "Use a nonempty ordinal identity of at most 256 characters without NUL."
             );
     }
 }

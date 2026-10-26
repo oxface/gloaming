@@ -15,6 +15,7 @@ import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { promisify } from "node:util";
 import { removeOwnedContainers } from "./container-cleanup.ts";
+import { nativePackage, preparePackageProof } from "./package-proof.ts";
 
 // A separate native transport profile: ordinary verify remains PostgreSQL-only.
 const root = resolve(import.meta.dirname, "../..");
@@ -42,8 +43,6 @@ assert(
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-kafka-package-proof-"));
 const directory = join(scratch, "consumer");
-const feed = join(scratch, "feed");
-const cache = join(scratch, "packages");
 const source = join(import.meta.dirname, "consumers", "Kafka");
 const id = randomBytes(6).toString("hex");
 const postgres = `gloaming-kafka-proof-pg-${id}`;
@@ -56,7 +55,6 @@ const images = {
     "docker.io/library/postgres:18.6@sha256:7341002d2b8c7c5bdd7542a671a95b36196c0b5b888daf454ae4fc33ba5346d7",
 };
 const log = join(scratch, "execution.log");
-const packageEnv = { ...process.env, NUGET_PACKAGES: cache };
 const ownedContainers: string[] = [];
 const failures: unknown[] = [];
 let manifest: Record<string, unknown> | undefined;
@@ -149,22 +147,11 @@ async function waitForBroker(): Promise<void> {
 }
 try {
   console.log("Packing current Gloaming libraries.");
-  run(process.execPath, [
-    join(import.meta.dirname, "pack.ts"),
-    "--output",
-    feed,
-  ]);
-  const snapshots = readdirSync(feed).filter(
-    (name) => name.startsWith("gloaming.") && name.endsWith(".json"),
-  );
-  assert.equal(snapshots.length, 1, "Expected one newly completed snapshot.");
-  const snapshot = JSON.parse(
-    readFileSync(join(feed, snapshots[0]!), "utf8"),
-  ) as { version: string; packages: string[] };
-  const version = snapshot.version;
-  const archives = snapshot.packages.map((name) => ({
-    id: name,
-    sha256: hash(join(feed, `${name}.${version}.nupkg`)),
+  const proof = preparePackageProof(root, scratch, run);
+  const { version, feed, cache, env: packageEnv } = proof;
+  const archives = proof.packages.map(({ id }) => ({
+    id,
+    sha256: hash(join(feed, `${id}.${version}.nupkg`)),
   }));
   mkdirSync(directory);
   cpSync(source, directory, { recursive: true });
@@ -177,79 +164,20 @@ try {
       path: relative(root, join(source, path)),
       sha256: hash(join(directory, path)),
     }));
-  cpSync(join(root, "global.json"), join(scratch, "global.json"));
-  const nativeVersions = readFileSync(
-    join(root, "Directory.Packages.props"),
-    "utf8",
+  const { version: dependencyInjection } = nativePackage(
+    root,
+    "Microsoft.Extensions.DependencyInjection",
   );
-  const dependencyInjection =
-    /Include="Microsoft.Extensions.DependencyInjection"\s+Version="([^"]+)"/.exec(
-      nativeVersions,
-    )?.[1];
-  assert(dependencyInjection, "Expected central native DI version.");
   writeFileSync(
     join(directory, "Consumer.csproj"),
     `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors><AnalysisLevel>latest-recommended</AnalysisLevel><EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild></PropertyGroup><ItemGroup><PackageReference Include="Gloaming.Messaging.EntityFrameworkCore.Postgres" Version="[${xml(version)}]"/><PackageReference Include="Confluent.Kafka" Version="[2.16.0]"/><PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[${xml(dependencyInjection)}]"/></ItemGroup></Project>`,
   );
-  const config = join(scratch, "NuGet.Config");
-  writeFileSync(
-    config,
-    `<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><clear/><add key="local" value="${xml(feed)}"/><add key="nuget.org" value="https://api.nuget.org/v3/index.json"/></packageSources><packageSourceMapping><clear/><packageSource key="local"><package pattern="Gloaming.*"/></packageSource><packageSource key="nuget.org"><package pattern="*"/></packageSource></packageSourceMapping></configuration>`,
-  );
-  run(
-    dotnet,
-    [
-      "restore",
-      "Consumer.csproj",
-      "--configfile",
-      config,
-      "--no-http-cache",
-      "--nologo",
-    ],
-    directory,
-    packageEnv,
-  );
-  const assets = JSON.parse(
-    readFileSync(join(directory, "obj", "project.assets.json"), "utf8"),
-  ) as {
-    libraries: Record<string, { type: string; path: string }>;
-    packageFolders: Record<string, unknown>;
-    project: {
-      restore: {
-        frameworks: Record<
-          string,
-          { projectReferences: Record<string, unknown> }
-        >;
-      };
-    };
-  };
-  for (const library of Object.values(assets.libraries))
-    assert.equal(library.type, "package");
-  for (const framework of Object.values(assets.project.restore.frameworks))
-    assert.deepEqual(framework.projectReferences, {});
-  const selected = Object.keys(assets.libraries).filter((name) =>
-    name.startsWith("Gloaming."),
-  );
-  assert.deepEqual(selected.map((name) => name.split("/")[0]).sort(), [
+  const { gloaming: selected } = proof.restore(directory, [
     "Gloaming.EntityFrameworkCore",
     "Gloaming.Messaging",
     "Gloaming.Messaging.EntityFrameworkCore",
     "Gloaming.Messaging.EntityFrameworkCore.Postgres",
   ]);
-  assert.deepEqual(
-    Object.keys(assets.packageFolders).map((path) => resolve(path)),
-    [cache],
-  );
-  for (const name of selected) {
-    assert.equal(name.split("/")[1], version);
-    const metadata = JSON.parse(
-      readFileSync(
-        join(cache, assets.libraries[name]!.path, ".nupkg.metadata"),
-        "utf8",
-      ),
-    ) as { source: string };
-    assert.equal(metadata.source, feed);
-  }
   run(
     dotnet,
     [

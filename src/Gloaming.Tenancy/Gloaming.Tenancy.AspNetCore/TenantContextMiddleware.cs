@@ -15,6 +15,7 @@ public sealed class TenantContextMiddleware
     {
         _next = next ?? throw new ArgumentNullException(nameof(next));
         ArgumentNullException.ThrowIfNull(options);
+
         _defaultRequirement = options.Value.DefaultRequirement;
         if (!Enum.IsDefined(_defaultRequirement))
             throw new ArgumentException("Choose a defined tenant requirement.", nameof(options));
@@ -30,25 +31,30 @@ public sealed class TenantContextMiddleware
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(resolver);
         ArgumentNullException.ThrowIfNull(initializer);
+
         Endpoint? endpoint = context.GetEndpoint();
         if (endpoint is null)
         {
             await _next(context);
             return;
         }
+
         CancellationToken cancellationToken = context.RequestAborted;
         cancellationToken.ThrowIfCancellationRequested();
+
         ClaimsPrincipal principal = context.User;
         TenantRequirement requirement =
             endpoint.Metadata.GetMetadata<TenantRequirementAttribute>()?.Requirement
             ?? _defaultRequirement;
         TenantContext? resolved = await resolver.ResolveAsync(context, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
+
         // Resolution may await; admission must still concern the same request principal.
         if (!ReferenceEquals(principal, context.User))
             throw new HttpTenantResolutionException(
                 "Tenant resolution must not replace the request principal."
             );
+
         TenantContext tenant =
             resolved
             ?? throw new HttpTenantResolutionException(
@@ -56,6 +62,7 @@ public sealed class TenantContextMiddleware
             );
         if (requirement == TenantRequirement.Required)
             tenant.RequireTenant();
+
         initializer.Initialize(tenant);
         await _next(context);
     }

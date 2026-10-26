@@ -1,6 +1,6 @@
 # Committed event feed and secondary projections
 
-This optional PostgreSQL18 module captures immutable source rows and explicitly executes bounded
+This optional PostgreSQL 18 module captures immutable source rows and explicitly executes bounded
 secondary projection turns. It references native Npgsql EF Core and DI abstractions only. Existing
 provider-free event sourcing, required inline state and ordinary stream reads remain independent.
 
@@ -16,14 +16,14 @@ the database trigger captures their subsequent inserts too. Startup never instal
 
 Supported sources are ordinary append-only tables without inheritance, partitioning, RLS or rewrite
 rules. Explicit source/column/schema identifiers use ASCII letters/digits/underscores, starting with
-a letter/underscore, at most63 bytes. One to32 distinct source bindings each select one to8 complete
+a letter/underscore, at most 63 bytes. One to 32 distinct source bindings each select one to 8 complete
 stream-key columns, a positive native integer version and the **complete native primary key in its
 declared order**. Keys are nonnullable native text/UUID/integer values. Baseline history must begin
-at1 without per-stream gaps/duplicates. Producers retain responsibility for valid live stream order
+at 1 without per-stream gaps/duplicates. Producers retain responsibility for valid live stream order
 and constraints. The feed copies facts; it is not a stream concurrency or domain validation engine.
 
 Each complete stream-key/event-key JSONB array must satisfy native `pg_column_size <= 512`.
-Returned cursors allow up to16,384 encoded characters, including worst-case key escaping.
+Returned cursors allow up to 16,384 encoded characters, including worst-case key escaping.
 
 Existing history becomes one **synthetic baseline**. Original historical cross-stream commit order
 cannot be recovered. Thereafter, the first captured insert updates an ordinary transactional head
@@ -85,10 +85,11 @@ var turn = await feed.ProjectNextAsync(generation, limits, token);
 `ReadAsync` uses one statement snapshot of committed head and entries. A cursor contains the full
 ordering tuple or an end-of-head fence and the immutable feed identity. `Parse` restores returned
 values; accepting arbitrary caller-chosen progress can skip facts and grants no authority. Reads
-bound returned count1..4096 and native UTF-8 JSON envelope bytes1..16MiB with one metadata lookahead.
+bound the returned count and native UTF-8 JSON envelope bytes through limits of 1..4096 and
+1..16 MiB respectively, with one metadata lookahead.
 An oversized first event throws `FeedEventTooLargeException` with its retained identity/required
 size and no progress. Key/protocol metadata, database CPU/memory and callback duration are separate
-from that output bound. Native JSON parsing supports the default System.Text.Json depth64.
+from that output bound. Native JSON parsing supports the default System.Text.Json depth 64.
 A page can split one original source transaction; projection atomicity belongs to the selected page.
 
 Every projection turn owns a fresh scope/context and native ReadCommitted transaction. Ambient
@@ -122,9 +123,10 @@ values, enums, strings, Guid, decimal, native date/time values, byte arrays and 
 snapshots are independent and compare by content. Insert defaults exempt only unspecified/temporary
 or ignored values; explicit values and existing-row updates remain protected. Identity keys and
 computed columns receive their operation-specific native generation rules. Owned/complex/inherited/
-split/shared or alternate view/query/function read mappings, arbitrary CLR objects, other arrays and conditional update-generation modes
-are rejected before the owned save. Consumers may use simpler scalar outputs or prove a separate
-adapter rather than treating an unsupported mapping as successful progress.
+split/shared or alternate view/query/function read mappings, arbitrary CLR objects, other arrays and
+conditional update-generation modes are rejected before the owned save. Consumers may use simpler
+scalar outputs or prove a separate adapter rather than treating an unsupported mapping as
+successful progress.
 
 Poison input, native constraint/checkpoint/save failures or cancellation stop progress and dispose
 the scope. No skip/dead-letter cursor or automatic retry exists. Once commit starts, missing
