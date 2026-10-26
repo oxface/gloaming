@@ -18,10 +18,10 @@
     "@commitlint/config-conventional": "21.2.4",
     "@types/js-yaml": "4.0.9",
     "@types/node": "26.6.5",
-    "@types/picomatch": "2.3.4",
+    "@types/picomatch": "4.0.3",
     "js-yaml": "5.5.0",
     "lefthook": "2.2.2",
-    "picomatch": "2.3.2",
+    "picomatch": "4.0.7",
     "prettier": "3.9.10",
     "typescript": "7.0.2"
   }
