@@ -32,6 +32,21 @@ under each project's `obj`/`bin`. NuGet.org access may still be needed for
 third-party dependencies and vulnerability data; local Gloaming distribution does
 not make a clean restore fully offline.
 
+### Distribution boundary
+
+This command supplies local development snapshots. Hosted publication and durable remote
+distribution remain deferred while the early package graph evolves. Preserve the exact
+archives and reported snapshot for a consumer's pinned version; rerunning the command creates
+a different version. Repacking a fixed source/version is not a supported byte-reproducibility
+guarantee: archive metadata can change locked-restore hashes despite equal entry contents.
+
+A consumer can retain a completed snapshot as a versioned artifact without operating a hosted
+feed. Record the source revision, package set, archive hashes and retrieval/access instructions,
+then prove locked restore from an initially empty package cache. Later snapshots may change
+the package set; retain earlier archives while consumers depend on them. Consumer source-build
+bridges remain temporary integration work, with their own reproducibility checks and removal
+condition. No remote publication or bridge is added by this workflow.
+
 ### Consume from another repository
 
 Add a `NuGet.Config` to the consuming repository. This example assumes sibling

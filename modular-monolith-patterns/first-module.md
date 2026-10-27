@@ -59,6 +59,9 @@ admission, before business changes or history disclosure.
 Resolve the protected scoped DbContext only after the required contexts are established.
 Keep anonymous and tenantless endpoints explicit. A selected tenant or attributed actor alone
 does not grant a business permission.
+An application's global account/membership registry may need to resolve identity and admission
+before tenancy exists. Its explicit query policy is separate from this walkthrough's tenant-owned
+business context; proving registry access alone does not prove persistence ownership protection.
 
 ## 3. Map the module and deploy its migration
 
@@ -66,6 +69,7 @@ Create the module's Contracts and implementation, scoped native DbContext, schem
 history and named connection. Register its operation implementation and DbContext explicitly
 through the composition root; endpoints call Contracts. Use the
 [module steps](modules.md#common-module-steps) for dependencies and commit ownership.
+Keep individual native `IEntityTypeConfiguration<T>` classes in the owning module.
 
 For the first path, follow the Personnel consumer's manual save integration:
 
@@ -113,10 +117,16 @@ Use the application's own integration suite and actual PostgreSQL to show:
 
 - An accepted operation commits exactly the expected business change and audit attribution/details.
 - A denied or newly suspended operation commits neither business changes nor accepted-change audit.
+- Direct Contracts calls reject an unauthorized actor or inadmissible tenant even when HTTP
+  middleware is absent; include history reads as well as writes.
 - Two tenants can use equal resource IDs while business and history reads remain isolated.
 - Invalid/stale work and a native SQL failure preserve the earlier committed state.
 - Rollback after saving removes both proposed business and history writes; a fresh operation recovers.
 - Every supported sync/async save path runs the selected guards.
+
+Inject a real database failure into a selected audited operation, then query from fresh state
+to prove both business and audit writes rolled back. Verify restricted runtime credentials
+cannot alter the schema or update/delete accepted-change audit, while permitted operations work.
 
 The [full verification guide](verification.md) adds host startup, migration failure and actual
 OIDC checks when those are selected. The

@@ -9,11 +9,13 @@ Use folders inside the implementation for domain, application operations and per
 global.json
 Directory.Build.props
 Directory.Packages.props
+orchestration/
+  local/
+    <Application>.Local.AppHost.csproj
 src/
   <Application>.Server/
   <Application>.Worker/
   <Application>.Migrator/
-  <Application>.AppHost/
   <Application>.ServiceDefaults/
   Modules/
     X/
@@ -37,6 +39,9 @@ Create folders when they contain implementation. Worker and service-default proj
 their selected lifecycle responsibilities; document or omit an unnecessary host rather than
 inventing recurring jobs. Existing repositories may use a different layout while keeping the
 same ownership boundaries.
+Add `orchestration/e2e`, `orchestration/shared` and a publishing AppHost only when used.
+The [browser stack profile](dotnet-react-vite.md) adds `apps/`, private workspace `packages/`
+and `eng/` helpers for its selected frontend and verification tools.
 
 ## Dependencies
 
@@ -46,7 +51,7 @@ same ownership boundaries.
   module's Contracts when needed. It does not reference another module implementation.
 - Server/Worker composition roots reference implementations to register native services.
   Business endpoints and cross-module calls use Contracts.
-- Migrator references owning contexts/configuration to apply their migrations explicitly.
+- Migrator invokes explicit module setup entry points for their migrations and grants.
   AppHost references executable hosts for local orchestration.
 - Business modules have no dependency on Server, Worker, Migrator, AppHost or Aspire.
 - Domain objects contain their own invariants. State-stored aggregates need no shared domain
@@ -61,6 +66,8 @@ Give every module a native DbContext, owned schema, migration history and named 
 A shared physical PostgreSQL instance/database is a deliberate deployment choice; it does not
 create a shared context or cross-module unit of work. Separate databases/roles are appropriate
 when the application's isolation requirements call for them.
+Keep native `IEntityTypeConfiguration<T>` mappings with the module alongside migrations.
+Hosts supply configuration and select setup operations; modules own schema-specific SQL.
 
 Use business IDs in another module's data rather than cross-module EF navigation or database
 foreign keys. Query another module through its Contracts or maintain an explicitly owned
