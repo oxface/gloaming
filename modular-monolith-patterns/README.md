@@ -18,6 +18,8 @@ A request can be as small as:
 2. Read [structure](structure.md). Adapt an existing application toward the boundaries; keep
    working public behavior and current project conventions unless the request changes them.
 3. For initialization or missing host infrastructure, follow [bootstrap](bootstrap.md).
+   For a selected .NET/React/Vite browser application, also follow the
+   [stack profile](dotnet-react-vite.md); API and worker applications use the general steps.
    For requested modules/aggregates, follow [modules](modules.md) and the relevant persistence
    branch. Follow [messaging](messaging.md) when durable handoff or command receipts are selected. For Kafka transport adoption, use the
    [native Kafka recipe](kafka.md).
@@ -59,3 +61,5 @@ The requested modules are registered and reachable through real application oper
 Chosen persistence and migrations work; required identity/tenant context is established; tests
 prove accepted/rejected work, isolation and rollback. The report names commands actually run,
 remaining configuration and unsupported behavior. An empty project graph alone is not completion.
+The browser stack profile adds tooling, generated-client and isolated browser acceptance checks;
+these documents remain implementation guidance, not an installable template.

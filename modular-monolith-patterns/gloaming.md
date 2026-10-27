@@ -16,6 +16,20 @@ below. When the matching source is available locally, inspect it and its executa
 Check the chosen package version's API, target framework and native provider dependencies.
 Keep application project references inside the application; consume technical libraries as packages.
 
+### Distribution boundary
+
+Hosted distribution remains deferred while the early package graph evolves. The
+[local-package distribution contract](https://github.com/oxface/gloaming/blob/main/tools/release/README.md#distribution-boundary)
+explains exact archive retention, changing package sets and the absence of a source-rebuild
+byte-reproducibility guarantee. Pin package versions and source revision together, and prove
+locked restore from an initially empty package cache using the chosen archive source.
+
+If a consumer temporarily rebuilds pinned source, document its source/version/toolchain,
+credentials and removal condition, and prove independent clean builds against the committed
+lock hashes. This bridge is consumer-owned and does not establish upstream reproducible-build
+support. Never normalize signed or already published packages. Local snapshots remain usable
+for early adoption; disclose the remaining clean-CI distribution obligation.
+
 ### Read contracts for the adopted version
 
 Record the exact Gloaming package version and source revision in the application's setup
