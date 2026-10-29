@@ -101,6 +101,31 @@ References: [local feeds](https://learn.microsoft.com/en-us/nuget/hosting-packag
 [cache behavior](https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders)
 and [version normalization](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning#normalized-version-numbers).
 
+## Typed evaluations
+
+Two independent consumer profiles select `Gloaming.Evaluations`: ordinary typed functions
+without MAF, and the document-title set against native workflows with/without agents plus
+recorded output scoring. The latter repeats locked restore into a second initially empty
+cache and executes only scripted chat clients. Its library closure has no MAF/EF/provider
+dependency; the workflow consumer explicitly selects its native framework/reporting packages.
+No credentials or live model calls are needed for these profiles. The full command still
+requires PostgreSQL for the other retained adoption profiles.
+
+## Native agent persistence
+
+The full package proof includes an independent document-editor consumer compiled against the
+four optional agent/conversation archives, with zero Gloaming source ProjectReferences.
+It reconstructs native graph/agent/context/store across start, refine and acceptance against
+PostgreSQL; acceptance makes no model call. Additional profiles restore/compile each package
+independently, checking that transcript storage remains MAF-free, history remains workflow-free,
+and native lifecycle helpers remain EF-free. The package cache starts empty.
+
+Run the full command below with `GLOAMING_PACKAGE_TEST_CONNECTION_STRING` pointing at a
+disposable provisioning server. The native consumer creates/drops its own random database.
+Its locked-restore proof retains the generated dependency lock and verifies a second empty
+cache against the same exact archives. Retained manifests/logs identify the local package
+version and hashes; they are the adoption handoff, not hosted-feed publication.
+
 ## Full package adoption proof
 
 Requires .NET SDK 10, Node 24.21 or later in the 24.x line, and a PostgreSQL
@@ -129,7 +154,7 @@ lifecycle fixtures, and the tooling tests. Restore the pinned .NET tools before 
 The root CSharpier check also includes these sources; build output and npm dependencies remain
 excluded. Both package CI jobs restore the tools and run these checks.
 
-The harness invokes the same pack-only command for the 24 `Gloaming.*` library
+The harness invokes the same pack-only command for the 29 `Gloaming.*` library
 projects, using a unique local prerelease version and a temporary feed. Ordinary
 `dotnet pack` uses the repository's native SDK
 [`Directory.Build.targets`](../../src/Directory.Build.targets) to render each
@@ -147,7 +172,13 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Seventeen clean executable consumers are created outside the repository:
+Twenty-four clean executable consumers are created outside the repository:
+
+- Typed evaluations: ordinary functions without MAF, and one set comparing deterministic,
+  agent and recorded-output targets with a second empty-cache locked restore.
+
+- Native agent persistence: the document-editor recovery journey plus four independently
+  selectable history, lifecycle, checkpoint and transcript profiles described above.
 
 - Core actor identity and tenancy: lifecycle errors, independent operation scopes,
   opaque identities, distinct actor kinds, concurrent immutable reads.
@@ -229,7 +260,7 @@ Seventeen clean executable consumers are created outside the repository:
   native writes, full retained wire content, independent balance/count reducers, bounded backfill
   and conditional generation cutover. Selects only the optional PostgreSQL feed package and native
   DI, with no other Gloaming dependency.
-- All packages: restore, compile and execute with all 24 packages selected.
+- All packages: restore, compile and execute with all 28 packages selected.
 - Native wakeup composition: both actual typed inbox/outbox roles, restricted runtime grants,
   dedicated committed LISTEN registration, separate bounded retained hints, original wire values
   and offline polling. Its initial fixture schema is independent of populated migration/process
@@ -305,4 +336,5 @@ are written to configuration files. The index and staged snapshot are checked be
 Source hashes describe the copied inputs used for compilation; a successful manifest is written
 only after native outcomes, cleanup and index preservation pass.
 The command does not publish remotely, stage files or modify a consuming application.
-The ordinary `verify` command remains the separate seventeen-profile PostgreSQL-only proof.
+The ordinary `verify` command remains the separate twenty-four-profile proof, with PostgreSQL
+as its only required external service.

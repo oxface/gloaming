@@ -11,6 +11,9 @@ documentation and tests; it does not introduce an umbrella dependency or applica
 
 | Family | Packages and purpose |
 | --- | --- |
+| [Evaluations](src/Gloaming.Evaluations/README.md) | Typed evaluation sets across ordinary code, agents and workflows, with native metrics and bounded execution. |
+| [Agents](src/Gloaming.Agents/README.md) | Optional native MAF history/checkpoint persistence and typed in-process lifecycle helpers. |
+| [Conversations](src/Gloaming.Conversations/README.md) | MAF-free ordered visible envelopes with explicit consumer payload types and versions. |
 | [ActorIdentity](src/Gloaming.ActorIdentity/README.md) | Executing actor/initiator context and optional native ASP.NET Core integration. |
 | [Tenancy](src/Gloaming.Tenancy/README.md) | Selected-tenant/tenantless context, optional HTTP admission and explicit PostgreSQL transaction context. |
 | [Persistence](src/Gloaming.Persistence/README.md) | EF ownership filtering/protected writes and optional PostgreSQL RLS. |
@@ -33,7 +36,8 @@ npm --prefix tools/release run pack
 The command reports the completed version and folder feed. Follow the
 [consumer source-mapping setup](tools/release/README.md#consume-from-another-repository) and
 [development guide](docs/development.md); no remote package service is required.
-The heavier release verifier checks all archives and seventeen isolated package-only consumers.
+The heavier release verifier checks all archives and isolated package-only consumers, including
+native agent reconstruction and independent selection of each agent/conversation package.
 
 [Modular monolith patterns](modular-monolith-patterns/README.md) describe how to initialize
 or adapt an application and add named modules, state-stored or event-sourced aggregates,
@@ -42,6 +46,8 @@ the documents supply the workflow and completion checks.
 
 ## Examples and proofs
 
+- [Workflow evaluations](src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/README.md): one typed set against deterministic and agent workflows, plus recorded output scoring.
+- [Native agent persistence](src/Gloaming.Agents/samples/AgentPersistenceDemo/README.md): deterministic document-editor reconstruction, refinement and acceptance in one consumer-owned transaction.
 - [Native actor/tenant composition](src/Gloaming.Tenancy/docs/composition.md): explicit DI scopes and independent context establishment, without a business sample.
 - [Ownership](src/Gloaming.Persistence/samples/PersistenceDemo/README.md): module-owned contexts/migrations, protected writes and ordinary native transactions.
 - [Receipt codec/upcasting](src/Gloaming.Events/samples/EventCodecDemo/README.md), [counter append](src/Gloaming.EventSourcing/samples/EventStorageDemo/README.md) and [immutable-model reactions](src/Gloaming.EventReactions/samples/EventReactionsDemo/README.md): focused family adopters.

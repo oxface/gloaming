@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -103,6 +104,7 @@ interface ConsumerProfile {
   ids: string[];
   external: { id: string; version: string }[];
   gloamingClosure?: string[];
+  additionalSources?: string[];
 }
 interface Dependency {
   id: string;
@@ -128,7 +130,7 @@ interface Nuspec {
 const packages = libraryPackages(root);
 assert.equal(
   packages.length,
-  24,
+  29,
   "Review the package inventory when adding/removing libraries.",
 );
 
@@ -312,6 +314,69 @@ try {
   );
   const profiles: ConsumerProfile[] = [
     {
+      name: "evaluations",
+      source: "Evaluations.cs",
+      ids: ["Gloaming.Evaluations"],
+      external: [],
+      gloamingClosure: ["Gloaming.Evaluations"],
+    },
+    {
+      name: "workflow-evaluations",
+      source: "WorkflowEvaluations.cs",
+      ids: ["Gloaming.Evaluations"],
+      external: [
+        nativePackage(root, "Microsoft.Agents.AI"),
+        nativePackage(root, "Microsoft.Agents.AI.Workflows"),
+        nativePackage(root, "Microsoft.Extensions.AI.Evaluation.Reporting"),
+      ],
+      additionalSources: [
+        "src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/DocumentEvaluations.cs",
+      ],
+      gloamingClosure: ["Gloaming.Evaluations"],
+    },
+    {
+      name: "agent-persistence",
+      source: "AgentPersistence.cs",
+      ids: [
+        "Gloaming.Agents.EntityFrameworkCore",
+        "Gloaming.Agents.Workflows",
+        "Gloaming.Agents.Workflows.EntityFrameworkCore",
+        "Gloaming.Conversations.EntityFrameworkCore",
+      ],
+      external: [postgresProvider, nativePackage(root, "Microsoft.Agents.AI")],
+      additionalSources: [
+        "DemoContext.cs",
+        "DemoWorkflow.cs",
+        "AdoptionJourney.cs",
+      ].map(
+        (name) => `src/Gloaming.Agents/samples/AgentPersistenceDemo/${name}`,
+      ),
+    },
+    {
+      name: "agent-history",
+      source: "AgentHistory.cs",
+      ids: ["Gloaming.Agents.EntityFrameworkCore"],
+      external: [],
+    },
+    {
+      name: "native-workflows",
+      source: "NativeWorkflows.cs",
+      ids: ["Gloaming.Agents.Workflows"],
+      external: [],
+    },
+    {
+      name: "agent-checkpoints",
+      source: "AgentCheckpoints.cs",
+      ids: ["Gloaming.Agents.Workflows.EntityFrameworkCore"],
+      external: [],
+    },
+    {
+      name: "conversation-transcript",
+      source: "ConversationTranscript.cs",
+      ids: ["Gloaming.Conversations.EntityFrameworkCore"],
+      external: [],
+    },
+    {
       name: "core",
       source: "Core.cs",
       ids: ["Gloaming.ActorIdentity", "Gloaming.Tenancy"],
@@ -484,6 +549,12 @@ try {
   for (const profile of profiles) {
     const directory = join(scratch, "consumers", profile.name);
     mkdirSync(directory, { recursive: true });
+    for (const file of profile.additionalSources ?? []) {
+      writeFileSync(
+        join(directory, basename(file)),
+        readFileSync(join(root, file), "utf8"),
+      );
+    }
     writeFileSync(
       join(directory, "Program.cs"),
       profile.source
@@ -495,7 +566,7 @@ try {
     );
     writeFileSync(
       join(directory, "Consumer.csproj"),
-      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external.map(({ id, version }) => `<PackageReference Include="${id}" Version="${version}"/>`).join("")}</ItemGroup></Project>`,
+      `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile></PropertyGroup><ItemGroup>${profile.ids.map((id) => `<PackageReference Include="${id}" Version="[${version}]"/>`).join("")}${profile.external.map(({ id, version }) => `<PackageReference Include="${id}" Version="${version}"/>`).join("")}</ItemGroup></Project>`,
     );
     const expected = new Set(profile.ids);
     // Expand the reviewed project graph only for the selected roots.
@@ -515,6 +586,19 @@ try {
     for (const id of profile.ids) expand(id);
 
     const restored = proof.restore(directory, [...expected]);
+    let profileEnv = consumerEnv;
+    if (
+      profile.name === "agent-persistence" ||
+      profile.name === "workflow-evaluations"
+    ) {
+      const lockedCache = join(scratch, `${profile.name}-locked-packages`);
+      assert(
+        !existsSync(lockedCache),
+        "Locked restore requires a second empty cache.",
+      );
+      proof.restore(directory, [...expected], lockedCache);
+      profileEnv = { ...consumerEnv, NUGET_PACKAGES: lockedCache };
+    }
     const { gloaming } = restored;
     assert.equal(
       restored.packages.some((name) =>
@@ -546,7 +630,7 @@ try {
         "--nologo",
       ],
       directory,
-      consumerEnv,
+      profileEnv,
     );
     console.log(
       `PASS ${profile.name}: ${gloaming.length} Gloaming packages; zero ProjectReferences; isolated package cache`,
@@ -567,6 +651,78 @@ try {
   );
   console.log(
     `PASS release package/adoption proof. Evidence: ${join(scratch, "manifest.json")}`,
+  );
+  const retained = join(root, ".artifacts", "package-adoption", version);
+  assert(
+    !existsSync(retained),
+    "Do not overwrite an existing retained package snapshot.",
+  );
+  const retainedFeed = join(retained, "feed");
+  cpSync(feed, retainedFeed, {
+    recursive: true,
+    errorOnExist: true,
+    force: false,
+  });
+  const retainedConsumer = join(retained, "agent-consumer");
+  mkdirSync(retainedConsumer, { recursive: true });
+  for (const file of [
+    "Program.cs",
+    "DemoContext.cs",
+    "DemoWorkflow.cs",
+    "AdoptionJourney.cs",
+    "Consumer.csproj",
+    "packages.lock.json",
+  ]) {
+    writeFileSync(
+      join(retainedConsumer, file),
+      readFileSync(join(scratch, "consumers", "agent-persistence", file)),
+    );
+  }
+  writeFileSync(
+    join(retainedConsumer, "NuGet.Config"),
+    `<configuration><packageSources><clear/><add key="gloaming" value="${xml(retainedFeed)}"/><add key="nuget.org" value="https://api.nuget.org/v3/index.json"/></packageSources><packageSourceMapping><clear/><packageSource key="gloaming"><package pattern="Gloaming.*"/></packageSource><packageSource key="nuget.org"><package pattern="*"/></packageSource></packageSourceMapping></configuration>`,
+  );
+  const evaluationConsumer = join(retained, "evaluation-consumer");
+  mkdirSync(evaluationConsumer, { recursive: true });
+  for (const file of [
+    "Program.cs",
+    "DocumentEvaluations.cs",
+    "Consumer.csproj",
+    "packages.lock.json",
+  ]) {
+    writeFileSync(
+      join(evaluationConsumer, file),
+      readFileSync(join(scratch, "consumers", "workflow-evaluations", file)),
+    );
+  }
+  writeFileSync(
+    join(evaluationConsumer, "NuGet.Config"),
+    readFileSync(join(retainedConsumer, "NuGet.Config")),
+  );
+  writeFileSync(
+    join(retained, "manifest.json"),
+    JSON.stringify(
+      {
+        version,
+        feed: retainedFeed,
+        evidence: join(scratch, "manifest.json"),
+        consumers: {
+          agents: retainedConsumer,
+          evaluations: evaluationConsumer,
+        },
+        source: (
+          JSON.parse(
+            readFileSync(join(feed, `gloaming.${version}.json`), "utf8"),
+          ) as { source: unknown }
+        ).source,
+        packages: manifest,
+      },
+      null,
+      2,
+    ) + "\n",
+  );
+  console.log(
+    `Retained exact local packages: ${retainedFeed}\nPackage-only agent consumer: ${retainedConsumer}\nPackage-only evaluation consumer: ${evaluationConsumer}\nDelivery manifest: ${join(retained, "manifest.json")}`,
   );
 } finally {
   assert.equal(

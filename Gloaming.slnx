@@ -1,4 +1,25 @@
 <Solution>
+  <Folder Name="/Libraries/Evaluations/">
+    <Project Path="src/Gloaming.Evaluations/Gloaming.Evaluations/Gloaming.Evaluations.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Evaluations/Samples/">
+    <Project Path="src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/WorkflowEvaluationDemo.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Evaluations/Tests/">
+    <Project Path="src/Gloaming.Evaluations/tests/EvaluationTests/EvaluationTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Agents/">
+    <Project Path="src/Gloaming.Agents/Gloaming.Agents.EntityFrameworkCore/Gloaming.Agents.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Agents/Gloaming.Agents.Workflows/Gloaming.Agents.Workflows.csproj" />
+    <Project Path="src/Gloaming.Agents/Gloaming.Agents.Workflows.EntityFrameworkCore/Gloaming.Agents.Workflows.EntityFrameworkCore.csproj" />
+    <Project Path="src/Gloaming.Conversations/Gloaming.Conversations.EntityFrameworkCore/Gloaming.Conversations.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Agents/Tests/">
+    <Project Path="src/Gloaming.Agents/tests/AgentPersistenceTests/AgentPersistenceTests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Agents/Samples/">
+    <Project Path="src/Gloaming.Agents/samples/AgentPersistenceDemo/AgentPersistenceDemo.csproj" />
+  </Folder>
   <Folder Name="/Libraries/CommandReceipts/">
     <Project Path="src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres.csproj" />
   </Folder>

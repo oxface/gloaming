@@ -42,6 +42,28 @@ jobs:
         # Every selected job restores/builds its native dependency graph.
         run: ${{ env.FAMILY_TEST_COMMANDS }}
 
+  evaluations:
+    needs: changes
+    if: needs.changes.outputs.Evaluations == 'true'
+    name: Gloaming.Evaluations
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Gloaming.Evaluations/tests/EvaluationTests/EvaluationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
+  agents:
+    needs: changes
+    if: needs.changes.outputs.Agents == 'true'
+    name: Gloaming native agent persistence
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      FAMILY_TEST_COMMANDS: |
+        dotnet test --project src/Gloaming.Agents/tests/AgentPersistenceTests/AgentPersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+    steps: *family-steps
+
   entity_framework_core:
     needs: changes
     if: needs.changes.outputs.EntityFrameworkCore == 'true'

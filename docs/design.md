@@ -69,6 +69,21 @@ transaction composition needs its own proof; in-process calls alone do not survi
 
 ## Dependencies and optional execution
 
+The optional [evaluation runner](../src/Gloaming.Evaluations/README.md) compares consumer-owned
+typed cases across ordinary code, agents, workflows and recorded outputs. It uses native
+Microsoft metrics without MAF, EF or a provider dependency. Consumers own rubrics, clients,
+fresh application scopes, acceptance thresholds and report disclosure; the runner owns finite
+matrix execution, strict metric completeness, cooperative lifecycle and wrapped actual-call
+caps. See [ADR 0032](adr/0032-typed-evaluation-execution.md) for the boundary pending owner review.
+
+[Native agent persistence](../src/Gloaming.Agents/README.md) optionally integrates MAF's own
+checkpoint/history interfaces. Its separate [visible transcript](../src/Gloaming.Conversations/README.md)
+retains generic consumer payloads without a MAF dependency. Context snapshots, native checkpoints
+and the business-selected head compose in a caller-owned transaction; graph definitions, admission,
+model calls and external-effect recovery remain consumer responsibilities. Existing core packages
+acquire no AI dependencies. See [ADR 0031](adr/0031-native-agent-persistence.md) for the boundary
+pending owner review.
+
 Select only the documented package closure. ActorIdentity and Tenancy cores are independent
 and package-free. Persistence ownership requires neither context family. Event sourcing needs
 no messaging; state-stored modules need no event-sourcing types. Technical libraries reference
