@@ -33,4 +33,8 @@ contracts define current public interfaces, setup and supported limits.
 | [0030 Native Kafka recipe](0030-native-kafka-delivery-recipe.md) | Existing inbox/outbox interfaces, native clients and sequential commit-before-offset intake; consumer policy and no new library mechanism. |
 
 ADR numbers are stable and are not reused. Gaps preserve earlier decision identities.
+The [native MAF persistence implementation](0031-native-agent-persistence.md) records the new
+optional boundary and is pending owner interface/implementation review.
+The [typed evaluation runner](0032-typed-evaluation-execution.md) records independent
+execution targets/native metrics and is pending the same review.
 Current records explain accepted choices; package-local contracts define supported setup and limits.

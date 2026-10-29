@@ -96,6 +96,32 @@ test("runtime selection keeps documentation and unrelated library suites focused
     assert.equal(runtime(path), expected, path);
 });
 
+test("evaluation runner selects its native and package proofs without application runtime", () => {
+  for (const path of [
+    "src/Gloaming.Evaluations/Gloaming.Evaluations/EvaluationRunner.cs",
+    "src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/DocumentEvaluations.cs",
+  ]) {
+    assert(matches("Evaluations", path), path);
+    assert(matches("packages", path), path);
+    assert.equal(matches("Agents", path), false, path);
+    assert.equal(runtime(path), false, path);
+  }
+});
+
+test("agent persistence selects native proofs without requiring Wholesale runtime", () => {
+  for (const path of [
+    "src/Gloaming.Agents/Gloaming.Agents.EntityFrameworkCore/EfChatHistoryProvider.cs",
+    "src/Gloaming.Agents/Gloaming.Agents.Workflows/NativeWorkflowExecution.cs",
+    "src/Gloaming.Agents/samples/AgentPersistenceDemo/AdoptionJourney.cs",
+    "src/Gloaming.Conversations/Gloaming.Conversations.EntityFrameworkCore/EfConversationTranscript.cs",
+  ]) {
+    assert(matches("Agents", path), path);
+    assert(matches("packages", path), path);
+    assert.equal(runtime(path), false, path);
+  }
+  assert.equal(matches("Agents", "src/Gloaming.Agents/README.md"), false);
+});
+
 test("runtime selection retains manual and conservative fallbacks", () => {
   const workflow = load(
     readFileSync(resolve(root, ".github/workflows/changes.yml"), "utf8"),

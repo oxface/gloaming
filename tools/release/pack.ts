@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import {
   constants,
   copyFileSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -52,6 +53,36 @@ assert(
 const version = `${prefix}-local.${Date.now()}.g${randomBytes(4).toString("hex")}`;
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
 const staging = mkdtempSync(join(tmpdir(), "gloaming-pack-"));
+const revision = spawnSync("git", ["rev-parse", "HEAD"], {
+  cwd: root,
+  encoding: "utf8",
+});
+const inventory = spawnSync(
+  "git",
+  ["ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+  { cwd: root, encoding: "utf8" },
+);
+assert.equal(revision.status, 0, "Cannot identify package source revision.");
+assert.equal(inventory.status, 0, "Cannot identify package source inputs.");
+const sourceFiles = [...new Set(inventory.stdout.split("\0").filter(Boolean))]
+  .sort()
+  .filter((path) => existsSync(join(root, path)));
+const sourceHash = createHash("sha256");
+for (const path of sourceFiles) {
+  sourceHash.update(
+    path +
+      "\0" +
+      createHash("sha256")
+        .update(readFileSync(join(root, path)))
+        .digest("hex") +
+      "\n",
+  );
+}
+const source = {
+  revision: revision.stdout.trim(),
+  sha256: sourceHash.digest("hex"),
+  files: sourceFiles.length,
+};
 
 try {
   for (const item of packages) {
@@ -101,7 +132,18 @@ try {
     writeFileSync(
       snapshot,
       JSON.stringify(
-        { version, feed, packages: packages.map((item) => item.id) },
+        {
+          version,
+          feed,
+          source,
+          packages: packages.map((item) => item.id),
+          archives: archives.map((file) => ({
+            file,
+            sha256: createHash("sha256")
+              .update(readFileSync(join(feed, file)))
+              .digest("hex"),
+          })),
+        },
         null,
         2,
       ) + "\n",

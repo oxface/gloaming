@@ -116,7 +116,13 @@ export function preparePackageProof(root: string, scratch: string, run: Run) {
     cache,
     packages,
     env,
-    restore(directory: string, expectedClosure: readonly string[]) {
+    restore(
+      directory: string,
+      expectedClosure: readonly string[],
+      lockedCache?: string,
+    ) {
+      const selectedCache = lockedCache ?? cache;
+      const selectedEnv = { ...env, NUGET_PACKAGES: selectedCache };
       run(
         process.env.DOTNET_HOST_PATH ?? "dotnet",
         [
@@ -126,16 +132,17 @@ export function preparePackageProof(root: string, scratch: string, run: Run) {
           config,
           "--no-http-cache",
           "--nologo",
+          ...(lockedCache ? ["--locked-mode"] : []),
         ],
         directory,
-        env,
+        selectedEnv,
       );
       const assets = JSON.parse(
         readFileSync(join(directory, "obj", "project.assets.json"), "utf8"),
       ) as Assets;
       assert.deepEqual(
         Object.keys(assets.packageFolders).map((path) => resolve(path)),
-        [cache],
+        [selectedCache],
         "Restore must use only the isolated package cache.",
       );
       for (const [name, library] of Object.entries(assets.libraries))
@@ -164,8 +171,11 @@ export function preparePackageProof(root: string, scratch: string, run: Run) {
           version,
           `Wrong snapshot version: ${name}`,
         );
-        const packagePath = resolve(cache, assets.libraries[name]!.path);
-        const relativePath = relative(cache, packagePath);
+        const packagePath = resolve(
+          selectedCache,
+          assets.libraries[name]!.path,
+        );
+        const relativePath = relative(selectedCache, packagePath);
         assert(
           relativePath !== ".." &&
             !relativePath.startsWith(`..${sep}`) &&

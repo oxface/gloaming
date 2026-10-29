@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../samples/AgentPersistenceDemo/AgentPersistenceDemo.csproj" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <Compile Include="../../../../tests/Support/PostgreSqlFixture.cs" Link="PostgreSqlFixture.cs" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

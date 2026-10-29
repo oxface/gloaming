@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Gloaming.Agents.EntityFrameworkCore/Gloaming.Agents.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../Gloaming.Agents.Workflows/Gloaming.Agents.Workflows.csproj" />
+    <ProjectReference Include="../../Gloaming.Agents.Workflows.EntityFrameworkCore/Gloaming.Agents.Workflows.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="../../../Gloaming.Conversations/Gloaming.Conversations.EntityFrameworkCore/Gloaming.Conversations.EntityFrameworkCore.csproj" />
+    <PackageReference Include="Microsoft.Agents.AI" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+</Project>

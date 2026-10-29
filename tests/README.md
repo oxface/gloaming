@@ -1,6 +1,6 @@
 # Proof ownership
 
-The **32 native test projects** comprise 28 family-local Gloaming suites, two root cross-family
+The **34 native test projects** comprise 30 family-local Gloaming suites, two root cross-family
 suites and two Wholesale suites. Family tests live in `src/Gloaming.*/tests`; root `tests` covers
 cross-family composition and repository architecture. This guide is their common entry point,
 and the solution includes every native test project. Process hosts and Earlier/Current binaries
@@ -25,6 +25,8 @@ control test selection: the native solution and explicit CI commands do.
 
 | Owner | Test projects | Obligation |
 | --- | --- | --- |
+| Evaluations | [Typed runner and workflow adopter](../src/Gloaming.Evaluations/tests/EvaluationTests/EvaluationTests.csproj) | Native workflows with/without agents, retained outputs, strict metrics, typed/native reports, selection/versions, fresh inputs, concurrency/budgets and cancellation cleanup. |
+| Agents and Conversations | [Native persistence](../src/Gloaming.Agents/tests/AgentPersistenceTests/AgentPersistenceTests.csproj) | Exact checkpoint/history restoration, branches/isolation, native tool/reducer support, atomic rollback, append-only grants/guards, serialized writes, typed pending requests, failure and cancellation. |
 | ActorIdentity | [Core](../src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj), [HTTP](../src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj) | Opaque identity/attribution and immutable establishment; effective native policy principal, schemes, challenges and anonymous paths. |
 | Tenancy | [Core](../src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj), [HTTP](../src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj), [PostgreSQL](../src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj) | Tenantless/missing distinction, independent admission/order, native transaction-local context and cleanup. |
 | Persistence | [Model/write guards](../src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj), [GUID adopter](../src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj), [RLS](../src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj), [module adopter](../src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj) | Supported/rejected mappings, stored-owner predicates, detached writes, native policy/grants/lifecycle, independent migrations and transactions. |
@@ -49,8 +51,8 @@ The [development guide](../docs/development.md) documents native local/container
 
 A separate [native Kafka consumer](../tools/release/consumers/Kafka/README.md) is generated outside
 the checkout and consumes the freshly packed libraries through exact PackageReferences. It is
-not a thirty-third native test project or an eighteenth profile silently added to the ordinary
-PostgreSQL-only command. Run `npm --prefix tools/release run verify:kafka`; its explicit
+not a native test project or a profile silently added to the ordinary PostgreSQL-only command.
+Run `npm --prefix tools/release run verify:kafka`; its explicit
 [package CI job](../.github/workflows/packages.yml) requires a local container CLI and owns the
 selected Kafka/PostgreSQL process, acknowledgement, offset, rollback, quarantine and restart
 proofs. The [recipe](../modular-monolith-patterns/kafka.md) owns setup and supported limits.
@@ -86,7 +88,7 @@ not a complete API/branch coverage measurement or a production-capacity certific
 Unit, provider, package-only and process tests can exercise the same API while protecting
 different failures. A fake publisher cannot prove broker acceptance uncertainty; an in-process
 rollback cannot prove abrupt process recovery; ProjectReference builds cannot prove the
-[seventeen package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
+[package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
 the [native event-storage consumer](../tools/release/consumers/EventStorage.cs),
 [local reaction composition](../tools/release/consumers/EventReactions.cs),
 [the disposable Personnel composition](../tools/release/consumers/PersonnelSlice.cs),
