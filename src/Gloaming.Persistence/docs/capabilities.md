@@ -8,7 +8,9 @@ HasTenantOwnership configures a consumer-populated ownership property and contex
 filter. ValidateTenantChanges detects missing/foreign ownership and changes to ownership before
 protected saves. Native ownership concurrency predicates also reject detached targeting of a foreign
 stored row. The supported configuration covers ordinary unshared single-table entities with native
-string/GUID ownership keys; PostgreSQL is the verified provider.
+string/GUID ownership keys, including native EF JSON complex values/collections in the owner's
+columns; PostgreSQL is the verified provider. JSON-only changes retain ordinary root ownership
+validation and concurrency. See [JSON compatibility and proof](../Gloaming.Persistence.EntityFrameworkCore/README.md#native-json-value-setup-and-compatibility).
 
 Select only the packages needed by the consumer:
 
@@ -40,7 +42,7 @@ keys remain rejected. Default HTTP/AppHost/transport rollout remains separate.
 ## Deferred context
 
 Automatic stamping, automatic RLS policy scaffolding, tenant transfer, additional providers
-and complex/shared/inherited mappings remain unsupported. The optional PostgreSQL adapter
+and non-JSON complex/shared/inherited mappings remain unsupported. The optional PostgreSQL adapter
 supplies explicit policy operations and bounded read/write isolation; it requires restricted
 runtime credentials and deployed policies. An interceptor alone does not provide database enforcement.
 

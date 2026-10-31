@@ -152,6 +152,16 @@ test("shared process and provider fixture changes select the persistence adopter
     assert(matches("Persistence", path), `${path} must select Persistence`);
 });
 
+test("native JSON ownership consumer changes select provider and package proofs", () => {
+  for (const path of [
+    "src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/JsonDocumentsContext.cs",
+    "src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/JsonOwnershipJourney.cs",
+  ]) {
+    assert(matches("Persistence", path), path);
+    assert(matches("packages", path), path);
+  }
+});
+
 test("Kafka adapter, wire fixtures and recipe select native package adoption", () => {
   for (const path of [
     "tools/release/verify-kafka.ts",

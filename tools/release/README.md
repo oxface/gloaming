@@ -101,6 +101,16 @@ References: [local feeds](https://learn.microsoft.com/en-us/nuget/hosting-packag
 [cache behavior](https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders)
 and [version normalization](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning#normalized-version-numbers).
 
+## Native JSON ownership
+
+The `json-ownership` profile independently selects the base ownership package and Npgsql,
+configures native EF complex JSON values/collections, and exercises sync/async changes after
+reload, optional values, string enums, tenant isolation/concurrency and rollback. It repeats
+locked restore into a second empty cache. Exact archives, lock, consumer sources and source-mapped
+config are retained under `.artifacts/package-adoption/<version>/json-ownership-consumer`.
+The [consumer contract](../../src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/README.md)
+records native CLR-shape limitations; this is not an application data migration.
+
 ## Typed evaluations
 
 Two independent consumer profiles select `Gloaming.Evaluations`: ordinary typed functions
@@ -172,7 +182,10 @@ Native renderer probes also exercise encoded Unicode/space/apostrophe/parenthesi
 path segments, both directory separators, directory/anchor/external links and
 rejection of missing targets and repository escapes.
 
-Twenty-four clean executable consumers are created outside the repository:
+Twenty-five clean executable consumers are created outside the repository:
+
+- Native JSON ownership: multiple typed JSON columns/collections, optional values, native
+  tenant guards/concurrency and rollback, with a second empty-cache locked restore.
 
 - Typed evaluations: ordinary functions without MAF, and one set comparing deterministic,
   agent and recorded-output targets with a second empty-cache locked restore.
@@ -336,5 +349,5 @@ are written to configuration files. The index and staged snapshot are checked be
 Source hashes describe the copied inputs used for compilation; a successful manifest is written
 only after native outcomes, cleanup and index preservation pass.
 The command does not publish remotely, stage files or modify a consuming application.
-The ordinary `verify` command remains the separate twenty-four-profile proof, with PostgreSQL
+The ordinary `verify` command remains the separate twenty-five-profile proof, with PostgreSQL
 as its only required external service.

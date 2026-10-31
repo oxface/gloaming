@@ -156,6 +156,7 @@ repository_dotnet:
 
 # Package README links are artifact content, so this lane includes their changes.
 packages:
+  - 'src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/**'
   - 'src/Gloaming.Agents/samples/AgentPersistenceDemo/**'
   - 'src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/**'
   - 'src/Gloaming.*/Gloaming.*/**'
