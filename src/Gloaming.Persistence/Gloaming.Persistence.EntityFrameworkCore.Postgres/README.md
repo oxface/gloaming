@@ -24,6 +24,12 @@ with unconverted PostgreSQL `text` or `character varying` (`varchar`) ownership.
 tracked-write validation stay in place. Static model validation is cached per completed
 model; tenant values and services are resolved from the runtime scope.
 
+An ordinary selected entity may contain native EF complex values/collections mapped into
+JSON columns on its own table. JSON-only changes use the existing save validator, ownership
+concurrency predicate and database policy. Non-JSON complex values and other excluded table
+shapes remain rejected. The [base JSON contract](../Gloaming.Persistence.EntityFrameworkCore/README.md#native-json-value-setup-and-compatibility)
+describes verified constructors/collections and consumer migration obligations.
+
 Register the capability and install its native interceptor:
 
 ```csharp

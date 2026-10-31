@@ -138,7 +138,7 @@ public static class TenantRowSecurityExtensions
             || entity.BaseType is not null
             || entity.GetDerivedTypes().Any()
             || entity.IsOwned()
-            || entity.GetComplexProperties().Any()
+            || entity.GetComplexProperties().Any(value => !value.ComplexType.IsMappedToJson())
             || entity.GetMappingFragments().Any()
             || entity
                 .Model.GetEntityTypes()

@@ -314,6 +314,23 @@ try {
   );
   const profiles: ConsumerProfile[] = [
     {
+      name: "json-ownership",
+      source: "JsonOwnership.cs",
+      ids: ["Gloaming.Persistence.EntityFrameworkCore"],
+      external: [postgresProvider],
+      additionalSources: [
+        "JsonDocumentsContext.cs",
+        "JsonOwnershipJourney.cs",
+      ].map(
+        (name) =>
+          `src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/${name}`,
+      ),
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
+      ],
+    },
+    {
       name: "evaluations",
       source: "Evaluations.cs",
       ids: ["Gloaming.Evaluations"],
@@ -589,7 +606,8 @@ try {
     let profileEnv = consumerEnv;
     if (
       profile.name === "agent-persistence" ||
-      profile.name === "workflow-evaluations"
+      profile.name === "workflow-evaluations" ||
+      profile.name === "json-ownership"
     ) {
       const lockedCache = join(scratch, `${profile.name}-locked-packages`);
       assert(
@@ -699,6 +717,24 @@ try {
     join(evaluationConsumer, "NuGet.Config"),
     readFileSync(join(retainedConsumer, "NuGet.Config")),
   );
+  const jsonConsumer = join(retained, "json-ownership-consumer");
+  mkdirSync(jsonConsumer, { recursive: true });
+  for (const file of [
+    "Program.cs",
+    "JsonDocumentsContext.cs",
+    "JsonOwnershipJourney.cs",
+    "Consumer.csproj",
+    "packages.lock.json",
+  ]) {
+    writeFileSync(
+      join(jsonConsumer, file),
+      readFileSync(join(scratch, "consumers", "json-ownership", file)),
+    );
+  }
+  writeFileSync(
+    join(jsonConsumer, "NuGet.Config"),
+    readFileSync(join(retainedConsumer, "NuGet.Config")),
+  );
   writeFileSync(
     join(retained, "manifest.json"),
     JSON.stringify(
@@ -709,6 +745,7 @@ try {
         consumers: {
           agents: retainedConsumer,
           evaluations: evaluationConsumer,
+          jsonOwnership: jsonConsumer,
         },
         source: (
           JSON.parse(

@@ -25,6 +25,15 @@ internal sealed class ConsumerDatabase(
         notes.Property(row => row.Partition).HasColumnName("Partition\"Key");
         notes.Property(row => row.Body).HasColumnName("body");
         notes.Property(row => row.Revision).HasColumnName("revision").HasDefaultValue(10);
+        notes.ComplexProperty(
+            row => row.Detail,
+            detail =>
+            {
+                detail.ToJson("detail");
+                detail.IsRequired(false);
+                detail.ComplexCollection(value => value.Parts);
+            }
+        );
         notes
             .HasTenantOwnership(row => row.Partition, () => RequiredPartition, "PartitionScope")
             .WithRls(ProofDatabase.Setting);
@@ -37,7 +46,16 @@ internal sealed class Note
     public string Partition { get; set; } = "";
     public string Body { get; set; } = "";
     public int Revision { get; set; }
+    public NoteDetail? Detail { get; set; }
 }
+
+internal sealed record NoteDetail(string Title, List<NotePart> Parts)
+{
+    private NoteDetail()
+        : this("", []) { }
+}
+
+internal sealed record NotePart(string Text);
 
 internal sealed class Operation : IAsyncDisposable
 {

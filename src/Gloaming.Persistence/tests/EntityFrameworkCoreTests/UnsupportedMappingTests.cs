@@ -1,4 +1,5 @@
 using Gloaming.Persistence.EntityFrameworkCore;
+using JsonOwnershipConsumer;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gloaming.EntityFrameworkCoreTests;
@@ -13,6 +14,89 @@ public sealed class UnsupportedMappingTests
 
     [Fact]
     public void ComplexEntityMappingIsRejected() => AssertRejected(new ComplexContext(Options()));
+
+    [Fact]
+    public void JsonComplexValueKeepsItsOrdinaryOwnerTableAndOwnershipToken()
+    {
+        using var context = new JsonComplexContext(Options());
+        var entity = context.Model.FindEntityType(typeof(RootRow))!;
+        Assert.Single(entity.GetComplexProperties());
+        Assert.Equal("json_roots", entity.GetTableName());
+        Assert.True(entity.FindProperty(nameof(RootRow.Owner))!.IsConcurrencyToken);
+    }
+
+    [Fact]
+    public void JsonAndInlineComplexValuesRemainUnsupported() =>
+        AssertRejected(new MixedComplexContext(Options()));
+
+    [Fact]
+    public void OwnedJsonEntityMappingRemainsUnsupported() =>
+        AssertRejected(new OwnedJsonContext(Options()));
+
+    [Fact]
+    public void JsonModelContainsOnlyOneEntityAndPreservesOwnershipFilters()
+    {
+        using var context = new JsonDocumentsContext(Options(), "alpha");
+        var entity = Assert.Single(context.Model.GetEntityTypes());
+        Assert.Equal(3, entity.GetComplexProperties().Count());
+        Assert.All(
+            entity.GetComplexProperties(),
+            value => Assert.True(value.ComplexType.IsMappedToJson())
+        );
+        Assert.Equal(
+            ["Archived", "TenantScope"],
+            entity.GetDeclaredQueryFilters().Select(x => x.Key).Order().ToArray()
+        );
+    }
+
+    [Fact]
+    public void NativeEfStillRejectsReadOnlyComplexCollectionDeclarations()
+    {
+        using var context = new ReadOnlyCollectionContext(Options());
+        var error = Assert.Throws<InvalidOperationException>(() => context.Model);
+        Assert.IsNotType<TenantOwnershipException>(error);
+        Assert.Contains("does not implement 'IList", error.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void RootJsonCollectionOnlyChangeTriggersTheOwnershipGuard()
+    {
+        using var context = new JsonDocumentsContext(Options(), "alpha");
+        var row = new JsonDocumentRow
+        {
+            Id = Guid.NewGuid(),
+            Tenant = "beta",
+            Defaults = [new("basic", "Basic")],
+        };
+        context.Attach(row);
+        context.ChangeTracker.AutoDetectChangesEnabled = false;
+        row.Defaults[0] = row.Defaults[0] with { Label = "Foreign edit" };
+        row.Defaults.Add(new("advanced", "Advanced"));
+        var error = Assert.Throws<TenantOwnershipException>(() =>
+            context.ValidateTenantChanges(() => "alpha")
+        );
+        Assert.Equal(TenantOwnershipFailure.ForeignOwner, error.Reason);
+    }
+
+    [Fact]
+    public void AddingInlineComplexValuesAfterRegistrationIsRejectedAtValidation()
+    {
+        using var context = new LateComplexContext(Options());
+        context.Add(new RootRow { Id = Guid.NewGuid() });
+        var error = Assert.Throws<TenantOwnershipException>(() =>
+            context.ValidateTenantChanges(() => Guid.Empty)
+        );
+        Assert.Equal(TenantOwnershipFailure.InvalidConfiguration, error.Reason);
+    }
+
+    [Fact]
+    public void NativeEfStillRequiresBindableJsonConstructors()
+    {
+        using var context = new ConstructorContext(Options());
+        var error = Assert.Throws<InvalidOperationException>(() => context.Model);
+        Assert.IsNotType<TenantOwnershipException>(error);
+        Assert.Contains("No suitable constructor", error.Message, StringComparison.Ordinal);
+    }
 
     private static void AssertRejected(DbContext context)
     {
@@ -64,6 +148,110 @@ public sealed class UnsupportedMappingTests
             row.ComplexProperty(item => item.Detail);
             row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
         }
+    }
+
+    private sealed class JsonComplexContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<RootRow>().ToTable("json_roots");
+            row.ComplexProperty(item => item.Detail, detail => detail.ToJson("ContentJson"));
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+        }
+    }
+
+    private sealed class OwnedJsonContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<RootRow>().ToTable("owned_json");
+            row.OwnsOne(item => item.Detail, detail => detail.ToJson("ContentJson"));
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+        }
+    }
+
+    private sealed class MixedComplexContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<MixedRow>().ToTable("mixed");
+            row.ComplexProperty(item => item.Json, detail => detail.ToJson("ContentJson"));
+            row.ComplexProperty(item => item.Inline);
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+        }
+    }
+
+    private sealed class ReadOnlyCollectionContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<ReadOnlyCollectionRow>().ToTable("readonly");
+            row.ComplexProperty(
+                item => item.Json,
+                detail =>
+                {
+                    detail.ToJson("ContentJson");
+                    detail.ComplexCollection(item => item.Levels);
+                }
+            );
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+        }
+    }
+
+    private sealed class LateComplexContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<RootRow>().ToTable("late");
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+            row.ComplexProperty(item => item.Detail);
+        }
+    }
+
+    private sealed class ConstructorContext(DbContextOptions options) : ShapeContext(options)
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var row = modelBuilder.Entity<ConstructorRow>().ToTable("constructor");
+            row.ComplexProperty(
+                item => item.Json,
+                detail =>
+                {
+                    detail.ToJson("ContentJson");
+                    detail.ComplexCollection(item => item.Levels);
+                }
+            );
+            row.HasTenantOwnership(item => item.Owner, () => RequiredOwner, "Scope");
+        }
+    }
+
+    private sealed class ConstructorRow
+    {
+        public Guid Id { get; set; }
+        public Guid Owner { get; set; }
+        public UnbindableValue Json { get; set; } = new([]);
+    }
+
+    private sealed record UnbindableValue(List<LevelValue> Levels);
+
+    private sealed class MixedRow
+    {
+        public Guid Id { get; set; }
+        public Guid Owner { get; set; }
+        public DetailValue Json { get; set; } = new();
+        public DetailValue Inline { get; set; } = new();
+    }
+
+    private sealed class ReadOnlyCollectionRow
+    {
+        public Guid Id { get; set; }
+        public Guid Owner { get; set; }
+        public ReadOnlyValue Json { get; set; } = new();
+    }
+
+    private sealed class ReadOnlyValue
+    {
+        public IReadOnlyList<LevelValue> Levels { get; init; } = [];
     }
 
     private class BaseRow

@@ -77,12 +77,52 @@ version when the consumer needs it.
 
 ## Supported configuration and limits
 
-The first proofs cover native string and GUID keys and ordinary unshared single-table
-entities. Ownership conversion, inheritance, owned/complex entity mappings, shared tables,
+The proofs cover native string and GUID keys and ordinary unshared single-table entities,
+including native EF 10 complex values/collections mapped to JSON columns in their owner's
+table. Every top-level complex value must use `ToJson`; nested objects, optional nested values
+and collections inherit their JSON container. Ownership remains a direct CLR scalar property
+on the entity, outside JSON. JSON-only edits retain ordinary change detection, ownership
+validation and native concurrency predicates.
+Ownership conversion, inheritance, owned entity mappings, non-JSON complex values, shared tables,
 entity splitting and view mappings are excluded. Registration and protected-write validation
 reject the exercised unsupported configurations. Named-filter replacement, disabled tokens,
 wrong key types, generated ownership and ignored insert ownership are rejected before
 accepting protected writes.
+
+### Native JSON value setup and compatibility
+
+```csharp
+row.ComplexProperty(x => x.Content, content =>
+{
+    content.ToJson("ContentJson");
+    content.ComplexCollection(x => x.Levels);
+});
+row.HasTenantOwnership(x => x.OrganizationKey, () => RequiredOrganizationKey, "Scope");
+```
+
+No new guard registration, serializer or database schema is introduced by this compatibility
+repair. Configure member names, enum conversion and column types through native EF/Npgsql.
+The [independent consumer](../tests/Fixtures/JsonOwnership/README.md) proves multiple JSON columns,
+init-only record values, collection replacement/in-place edits after reload, optional selection
+transitions, root collections and explicit nullable string-enum conversion with EF 10.0.13,
+Npgsql 10.0.3 and PostgreSQL 18.6. Both native save paths detect foreign JSON-only changes even
+with automatic change detection disabled. The optional RLS adapter accepts the same JSON shape
+while retaining its text-key restrictions and deployed policy requirements.
+
+Native EF 10 limitations still apply. Complex collection declarations must implement `IList<T>`
+(the proof uses `List<T>`); `IReadOnlyList<T>` declarations are rejected. Constructors cannot
+bind complex-member/collection parameters: positional records containing them need an
+EF-compatible constructor, such as a private parameterless constructor, or separate persistence
+value types. Scalar-only leaf records are exercised without that extra constructor. Initialize
+collection properties empty for materialization and seed defaults explicitly when creating a
+new entity; EF can populate an existing collection during reload. Passing the ownership model
+check does not certify arbitrary CLR shapes, custom serialization, nullability or EF features.
+
+Applications own adoption of typed JSON into existing columns. Preserve JSON member/enum
+representation intentionally and review native migration SQL against retained data; this library
+does not convert payloads or run migrations. Immutable revisions, snapshots, source locks and
+within-tenant rules remain module policy. Native MAF/Gloaming checkpoint and history JSON is
+opaque library-owned text and is outside this typed business-value mapping capability.
 
 The Sales consumer additionally proves an independently mapped child with explicit ownership
 registration and a native tenant-bearing foreign key to its parent's alternate key. A
@@ -115,7 +155,7 @@ See the [ownership consumer](../samples/PersistenceDemo/README.md) and [family c
 Automatic trusted-owner assignment is not implemented; the current mechanism rejects absent,
 foreign or changed ownership rather than filling it. Raw/bulk writes remain outside this
 provider-independent adapter's tracked-save validation. Tenant transfer, additional providers
-and complex/shared/inherited mapping shapes need their own proofs.
+and non-JSON complex/shared/inherited mapping shapes need their own proofs.
 
 ## Optional PostgreSQL row security
 
