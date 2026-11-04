@@ -26,6 +26,24 @@ internal sealed class ConsumerDatabase(
         notes.Property(row => row.Body).HasColumnName("body");
         notes.Property(row => row.Revision).HasColumnName("revision").HasDefaultValue(10);
         notes.ComplexProperty(
+            row => row.Review,
+            review =>
+            {
+                review
+                    .Property(value => value.Summary)
+                    .HasColumnName("review_summary")
+                    .HasDefaultValue("Unreviewed");
+                review.ComplexProperty(
+                    value => value.Notes,
+                    notes =>
+                        notes
+                            .Property(value => value.Text)
+                            .HasColumnName("review_note")
+                            .HasDefaultValue("Original note")
+                );
+            }
+        );
+        notes.ComplexProperty(
             row => row.Detail,
             detail =>
             {
@@ -47,6 +65,18 @@ internal sealed class Note
     public string Body { get; set; } = "";
     public int Revision { get; set; }
     public NoteDetail? Detail { get; set; }
+    public NoteReview Review { get; set; } = new();
+}
+
+internal sealed class NoteReview
+{
+    public string Summary { get; set; } = "Unreviewed";
+    public ReviewNotes Notes { get; set; } = new();
+}
+
+internal sealed class ReviewNotes
+{
+    public string Text { get; set; } = "Original note";
 }
 
 internal sealed record NoteDetail(string Title, List<NotePart> Parts)

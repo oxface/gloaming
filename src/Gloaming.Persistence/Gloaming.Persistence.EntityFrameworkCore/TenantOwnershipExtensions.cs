@@ -97,8 +97,8 @@ public static class TenantOwnershipExtensions
     }
 
     /// <summary>
-    /// Detects changes and validates registered tenant-owned tracked writes before the caller
-    /// saves. It does not fill values, query stored ownership, save, commit or retry.
+    /// Checks registered model shapes, detects changes and validates tenant-owned tracked writes
+    /// before the caller saves. It does not fill values, query stored ownership, save, commit or retry.
     /// </summary>
     public static void ValidateTenantChanges<TTenant>(
         this DbContext context,
@@ -108,6 +108,7 @@ public static class TenantOwnershipExtensions
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(requireTenant);
+        TenantOwnershipMetadata.ValidateModelShape(context.Model);
         context.ChangeTracker.DetectChanges();
         bool resolved = false;
         TTenant tenant = default!;

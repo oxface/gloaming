@@ -314,6 +314,24 @@ try {
   );
   const profiles: ConsumerProfile[] = [
     {
+      name: "relational-ownership",
+      source: "RelationalOwnership.cs",
+      ids: ["Gloaming.Persistence.EntityFrameworkCore"],
+      external: [postgresProvider],
+      additionalSources: [
+        "RelationalDocumentsContext.cs",
+        "RelationalOwnershipJourney.cs",
+        "ValueShapeJourney.cs",
+      ].map(
+        (name) =>
+          `src/Gloaming.Persistence/tests/Fixtures/RelationalOwnership/${name}`,
+      ),
+      gloamingClosure: [
+        "Gloaming.EntityFrameworkCore",
+        "Gloaming.Persistence.EntityFrameworkCore",
+      ],
+    },
+    {
       name: "json-ownership",
       source: "JsonOwnership.cs",
       ids: ["Gloaming.Persistence.EntityFrameworkCore"],
@@ -607,7 +625,8 @@ try {
     if (
       profile.name === "agent-persistence" ||
       profile.name === "workflow-evaluations" ||
-      profile.name === "json-ownership"
+      profile.name === "json-ownership" ||
+      profile.name === "relational-ownership"
     ) {
       const lockedCache = join(scratch, `${profile.name}-locked-packages`);
       assert(
@@ -735,6 +754,25 @@ try {
     join(jsonConsumer, "NuGet.Config"),
     readFileSync(join(retainedConsumer, "NuGet.Config")),
   );
+  const relationalConsumer = join(retained, "relational-ownership-consumer");
+  mkdirSync(relationalConsumer, { recursive: true });
+  for (const file of [
+    "Program.cs",
+    "RelationalDocumentsContext.cs",
+    "RelationalOwnershipJourney.cs",
+    "ValueShapeJourney.cs",
+    "Consumer.csproj",
+    "packages.lock.json",
+  ]) {
+    writeFileSync(
+      join(relationalConsumer, file),
+      readFileSync(join(scratch, "consumers", "relational-ownership", file)),
+    );
+  }
+  writeFileSync(
+    join(relationalConsumer, "NuGet.Config"),
+    readFileSync(join(retainedConsumer, "NuGet.Config")),
+  );
   writeFileSync(
     join(retained, "manifest.json"),
     JSON.stringify(
@@ -746,6 +784,7 @@ try {
           agents: retainedConsumer,
           evaluations: evaluationConsumer,
           jsonOwnership: jsonConsumer,
+          relationalOwnership: relationalConsumer,
         },
         source: (
           JSON.parse(

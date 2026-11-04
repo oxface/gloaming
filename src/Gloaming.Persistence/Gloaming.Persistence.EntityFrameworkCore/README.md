@@ -78,16 +78,77 @@ version when the consumer needs it.
 ## Supported configuration and limits
 
 The proofs cover native string and GUID keys and ordinary unshared single-table entities,
-including native EF 10 complex values/collections mapped to JSON columns in their owner's
-table. Every top-level complex value must use `ToJson`; nested objects, optional nested values
-and collections inherit their JSON container. Ownership remains a direct CLR scalar property
-on the entity, outside JSON. JSON-only edits retain ordinary change detection, ownership
-validation and native concurrency predicates.
-Ownership conversion, inheritance, owned entity mappings, non-JSON complex values, shared tables,
+including native EF 10 scalar, nested and optional complex values stored as ordinary columns
+in their owner's table, and complex values/collections mapped to JSON columns. Inline and
+JSON values may coexist. Inline complex leaves are checked recursively against the owner
+table; JSON members inherit their container. Ownership remains a directly mapped CLR scalar
+property on the entity, outside all complex values. Complex-only edits retain ordinary change
+detection, ownership validation and native concurrency predicates.
+Ownership conversion, inheritance, owned entity mappings, multiple entity types sharing a table,
 entity splitting and view mappings are excluded. Registration and protected-write validation
 reject the exercised unsupported configurations. Named-filter replacement, disabled tokens,
 wrong key types, generated ownership and ignored insert ownership are rejected before
 accepting protected writes.
+
+Both adapters use the same table/graph classification. Completed models are checked once
+before save-time entry-state filtering, without resolving the operation tenant. Unsupported
+owned dependents in separate tables and inheritance configured after ownership registration
+therefore fail even when only an unannotated child or derived entry changes. Owned mappings
+are excluded on the protected owner as well as on an explicitly selected owned entity.
+
+| Native shape | Ownership support |
+| --- | --- |
+| Inline class/record values, structs and nullable record structs | Supported when their scalar leaves map to the owner table. |
+| Primitive arrays/lists on the entity or inside an inline complex value | Supported as native PostgreSQL array columns; these are scalar properties, not EF complex collections. |
+| Root primitive collections explicitly mapped to `jsonb` | Supported with Npgsql 10. |
+| Converted non-tenant scalar leaves | Supported through native EF configuration; ownership scalar converters remain excluded. |
+| Optional inline values with required members or a native discriminator marker | Supported, including present values with all consumer leaves null when a marker is configured. |
+| Complex collections | Use JSON on relational EF 10; a separate collection table is an entity/relationship mapping. |
+| JSON complex subtree below an inline complex parent | Rejected by native EF 10; keep JSON as a separate root value or map the containing value to JSON. |
+| Owned entity graphs, inheritance, shared/split entity tables, view mappings | Deliberate unsupported ownership shapes, including native-valid variants. |
+
+The [positive value-shape journey](../tests/Fixtures/RelationalOwnership/ValueShapeJourney.cs)
+compares native and ownership-enabled DDL and exercises replacement, in-place collections,
+optional transitions and foreign-write/concurrency refusal on PostgreSQL. The
+[graph boundary regressions](../tests/EntityFrameworkCoreTests/MappingBoundaryTests.cs)
+distinguish native-valid excluded mappings from supported payload shapes. Native model
+validity alone does not establish a tenant predicate for every separately tracked row.
+
+### Native relational complex value setup
+
+```csharp
+row.ComplexProperty(x => x.Text, text =>
+{
+    text.Property(x => x.Name).HasColumnName("Name").HasMaxLength(200);
+    text.Property(x => x.TechnologyContext).HasColumnName("TechnologyContext").IsRequired(false);
+});
+row.HasTenantOwnership(x => x.OrganizationKey, () => RequiredOrganizationKey, "Scope");
+```
+
+Use native `ComplexProperty` configuration before or after ownership registration. No new
+ownership API, serializer or save path is required. A complex value has no separate entity
+identity; EF's term "table splitting" for its inline columns does not mean multiple entity
+types sharing a table, which remains unsupported. Nested required/optional values use the
+same mapping. An optional complex value needs a required member or native discriminator
+marker so EF 10 can distinguish absence from a present value; relational complex collections
+still require JSON. Entity
+navigations, keys/indexes into complex members and EF 11 features are outside this contract.
+See Microsoft's [complex-type guide](https://learn.microsoft.com/en-us/ef/core/modeling/complex-types)
+and [EF 10 release notes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-10.0/whatsnew).
+
+The [independent relational consumer](../tests/Fixtures/RelationalOwnership/README.md) proves
+explicit column names/facets, null scalar leaves, replacement, nested-only updates, optional
+transitions and mixed JSON values with automatic change detection disabled through both
+native save paths. PostgreSQL proofs verify the actual columns, tenant guard failures and
+stored-owner concurrency refusal for detached nested-only updates/deletes. Registration
+ordering, filter/token tampering and unsupported entity shapes have separate model proofs.
+
+Applications own the persisted CLR property, native mapping, schema and migrations. Replacing
+a flattened projection requires a real persisted value; merely changing `Ignore` to
+`ComplexProperty` may not be sufficient. Preserve existing column names/facets and inspect
+migration SQL against retained data. This adapter neither changes schemas nor resets data.
+Relationships, collection rows, publication immutability and tenant admission remain consumer
+policy. This extends the existing ownership mechanism without introducing a new reusable API.
 
 ### Native JSON value setup and compatibility
 
@@ -155,7 +216,7 @@ See the [ownership consumer](../samples/PersistenceDemo/README.md) and [family c
 Automatic trusted-owner assignment is not implemented; the current mechanism rejects absent,
 foreign or changed ownership rather than filling it. Raw/bulk writes remain outside this
 provider-independent adapter's tracked-save validation. Tenant transfer, additional providers
-and non-JSON complex/shared/inherited mapping shapes need their own proofs.
+and shared/inherited/split entity mapping shapes need their own proofs.
 
 ## Optional PostgreSQL row security
 

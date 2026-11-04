@@ -124,7 +124,6 @@ public static class TenantRowSecurityExtensions
     private static void ValidateOwnership(IReadOnlyEntityType entity, bool runtime = false)
     {
         var property = entity.FindTenantOwnershipProperty();
-        string? table = entity.GetTableName();
         if (
             property is null
             || property.ClrType != typeof(string)
@@ -133,20 +132,7 @@ public static class TenantRowSecurityExtensions
             || property.ValueGenerated != ValueGenerated.Never
             || property.GetValueConverter() is not null
             || property.GetProviderClrType() is not null
-            || table is null
-            || entity.GetViewName() is not null
-            || entity.BaseType is not null
-            || entity.GetDerivedTypes().Any()
-            || entity.IsOwned()
-            || entity.GetComplexProperties().Any(value => !value.ComplexType.IsMappedToJson())
-            || entity.GetMappingFragments().Any()
-            || entity
-                .Model.GetEntityTypes()
-                .Any(other =>
-                    other != entity
-                    && other.GetTableName() == table
-                    && other.GetSchema() == entity.GetSchema()
-                )
+            || !TenantOwnershipShape.IsSupported(entity)
         )
             throw new InvalidOperationException(
                 "RLS requires HasTenantOwnership on an ordinary, unshared text-key table without converters."

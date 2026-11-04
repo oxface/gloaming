@@ -14,5 +14,9 @@
       Include="../Fixtures/JsonOwnership/JsonDocumentsContext.cs"
       Link="JsonDocumentsContext.cs"
     />
+    <Compile
+      Include="../Fixtures/RelationalOwnership/RelationalDocumentsContext.cs"
+      Link="RelationalDocumentsContext.cs"
+    />
   </ItemGroup>
 </Project>

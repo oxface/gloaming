@@ -13,7 +13,15 @@ public sealed class UnsupportedMappingTests
     public void SplitEntityOwnershipIsRejected() => AssertRejected(new SplitContext(Options()));
 
     [Fact]
-    public void ComplexEntityMappingIsRejected() => AssertRejected(new ComplexContext(Options()));
+    public void InlineComplexValueKeepsItsOrdinaryOwnerTableAndOwnershipToken()
+    {
+        using var context = new ComplexContext(Options());
+        var entity = Assert.Single(context.Model.GetEntityTypes());
+        Assert.Single(entity.GetComplexProperties());
+        Assert.True(entity.FindProperty(nameof(RootRow.Owner))!.IsConcurrencyToken);
+        context.Add(new RootRow { Id = Guid.NewGuid() });
+        context.ValidateTenantChanges(() => Guid.Empty);
+    }
 
     [Fact]
     public void JsonComplexValueKeepsItsOrdinaryOwnerTableAndOwnershipToken()
@@ -26,8 +34,14 @@ public sealed class UnsupportedMappingTests
     }
 
     [Fact]
-    public void JsonAndInlineComplexValuesRemainUnsupported() =>
-        AssertRejected(new MixedComplexContext(Options()));
+    public void JsonAndInlineComplexValuesShareTheirOrdinaryOwnerTable()
+    {
+        using var context = new MixedComplexContext(Options());
+        var entity = Assert.Single(context.Model.GetEntityTypes());
+        Assert.Equal(2, entity.GetComplexProperties().Count());
+        context.Add(new MixedRow { Id = Guid.NewGuid() });
+        context.ValidateTenantChanges(() => Guid.Empty);
+    }
 
     [Fact]
     public void OwnedJsonEntityMappingRemainsUnsupported() =>
@@ -79,14 +93,11 @@ public sealed class UnsupportedMappingTests
     }
 
     [Fact]
-    public void AddingInlineComplexValuesAfterRegistrationIsRejectedAtValidation()
+    public void InlineComplexValuesCanBeConfiguredAfterOwnershipRegistration()
     {
         using var context = new LateComplexContext(Options());
         context.Add(new RootRow { Id = Guid.NewGuid() });
-        var error = Assert.Throws<TenantOwnershipException>(() =>
-            context.ValidateTenantChanges(() => Guid.Empty)
-        );
-        Assert.Equal(TenantOwnershipFailure.InvalidConfiguration, error.Reason);
+        context.ValidateTenantChanges(() => Guid.Empty);
     }
 
     [Fact]
