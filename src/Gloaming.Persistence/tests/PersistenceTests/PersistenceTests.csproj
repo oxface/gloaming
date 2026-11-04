@@ -24,5 +24,17 @@
       Include="../Fixtures/JsonOwnership/JsonOwnershipJourney.cs"
       Link="JsonOwnershipJourney.cs"
     />
+    <Compile
+      Include="../Fixtures/RelationalOwnership/RelationalDocumentsContext.cs"
+      Link="RelationalDocumentsContext.cs"
+    />
+    <Compile
+      Include="../Fixtures/RelationalOwnership/RelationalOwnershipJourney.cs"
+      Link="RelationalOwnershipJourney.cs"
+    />
+    <Compile
+      Include="../Fixtures/RelationalOwnership/ValueShapeJourney.cs"
+      Link="ValueShapeJourney.cs"
+    />
   </ItemGroup>
 </Project>

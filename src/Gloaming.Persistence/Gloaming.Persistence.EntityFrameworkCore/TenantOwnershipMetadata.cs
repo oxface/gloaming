@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,6 +8,7 @@ namespace Gloaming.Persistence.EntityFrameworkCore;
 
 internal static class TenantOwnershipMetadata
 {
+    private static readonly ConditionalWeakTable<IModel, object> ValidatedModels = new();
     internal const string PropertyAnnotation = "Gloaming:TenantOwnershipProperty";
     internal const string FilterAnnotation = "Gloaming:TenantOwnershipFilter";
     internal const string ContextMemberAnnotation = "Gloaming:TenantContextMember";
@@ -25,23 +27,7 @@ internal static class TenantOwnershipMetadata
 
     internal static void ValidateTable(IReadOnlyEntityType entity, string property)
     {
-        string? table = entity.GetTableName();
-        if (
-            table is null
-            || entity.GetViewName() is not null
-            || entity.BaseType is not null
-            || entity.GetDerivedTypes().Any()
-            || entity.IsOwned()
-            || entity.GetComplexProperties().Any(value => !value.ComplexType.IsMappedToJson())
-            || entity.GetMappingFragments().Any()
-            || entity
-                .Model.GetEntityTypes()
-                .Any(other =>
-                    other != entity
-                    && other.GetTableName() == table
-                    && other.GetSchema() == entity.GetSchema()
-                )
-        )
+        if (!TenantOwnershipShape.IsSupported(entity))
         {
             throw Invalid(
                 entity,
@@ -51,10 +37,24 @@ internal static class TenantOwnershipMetadata
         }
     }
 
+    internal static void ValidateModelShape(IModel model) =>
+        ValidatedModels.GetValue(
+            model,
+            static value =>
+            {
+                foreach (var entity in value.GetEntityTypes())
+                {
+                    if (entity.FindAnnotation(PropertyAnnotation)?.Value is string property)
+                        ValidateTable(entity, property);
+                }
+
+                return new object();
+            }
+        );
+
     internal static IProperty Validate<TEntityKey>(IEntityType entity, string propertyName)
         where TEntityKey : notnull
     {
-        ValidateTable(entity, propertyName);
         IProperty property =
             entity.FindProperty(propertyName)
             ?? throw Invalid(entity, propertyName, "The ownership property is not mapped.");

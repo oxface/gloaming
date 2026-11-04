@@ -10,7 +10,7 @@ Both native saves invoke `ValidateTenantChanges`. The
 [provider tests](../../PersistenceTests/JsonOwnershipTests.cs) exercise replacement and in-place
 JSON-only edits after reload, owner/key mutations, foreign tracked writes, forged detached IDs,
 filter composition, deletes and rollback. The [model tests](../../EntityFrameworkCoreTests/UnsupportedMappingTests.cs)
-retain inheritance/split/owned/non-JSON/mixed-shape rejection and prove native constructor and
+retain inheritance/split/owned rejection, allow inline values beside JSON, and prove native constructor and
 read-only-collection limitations. The [RLS tests](../../PostgresTests/JsonRowSecurityTests.cs)
 exercise nested JSON edits with restricted credentials, deployed policies and both native save paths.
 

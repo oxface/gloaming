@@ -24,11 +24,20 @@ with unconverted PostgreSQL `text` or `character varying` (`varchar`) ownership.
 tracked-write validation stay in place. Static model validation is cached per completed
 model; tenant values and services are resolved from the runtime scope.
 
-An ordinary selected entity may contain native EF complex values/collections mapped into
-JSON columns on its own table. JSON-only changes use the existing save validator, ownership
-concurrency predicate and database policy. Non-JSON complex values and other excluded table
-shapes remain rejected. The [base JSON contract](../Gloaming.Persistence.EntityFrameworkCore/README.md#native-json-value-setup-and-compatibility)
-describes verified constructors/collections and consumer migration obligations.
+An ordinary selected entity may contain native EF scalar/nested/optional complex values in
+ordinary columns alongside JSON complex values/collections on its own table. Complex-only
+changes use the existing save validator, ownership concurrency predicate and database policy.
+Shared/inherited/split entity mappings and owned entities remain rejected. The
+[base relational contract](../Gloaming.Persistence.EntityFrameworkCore/README.md#native-relational-complex-value-setup)
+and [JSON contract](../Gloaming.Persistence.EntityFrameworkCore/README.md#native-json-value-setup-and-compatibility)
+describe verified shapes and consumer migration obligations. The
+[restricted relational proof](../tests/PostgresTests/RelationalRowSecurityTests.cs) exercises
+nested-only writes, guard rejection, database isolation without the guard, commit and rollback.
+The adapter shares the base package's table/graph classifier and checks selected completed
+models even when only a dependent entry changes. An owned dependent's separate table is
+not protected by declaring a policy only on its owner's table; such graphs remain rejected.
+Ordinary independently mapped relationship rows remain consumer-owned and need their own
+ownership declarations, tenant-bearing relationships and policy deployment where selected.
 
 Register the capability and install its native interceptor:
 

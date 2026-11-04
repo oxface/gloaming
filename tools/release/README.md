@@ -101,6 +101,21 @@ References: [local feeds](https://learn.microsoft.com/en-us/nuget/hosting-packag
 [cache behavior](https://learn.microsoft.com/en-us/nuget/consume-packages/managing-the-global-packages-and-cache-folders)
 and [version normalization](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning#normalized-version-numbers).
 
+## Native relational complex ownership
+
+The `relational-ownership` profile independently selects the base ownership package and Npgsql,
+then runs the [native consumer](../../src/Gloaming.Persistence/tests/Fixtures/RelationalOwnership/README.md)
+outside the checkout. Required, nested and optional inline values coexist with JSON. It proves
+both registration orders and native save paths, complex-only tracking with automatic detection
+disabled, tenant isolation, detached concurrency refusal and rollback. Its additional native
+value-shape journey compares DDL and exercises required/nullable record structs, primitive
+arrays/lists, primitive JSON collections, converted payload leaves and optional discriminator
+markers. Locked restore repeats
+into a second empty cache. Exact archives, lock, sources and source-mapped config are retained
+under `.artifacts/package-adoption/<version>/relational-ownership-consumer` alongside the full
+snapshot and JSON compatibility proof. Applications keep native mappings and own migration
+review; no additional guard registration, serializer or save path is required.
+
 ## Native JSON ownership
 
 The `json-ownership` profile independently selects the base ownership package and Npgsql,
@@ -349,5 +364,5 @@ are written to configuration files. The index and staged snapshot are checked be
 Source hashes describe the copied inputs used for compilation; a successful manifest is written
 only after native outcomes, cleanup and index preservation pass.
 The command does not publish remotely, stage files or modify a consuming application.
-The ordinary `verify` command remains the separate twenty-five-profile proof, with PostgreSQL
+The ordinary `verify` command remains the separate twenty-six-profile proof, with PostgreSQL
 as its only required external service.
