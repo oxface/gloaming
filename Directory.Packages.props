@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Agents.AI" Version="1.26.0" />
-    <PackageVersion Include="Microsoft.Agents.AI.Abstractions" Version="1.26.0" />
+    <PackageVersion Include="Microsoft.Agents.AI.Abstractions" Version="1.27.0" />
     <PackageVersion Include="Microsoft.Agents.AI.Workflows" Version="1.26.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.Evaluation" Version="10.11.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.Evaluation.Reporting" Version="10.11.0" />
