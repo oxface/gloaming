@@ -9,7 +9,13 @@ shared:
   - '**/*.{csproj,props,targets,slnx}'
   - 'global.json'
   - 'NuGet.Config'
+  - '!Directory.Packages.props'
   - '!**/*.md'
+
+# Version-only central edits use project package ownership; other edits fall back
+# to full coverage in tools/repository/ci-packages.ts.
+package_versions:
+  - 'Directory.Packages.props'
 
 # New inputs outside the mapped roots conservatively request full coverage.
 unmapped:
@@ -21,6 +27,7 @@ unmapped:
   - '!tests/ContextCompositionTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
   - '!tools/release/**'
+  - '!Directory.Packages.props'
 
 Evaluations:
   - 'src/Gloaming.Evaluations/**'
@@ -115,7 +122,28 @@ Messaging:
   - '!**/*.md'
 
 wholesale:
-  - 'src/Gloaming.*/Gloaming.*/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
+  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/**'
+  - 'src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/**'
+  - 'src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventReactions/Gloaming.EventReactions/**'
+  - 'src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/**'
+  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing/**'
+  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/**'
+  - 'src/Gloaming.Events/Gloaming.Events.History/**'
+  - 'src/Gloaming.Events/Gloaming.Events.Serialization/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
+  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/**'
+  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/**'
   - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
   - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
   - 'tests/Support/ChildHost.cs'
@@ -163,5 +191,14 @@ packages:
   - 'src/Gloaming.*/README.md'
   - 'src/Gloaming.*/docs/**'
   - 'src/Directory.Build.props'
+  - 'tools/release/**'
+  - 'modular-monolith-patterns/kafka.md'
+
+# Kafka's package consumer uses only this native messaging closure and DI.
+kafka:
+  - 'src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
+  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
   - 'tools/release/**'
   - 'modular-monolith-patterns/kafka.md'

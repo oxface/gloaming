@@ -1,6 +1,6 @@
 # Native EF checkpoints
 
-`EfCheckpointStore<TContext>` implements MAF 1.26.0 `ICheckpointStore<JsonElement>`. It depends
+`EfCheckpointStore<TContext>` implements MAF 1.27.0 `ICheckpointStore<JsonElement>`. It depends
 on MAF Workflows and EF Relational 10.0.13, with no vendor or Npgsql integration. MAF owns
 checkpoint serialization/restoration; this store retains its opaque JSON without rewriting it.
 

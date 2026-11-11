@@ -27,8 +27,13 @@ PR workflows. Run relevant checks before review using the
 
 Dependabot groups EF Core, dotnet-ef and Microsoft.Extensions/ASP.NET Core servicing updates
 together because EF patch releases can raise their minimum dependency versions. Central package
-pins and the EF tool version travel in that update. SDK, Aspire and telemetry updates retain
-their own groups.
+pins, the Npgsql driver/provider and the EF tool version travel in that update. SDK, Aspire,
+telemetry and Testcontainers updates retain their own groups.
+
+Microsoft Agent Framework packages update together so Workflows cannot raise its Agents
+dependency above a consumer's central pin. The AI Evaluation packages also update together,
+in a group declared before the broader Microsoft.Extensions servicing rule. These groups cover
+minor and patch updates; major updates retain individual review.
 
 Library project declarations describe the packages their code uses. Review a bot-added
 PackageReference against that contract rather than widening architecture assertions to accept
@@ -79,10 +84,29 @@ The [reusable scope workflow](../../.github/workflows/changes.yml) uses SHA-pinn
 GitHub API path; push detection uses Git. Only read permissions are granted. Reference
 validation does not infer dependencies or select test lanes.
 
-The action's `some-with-excludes` mode excludes Markdown across every positive pattern.
-Shared build/project/CI inputs and paths outside mapped roots request full coverage.
-Manual dispatch also requests full coverage. Detection failures fail required Repository
-integrity. Changes inside mapped roots follow their explicit filters.
+The action's `some-with-excludes` mode applies each filter's exclusions across every positive
+pattern. Shared build/project/CI inputs and paths outside mapped roots request full coverage,
+except for the central package file described below. Manual dispatch also requests full
+coverage. Detection failures fail required Repository integrity. Changes inside mapped roots
+follow their explicit filters.
+
+For version-only changes to `Directory.Packages.props`,
+[`ci-packages.ts`](ci-packages.ts) compares the central file with the PR base commit or the
+pre-push commit. It finds tracked projects with direct `PackageReference` declarations for the
+changed IDs and selects their lanes through the same folder map. Package IDs compare without
+case sensitivity. This supplements every other changed-path selection; it cannot suppress a
+lane selected by another file. Repository .NET checks still run for central package edits.
+New/removed declarations, structural edits, unknown ownership, shared package imports,
+unsupported expressions and missing comparison commits conservatively select all lanes.
+The selector reads literal declarations; it does not evaluate MSBuild or restore dependencies.
+
+Kafka has its own path/output selection for the four libraries in its native messaging
+closure, its proof tooling/recipe and the DI package used by its generated project. Wholesale
+integration follows its actual library closure. Source changes in unconsumed agent/evaluation
+libraries no longer select these consumers. The ordinary package adoption job remains a complete package suite
+whenever selected; individual adoption profiles are not independently scheduled. External
+package inputs of generated adoption projects are listed explicitly in the selector and
+checked against their owning proof scripts.
 
 Repository integrity always runs lightweight tooling/reference checks and commitlint;
 its .NET checks run for relevant code/build changes. Update the path map when project
@@ -91,11 +115,17 @@ the library implementations in its actual project-reference closure. Family-only
 unconsumed optional libraries retain their focused lanes. Documentation-only changes do not
 select runtime unless dispatched manually.
 
-`npm --prefix tools/repository test` checks representative path-selection cases and walks the
-runtime test project's literal ProjectReferences to verify every consumed library selects runtime.
-The cases use the pinned action's picomatch major version and `dot: true` matching with
-`some-with-excludes`; they also check the declared manual/shared/unmapped fallbacks. This is
-a local policy check, not execution of GitHub's expression engine or a general MSBuild evaluator.
+`npm --prefix tools/repository test` checks representative path/package selections and walks
+the CI consumers' literal ProjectReferences to verify that every consumed project selects its
+lane for both source and package updates. It also checks generated adoption package inputs,
+fallbacks and CLI output. The production selector and tests share the pinned action's picomatch
+major version with `dot: true` and `some-with-excludes` matching. These are local policy checks,
+not execution of GitHub's expression engine or a general MSBuild evaluator.
+
+To inspect central package selection locally, set `CI_BASE_SHA` to a full comparison commit SHA
+and run `node tools/repository/ci-packages.ts` with the locked repository tools installed.
+It prints the selected lanes and fallback reason. CI also receives the individual booleans
+through `GITHUB_OUTPUT`.
 
 Expensive jobs keep stable check names and use job conditions. The reusable selection workflow
 still has lightweight setup overhead for documentation-only changes. Host CI remains the

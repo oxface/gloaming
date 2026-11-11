@@ -67,7 +67,7 @@ jobs:
 
   kafka:
     needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.packages == 'true') }}
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.kafka == 'true') }}
     name: Native Kafka package adoption
     runs-on: ubuntu-latest
     timeout-minutes: 15

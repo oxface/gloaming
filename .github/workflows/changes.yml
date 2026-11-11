@@ -35,6 +35,8 @@ on:
         value: ${{ jobs.changes.outputs.repository_dotnet }}
       packages:
         value: ${{ jobs.changes.outputs.packages }}
+      kafka:
+        value: ${{ jobs.changes.outputs.kafka }}
 
 permissions:
   contents: read
@@ -46,22 +48,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      Evaluations: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Evaluations == 'true') && 'true' || 'false' }}
-      Agents: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Agents == 'true') && 'true' || 'false' }}
-      CommandReceipts: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.CommandReceipts == 'true') && 'true' || 'false' }}
-      EntityFrameworkCore: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EntityFrameworkCore == 'true') && 'true' || 'false' }}
-      Auditing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Auditing == 'true') && 'true' || 'false' }}
-      ActorIdentity: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.ActorIdentity == 'true') && 'true' || 'false' }}
-      EventReactions: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EventReactions == 'true') && 'true' || 'false' }}
-      Tenancy: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Tenancy == 'true') && 'true' || 'false' }}
-      Persistence: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Persistence == 'true') && 'true' || 'false' }}
-      Events: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Events == 'true') && 'true' || 'false' }}
-      EventSourcing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.EventSourcing == 'true') && 'true' || 'false' }}
-      Messaging: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.Messaging == 'true') && 'true' || 'false' }}
-      wholesale: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.wholesale == 'true') && 'true' || 'false' }}
-      runtime: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.runtime == 'true') && 'true' || 'false' }}
-      repository_dotnet: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.repository_dotnet == 'true') && 'true' || 'false' }}
-      packages: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.filter.outputs.packages == 'true') && 'true' || 'false' }}
+      Evaluations: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Evaluations == 'true' || steps.filter.outputs.Evaluations == 'true') && 'true' || 'false' }}
+      Agents: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Agents == 'true' || steps.filter.outputs.Agents == 'true') && 'true' || 'false' }}
+      CommandReceipts: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.CommandReceipts == 'true' || steps.filter.outputs.CommandReceipts == 'true') && 'true' || 'false' }}
+      EntityFrameworkCore: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.EntityFrameworkCore == 'true' || steps.filter.outputs.EntityFrameworkCore == 'true') && 'true' || 'false' }}
+      Auditing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Auditing == 'true' || steps.filter.outputs.Auditing == 'true') && 'true' || 'false' }}
+      ActorIdentity: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.ActorIdentity == 'true' || steps.filter.outputs.ActorIdentity == 'true') && 'true' || 'false' }}
+      EventReactions: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.EventReactions == 'true' || steps.filter.outputs.EventReactions == 'true') && 'true' || 'false' }}
+      Tenancy: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Tenancy == 'true' || steps.filter.outputs.Tenancy == 'true') && 'true' || 'false' }}
+      Persistence: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Persistence == 'true' || steps.filter.outputs.Persistence == 'true') && 'true' || 'false' }}
+      Events: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Events == 'true' || steps.filter.outputs.Events == 'true') && 'true' || 'false' }}
+      EventSourcing: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.EventSourcing == 'true' || steps.filter.outputs.EventSourcing == 'true') && 'true' || 'false' }}
+      Messaging: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.Messaging == 'true' || steps.filter.outputs.Messaging == 'true') && 'true' || 'false' }}
+      wholesale: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.wholesale == 'true' || steps.filter.outputs.wholesale == 'true') && 'true' || 'false' }}
+      runtime: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.runtime == 'true' || steps.filter.outputs.runtime == 'true') && 'true' || 'false' }}
+      repository_dotnet: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.repository_dotnet == 'true' || steps.filter.outputs.repository_dotnet == 'true') && 'true' || 'false' }}
+      packages: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.packages == 'true' || steps.filter.outputs.packages == 'true') && 'true' || 'false' }}
+      kafka: ${{ (github.event_name == 'workflow_dispatch' || steps.filter.outputs.shared == 'true' || steps.filter.outputs.unmapped == 'true' || steps.dependencies.outputs.full == 'true' || steps.dependencies.outputs.kafka == 'true' || steps.filter.outputs.kafka == 'true') && 'true' || 'false' }}
     steps:
       - name: Check out filters and push history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -76,3 +79,18 @@ jobs:
           filters: .github/ci-paths.yml
           predicate-quantifier: some-with-excludes
           base: ${{ github.event_name == 'push' && github.ref || '' }}
+      - name: Set up Node.js for central package selection
+        if: steps.filter.outputs.package_versions == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Install selection tooling
+        if: steps.filter.outputs.package_versions == 'true'
+        run: npm ci --prefix tools/repository --ignore-scripts
+      - name: Select consumers of changed central packages
+        if: steps.filter.outputs.package_versions == 'true'
+        id: dependencies
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node tools/repository/ci-packages.ts
