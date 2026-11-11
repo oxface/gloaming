@@ -1,6 +1,6 @@
 # Native agent persistence
 
-Optional .NET 10 integrations with Microsoft Agent Framework (MAF) 1.26.0. Existing Gloaming
+Optional .NET 10 integrations with Microsoft Agent Framework (MAF) 1.27.0. Existing Gloaming
 cores gain no AI dependencies. MAF owns agents, graph execution, native messages, sessions,
 checkpoint serialization and external-request correlation. These packages add native EF
 persistence and bounded in-process lifecycle helpers; they select no model vendor.

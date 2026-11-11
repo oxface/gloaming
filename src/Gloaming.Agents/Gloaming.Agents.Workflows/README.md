@@ -1,6 +1,6 @@
 # Native workflow turns
 
-Thin helpers over MAF Workflows 1.26.0, with no EF dependency. Adopt them with an independent
+Thin helpers over MAF Workflows 1.27.0, with no EF dependency. Adopt them with an independent
 native checkpoint store or the separately selected [EF store](../Gloaming.Agents.Workflows.EntityFrameworkCore/README.md).
 
 ```csharp

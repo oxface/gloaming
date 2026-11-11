@@ -112,5 +112,8 @@ the retained package-consumer C# sources and exercise helper lifecycles without 
 The [main workflow](../.github/workflows/ci.yml) selects family suites, architecture and
 dependent consumers using [explicit path inputs](../.github/ci-paths.yml). Shared tooling,
 project or workflow changes select broader coverage; unknown inputs select conservatively.
+Version-only central package edits select the owning projects' existing lanes, with full
+coverage for structural edits or unknown ownership. See the
+[selection rules](../tools/repository/README.md#ci-selection).
 [Runtime](../.github/workflows/sample-runtime.yml) and
 [package adoption](../.github/workflows/packages.yml) have their own checks.

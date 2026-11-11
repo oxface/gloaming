@@ -18,6 +18,17 @@ updates:
       prefix: chore
       include: scope
     groups:
+      agent-framework:
+        patterns:
+          - Microsoft.Agents.AI
+          - Microsoft.Agents.AI.*
+        update-types: [minor, patch]
+      # These have their own release cadence; match before Microsoft.Extensions.*.
+      ai-evaluation:
+        patterns:
+          - Microsoft.Extensions.AI.Evaluation
+          - Microsoft.Extensions.AI.Evaluation.*
+        update-types: [minor, patch]
       # EF's servicing releases raise Microsoft.Extensions dependency floors.
       # Update their direct pins together instead of adding unused project roots.
       dotnet-servicing:
@@ -25,6 +36,7 @@ updates:
           - Microsoft.EntityFrameworkCore
           - Microsoft.EntityFrameworkCore.*
           - Npgsql.EntityFrameworkCore.*
+          - Npgsql
           - dotnet-ef
           - Microsoft.AspNetCore.*
           - Microsoft.Extensions.*

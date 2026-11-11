@@ -1,6 +1,6 @@
 # Native EF working history
 
-`EfChatHistoryProvider<TContext>` implements MAF 1.26.0 `ChatHistoryProvider` with immutable
+`EfChatHistoryProvider<TContext>` implements MAF 1.27.0 `ChatHistoryProvider` with immutable
 full-message snapshots. It depends on MAF abstractions and EF Core Relational 10.0.13;
 workflow execution, Npgsql and model-provider clients are not selected by this package.
 
