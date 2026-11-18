@@ -44,4 +44,4 @@ exactly-once effects. Required inline command aggregates retain ADR0006's exact-
 
 The [package contract](../../src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/README.md)
 owns supported setup and limits. Its [native consumers](../../src/Gloaming.EventSourcing/tests/Fixtures/EventFeed/README.md)
-and [independent package adopter](../../tools/release/consumers/EventFeed.cs) own distinct proofs.
+and [independent package adopter](../../eng/release/consumers/EventFeed.cs) own distinct proofs.

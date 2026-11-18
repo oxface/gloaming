@@ -27,7 +27,7 @@ const { values } = parseArgs({
 });
 
 if (values.help) {
-  console.log(`Usage: npm --prefix tools/release run pack -- [--output DIRECTORY]
+  console.log(`Usage: npm --prefix eng/release run pack -- [--output DIRECTORY]
 
 Pack all Gloaming libraries at one unique prerelease version without running tests.
 Default feed: ${join(root, ".artifacts", "local-feed")}

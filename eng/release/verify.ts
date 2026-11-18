@@ -34,7 +34,7 @@ assert(
 assert.equal(
   process.argv.length,
   2,
-  "Usage: node tools/release/verify.ts (no arguments)",
+  "Usage: node eng/release/verify.ts (no arguments)",
 );
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-package-proof-"));
 const parser = new XMLParser({

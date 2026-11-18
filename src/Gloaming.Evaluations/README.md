@@ -8,7 +8,7 @@ The [document-title consumer](samples/WorkflowEvaluationDemo/README.md) runs the
 against a native deterministic workflow, a native agent workflow with a scripted client,
 and previously recorded outcomes. The [tests](tests/EvaluationTests/EvaluationTests.csproj)
 cover selection, isolation, metrics, reports, budgets, concurrency and cooperative lifecycle.
-The [local package proof](../../tools/release/README.md#typed-evaluations) independently installs
+The [local package proof](../../eng/release/README.md#typed-evaluations) independently installs
 the runner and repeats the workflow comparison from exact NuGet archives.
 
 Workflow definitions, dataset content, expected outcomes, evaluation rubrics, provider setup,

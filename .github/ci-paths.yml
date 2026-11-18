@@ -1,180 +1,27 @@
-# Explicit lane inputs, including dependent consumers. Update this map when project
-# references, linked fixtures or adoption proofs change.
-# some-with-excludes makes !**/*.md an exclusion across every positive pattern.
-
+# Environment-specific proof inputs. Ordinary .NET test dependencies are inferred by Nx.
+# some-with-excludes applies each exclusion across every positive pattern.
 shared:
   - '.github/**'
   - '.config/**'
-  - 'tools/repository/**'
+  - 'eng/repository/**'
   - '**/*.{csproj,props,targets,slnx}'
   - 'global.json'
   - 'NuGet.Config'
-  - '!Directory.Packages.props'
+  - 'package.json'
+  - 'package-lock.json'
+  - 'nx.json'
   - '!**/*.md'
 
-# Version-only central edits use project package ownership; other edits fall back
-# to full coverage in tools/repository/ci-packages.ts.
-package_versions:
-  - 'Directory.Packages.props'
-
-# New inputs outside the mapped roots conservatively request full coverage.
+# Inputs outside the existing source/tool roots conservatively request full proofs.
 unmapped:
   - '**'
   - '!**/*.md'
-  - '!src/Gloaming.{Evaluations,Agents,Conversations,Auditing,ActorIdentity,CommandReceipts,EventReactions,EntityFrameworkCore,Tenancy,Persistence,Events,EventSourcing,Messaging}/**'
+  - '!src/**'
   - '!samples/Wholesale/**'
   - '!tests/ArchitectureTests/**'
   - '!tests/ContextCompositionTests/**'
   - '!tests/Support/{PostgreSqlFixture,RabbitMqFixture,ChildHost}.cs'
-  - '!tools/release/**'
-  - '!Directory.Packages.props'
-
-Evaluations:
-  - 'src/Gloaming.Evaluations/**'
-  - '!**/*.md'
-
-Agents:
-  - 'src/Gloaming.Agents/**'
-  - 'src/Gloaming.Conversations/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - '!**/*.md'
-
-EntityFrameworkCore:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - '!**/*.md'
-
-CommandReceipts:
-  - 'src/Gloaming.CommandReceipts/**'
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'tests/Support/{PostgreSqlFixture,ChildHost}.cs'
-  - '!**/*.md'
-
-Auditing:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.Auditing/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - '!**/*.md'
-
-ActorIdentity:
-  - 'src/Gloaming.ActorIdentity/**'
-  - '!**/*.md'
-
-EventReactions:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging{,.EntityFrameworkCore,.EntityFrameworkCore.Postgres}/**'
-  - 'src/Gloaming.EventReactions/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - 'tests/Support/ChildHost.cs'
-  - '!**/*.md'
-
-Tenancy:
-  - 'src/Gloaming.Tenancy/**'
-  - 'tests/ContextCompositionTests/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - '!**/*.md'
-
-Persistence:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'tests/Support/PostgreSqlFixture.cs'
-  - 'tests/Support/ChildHost.cs'
-  - '!**/*.md'
-
-Events:
-  - 'src/Gloaming.Events/**'
-  - 'tests/Support/ChildHost.cs'
-  - '!**/*.md'
-
-# Wholesale composes event sourcing, messaging and accepted-change audit.
-# Its owning lanes include those dependencies and the module implementation paths.
-EventSourcing:
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventReactions/Gloaming.*/**'
-  - 'src/Gloaming.EventSourcing/**'
-  - 'src/Gloaming.{Events,Messaging,Auditing}/Gloaming.*/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
-  - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
-  - 'tests/Support/ChildHost.cs'
-  - '!**/*.md'
-
-Messaging:
-  - 'src/Gloaming.CommandReceipts/Gloaming.*/**'
-  - 'src/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventReactions/Gloaming.*/**'
-  - 'src/Gloaming.Messaging/**'
-  - 'src/Gloaming.{EventSourcing,Events,Auditing}/Gloaming.*/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.Messaging/samples/**'
-  - 'samples/Wholesale/{modules,Api,Worker,IntegrationTests}/**'
-  - 'tests/Support/ChildHost.cs'
-  - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
-  - '!**/*.md'
-
-wholesale:
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/**'
-  - 'src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/**'
-  - 'src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventReactions/Gloaming.EventReactions/**'
-  - 'src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing/**'
-  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/**'
-  - 'src/Gloaming.Events/Gloaming.Events.History/**'
-  - 'src/Gloaming.Events/Gloaming.Events.Serialization/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.RabbitMQ/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.EntityFrameworkCore.Postgres/**'
-  - 'samples/Wholesale/{Api,Worker,IntegrationTests,modules,ServiceDefaults}/**'
-  - 'src/Gloaming.Events/samples/EventCodecDemo/Fixtures/**'
-  - 'tests/Support/ChildHost.cs'
-  - 'tests/Support/{PostgreSqlFixture,RabbitMqFixture}.cs'
-  - '!**/*.md'
-
-
-# The runtime graph consumes these library implementations through Wholesale's
-# project references. tools/repository/ci-selection.test.ts checks that closure.
-runtime:
-  - 'samples/Wholesale/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity/**'
-  - 'src/Gloaming.ActorIdentity/Gloaming.ActorIdentity.AspNetCore/**'
-  - 'src/Gloaming.Auditing/Gloaming.Auditing.EntityFrameworkCore/**'
-  - 'src/Gloaming.CommandReceipts/Gloaming.CommandReceipts.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventReactions/Gloaming.EventReactions/**'
-  - 'src/Gloaming.EventReactions/Gloaming.EventReactions.EntityFrameworkCore/**'
-  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing/**'
-  - 'src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore/**'
-  - 'src/Gloaming.Events/Gloaming.Events.History/**'
-  - 'src/Gloaming.Events/Gloaming.Events.Serialization/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.Messaging/Gloaming.Messaging.Workflows.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore/**'
-  - 'src/Gloaming.Persistence/Gloaming.Persistence.EntityFrameworkCore.Postgres/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy/**'
-  - 'src/Gloaming.Tenancy/Gloaming.Tenancy.AspNetCore/**'
-  - '!**/*.md'
+  - '!eng/release/**'
 
 repository_dotnet:
   - 'src/**'
@@ -191,7 +38,7 @@ packages:
   - 'src/Gloaming.*/README.md'
   - 'src/Gloaming.*/docs/**'
   - 'src/Directory.Build.props'
-  - 'tools/release/**'
+  - 'eng/release/**'
   - 'modular-monolith-patterns/kafka.md'
 
 # Kafka's package consumer uses only this native messaging closure and DI.
@@ -200,5 +47,5 @@ kafka:
   - 'src/Gloaming.Messaging/Gloaming.Messaging/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
-  - 'tools/release/**'
+  - 'eng/release/**'
   - 'modular-monolith-patterns/kafka.md'

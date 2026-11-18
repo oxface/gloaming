@@ -41,19 +41,19 @@ control test selection: the native solution and explicit CI commands do.
 | Cross-family composition | [Native DI](ContextCompositionTests/ContextCompositionTests.csproj), [architecture](ArchitectureTests/ArchitectureTests.csproj) | Independent context lifetimes/establishment; deliberate library dependency boundaries, module Contracts, consumer composition and sample schema/migration policy. |
 | Wholesale | [Integration](../samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj), [runtime/browser](../samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj) | Actual Access/Sales/Inventory authorization, domain decisions, transactions, migrations, historical events and durable handoffs; Aspire/OIDC/HTTPS/readiness with native processes and browser. |
 
-The [CI workflow](../.github/workflows/ci.yml) runs family/provider/adoption suites and Wholesale
-integration; [runtime CI](../.github/workflows/sample-runtime.yml) owns browser/topology proofs.
-The [explicit path map](../.github/ci-paths.yml) selects dependent lanes. Command presence is
-not proof of scheduling or passing results; manual full selection remains the integration gate.
+In the [CI workflow](../.github/workflows/ci.yml), Repository integrity uses Nx to select
+ordinary suites, including provider/adoption tests and Wholesale integration. The Wholesale
+runtime check owns browser and topology proofs. One scope job applies the
+[environment path map](../.github/ci-paths.yml). Manual dispatch runs all checks.
 The [development guide](../docs/development.md) documents native local/container prerequisites.
 
 ## Native Kafka package profile
 
-A separate [native Kafka consumer](../tools/release/consumers/Kafka/README.md) is generated outside
+A separate [native Kafka consumer](../eng/release/consumers/Kafka/README.md) is generated outside
 the checkout and consumes the freshly packed libraries through exact PackageReferences. It is
 not a native test project or a profile silently added to the ordinary PostgreSQL-only command.
-Run `npm --prefix tools/release run verify:kafka`; its explicit
-[package CI job](../.github/workflows/packages.yml) requires a local container CLI and owns the
+Run `npm --prefix eng/release run verify:kafka`; its explicit
+[Kafka CI check](../.github/workflows/ci.yml) requires a local container CLI and owns the
 selected Kafka/PostgreSQL process, acknowledgement, offset, rollback, quarantine and restart
 proofs. The [recipe](../modular-monolith-patterns/kafka.md) owns setup and supported limits.
 
@@ -63,7 +63,7 @@ The outbox suite also owns [finite due-time consumers](../src/Gloaming.Messaging
 Their clock/cancellation/generation/process proofs adopt the public occurrence protocol while
 preserving consumer policy. Independent
 [contract cases](../src/Gloaming.Messaging/tests/OutboxPostgresTests/DueIntentContractTests.cs)
-and the [package-only migration/grant proof](../tools/release/consumers/DueIntents.cs) protect
+and the [package-only migration/grant proof](../eng/release/consumers/DueIntents.cs) protect
 the library interface and deployment obligations separately.
 
 Direct library-contract tests use public APIs with independent expected outcomes, such as
@@ -88,12 +88,12 @@ not a complete API/branch coverage measurement or a production-capacity certific
 Unit, provider, package-only and process tests can exercise the same API while protecting
 different failures. A fake publisher cannot prove broker acceptance uncertainty; an in-process
 rollback cannot prove abrupt process recovery; ProjectReference builds cannot prove the
-[package-only profiles](../tools/release/README.md#full-package-adoption-proof), including
-the [native event-storage consumer](../tools/release/consumers/EventStorage.cs),
-[local reaction composition](../tools/release/consumers/EventReactions.cs),
-[the disposable Personnel composition](../tools/release/consumers/PersonnelSlice.cs),
-[native HTTP establishment](../tools/release/consumers/HttpEstablishment.cs), and
-[restricted PostgreSQL row security](../tools/release/consumers/RowSecurity.cs).
+[package-only profiles](../eng/release/README.md#full-package-adoption-proof), including
+the [native event-storage consumer](../eng/release/consumers/EventStorage.cs),
+[local reaction composition](../eng/release/consumers/EventReactions.cs),
+[the disposable Personnel composition](../eng/release/consumers/PersonnelSlice.cs),
+[native HTTP establishment](../eng/release/consumers/HttpEstablishment.cs), and
+[restricted PostgreSQL row security](../eng/release/consumers/RowSecurity.cs).
 Historic literals and populated migration fixtures need independent expected outcomes and
 owned provenance, not values manufactured by the implementation under test.
 
@@ -114,7 +114,7 @@ become Gloaming guarantees. No test-count target or framework feature-parity lis
 
 ## Repository tooling
 
-[Reference-checker tests](../tools/repository/references.test.ts) exercise valid source links,
+[Reference-checker tests](../eng/repository/references.test.ts) exercise valid source links,
 missing/deleted/untracked targets, ignored build output, literal linked fixtures and CLI status.
 They run without .NET or containers. They do not replace native restore/build, package README
 rendering, provider/runtime proofs or independent code/architecture review.

@@ -123,6 +123,6 @@ migrations where a supported compatibility guarantee depends on them.
 application initialization and module tasks. They define a preferred consumer layout without
 adding a mandatory library runtime or configurable source generator.
 
-The [local package workflow](../tools/release/README.md) supports ordinary NuGet consumption
+The [local package workflow](../eng/release/README.md) supports ordinary NuGet consumption
 during development. Package-only, provider, process and runtime tests verify different
 boundaries; see the owning test commands and contracts.

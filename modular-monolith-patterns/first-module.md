@@ -26,8 +26,8 @@ behavior requires their separate guarantees.
 
 Use these executable examples at the adopted source revision:
 
-- [Independent HTTP consumer](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/HttpEstablishment.cs): native authentication, actor mapping, tenant admission and failed requests.
-- [Personnel consumer](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/PersonnelSlice.cs): versioned module migration, tenant-owned business rows, guarded saving and transactional history.
+- [Independent HTTP consumer](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/HttpEstablishment.cs): native authentication, actor mapping, tenant admission and failed requests.
+- [Personnel consumer](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/PersonnelSlice.cs): versioned module migration, tenant-owned business rows, guarded saving and transactional history.
 - [Ownership example](https://github.com/oxface/gloaming/blob/main/src/Gloaming.Persistence/samples/PersistenceDemo/README.md): separate contexts, schemas and migration histories.
 
 The Personnel example's entities and membership/permission rules are disposable test policy.
@@ -130,6 +130,6 @@ cannot alter the schema or update/delete accepted-change audit, while permitted 
 
 The [full verification guide](verification.md) adds host startup, migration failure and actual
 OIDC checks when those are selected. The
-[package-adoption guide](https://github.com/oxface/gloaming/blob/main/tools/release/README.md#full-package-adoption-proof)
+[package-adoption guide](https://github.com/oxface/gloaming/blob/main/eng/release/README.md#full-package-adoption-proof)
 describes the separate Gloaming-owned proof and its PostgreSQL prerequisites. Run those library
 proof commands from the Gloaming checkout; run the new module's acceptance tests in its application.

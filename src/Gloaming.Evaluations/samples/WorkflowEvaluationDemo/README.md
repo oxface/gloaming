@@ -33,5 +33,5 @@ budgets across streaming and judges, and failure evidence. Run:
 dotnet test --project src/Gloaming.Evaluations/tests/EvaluationTests/EvaluationTests.csproj
 ```
 
-The [package proof](../../../../tools/release/README.md#typed-evaluations) compiles this
+The [package proof](../../../../eng/release/README.md#typed-evaluations) compiles this
 consumer separately against exact archives and performs a second empty-cache locked restore.

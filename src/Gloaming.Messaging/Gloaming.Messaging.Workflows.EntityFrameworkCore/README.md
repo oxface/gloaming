@@ -53,6 +53,6 @@ consumers replace `Gloaming.Messaging.Workflows` with this package. Definition t
 assembly while their CLR namespaces, persisted wire names, process rows and mappings remain
 unchanged. No type-forwarding compatibility package is supplied.
 
-The [package-only adopter](../../../tools/release/consumers/Workflows.cs) and
+The [package-only adopter](../../../eng/release/consumers/Workflows.cs) and
 [compiled deployment tests](../tests/WorkflowDeploymentTests/DeploymentTests.cs) exercise
 independent adoption and consumer reader compatibility.

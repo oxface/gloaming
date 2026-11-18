@@ -72,7 +72,7 @@ See [outbox route selection](docs/route-selection.md) when independently compose
 ## Native Kafka adoption
 
 The [application recipe](../../modular-monolith-patterns/kafka.md) and its
-[package-only consumer](../../tools/release/consumers/Kafka/README.md) demonstrate native Kafka
+[package-only consumer](../../eng/release/consumers/Kafka/README.md) demonstrate native Kafka
 publication and sequential durable intake over the existing interfaces. This adds no Gloaming
 Kafka package, runtime or serializer dependency. Consumer groups, trust, wire contracts,
 quarantine, retention and production topology stay with the application.

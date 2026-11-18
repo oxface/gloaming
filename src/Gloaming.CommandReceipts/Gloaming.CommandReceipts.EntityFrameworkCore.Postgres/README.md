@@ -29,7 +29,7 @@ identifier limit; silent truncation must not alias differently locked names. No 
 provisions resources, starts workers or commits. As an
 alternative to DI/interception, construct `PostgresCommandReceipts<OrdersDatabase>(database)` and
 call `ValidateCommandReceiptChanges` from **both** native sync/async save overrides before base
-saving. The [package-only adopter](../../../tools/release/consumers/CommandReceipts.cs) exercises
+saving. The [package-only adopter](../../../eng/release/consumers/CommandReceipts.cs) exercises
 that alternative. Omitting the selected validation integration bypasses its tracked-write guards.
 
 After authenticating/admitting the operation and checking current resource permission:

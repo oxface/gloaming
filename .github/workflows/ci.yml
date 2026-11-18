@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -18,200 +17,166 @@ concurrency:
 jobs:
   changes:
     name: CI scope
-    uses: ./.github/workflows/changes.yml
-
-  auditing:
-    needs: changes
-    if: needs.changes.outputs.Auditing == 'true'
-    name: Gloaming.Auditing
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Auditing/tests/AuditPostgresTests/AuditPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: &family-steps
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up .NET
-        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
-        with:
-          global-json-file: global.json
-      - name: Test family and independent consumers
-        # Every selected job restores/builds its native dependency graph.
-        run: ${{ env.FAMILY_TEST_COMMANDS }}
-
-  evaluations:
-    needs: changes
-    if: needs.changes.outputs.Evaluations == 'true'
-    name: Gloaming.Evaluations
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Evaluations/tests/EvaluationTests/EvaluationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  agents:
-    needs: changes
-    if: needs.changes.outputs.Agents == 'true'
-    name: Gloaming native agent persistence
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Agents/tests/AgentPersistenceTests/AgentPersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  entity_framework_core:
-    needs: changes
-    if: needs.changes.outputs.EntityFrameworkCore == 'true'
-    name: Gloaming.EntityFrameworkCore
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  actoridentity:
-    needs: changes
-    if: needs.changes.outputs.ActorIdentity == 'true'
-    name: Gloaming.ActorIdentity
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityTests/ActorIdentityTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.ActorIdentity/tests/ActorIdentityAspNetCoreTests/ActorIdentityAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  command_receipts:
-    needs: changes
-    if: needs.changes.outputs.CommandReceipts == 'true'
-    name: Gloaming.CommandReceipts
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.CommandReceipts/tests/CommandReceiptTests/CommandReceiptTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  event_reactions:
-    needs: changes
-    if: needs.changes.outputs.EventReactions == 'true'
-    name: Gloaming.EventReactions
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.EventReactions/tests/EventReactionsTests/EventReactionsTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.EventReactions/tests/AdoptionTests/Consumer.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  tenancy:
-    needs: changes
-    if: needs.changes.outputs.Tenancy == 'true'
-    name: Gloaming.Tenancy
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Tenancy/tests/TenantTests/TenantTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Tenancy/tests/TenancyAspNetCoreTests/TenancyAspNetCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Tenancy/tests/TenancyPostgresTests/TenancyPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project tests/ContextCompositionTests/ContextCompositionTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  persistence:
-    needs: changes
-    if: needs.changes.outputs.Persistence == 'true'
-    name: Gloaming.Persistence
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Persistence/tests/EntityFrameworkCoreTests/EntityFrameworkCoreTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Persistence/tests/PersistenceTests/PersistenceTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Persistence/tests/OwnershipAdoptionTests/PersistenceDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  events:
-    needs: changes
-    if: needs.changes.outputs.Events == 'true'
-    name: Gloaming.Events
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
-    steps: *family-steps
-
-  eventsourcing:
-    needs: changes
-    if: needs.changes.outputs.EventSourcing == 'true'
-    name: Gloaming.EventSourcing
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingTests/EventSourcingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.EventSourcing/tests/EventSourcingPostgresTests/EventSourcingPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.EventSourcing/tests/StorageAdoptionTests/EventStorageDemo.Tests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  messaging:
-    needs: changes
-    if: needs.changes.outputs.Messaging == 'true'
-    name: Gloaming.Messaging
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    env:
-      FAMILY_TEST_COMMANDS: |
-        dotnet test --project src/Gloaming.Messaging/tests/MessagingTests/MessagingTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/WorkflowPostgresTests/WorkflowPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/OutboxPostgresTests/OutboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/InboxPostgresTests/InboxPostgresTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/DeliveryTests/DeliveryTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-        dotnet test --project src/Gloaming.Messaging/tests/WorkflowDeploymentTests/WorkflowDeploymentTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
-    steps: *family-steps
-
-  wholesale:
-    needs: changes
-    if: needs.changes.outputs.wholesale == 'true'
-    name: Wholesale consumer composition
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      base: ${{ steps.range.outputs.base }}
+      full: ${{ steps.plan.outputs.full }}
+      runtime: ${{ steps.plan.outputs.runtime }}
+      repository_dotnet: ${{ steps.plan.outputs.repository_dotnet }}
+      packages: ${{ steps.plan.outputs.packages }}
+      kafka: ${{ steps.plan.outputs.kafka }}
     steps:
-      - name: Check out repository
+      - name: Check out filters and push history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - name: Set up .NET
+      - name: Find the last successful main push
+        if: github.event_name == 'push'
+        id: last_green
+        continue-on-error: true
+        uses: nrwl/nx-set-shas@e602fada7ad5987b0f7b1905e7a99ea1c661514c # v5.1.0
+        with:
+          workflow-id: ci.yml
+          fallback-sha: ${{ github.sha }}
+          set-environment-variables-for-job: false
+      - name: Validate the shared comparison base
+        if: github.event_name != 'workflow_dispatch'
+        id: range
+        env:
+          CI_BASE: ${{ github.event.pull_request.base.sha || (steps.last_green.outcome == 'success' && steps.last_green.outputs.base) || '' }}
+        run: |
+          if [[ "$CI_BASE" =~ ^[0-9a-f]{40}$ && "$CI_BASE" != "$GITHUB_SHA" ]] && \
+            git merge-base --is-ancestor "$CI_BASE" "$GITHUB_SHA" 2>/dev/null; then
+            printf 'base=%s\n' "$CI_BASE" >> "$GITHUB_OUTPUT"
+          else
+            echo '::notice::No usable comparison base. Running all checks eligible for this event.'
+          fi
+      - name: Match changed paths
+        if: steps.range.outputs.base != ''
+        id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: .github/ci-paths.yml
+          predicate-quantifier: some-with-excludes
+          token: ''
+          base: ${{ steps.range.outputs.base }}
+          ref: ${{ github.event_name == 'push' && github.sha || '' }}
+      - name: Set up .NET for runtime selection
+        if: github.event_name == 'pull_request' && steps.filter.outputs.repository_dotnet == 'true' && steps.filter.outputs.shared != 'true' && steps.filter.outputs.unmapped != 'true'
+        id: runtime_sdk
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
-      - name: Test Wholesale API, domain, provider and worker process integration
-        run: dotnet test --project samples/Wholesale/IntegrationTests/Wholesale.IntegrationTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+      - name: Set up Node.js for runtime selection
+        if: steps.runtime_sdk.outcome == 'success'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Install pinned Nx for runtime selection
+        if: steps.runtime_sdk.outcome == 'success'
+        run: npm ci --ignore-scripts
+      - name: Select Wholesale runtime using Nx
+        if: steps.runtime_sdk.outcome == 'success'
+        id: runtime
+        env:
+          NX_DAEMON: 'false'
+          NX_BASE: ${{ steps.range.outputs.base }}
+          NX_HEAD: ${{ github.sha }}
+        run: |
+          affected=$(npm run --silent nx -- show projects --affected -t test-dotnet --json)
+          runtime=$(jq -c 'if type == "array" then index("RuntimeComposition.Tests") != null else error("Expected an affected project array") end' <<< "$affected")
+          printf 'affected=%s\n' "$runtime" >> "$GITHUB_OUTPUT"
+      - name: Publish CI scope
+        id: plan
+        env:
+          CI_BASE: ${{ steps.range.outputs.base }}
+          CI_SHARED: ${{ steps.filter.outputs.shared }}
+          CI_UNMAPPED: ${{ steps.filter.outputs.unmapped }}
+          CI_REPOSITORY_DOTNET: ${{ steps.filter.outputs.repository_dotnet || 'false' }}
+          CI_PACKAGES: ${{ steps.filter.outputs.packages || 'false' }}
+          CI_KAFKA: ${{ steps.filter.outputs.kafka || 'false' }}
+          CI_RUNTIME: ${{ steps.runtime.outputs.affected || 'false' }}
+        run: |
+          full=true
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            reason='Manual dispatch'
+          elif [[ -z "$CI_BASE" ]]; then
+            reason='No usable comparison base'
+          elif [[ "$CI_SHARED" == true ]]; then
+            reason='Shared build, project, or CI inputs changed'
+          elif [[ "$CI_UNMAPPED" == true ]]; then
+            reason='Unmapped paths changed'
+          else
+            full=false
+            reason='Changed paths and affected projects'
+          fi
+
+          if [[ "$full" == true ]]; then
+            CI_REPOSITORY_DOTNET=true CI_PACKAGES=true CI_KAFKA=true CI_RUNTIME=true
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then
+            CI_RUNTIME=false
+          fi
+
+          printf 'full=%s\nrepository_dotnet=%s\npackages=%s\nkafka=%s\nruntime=%s\n' \
+            "$full" "$CI_REPOSITORY_DOTNET" "$CI_PACKAGES" "$CI_KAFKA" "$CI_RUNTIME" >> "$GITHUB_OUTPUT"
+          {
+            printf '## CI scope\n\nBase `%s` · Head `%s`\n\n%s\n\n' "${CI_BASE:-unavailable}" "$GITHUB_SHA" "$reason"
+            printf '| Check | Selected |\n| --- | --- |\n'
+            printf '| Repository integrity | true (.NET checks: %s) |\n' "$CI_REPOSITORY_DOTNET"
+            printf '| Package integrity and adoption | %s |\n' "$CI_PACKAGES"
+            printf '| Native Kafka package adoption | %s |\n' "$CI_KAFKA"
+            printf '| Wholesale runtime | %s |\n' "$CI_RUNTIME"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   repository:
-    needs: changes
+    needs: [changes, packages, kafka, runtime]
     if: ${{ !cancelled() }}
     name: Repository integrity
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
+    env:
+      NX_DAEMON: 'false'
+      NX_BASE: ${{ needs.changes.outputs.base }}
+      NX_HEAD: ${{ github.sha }}
 
     steps:
-      - name: Require successful check selection
-        if: needs.changes.result != 'success'
-        run: exit 1
+      - name: Require the selected checks to pass
+        id: gate
+        env:
+          SCOPE_RESULT: ${{ needs.changes.result }}
+          PACKAGES_SELECTED: ${{ needs.changes.outputs.packages }}
+          PACKAGES_RESULT: ${{ needs.packages.result }}
+          KAFKA_SELECTED: ${{ needs.changes.outputs.kafka }}
+          KAFKA_RESULT: ${{ needs.kafka.result }}
+          RUNTIME_SELECTED: ${{ needs.changes.outputs.runtime }}
+          RUNTIME_RESULT: ${{ needs.runtime.result }}
+        run: |
+          if [[ "$SCOPE_RESULT" != success ]]; then
+            printf '::error::CI scope was %s.\n' "$SCOPE_RESULT"
+            exit 1
+          fi
+          require_result() {
+            local name="$1" selected="$2" result="$3" expected
+            case "$selected" in
+              true) expected=success ;;
+              false) expected=skipped ;;
+              *) printf '::error::Missing or invalid selection for %s.\n' "$name"; return 1 ;;
+            esac
+            if [[ "$result" != "$expected" ]]; then
+              printf '::error::%s was %s (expected %s).\n' "$name" "$result" "$expected"
+              return 1
+            fi
+          }
+          require_result 'Package integrity and adoption' "$PACKAGES_SELECTED" "$PACKAGES_RESULT"
+          require_result 'Native Kafka package adoption' "$KAFKA_SELECTED" "$KAFKA_RESULT"
+          require_result 'Wholesale runtime' "$RUNTIME_SELECTED" "$RUNTIME_RESULT"
 
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -253,10 +218,18 @@ jobs:
 
       - name: Install repository tools
         working-directory: ${{ github.workspace }}
-        run: npm ci --prefix tools/repository --ignore-scripts
+        run: npm ci --prefix eng/repository --ignore-scripts
+
+      - name: Install pinned Nx
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: npm ci --ignore-scripts
+
+      - name: Verify Nx project inference and affected selection
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: npm run check:nx
 
       - name: Verify repository tooling and local references
-        run: npm --prefix tools/repository run check
+        run: npm --prefix eng/repository run check
 
       - name: Restore active formatter
         if: needs.changes.outputs.repository_dotnet == 'true'
@@ -270,8 +243,8 @@ jobs:
         if: github.event_name == 'pull_request'
         working-directory: ${{ github.workspace }}
         run: >-
-          npm exec --prefix tools/repository -- commitlint
-          --config tools/repository/commitlint.config.mjs
+          npm exec --prefix eng/repository -- commitlint
+          --config eng/repository/commitlint.config.mjs
           --from ${{ github.event.pull_request.base.sha }}
           --to ${{ github.event.pull_request.head.sha }}
           --verbose
@@ -280,7 +253,157 @@ jobs:
         if: github.event_name == 'push'
         working-directory: ${{ github.workspace }}
         run: >-
-          npm exec --prefix tools/repository -- commitlint
-          --config tools/repository/commitlint.config.mjs
+          npm exec --prefix eng/repository -- commitlint
+          --config eng/repository/commitlint.config.mjs
           --last
           --verbose
+
+      - name: Run affected native test projects
+        if: needs.changes.outputs.repository_dotnet == 'true' && needs.changes.outputs.full != 'true'
+        run: npm run test:affected -- --excludeTaskDependencies --outputStyle=static
+
+      - name: Run every ordinary native test project
+        if: needs.changes.outputs.full == 'true'
+        run: npm run test:ordinary -- --excludeTaskDependencies --outputStyle=static
+
+      - name: Run codec sample consumer
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
+
+  packages:
+    needs: changes
+    if: needs.changes.outputs.packages == 'true'
+    name: Package integrity and adoption
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:18.6
+        env:
+          POSTGRES_PASSWORD: package-local-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      GLOAMING_PACKAGE_TEST_CONNECTION_STRING: Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=package-local-only;Pooling=false
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Install package verification tooling
+        run: npm ci --prefix eng/release --ignore-scripts
+      - name: Restore pinned .NET tools
+        run: dotnet tool restore
+      - name: Check TypeScript and formatting
+        run: npm --prefix eng/release run check
+      - name: Prove local package artifacts and external consumers
+        run: npm --prefix eng/release run verify
+
+  kafka:
+    needs: changes
+    if: needs.changes.outputs.kafka == 'true'
+    name: Native Kafka package adoption
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GLOAMING_CONTAINER_RUNTIME: docker
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Install package verification tooling
+        run: npm ci --prefix eng/release --ignore-scripts
+      - name: Restore pinned .NET tools
+        run: dotnet tool restore
+      - name: Check TypeScript and formatting
+        run: npm --prefix eng/release run check
+      - name: Prove native Kafka delivery from packed libraries
+        run: npm --prefix eng/release run verify:kafka
+
+  runtime:
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    name: Wholesale runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Install Aspire CLI matching the AppHost SDK
+        env:
+          DOTNET_NOLOGO: "true"
+        run: |
+          aspire_version="$(dotnet msbuild samples/Wholesale/AppHost/Wholesale.AppHost.csproj -getProperty:AspireHostingSDKVersion -nologo)"
+          dotnet tool install --global Aspire.Cli --version "$aspire_version"
+      - name: Install Linux certificate trust tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libnss3-tools
+      - name: Trust native development HTTPS certificate
+        run: |
+          # Trust checks use this environment in the current step as well as later steps.
+          export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:${SSL_CERT_DIR:-/etc/ssl/certs}"
+          dotnet dev-certs https --trust
+          echo "SSL_CERT_DIR=$SSL_CERT_DIR" >> "$GITHUB_ENV"
+      - name: Verify development HTTPS certificate trust
+        run: dotnet dev-certs https --check --trust
+      - name: Restore runtime consumer and its dependencies
+        run: dotnet restore samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj
+      - name: Build runtime consumer and its dependencies
+        run: dotnet build samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj --no-restore
+      - name: Install matching Chromium and browser system dependencies
+        run: pwsh samples/Wholesale/RuntimeComposition.Tests/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
+      - name: Test runtime setup, database outage and real OIDC browser journeys
+        shell: bash
+        env:
+          WHOLESALE_RUNTIME_RESULTS: ${{ runner.temp }}/wholesale-runtime
+        run: |
+          mkdir -p "$WHOLESALE_RUNTIME_RESULTS"
+          dotnet test \
+            --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj \
+            --no-build --no-restore --no-progress --no-ansi --output Normal \
+            --show-stdout Failed --show-stderr Failed \
+            --results-directory "$WHOLESALE_RUNTIME_RESULTS" \
+            --report-xunit-trx --report-xunit-trx-filename wholesale-runtime.trx \
+            2>&1 | tee "$WHOLESALE_RUNTIME_RESULTS/test.log"
+      - name: Retain Wholesale runtime failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wholesale-runtime-diagnostics-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/wholesale-runtime
+          if-no-files-found: ignore
+          retention-days: 7

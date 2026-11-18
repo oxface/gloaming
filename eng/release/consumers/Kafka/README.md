@@ -8,8 +8,8 @@ describes the composition, policies and supported limits.
 Run from the repository root:
 
 ```sh
-npm ci --prefix tools/release --ignore-scripts
-npm --prefix tools/release run verify:kafka
+npm ci --prefix eng/release --ignore-scripts
+npm --prefix eng/release run verify:kafka
 ```
 
 The TypeScript [runner](../../verify-kafka.ts) requires the pinned SDK/Node and a local Docker or

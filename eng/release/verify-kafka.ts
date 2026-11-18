@@ -22,7 +22,7 @@ const root = resolve(import.meta.dirname, "../..");
 assert.equal(
   process.argv.length,
   2,
-  "Usage: npm --prefix tools/release run verify:kafka",
+  "Usage: npm --prefix eng/release run verify:kafka",
 );
 const requestedRuntime = process.env.GLOAMING_CONTAINER_RUNTIME;
 assert(

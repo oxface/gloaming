@@ -141,4 +141,4 @@ Deploy tables/grants and compatible readers first, then selected writers/planner
 writers remain valid and do not acquire recurrence semantics. One initial provided format is
 supported; future format changes require retained fixtures and actual old/new binary rollout proofs.
 The [native fixtures](../tests/Fixtures/Recurrence/README.md), provider tests and
-[package-only adopter](../../../tools/release/consumers/Recurrence.cs) exercise different obligations.
+[package-only adopter](../../../eng/release/consumers/Recurrence.cs) exercise different obligations.
