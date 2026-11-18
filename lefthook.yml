@@ -1,3 +1,5 @@
+lefthook: ./eng/repository/node_modules/.bin/lefthook
+
 pre-commit:
   jobs:
     - name: repository-references

@@ -14,6 +14,12 @@ documentation-only PRs. The pre-commit hook selects it for documentation, projec
 
 ## Local commit checks
 
+After installing the repository tooling, install or refresh the Git hooks from the repository root.
+
+```sh
+npm exec --offline --prefix eng/repository -- lefthook install
+```
+
 The pre-commit hook runs the lightweight repository checks above and CSharpier for relevant
 files. Commit-message validation runs separately through commitlint. These checks require the
 pinned Node/SDK and restored tools, with no database or broker needed.
