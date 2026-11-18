@@ -1,0 +1,22 @@
+{
+  "name": "gloaming-monorepo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "nx": "nx",
+    "graph": "nx graph",
+    "test:affected": "nx affected -t test-dotnet --exclude=RuntimeComposition.Tests,ArchitectureTests",
+    "test:ordinary": "nx run-many -t test-dotnet --exclude=RuntimeComposition.Tests,ArchitectureTests",
+    "check:nx": "node --test eng/repository/nx-selection.proof.ts"
+  },
+  "devDependencies": {
+    "@nx/dotnet": "24.0.6",
+    "nx": "24.0.6"
+  },
+  "overrides": {
+    "minimatch": "11.0.1"
+  }
+}

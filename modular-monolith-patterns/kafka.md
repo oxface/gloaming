@@ -5,7 +5,7 @@ interfaces. The application owns the native Confluent client, routing, wire cont
 trusted producer mapping, consumer group, bootstrap position and poison-record policy.
 This recipe adds no Gloaming package, runtime or reusable library mechanism.
 
-The executable [package-only consumer](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/README.md) demonstrates
+The executable [package-only consumer](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/Kafka/README.md) demonstrates
 one sequential intake loop with Confluent.Kafka 2.16.0, Kafka 4.3.1 and PostgreSQL 18.6.
 Its record format, table names and sample effects are consumer-owned examples.
 
@@ -18,7 +18,7 @@ the publisher; no producer database transaction spans Kafka I/O. See the
 
 The host owns a native `IProducer<byte[], byte[]>` configured with `Acks.All` and
 `EnableIdempotence = true`. Supply it to the consumer's
-[KafkaPublisher](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/KafkaAdapter.cs) and reuse it for its selected
+[KafkaPublisher](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/Kafka/KafkaAdapter.cs) and reuse it for its selected
 lifetime. Keep credentials/TLS, native timeouts and disposal in host composition.
 `PublishAsync` validates the selected route, serializes the retained envelope and awaits
 `ProduceAsync`. It returns normally only when the report says `PersistenceStatus.Persisted`.
@@ -51,9 +51,9 @@ For each record:
    separately through `IInboxProcessor<TContext>` with its own fresh scopes and atomic local
    effects/completion. Do not hold Kafka intake across slow external work.
 
-The [native adapter](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/KafkaAdapter.cs) contains the complete
+The [native adapter](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/Kafka/KafkaAdapter.cs) contains the complete
 receive/commit composition. Both native EF save forms call the selected guards in the
-[consumer mappings](https://github.com/oxface/gloaming/blob/main/tools/release/consumers/Kafka/Database.cs). Production schema placement,
+[consumer mappings](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/Kafka/Database.cs). Production schema placement,
 migrations, grants, tenant admission and reader permissions stay with the application.
 
 If intake fails, stop that consumer attempt or deliberately seek/retry the same record before
@@ -109,18 +109,18 @@ PostgreSQL effects.
 From the Gloaming repository root, with the pinned SDK/Node and a local Docker or Podman CLI:
 
 ```sh
-npm ci --prefix tools/release --ignore-scripts
-npm --prefix tools/release run verify:kafka
+npm ci --prefix eng/release --ignore-scripts
+npm --prefix eng/release run verify:kafka
 # Select the local engine explicitly when needed:
-GLOAMING_CONTAINER_RUNTIME=podman npm --prefix tools/release run verify:kafka
+GLOAMING_CONTAINER_RUNTIME=podman npm --prefix eng/release run verify:kafka
 ```
 
-The [runner](https://github.com/oxface/gloaming/blob/main/tools/release/verify-kafka.ts) packs current libraries, restores an external
+The [runner](https://github.com/oxface/gloaming/blob/main/eng/release/verify-kafka.ts) packs current libraries, restores an external
 consumer through source mapping into a fresh cache, verifies its exact four-package Gloaming
 closure and zero ProjectReferences, then provisions its own isolated broker and PostgreSQL.
 It retains source/archive hashes, redacted logs, per-scenario outcomes and cleanup evidence.
-The [package workflow](https://github.com/oxface/gloaming/blob/main/.github/workflows/packages.yml) owns this native transport profile;
-the ordinary seventeen-profile package command remains PostgreSQL-only.
+The [Native Kafka package adoption check](https://github.com/oxface/gloaming/blob/main/.github/workflows/ci.yml)
+owns this profile. The ordinary seventeen-profile package command remains PostgreSQL-only.
 
 The selected proofs cover process death before/after intake commit, accepted publication before
 outbox completion, duplicate effects, native local rollback, conflicting/malformed disposition,

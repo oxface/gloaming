@@ -40,6 +40,10 @@ public sealed class BrowserTests
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync();
         await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
+        await using var trace = await RecordTraceAsync(
+            context,
+            rowSecurity ? "alpha-row-security" : "alpha"
+        );
         context.SetDefaultTimeout(15_000);
         var page = await context.NewPageAsync();
         Uri endpoint = app.GetEndpoint("api", "https");
@@ -138,6 +142,7 @@ public sealed class BrowserTests
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync();
         await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
+        await using var trace = await RecordTraceAsync(context, "beta");
         context.SetDefaultTimeout(15_000);
         var page = await context.NewPageAsync();
         Uri endpoint = app.GetEndpoint("api", "https");
@@ -184,6 +189,7 @@ public sealed class BrowserTests
         using var playwright = await Playwright.CreateAsync();
         await using var browser = await playwright.Chromium.LaunchAsync();
         await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
+        await using var trace = await RecordTraceAsync(context, "unmapped");
         context.SetDefaultTimeout(15_000);
         var page = await context.NewPageAsync();
         await LoginAsync(page, app.GetEndpoint("api", "https"), "unmapped");
@@ -205,6 +211,35 @@ public sealed class BrowserTests
             connection
         );
         Assert.Equal(true, await command.ExecuteScalarAsync(Token));
+    }
+
+    private static async Task<BrowserTrace?> RecordTraceAsync(IBrowserContext context, string name)
+    {
+        string? directory = Environment.GetEnvironmentVariable("WHOLESALE_RUNTIME_RESULTS");
+        if (string.IsNullOrEmpty(directory))
+            return null;
+
+        Directory.CreateDirectory(directory);
+        await context.Tracing.StartAsync(new() { Screenshots = true, Snapshots = true });
+        return new BrowserTrace(context.Tracing, Path.Combine(directory, $"{name}.zip"));
+    }
+
+    private sealed class BrowserTrace(ITracing tracing, string path) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await tracing.StopAsync(new() { Path = path }).WaitAsync(TimeSpan.FromSeconds(10));
+            }
+            catch (Exception error)
+                when (error is PlaywrightException or IOException or TimeoutException)
+            {
+                TestContext.Current.TestOutputHelper?.WriteLine(
+                    $"Could not save browser trace: {error.Message}"
+                );
+            }
+        }
     }
 
     private static async Task<IDistributedApplicationTestingBuilder> CreateBuilderAsync(

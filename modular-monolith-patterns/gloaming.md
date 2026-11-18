@@ -8,7 +8,7 @@ The package README is authoritative for the version in use.
 
 For local library development, pack a unique Gloaming snapshot and consume its completed folder
 feed through NuGet source mapping and exact PackageReferences. The
-[local-package guide](https://github.com/oxface/gloaming/blob/main/tools/release/README.md)
+[local-package guide](https://github.com/oxface/gloaming/blob/main/eng/release/README.md)
 covers source mapping, cache behavior and the package-only verifier.
 
 If this folder is copied without the library checkout, use the published contract/source links
@@ -19,7 +19,7 @@ Keep application project references inside the application; consume technical li
 ### Distribution boundary
 
 Hosted distribution remains deferred while the early package graph evolves. The
-[local-package distribution contract](https://github.com/oxface/gloaming/blob/main/tools/release/README.md#distribution-boundary)
+[local-package distribution contract](https://github.com/oxface/gloaming/blob/main/eng/release/README.md#distribution-boundary)
 explains exact archive retention, changing package sets and the absence of a source-rebuild
 byte-reproducibility guarantee. Pin package versions and source revision together, and prove
 locked restore from an initially empty package cache using the chosen archive source.

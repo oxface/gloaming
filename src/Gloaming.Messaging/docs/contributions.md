@@ -145,5 +145,5 @@ The [native consumers](../tests/Fixtures/Contributions/README.md) demonstrate al
 readiness and a two-of-three offer indication whose budget policy can still reject technically
 complete replies. Their business state and readers remain application-owned. Provider tests cover
 native races, rollback, response loss, participant suppression, process recovery and retained JSON.
-The independent [NuGet adopter](../../../tools/release/consumers/Contributions.cs) owns migrations,
+The independent [NuGet adopter](../../../eng/release/consumers/Contributions.cs) owns migrations,
 restricted grants and initial retained-format evidence.

@@ -19,7 +19,7 @@ one module-owned context/schema and commits checkpoints, history, visible entrie
 business-selected head together. The [native PostgreSQL tests](tests/AgentPersistenceTests/AgentPersistenceTests.csproj)
 exercise restoration, branching/isolation, tool protocol, reduction, rollback, database grants,
 tracked-save guards, writer serialization, multiple pending ports, failure and cancellation.
-The [package proof](../../tools/release/README.md#native-agent-persistence) compiles the same
+The [package proof](../../eng/release/README.md#native-agent-persistence) compiles the same
 consumer from NuGet without source project references and checks each package independently.
 
 Consumers own admission, authorship, trusted opaque partition/conversation keys, workflow

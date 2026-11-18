@@ -435,7 +435,11 @@ FodyWeavers.xsd
 .aspire/
 
 # Repository release verification is source, not a build output directory.
-!tools/release/
+!eng/release/
 
 # Local research, plans, audit reports and working notes
 /docs/internal/
+
+# Nx workspace state and JavaScript dependencies
+node_modules/
+/.nx/

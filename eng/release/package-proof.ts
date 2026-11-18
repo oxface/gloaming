@@ -75,7 +75,7 @@ export function preparePackageProof(root: string, scratch: string, run: Run) {
   const packages = libraryPackages(root);
   run(
     process.execPath,
-    [join(root, "tools", "release", "pack.ts"), "--output", feed],
+    [join(root, "eng", "release", "pack.ts"), "--output", feed],
     root,
     process.env,
   );

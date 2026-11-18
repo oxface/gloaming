@@ -51,7 +51,7 @@ schema or migration is changed by these fixtures. Optional complex values have r
 members or discriminator markers to distinguish presence; complex collections use JSON and relationships remain
 ordinary entities.
 
-The [package-only profile](../../../../../tools/release/README.md#native-relational-complex-ownership)
+The [package-only profile](../../../../../eng/release/README.md#native-relational-complex-ownership)
 copies this consumer outside the checkout and runs it against exact archives with zero
 ProjectReferences, including a locked restore into a second empty cache. The delivery retains
 the source, lock, source-mapped config, archive hashes and complete compatible package set.

@@ -14,7 +14,7 @@ after trigger installation and removal. Its ASP.NET shared runtime reference mat
 used by ChildHost and supplies the native driver's logging dependency; it uses no ASP.NET APIs.
 
 The [public native recipe](../../../../../modular-monolith-patterns/postgres-wakeups.md) owns setup and
-limits. The [package-only adopter](../../../../../tools/release/consumers/Wakeups.cs) owns a different
+limits. The [package-only adopter](../../../../../eng/release/consumers/Wakeups.cs) owns a different
 bounded notification/polling composition with restricted credentials and its own initial schema.
 That initial fixture layout is not a populated migration certificate; compiled rollout is proved
 by the separate native host/tests. No real Umbrine application or transport matrix is implemented.

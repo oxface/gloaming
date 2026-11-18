@@ -6,14 +6,14 @@ Requires the pinned .NET 10 SDK and Node 24.21+ in the 24.x line. No database or
 NuGet account is needed. From the repository root:
 
 ```sh
-npm --prefix tools/release run pack
+npm --prefix eng/release run pack
 # Or use a persistent feed shared with another checkout:
-npm --prefix tools/release run pack -- --output /absolute/path/to/gloaming-feed
+npm --prefix eng/release run pack -- --output /absolute/path/to/gloaming-feed
 ```
 
 The pack-only command uses Node built-ins and needs no npm dependency installation.
 The default feed is `.artifacts/local-feed` in this checkout. Relative `--output`
-paths resolve from the repository root, including when npm runs in `tools/release`.
+paths resolve from the repository root, including when npm runs in `eng/release`.
 `--help` shows usage. `DOTNET_HOST_PATH` can select the `dotnet` executable.
 
 Each invocation packs all Gloaming library projects in Release at one new version
@@ -163,10 +163,10 @@ are removed in finally. Use a disposable PostgreSQL server.
 
 ```sh
 dotnet tool restore
-npm --prefix tools/release ci
-npm --prefix tools/release run check
+npm --prefix eng/release ci
+npm --prefix eng/release run check
 # Supply the connection through your environment/secret manager, never command arguments.
-npm --prefix tools/release run verify
+npm --prefix eng/release run verify
 ```
 
 `GLOAMING_PACKAGE_TEST_CONNECTION_STRING` is required. Missing configuration fails
@@ -175,7 +175,7 @@ a particular `dotnet` executable; otherwise it must be on `PATH`.
 
 Release-tool checks run TypeScript/Prettier, CSharpier over the retained C# consumers and
 lifecycle fixtures, and the tooling tests. Restore the pinned .NET tools before running them.
-`npm --prefix tools/release run format` formats both the tooling and those C# sources.
+`npm --prefix eng/release run format` formats both the tooling and those C# sources.
 The root CSharpier check also includes these sources; build output and npm dependencies remain
 excluded. Both package CI jobs restore the tools and run these checks.
 
@@ -329,16 +329,16 @@ Run the independently selected native transport proof with the same SDK/Node req
 and a local Docker or Podman CLI (Linux x64 is the tested topology):
 
 ```sh
-npm --prefix tools/release run verify:kafka
+npm --prefix eng/release run verify:kafka
 # Optional explicit local runtime selection:
-GLOAMING_CONTAINER_RUNTIME=podman npm --prefix tools/release run verify:kafka
+GLOAMING_CONTAINER_RUNTIME=podman npm --prefix eng/release run verify:kafka
 ```
 
 No database/broker connection or external account is required. The runner creates its own
 Kafka 4.3.1 and PostgreSQL 18.6 containers using pinned image digests and isolated local ports,
 restarts only its owned broker, then removes its containers and anonymous volumes on ordinary
 success/failure. Release-tool checks exercise cleanup failures separately from native delivery.
-`npm --prefix tools/release run check` also compiles the actual frame proxy with the pinned SDK
+`npm --prefix eng/release run check` also compiles the actual frame proxy with the pinned SDK
 and exercises loopback TCP resets, cancellation during connection setup and propagation of
 unexpected relay faults. These lifecycle checks need no broker or database.
 It never skips unavailable infrastructure. Image/NuGet network access may be needed.

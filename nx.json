@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultBase": "origin/main",
+  "neverConnectToCloud": true,
+  "plugins": [
+    {
+      "plugin": "@nx/dotnet",
+      "options": {
+        "test": {
+          "cache": false,
+          "options": {
+            "args": [
+              "--no-build",
+              "--no-restore",
+              "--no-progress",
+              "--no-ansi",
+              "--output",
+              "Normal",
+              "--show-stdout",
+              "Failed",
+              "--show-stderr",
+              "Failed"
+            ]
+          },
+          "targetName": "test-dotnet"
+        }
+      }
+    }
+  ],
+  "parallel": 2,
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "retainedFixtures"],
+    "retainedFixtures": [
+      "{workspaceRoot}/src/**/Fixtures/**/*",
+      "{workspaceRoot}/src/**/fixtures/**/*",
+      "{workspaceRoot}/samples/**/Fixtures/**/*",
+      "{workspaceRoot}/samples/**/fixtures/**/*",
+      "{workspaceRoot}/**/*.csproj"
+    ]
+  }
+}

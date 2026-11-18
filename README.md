@@ -30,11 +30,11 @@ documentation and tests; it does not introduce an umbrella dependency or applica
 For rapid changes across repositories, pack unique local NuGet versions:
 
 ```bash
-npm --prefix tools/release run pack
+npm --prefix eng/release run pack
 ```
 
 The command reports the completed version and folder feed. Follow the
-[consumer source-mapping setup](tools/release/README.md#consume-from-another-repository) and
+[consumer source-mapping setup](eng/release/README.md#consume-from-another-repository) and
 [development guide](docs/development.md); no remote package service is required.
 The heavier release verifier checks all archives and isolated package-only consumers, including
 native agent reconstruction and independent selection of each agent/conversation package.

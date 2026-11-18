@@ -27,7 +27,7 @@ Restricted grants and native cancellation/reset/reconnect behavior need actual e
 
 The [public recipe](../../modular-monolith-patterns/postgres-wakeups.md),
 [native fixture](../../src/Gloaming.Messaging/tests/Fixtures/Wakeups/README.md) and
-[independent package consumer](../../tools/release/consumers/Wakeups.cs) own the complete composition
+[independent package consumer](../../eng/release/consumers/Wakeups.cs) own the complete composition
 and supported limits. No automatic worker adoption, hosted scheduler, FIFO or external exactly-once
 guarantee is selected. A future shared module needs repeated application obligations and its own
 depth/adoption proof; this decision does not preempt that evidence.

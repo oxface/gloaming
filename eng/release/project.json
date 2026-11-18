@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "release-proofs",
+  "targets": {
+    "check": {
+      "cache": false
+    },
+    "verify": {
+      "cache": false
+    },
+    "verify:kafka": {
+      "cache": false
+    }
+  }
+}

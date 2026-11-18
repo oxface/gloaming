@@ -2,7 +2,7 @@ pre-commit:
   jobs:
     - name: repository-references
       glob: "*.{md,csproj,props,targets,slnx,ts,json,yml,yaml}"
-      run: npm --prefix tools/repository run check
+      run: npm --prefix eng/repository run check
     - name: csharpier
       glob: "*.{cs,csx,config,csproj,props,targets,slnx,xml}"
       run: dotnet csharpier check . --include-generated
@@ -11,6 +11,6 @@ commit-msg:
   jobs:
     - name: commitlint
       run: >-
-        npm exec --prefix tools/repository -- commitlint
-        --config tools/repository/commitlint.config.mjs
+        npm exec --prefix eng/repository -- commitlint
+        --config eng/repository/commitlint.config.mjs
         --edit {1}

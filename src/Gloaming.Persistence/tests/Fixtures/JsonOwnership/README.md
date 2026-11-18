@@ -23,7 +23,7 @@ dotnet test --project src/Gloaming.Persistence/tests/PostgresTests/PostgresTests
 Provider suites create/remove their own PostgreSQL 18.6 containers. No developer data is used.
 The [independent journey](JsonOwnershipJourney.cs) repeats recovery, sync/async writes, optional
 values, root collections, tenant isolation/concurrency and rollback without a test framework.
-The [local package proof](../../../../../tools/release/README.md#native-json-ownership) copies
+The [local package proof](../../../../../eng/release/README.md#native-json-ownership) copies
 that consumer outside the repository and compiles/runs it against exact archives, including a
 second empty-cache locked restore. `EnsureCreated` is explicit disposable proof setup; applications
 own production migrations and preservation of existing data. No Umbrine DTOs or schemas are imported.

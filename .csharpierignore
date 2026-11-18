@@ -1,5 +1,5 @@
 # Retained package consumers are source under Git's otherwise ignored Release path.
-!tools/release/**
+!eng/release/**
 **/bin/**
 **/obj/**
 **/node_modules/**

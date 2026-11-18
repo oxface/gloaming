@@ -32,4 +32,4 @@ dotnet test --project src/Gloaming.Agents/tests/AgentPersistenceTests/AgentPersi
 
 Tests create/remove their own PostgreSQL 18.6 container through Testcontainers. Package-only
 adoption additionally compiles these consumer sources against the produced NuGet archives;
-see the [release proof](../../../../tools/release/README.md#native-agent-persistence).
+see the [release proof](../../../../eng/release/README.md#native-agent-persistence).

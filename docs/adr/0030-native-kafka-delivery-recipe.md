@@ -23,7 +23,7 @@ RabbitMQ and now Kafka example adapters. A wrapper over the Kafka client would l
 application obligations exposed; no additional interface is justified by this recipe.
 
 The [public guide](../../modular-monolith-patterns/kafka.md) and
-[independently packaged native consumer](../../tools/release/consumers/Kafka/README.md) own the
+[independently packaged native consumer](../../eng/release/consumers/Kafka/README.md) own the
 complete selected composition and proofs. CI invokes the package-only provider/process profile;
 the normal native project graph and PostgreSQL-only package command remain independently usable.
 

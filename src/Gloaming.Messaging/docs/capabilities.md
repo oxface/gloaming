@@ -231,7 +231,7 @@ branch and does not release resources it did not create.
 
 The [Kafka application recipe](../../../modular-monolith-patterns/kafka.md) composes existing
 inbox/outbox interfaces with native Confluent clients. Its separate
-[package-only provider/process proof](../../../tools/release/consumers/Kafka/README.md) covers
+[package-only provider/process proof](../../../eng/release/consumers/Kafka/README.md) covers
 sequential commit-before-offset intake, native acknowledgement loss, process death, local
 rollback, poison disposition, live group ownership loss and broker restart. It adds no Kafka
 package or reusable mechanism. Producer trust, source retention, migrations, quarantine,

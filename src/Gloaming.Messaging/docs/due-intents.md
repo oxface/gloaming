@@ -152,7 +152,7 @@ these operations with different business generations and schemas. Provider tests
 lock races, cancelled waits, process replacement and old/new payload readers.
 [Contract tests](../tests/OutboxPostgresTests/DueIntentContractTests.cs) cover immutable
 participation, repeated saves, savepoint rollback, native async reads and unsupported mappings.
-The independent [NuGet consumer](../../../tools/release/consumers/DueIntents.cs) deploys a populated
+The independent [NuGet consumer](../../../eng/release/consumers/DueIntents.cs) deploys a populated
 forward migration, preserves earlier literal identities/payloads and runs under restricted module
 credentials. Its earlier layout is consumer-owned experiment data, not two released scheduler
 library versions. The initial provided protocol must remain stable for later released upgrades.

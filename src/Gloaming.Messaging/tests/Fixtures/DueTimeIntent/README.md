@@ -66,7 +66,7 @@ receipt, due-intent and outbox capabilities. The provided occurrence model and h
 belong to the library; source generation, relevance and notification policy remain here.
 
 These process/race tests create empty disposable databases using native EF schema scripts.
-The independent [package consumer](../../../../../tools/release/consumers/DueIntents.cs)
+The independent [package consumer](../../../../../eng/release/consumers/DueIntents.cs)
 separately exercises a populated consumer migration and restricted module grants. Neither
 certifies tenant RLS or two released scheduler library versions.
 Scopes are explicitly constrained in every lookup; this is query-isolation evidence, not an
