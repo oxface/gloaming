@@ -66,29 +66,39 @@ jobs:
           token: ''
           base: ${{ steps.range.outputs.base }}
           ref: ${{ github.event_name == 'push' && github.sha || '' }}
-      - name: Set up .NET for runtime selection
-        if: github.event_name == 'pull_request' && steps.filter.outputs.repository_dotnet == 'true' && steps.filter.outputs.shared != 'true' && steps.filter.outputs.unmapped != 'true'
-        id: runtime_sdk
+      - name: Set up .NET for Nx selection
+        if: github.event_name == 'pull_request' && steps.filter.outcome == 'success'
+        id: scope_sdk
+        continue-on-error: true
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
-      - name: Set up Node.js for runtime selection
-        if: steps.runtime_sdk.outcome == 'success'
+      - name: Set up Node.js for Nx selection
+        if: steps.scope_sdk.outcome == 'success'
+        id: scope_node
+        continue-on-error: true
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.21.0
           package-manager-cache: false
-      - name: Install pinned Nx for runtime selection
-        if: steps.runtime_sdk.outcome == 'success'
+      - name: Install pinned Nx for scope
+        if: steps.scope_node.outcome == 'success'
+        id: scope_nx
+        continue-on-error: true
         run: npm ci --ignore-scripts
       - name: Select Wholesale runtime using Nx
-        if: steps.runtime_sdk.outcome == 'success'
+        if: github.event_name == 'pull_request' && steps.filter.outputs.repository_dotnet == 'true' && steps.filter.outputs.shared != 'true' && steps.filter.outputs.unmapped != 'true'
         id: runtime
         env:
+          NX_SETUP_RESULT: ${{ steps.scope_nx.outcome }}
           NX_DAEMON: 'false'
           NX_BASE: ${{ steps.range.outputs.base }}
           NX_HEAD: ${{ github.sha }}
         run: |
+          if [[ "$NX_SETUP_RESULT" != success ]]; then
+            echo '::error::Wholesale runtime selection requires a successful Nx setup.'
+            exit 1
+          fi
           affected=$(npm run --silent nx -- show projects --affected -t test-dotnet --json)
           runtime=$(jq -c 'if type == "array" then index("RuntimeComposition.Tests") != null else error("Expected an affected project array") end' <<< "$affected")
           printf 'affected=%s\n' "$runtime" >> "$GITHUB_OUTPUT"
@@ -133,6 +143,39 @@ jobs:
             printf '| Package integrity and adoption | %s |\n' "$CI_PACKAGES"
             printf '| Native Kafka package adoption | %s |\n' "$CI_KAFKA"
             printf '| Wholesale runtime | %s |\n' "$CI_RUNTIME"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Compare Kafka selection with Nx
+        if: github.event_name == 'pull_request' && steps.filter.outcome == 'success'
+        continue-on-error: true
+        env:
+          KAFKA_FILTER: ${{ steps.filter.outputs.kafka }}
+          KAFKA_SELECTED: ${{ steps.plan.outputs.kafka }}
+          NX_SETUP_RESULT: ${{ steps.scope_nx.outcome }}
+          NX_DAEMON: 'false'
+          NX_BASE: ${{ steps.range.outputs.base }}
+          NX_HEAD: ${{ github.sha }}
+        run: |
+          nx_selection=unavailable
+          query_time='unavailable'
+          if [[ "$NX_SETUP_RESULT" == success ]]; then
+            started=$(date +%s%3N)
+            if affected=$(timeout 30s npm run --silent nx -- show projects --affected -t verify:kafka --json) &&
+              selected=$(jq -c 'if type == "array" then index("release-proofs") != null else error("Expected an affected project array") end' <<< "$affected"); then
+              nx_selection=$selected
+            fi
+            query_time="$(( $(date +%s%3N) - started )) ms"
+          fi
+          if [[ "$nx_selection" == unavailable ]]; then
+            echo '::warning::The advisory Nx Kafka comparison is unavailable.'
+          elif [[ "$nx_selection" != "$KAFKA_FILTER" ]]; then
+            echo '::notice::Nx and the Kafka path filter selected different coverage.'
+          fi
+          {
+            printf '\n### Kafka scope comparison\n\n'
+            printf '| Path filter | Nx affected | Kafka job selected | Nx query time |\n'
+            printf '| --- | --- | --- | --- |\n'
+            printf '| %s | %s | %s | %s |\n' "$KAFKA_FILTER" "$nx_selection" "$KAFKA_SELECTED" "$query_time"
           } >> "$GITHUB_STEP_SUMMARY"
 
   repository:
@@ -260,11 +303,11 @@ jobs:
 
       - name: Run affected native test projects
         if: needs.changes.outputs.repository_dotnet == 'true' && needs.changes.outputs.full != 'true'
-        run: npm run test:affected -- --excludeTaskDependencies --outputStyle=static
+        run: npm run test:affected -- --excludeTaskDependencies --parallel=3 --outputStyle=static
 
       - name: Run every ordinary native test project
         if: needs.changes.outputs.full == 'true'
-        run: npm run test:ordinary -- --excludeTaskDependencies --outputStyle=static
+        run: npm run test:ordinary -- --excludeTaskDependencies --parallel=3 --outputStyle=static
 
       - name: Run codec sample consumer
         if: needs.changes.outputs.repository_dotnet == 'true'

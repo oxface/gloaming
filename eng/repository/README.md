@@ -110,8 +110,9 @@ The ordinary test commands exclude `RuntimeComposition.Tests`, which needs Aspir
 certificate trust and browser setup, and `ArchitectureTests`, which Repository integrity
 runs for relevant .NET changes. Wholesale integration and native provider/process
 tests remain ordinary inferred tasks and require a Docker-compatible runtime. Nx runs up
-to two tasks concurrently. Restore is explicit; inferred builds run without restore and
-Nx orders their project dependencies. Tests always execute freshly (`cache: false`);
+to two tasks concurrently by default. CI runs up to three ordinary test projects at a time.
+Restore is explicit; inferred builds run without restore and Nx orders their project
+dependencies. Tests always execute freshly (`cache: false`);
 inferred build outputs may be reused from the local `.nx` cache. Nx Cloud connections are
 disabled. No remote cache or distributed execution is configured.
 
@@ -138,6 +139,14 @@ The scope job uses SHA-pinned [`dorny/paths-filter`](https://github.com/dorny/pa
 and the [environment scope map](../../.github/ci-paths.yml) for Repository integrity's .NET
 steps, package adoption, and Kafka adoption. Package and Kafka proof scripts own the inputs
 for consumers they generate outside the checkout.
+
+PRs with a usable comparison range also evaluate the [Kafka Nx target](../release/project.json)
+using the Postgres messaging project, its transitive project references, the release tooling
+and the Kafka guide. The scope summary shows the raw path filter result, the advisory Nx result,
+the final Kafka job decision after applying fallbacks, and the Nx query duration. Compare setup
+and path filter durations in the scope step timings. When Wholesale runtime selection has
+already queried Nx, it can warm the graph cache for the Kafka query. The path filter and
+existing full-run fallbacks control the Kafka job.
 
 Wholesale runtime remains eligible on PRs and manual dispatch. Scoped PRs use Nx to detect
 changes that affect `RuntimeComposition.Tests`, including its AppHost and API references.

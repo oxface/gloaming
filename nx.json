@@ -30,7 +30,8 @@
   ],
   "parallel": 2,
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "retainedFixtures"],
+    "projectFiles": ["{projectRoot}/**/*"],
+    "default": ["projectFiles", "retainedFixtures"],
     "retainedFixtures": [
       "{workspaceRoot}/src/**/Fixtures/**/*",
       "{workspaceRoot}/src/**/fixtures/**/*",
