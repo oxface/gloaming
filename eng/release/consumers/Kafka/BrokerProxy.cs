@@ -5,12 +5,12 @@ using System.Net.Sockets;
 
 // Test-only Kafka plaintext frame proxy. It never decodes records or serves application traffic.
 // Kafka request API key 0 is Produce; response correlation IDs identify exactly its replies.
-sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
+sealed class BrokerProxy(string upstream, TcpListener listener) : IAsyncDisposable
 {
-    private readonly TcpListener listener = new(IPAddress.Loopback, port);
     private readonly CancellationTokenSource stopping = new();
     private readonly ConcurrentBag<Task> sessions = [];
     private Task accept = Task.CompletedTask;
+    private string? upstreamEndpoint = upstream;
     private int dropping;
     private int dropped;
     internal bool DropProduceResponses
@@ -19,6 +19,10 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
     }
 
     internal int DroppedResponses => Volatile.Read(ref dropped);
+
+    internal int Port => ((IPEndPoint)listener.LocalEndpoint).Port;
+
+    internal void SetUpstream(string? endpoint) => Volatile.Write(ref upstreamEndpoint, endpoint);
 
     internal void Start()
     {
@@ -48,7 +52,11 @@ sealed class BrokerProxy(string upstream, int port) : IAsyncDisposable
         {
             try
             {
-                var target = new Uri("tcp://" + upstream);
+                string? endpoint = Volatile.Read(ref upstreamEndpoint);
+                if (endpoint is null)
+                    return;
+
+                var target = new Uri("tcp://" + endpoint);
                 await server.ConnectAsync(target.Host, target.Port, pair.Token);
                 // A forwarding task can observe a reset before the reverse task starts.
                 // Acquire both streams before either task can change socket state.

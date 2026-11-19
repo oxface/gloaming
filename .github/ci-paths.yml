@@ -24,6 +24,8 @@ unmapped:
   - '!eng/release/**'
 
 repository_dotnet:
+  - 'eng/release/consumers/Kafka/BrokerProxy.cs'
+  - 'eng/release/tests/**'
   - 'src/**'
   - 'samples/**'
   - 'tests/**'
@@ -31,7 +33,7 @@ repository_dotnet:
 
 # Package README links are artifact content, so this lane includes their changes.
 packages:
-  - 'src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/**'
+  - 'src/Gloaming.Persistence/tests/Fixtures/{JsonOwnership,RelationalOwnership}/**'
   - 'src/Gloaming.Agents/samples/AgentPersistenceDemo/**'
   - 'src/Gloaming.Evaluations/samples/WorkflowEvaluationDemo/**'
   - 'src/Gloaming.*/Gloaming.*/**'
@@ -39,6 +41,7 @@ packages:
   - 'src/Gloaming.*/docs/**'
   - 'src/Directory.Build.props'
   - 'eng/release/**'
+  - '!eng/release/tests/**'
   - 'modular-monolith-patterns/kafka.md'
 
 # Kafka's package consumer uses only this native messaging closure and DI.
@@ -48,4 +51,5 @@ kafka:
   - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/**'
   - 'src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/**'
   - 'eng/release/**'
+  - '!eng/release/tests/**'
   - 'modular-monolith-patterns/kafka.md'

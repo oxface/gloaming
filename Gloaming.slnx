@@ -145,6 +145,7 @@
     <Project Path="samples/Wholesale/modules/Inventory/Inventory.Contracts/Inventory.Contracts.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="eng/release/tests/KafkaProxy.Tests.csproj" />
     <Project Path="tests/ContextCompositionTests/ContextCompositionTests.csproj" />
     <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
   </Folder>

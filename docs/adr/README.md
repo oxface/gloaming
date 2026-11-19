@@ -1,7 +1,8 @@
-# Current architecture decisions
+# Implemented architecture decisions
 
-These records explain accepted architecture choices and their consequences. Family-local
-contracts define current public interfaces, setup and supported limits.
+These records explain architectural choices implemented in code or application guidance.
+Each record states its review status. Family-local contracts define current public
+interfaces, setup and supported limits.
 
 | Decision | Owning boundary |
 | --- | --- |
@@ -31,10 +32,7 @@ contracts define current public interfaces, setup and supported limits.
 | [0028 Committed feed and projection generations](0028-committed-feed-and-projection-generations.md) | Explicit serialized capture, bounded transactional secondary projections and fenced generation selection; consumer source/output/deployment policy. |
 | [0029 Native queue wakeups](0029-native-queue-wakeups.md) | Optional dedicated LISTEN/NOTIFY composition and retained per-worker hints; polling remains authoritative, no new wrapper/runtime. |
 | [0030 Native Kafka recipe](0030-native-kafka-delivery-recipe.md) | Existing inbox/outbox interfaces, native clients and sequential commit-before-offset intake; consumer policy and no new library mechanism. |
+| [0031 Native agent persistence](0031-native-agent-persistence.md) | Native MAF checkpoints and history, optional visible transcripts and caller-owned transactions. |
+| [0032 Typed evaluations](0032-typed-evaluation-execution.md) | Independent execution targets, native metrics and bounded attempt execution. |
 
-ADR numbers are stable and are not reused. Gaps preserve earlier decision identities.
-The [native MAF persistence implementation](0031-native-agent-persistence.md) records the new
-optional boundary and is pending owner interface/implementation review.
-The [typed evaluation runner](0032-typed-evaluation-execution.md) records independent
-execution targets/native metrics and is pending the same review.
-Current records explain accepted choices; package-local contracts define supported setup and limits.
+ADR numbers are stable. Gaps preserve earlier decision identities.

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import test from "node:test";
 
@@ -23,35 +23,46 @@ function nx<T>(...args: string[]): T {
           NX_ISOLATE_PLUGINS: "false",
         },
         timeout: 120_000,
+        maxBuffer: 16 * 1024 * 1024,
       },
     ),
   ) as T;
 }
 
-function affected(path: string): string[] {
+function affected(path: string, target = "test-dotnet"): string[] {
   return nx<string[]>(
     "show",
     "projects",
     "--affected",
     "-t",
-    "test-dotnet",
+    target,
     `--files=${path}`,
     "--json",
   );
 }
 
 test("Nx discovers every declared test project and the solution includes it", () => {
-  const paths = execFileSync("git", ["ls-files", "--", "*.csproj"], {
-    cwd: root,
-    encoding: "utf8",
-  })
-    .trim()
-    .split("\n");
-  const expected = paths.filter((path) =>
-    /<IsTestProject>true<\/IsTestProject>/.test(
-      readFileSync(resolve(root, path), "utf8"),
-    ),
-  );
+  const paths = execFileSync(
+    "git",
+    [
+      "ls-files",
+      "-z",
+      "--cached",
+      "--others",
+      "--exclude-standard",
+      "--",
+      "*.csproj",
+    ],
+    { cwd: root, encoding: "utf8" },
+  ).split("\0");
+  const expected = [...new Set(paths)].filter((path) => {
+    const project = resolve(root, path);
+    return (
+      path &&
+      existsSync(project) &&
+      /<IsTestProject>true<\/IsTestProject>/.test(readFileSync(project, "utf8"))
+    );
+  });
   const solutionProjects = new Set(
     execFileSync("dotnet", ["sln", "Gloaming.slnx", "list"], {
       cwd: root,
@@ -67,20 +78,19 @@ test("Nx discovers every declared test project and the solution includes it", ()
       `${path} must be built by Gloaming.slnx`,
     );
 
-  const actual = nx<string[]>(
-    "show",
-    "projects",
-    "--with-target=test-dotnet",
-    "--json",
-  );
-  assert.equal(actual.length, expected.length);
-  for (const name of actual) {
-    const project = nx<{ root: string }>("show", "project", name, "--json");
-    assert(
-      expected.some((path) => path.startsWith(`${project.root}/`)),
-      name,
-    );
-  }
+  const { graph } = nx<{
+    graph: {
+      nodes: Record<
+        string,
+        { data: { root: string; targets?: Record<string, unknown> } }
+      >;
+    };
+  }>("graph", "--print");
+  const actualRoots = Object.values(graph.nodes)
+    .filter(({ data }) => Object.hasOwn(data.targets ?? {}, "test-dotnet"))
+    .map(({ data }) => data.root)
+    .sort();
+  assert.deepEqual(actualRoots, expected.map((path) => dirname(path)).sort());
 });
 
 test("a leaf implementation selects its consumer without unrelated tests", () => {
@@ -104,7 +114,7 @@ test("a leaf implementation selects its consumer without unrelated tests", () =>
   assert(!selected.includes("EvaluationTests"));
 });
 
-test("linked C# inputs reach their provider consumers", () => {
+test("linked C# inputs reach their native test consumers", () => {
   const selected = affected("tests/Support/PostgreSqlFixture.cs");
   for (const name of [
     "AuditPostgresTests",
@@ -113,6 +123,31 @@ test("linked C# inputs reach their provider consumers", () => {
   ])
     assert(selected.includes(name), name);
   assert(!selected.includes("EvaluationTests"));
+  assert.deepEqual(affected("eng/release/consumers/Kafka/BrokerProxy.cs"), [
+    "KafkaProxy.Tests",
+  ]);
+  const proxyTest = "eng/release/tests/BrokerProxyTests.cs";
+  assert.deepEqual(affected(proxyTest), ["KafkaProxy.Tests"]);
+  assert.deepEqual(affected(proxyTest, "verify:kafka"), []);
+});
+
+test("Kafka package adoption selects its package closure and proof inputs", () => {
+  for (const path of [
+    "src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/PostgresOutboxDispatcher.cs",
+    "src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore/ScopeProbe.cs",
+    "src/Gloaming.Messaging/Gloaming.Messaging/ScopeProbe.cs",
+    "src/Gloaming.EntityFrameworkCore/Gloaming.EntityFrameworkCore/ScopeProbe.cs",
+    "eng/release/verify-kafka.ts",
+    "modular-monolith-patterns/kafka.md",
+  ])
+    assert(affected(path, "verify:kafka").includes("release-proofs"), path);
+
+  for (const path of [
+    "src/Gloaming.Evaluations/Gloaming.Evaluations/EvaluationRunner.cs",
+    "src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/previous.json",
+    "README.md",
+  ])
+    assert(!affected(path, "verify:kafka").includes("release-proofs"), path);
 });
 
 test("Wholesale runtime selection covers native references and runtime-only inputs", () => {

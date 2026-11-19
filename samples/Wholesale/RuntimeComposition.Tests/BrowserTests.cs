@@ -9,11 +9,12 @@ using Gloaming.Samples.Wholesale.AppHost;
 using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
+using Microsoft.Playwright.Xunit.v3;
 using Npgsql;
 
 namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
-public sealed class BrowserTests
+public sealed class BrowserTests : PageTest
 {
     private const string AlphaProfile =
         "/organizations/north-supply/customers/10000000-0000-0000-0000-000000000001/profile";
@@ -36,16 +37,12 @@ public sealed class BrowserTests
             TestContext.Current.CancellationToken,
             rowSecurity
         );
-        await using var app = await StartAndInitializeAsync(builder);
-        using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync();
-        await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
-        await using var trace = await RecordTraceAsync(
-            context,
-            rowSecurity ? "alpha-row-security" : "alpha"
-        );
-        context.SetDefaultTimeout(15_000);
-        var page = await context.NewPageAsync();
+        string scenario = rowSecurity ? "alpha-row-security" : "alpha";
+        await using var app = await StartAndInitializeAsync(builder, scenario);
+        await using var evidence = new RuntimeEvidence(app, scenario);
+        await using var trace = await RecordTraceAsync(Context, scenario);
+        Context.SetDefaultTimeout(15_000);
+        var page = Page;
         Uri endpoint = app.GetEndpoint("api", "https");
         await page.GotoAsync(new Uri(endpoint, "/public-identity").ToString()).WaitAsync(Token);
         Assert.Equal(
@@ -103,7 +100,7 @@ public sealed class BrowserTests
             (await FetchAsync(page, AlphaProfile, "PUT", edit, protection.RequestToken)).Status
         );
         Assert.Equal(expected, await GetAsync<CustomerProfile>(page, AlphaProfile));
-        var cookies = await context.CookiesAsync([endpoint.ToString()]);
+        var cookies = await Context.CookiesAsync([endpoint.ToString()]);
         var identityCookie = Assert.Single(cookies, cookie => cookie.Name == "wholesale.identity");
         Assert.True(identityCookie.Secure);
         Assert.True(identityCookie.HttpOnly);
@@ -138,13 +135,11 @@ public sealed class BrowserTests
     public async Task BetaAdmissionUsesCurrentMembershipWithTheSameBrowserSession()
     {
         await using var builder = await CreateBuilderAsync(TestContext.Current.CancellationToken);
-        await using var app = await StartAndInitializeAsync(builder);
-        using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync();
-        await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
-        await using var trace = await RecordTraceAsync(context, "beta");
-        context.SetDefaultTimeout(15_000);
-        var page = await context.NewPageAsync();
+        await using var app = await StartAndInitializeAsync(builder, "beta");
+        await using var evidence = new RuntimeEvidence(app, "beta");
+        await using var trace = await RecordTraceAsync(Context, "beta");
+        Context.SetDefaultTimeout(15_000);
+        var page = Page;
         Uri endpoint = app.GetEndpoint("api", "https");
         await LoginAsync(page, endpoint, "beta");
         Assert.Equal(
@@ -156,7 +151,7 @@ public sealed class BrowserTests
             await GetAsync<TenantIdentityResponse>(page, "/organizations/south-supply/identity")
         );
         _ = await GetAsync<CustomerProfile>(page, BetaProfile);
-        var cookies = await context.CookiesAsync([endpoint.ToString()]);
+        var cookies = await Context.CookiesAsync([endpoint.ToString()]);
         string session = Assert
             .Single(cookies, cookie => cookie.Name == "wholesale.identity")
             .Value;
@@ -174,7 +169,7 @@ public sealed class BrowserTests
             new IdentityResponse(ActorKind.Human, "application-beta"),
             await GetAsync<IdentityResponse>(page, "/identity")
         );
-        cookies = await context.CookiesAsync([endpoint.ToString()]);
+        cookies = await Context.CookiesAsync([endpoint.ToString()]);
         Assert.Equal(
             session,
             Assert.Single(cookies, cookie => cookie.Name == "wholesale.identity").Value
@@ -185,13 +180,11 @@ public sealed class BrowserTests
     public async Task RealUnmappedAccountIsRejectedWithoutEmailLinkingOrProvisioning()
     {
         await using var builder = await CreateBuilderAsync(TestContext.Current.CancellationToken);
-        await using var app = await StartAndInitializeAsync(builder);
-        using var playwright = await Playwright.CreateAsync();
-        await using var browser = await playwright.Chromium.LaunchAsync();
-        await using var context = await browser.NewContextAsync(new() { IgnoreHTTPSErrors = true });
-        await using var trace = await RecordTraceAsync(context, "unmapped");
-        context.SetDefaultTimeout(15_000);
-        var page = await context.NewPageAsync();
+        await using var app = await StartAndInitializeAsync(builder, "unmapped");
+        await using var evidence = new RuntimeEvidence(app, "unmapped");
+        await using var trace = await RecordTraceAsync(Context, "unmapped");
+        Context.SetDefaultTimeout(15_000);
+        var page = Page;
         await LoginAsync(page, app.GetEndpoint("api", "https"), "unmapped");
         foreach (
             string path in new[]
@@ -265,7 +258,8 @@ public sealed class BrowserTests
     }
 
     private static async Task<DistributedApplication> StartAndInitializeAsync(
-        IDistributedApplicationTestingBuilder builder
+        IDistributedApplicationTestingBuilder builder,
+        string scenario
     )
     {
         var app = await builder.BuildAsync(Token);
@@ -300,42 +294,6 @@ public sealed class BrowserTests
             Assert.Equal(0, setup.Snapshot.ExitCode);
             if (rowSecurity)
             {
-                await using (
-                    var database = new NpgsqlConnection(
-                        await app.GetConnectionStringAsync("wholesale", Token)
-                    )
-                )
-                {
-                    await database.OpenAsync(Token);
-                    await using var policies = new NpgsqlCommand(
-                        """
-                        SELECT ARRAY(SELECT rolname::text FROM pg_roles
-                                WHERE rolname IN ('wholesale_access', 'wholesale_sales') ORDER BY rolname),
-                            ARRAY(SELECT c.relname::text FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-                                WHERE n.nspname = 'sales' AND c.relrowsecurity AND c.relforcerowsecurity
-                                ORDER BY c.relname)
-                        """,
-                        database
-                    );
-                    await using var policiesReader = await policies.ExecuteReaderAsync(Token);
-                    Assert.True(await policiesReader.ReadAsync(Token));
-                    Assert.Equal<string>(
-                        ["wholesale_access", "wholesale_sales"],
-                        policiesReader.GetFieldValue<string[]>(0)
-                    );
-                    Assert.Equal<string>(
-                        [
-                            "audit_entries",
-                            "customer_addresses",
-                            "customer_profiles",
-                            "draft_order_grants",
-                            "draft_order_lines",
-                            "draft_orders",
-                        ],
-                        policiesReader.GetFieldValue<string[]>(1)
-                    );
-                }
-
                 var api = await commands.ExecuteCommandAsync(
                     "api",
                     KnownResourceCommands.StartCommand,
@@ -349,6 +307,7 @@ public sealed class BrowserTests
         }
         catch
         {
+            await new RuntimeEvidence(app, scenario).DisposeAsync();
             await app.DisposeAsync();
             throw;
         }

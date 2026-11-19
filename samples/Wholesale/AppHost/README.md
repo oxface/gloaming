@@ -2,7 +2,7 @@
 
 This editable sample AppHost composes PostgreSQL 18.6, its `wholesale` database, the existing
 HTTP API and a manually started `demo-setup` command. It requires the pinned Aspire CLI
-13.6.1, .NET from root `global.json`, a Docker-compatible engine and a native HTTPS
+13.6.5, .NET from root `global.json`, a Docker-compatible engine and a native HTTPS
 development certificate. Root `aspire.config.json` selects this AppHost. Explicit `--apphost` paths also work.
 
 ```bash
@@ -14,7 +14,7 @@ dotnet build Gloaming.slnx --no-restore
 ```
 
 If a matching CLI is already installed, use it. The
-[native package](https://www.nuget.org/packages/Aspire.Cli/13.6.1) supports the pinned install
+[native package](https://www.nuget.org/packages/Aspire.Cli/13.6.5) supports the pinned install
 command. Native project-path references select the API without generated application types.
 Build the solution before using `--no-build`; the AppHost itself has no API project reference.
 Do not rebuild running resources; stop the graph first.
@@ -91,9 +91,27 @@ may be retained. A stable issuer preserves its existing mappings; if the authori
 (including its port), update application links explicitly rather than rerunning seed setup.
 For a throwaway `--isolated` graph choose `UseDataVolume=false`, since its randomized issuer
 must not silently change retained Access data. Browser tests use that fully disposable mode.
-Trust the native development certificate for ordinary manual browsing. Automated browser
-contexts explicitly ignore development certificate trust errors; this is not production
-certificate-trust evidence.
+Trust the native development certificate for manual browsing and Playwright. Both the
+browser and the API's OIDC backchannel validate development HTTPS. On Linux, install
+`libnss3-tools` if `certutil` is missing and run the following as the user running the tests:
+
+```bash
+nss_db="${XDG_DATA_HOME:-$HOME/.local/share}/pki/nssdb"
+if [[ -d "$HOME/.pki/nssdb" ]]; then
+  nss_db="$HOME/.pki/nssdb"
+fi
+mkdir -p "$nss_db"
+if [[ ! -f "$nss_db/cert9.db" ]]; then
+  certutil -N --empty-password -d "sql:$nss_db"
+fi
+export DOTNET_DEV_CERTS_NSSDB_PATHS="$nss_db"
+export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:${SSL_CERT_DIR:-/etc/ssl/certs}"
+dotnet dev-certs https --trust
+dotnet dev-certs https --check --trust
+```
+
+This sets up Chromium's NSS store and the OpenSSL trust path in the same shell.
+On Windows and macOS use `dotnet dev-certs https --trust` for the system trust store.
 
 ## Optional Sales RLS graph
 
@@ -204,7 +222,7 @@ aspire stop --apphost samples/Wholesale/AppHost/Wholesale.AppHost.csproj --non-i
 ```
 
 Native telemetry preserves request/database trace relationships and correlates error logs.
-Metrics are configured too; CLI 13.6.1 exposes traces/spans/logs, so use the dashboard for
+Metrics are configured too; CLI 13.6.5 exposes traces/spans/logs, so use the dashboard for
 metrics. The runtime test independently proves database-outage readiness 503, liveness 200
 and failed business reads. There is no automatic repair, global HTTP retry policy or custom
 shutdown worker. Local stop/cleanup was verified; exporter-outage delivery guarantees,

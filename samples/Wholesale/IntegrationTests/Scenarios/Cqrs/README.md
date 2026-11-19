@@ -116,20 +116,13 @@ inline metadata without replaying history. Its positive quantity guard and missi
 legacy reserved-field fallback remain Inventory policy. Sales command reference
 validation uses `IStockCatalog`; it never joins Inventory tables.
 
-## Findings and deferred work
+## Authorization and query cost
 
-No new reusable mechanism was proven. Typed DI, EF query composition, native
-transactions and module-owned result types suffice. The new filters remove no
-cross-module technical duplication that warrants a library. Persisted projections,
-generic repositories, mediator/pipeline abstractions and generic paging/filter
-helpers remain unselected.
+Direct human and system grants and HTTP tests cover sparse grants, revocation,
+tenant-colliding IDs and count/page snapshot changes. The opt-in RLS mode has its
+own credentials, table inventory, transaction requirements and limits. Permission
+is evaluated during each read or operation and can change before commit.
 
-Direct human/system grants and HTTP adoption cover sparse grants, revocation,
-tenant-colliding IDs and count/page snapshot changes. This supplies no grant editor, role/group
-engine, export/AI endpoint or strict permission-at-commit fence. The opt-in RLS mode has its own
-credentials, table inventory, transaction setup and limits.
-
-Registrations, operation scopes, explicit transaction ownership and native queries remain
-consumer-owned examples. Additional query/authorization
-compositions, indexes/benchmarks, alternate sorting and provider semantics need concrete
-consumer requirements. An upper page-size limit does not bound offset scan or aggregate-query cost.
+The consumer owns registrations, operation scopes, native queries and transaction
+selection. The page-size limit bounds returned results. Consumers still need to
+account for offset scan and aggregate-query cost.

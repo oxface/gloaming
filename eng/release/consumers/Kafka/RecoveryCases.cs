@@ -11,6 +11,7 @@ static partial class KafkaJourney
 {
     private static async Task RecoveryCasesAsync(
         BrokerProxy proxy,
+        ProviderFixture fixtures,
         string prefix,
         string groupPrefix
     )
@@ -152,7 +153,7 @@ static partial class KafkaJourney
         }
 
         Check(
-            Committed(topic, group) < 0,
+            await CommittedAsync(topic, group) < 0,
             "A thrown commit observation must leave Kafka unacknowledged."
         );
         await using (var observer = Receiver())
@@ -186,7 +187,7 @@ static partial class KafkaJourney
         await ExpectedEffectAsync(message, 19);
         Pass(
             "caller-unobserved-native-database-commit",
-            new { nextOffset = Committed(topic, group), effects = 1 }
+            new { nextOffset = await CommittedAsync(topic, group), effects = 1 }
         );
 
         topic = prefix + "-restart";
@@ -206,14 +207,11 @@ static partial class KafkaJourney
             consumer.Close();
         }
 
-        Console.WriteLine("CONTROL:restart-broker");
-        await Console.Out.FlushAsync(Token);
+        proxy.SetUpstream(null);
+        await fixtures.RestartBrokerAsync(Token);
+        proxy.SetUpstream(fixtures.BrokerAddress);
         Check(
-            await Console.In.ReadLineAsync(Token) == "restarted",
-            "Runner must confirm restart of its owned broker."
-        );
-        Check(
-            Committed(topic, group) == 1,
+            await CommittedAsync(topic, group) == 1,
             "Broker restart must preserve its committed consumer position."
         );
         Check(
@@ -239,7 +237,10 @@ static partial class KafkaJourney
                 "Retained pre-restart work must process once."
             );
         await ExpectedEffectAsync(message, 23);
-        Pass("native-broker-restart", new { nextOffset = Committed(topic, group), effects = 1 });
+        Pass(
+            "native-broker-restart",
+            new { nextOffset = await CommittedAsync(topic, group), effects = 1 }
+        );
 
         topic = prefix + "-cancel";
         group = groupPrefix + "-cancel";
@@ -273,12 +274,12 @@ static partial class KafkaJourney
         }
 
         Check(
-            Committed(topic, group) < 0,
+            await CommittedAsync(topic, group) < 0,
             "Cancelled consumption and close must not invent an acknowledged position."
         );
         Pass(
             "cancelled-consume-and-native-close",
-            new { committedOffset = Committed(topic, group) }
+            new { committedOffset = await CommittedAsync(topic, group) }
         );
 
         byte[] literal = await File.ReadAllBytesAsync("Fixtures/changed.v1.json", Token);
@@ -332,7 +333,7 @@ static partial class KafkaJourney
 
         Pass(
             "owned-wire-v1-and-post-close-recovery",
-            new { nextOffset = Committed(topic, group), amount = 29 }
+            new { nextOffset = await CommittedAsync(topic, group), amount = 29 }
         );
     }
 

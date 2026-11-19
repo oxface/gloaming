@@ -12,12 +12,20 @@ npm ci --prefix eng/release --ignore-scripts
 npm --prefix eng/release run verify:kafka
 ```
 
-The TypeScript [runner](../../verify-kafka.ts) requires the pinned SDK/Node and a local Docker or
-Podman CLI. Set GLOAMING_CONTAINER_RUNTIME to docker or podman to select it explicitly. It packs
-current libraries, copies this consumer outside the checkout, generates exact PackageReferences
-and source mapping, restores a fresh cache and builds with recommended analyzers/warnings as
-errors. Only Messaging, its EF/PostgreSQL layers and Gloaming.EntityFrameworkCore are selected.
-Native broker/database fixtures are never silently skipped.
+The TypeScript [runner](../../verify-kafka.ts) requires the pinned SDK, Node and a
+Docker-compatible socket. It packs current libraries, copies this consumer outside the
+checkout, generates exact PackageReferences and source mapping, restores a fresh cache
+and builds with recommended analyzers and warnings as errors. It selects Messaging, its
+EF/PostgreSQL layers and Gloaming.EntityFrameworkCore. Both providers are required.
+
+For rootless Podman on Linux, start its user socket and point Testcontainers at it.
+Disable the resource reaper when required by the rootless engine.
+
+```sh
+systemctl --user start podman.socket
+DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock" \
+  TESTCONTAINERS_RYUK_DISABLED=true npm --prefix eng/release run verify:kafka
+```
 
 The fixture separates the [native adapter](KafkaAdapter.cs), [consumer mappings](Database.cs),
 [process journey](Journey.cs), [additional recovery cases](RecoveryCases.cs),
@@ -26,18 +34,22 @@ and a [plaintext test frame proxy](BrokerProxy.cs). Faults do not add test hooks
 The [owned v1 JSON](Fixtures/changed.v1.json) is literal reader evidence, not encoder output.
 Its sample values and business-effect table are fixture policy.
 
-The runner owns only two uniquely named containers, random local ports and per-run generated
-database credentials. It restarts its own Kafka container when the journey requests that test
-step. Ordinary success/failure removes its containers and anonymous volumes and preserves temporary evidence. It
-does not stage files, change the Git index, modify Umbrine or publish packages.
+The [fixture](ProviderFixture.cs) uses the repository's pinned .NET Testcontainers package.
+It provisions two uniquely named containers with dynamic loopback ports and waits for
+provider readiness. The consumer keeps its Kafka proxy listener bound from the
+moment it chooses its port. When the journey requests a restart, Testcontainers restarts its
+broker and waits again. The proxy uses the broker's current mapped port while its advertised
+endpoint stays bound. Ordinary success or failure removes the owned containers and anonymous
+volumes and preserves temporary evidence.
 
 The printed temporary directory contains archives, generated consumer/cache, execution.log,
 results.json, manifest.json and cleanup.json. Native outcomes, source/archive hashes and package
 closure are separate from resource cleanup status; command success requires both. The initial
 test schema is generated for a new isolated database, not a production migration/rollout proof.
 Broker positions and quarantine rows are independent from business-effect and delivery identity.
-Source hashes describe the copied files used to build the consumer. Release tooling checks also
-exercise denied/disconnected cleanup, confirmed absence and continuation after removal failures.
+Source hashes describe the copied files used to build the consumer. The
+[native loopback suite](../../tests/KafkaProxy.Tests.csproj) covers the frame proxy's socket
+faults independently of Kafka and PostgreSQL.
 
 The proof uses one broker, one partition per topic, classic Range group assignment, local
 plaintext and sequential explicit commits. It establishes no reusable mechanism, production

@@ -1,7 +1,6 @@
 # ADR 0025: bounded recurring intents
 
-Status: accepted architecture decision. Public interfaces and implementation receive normal
-owner review; this record does not replace exact change-set approval before commit.
+Status: accepted architecture decision.
 
 ## Context
 

@@ -1,7 +1,6 @@
 # ADR 0027: technical contribution completion
 
-Status: accepted architecture decision. Public interfaces/implementation receive owner review;
-the complete exact change set requires explicit approval before commit.
+Status: accepted architecture decision.
 
 ## Context
 

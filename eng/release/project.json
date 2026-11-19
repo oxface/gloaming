@@ -9,7 +9,20 @@
       "cache": false
     },
     "verify:kafka": {
-      "cache": false
+      "cache": false,
+      "inputs": [
+        "projectFiles",
+        "{workspaceRoot}/modular-monolith-patterns/kafka.md",
+        {
+          "input": "projectFiles",
+          "projects": "Gloaming.Messaging.EntityFrameworkCore.Postgres"
+        },
+        {
+          "input": "projectFiles",
+          "projects": "Gloaming.Messaging.EntityFrameworkCore.Postgres",
+          "dependencies": true
+        }
+      ]
     }
   }
 }
