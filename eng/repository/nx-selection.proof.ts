@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import test from "node:test";
 
@@ -42,17 +42,27 @@ function affected(path: string, target = "test-dotnet"): string[] {
 }
 
 test("Nx discovers every declared test project and the solution includes it", () => {
-  const paths = execFileSync("git", ["ls-files", "--", "*.csproj"], {
-    cwd: root,
-    encoding: "utf8",
-  })
-    .trim()
-    .split("\n");
-  const expected = paths.filter((path) =>
-    /<IsTestProject>true<\/IsTestProject>/.test(
-      readFileSync(resolve(root, path), "utf8"),
-    ),
-  );
+  const paths = execFileSync(
+    "git",
+    [
+      "ls-files",
+      "-z",
+      "--cached",
+      "--others",
+      "--exclude-standard",
+      "--",
+      "*.csproj",
+    ],
+    { cwd: root, encoding: "utf8" },
+  ).split("\0");
+  const expected = [...new Set(paths)].filter((path) => {
+    const project = resolve(root, path);
+    return (
+      path &&
+      existsSync(project) &&
+      /<IsTestProject>true<\/IsTestProject>/.test(readFileSync(project, "utf8"))
+    );
+  });
   const solutionProjects = new Set(
     execFileSync("dotnet", ["sln", "Gloaming.slnx", "list"], {
       cwd: root,
@@ -104,7 +114,7 @@ test("a leaf implementation selects its consumer without unrelated tests", () =>
   assert(!selected.includes("EvaluationTests"));
 });
 
-test("linked C# inputs reach their provider consumers", () => {
+test("linked C# inputs reach their native test consumers", () => {
   const selected = affected("tests/Support/PostgreSqlFixture.cs");
   for (const name of [
     "AuditPostgresTests",
@@ -113,6 +123,12 @@ test("linked C# inputs reach their provider consumers", () => {
   ])
     assert(selected.includes(name), name);
   assert(!selected.includes("EvaluationTests"));
+  assert.deepEqual(affected("eng/release/consumers/Kafka/BrokerProxy.cs"), [
+    "KafkaProxy.Tests",
+  ]);
+  const proxyTest = "eng/release/tests/BrokerProxyTests.cs";
+  assert.deepEqual(affected(proxyTest), ["KafkaProxy.Tests"]);
+  assert.deepEqual(affected(proxyTest, "verify:kafka"), []);
 });
 
 test("Kafka package adoption selects its package closure and proof inputs", () => {

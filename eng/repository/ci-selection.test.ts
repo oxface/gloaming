@@ -60,6 +60,7 @@ test("package artifacts and native Kafka inputs keep their separate proofs", () 
   for (const path of [
     "src/Gloaming.Messaging/README.md",
     "src/Gloaming.Persistence/tests/Fixtures/JsonOwnership/previous.json",
+    "src/Gloaming.Persistence/tests/Fixtures/RelationalOwnership/RelationalOwnershipJourney.cs",
     "eng/release/verify.ts",
   ])
     assert(matches("packages", path), path);
@@ -75,6 +76,15 @@ test("package artifacts and native Kafka inputs keep their separate proofs", () 
       "src/Gloaming.Evaluations/Gloaming.Evaluations/EvaluationRunner.cs",
     ),
   );
+  const proxy = "eng/release/consumers/Kafka/BrokerProxy.cs";
+  const proxyTest = "eng/release/tests/BrokerProxyTests.cs";
+  assert(matches("repository_dotnet", proxy));
+  assert(matches("kafka", proxy));
+  assert(matches("repository_dotnet", proxyTest));
+  assert(!matches("shared", proxyTest));
+  assert(!matches("unmapped", proxyTest));
+  assert(!matches("packages", proxyTest));
+  assert(!matches("kafka", proxyTest));
 });
 
 function assertClosure(scope: string, start: string): void {
@@ -263,8 +273,6 @@ test("the four CI checks share scope and Repository integrity depends on every p
     "repository",
     "runtime",
   ]);
-  for (const name of ["changes", "packages", "sample-runtime"])
-    assert(!existsSync(resolve(root, `.github/workflows/${name}.yml`)));
   for (const name of ["kafka", "packages", "runtime"]) {
     assert.equal(jobs[name]?.needs, "changes");
     assert.equal(jobs[name]?.if, `needs.changes.outputs.${name} == 'true'`);

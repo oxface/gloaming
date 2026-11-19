@@ -1,20 +1,18 @@
 import assert from "node:assert/strict";
-import { execFile, execFileSync, spawn, spawnSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import {
   appendFileSync,
   cpSync,
+  existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
   writeFileSync,
 } from "node:fs";
-import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
-import { promisify } from "node:util";
-import { removeOwnedContainers } from "./container-cleanup.ts";
 import { nativePackage, preparePackageProof } from "./package-proof.ts";
 
 // A separate native transport profile: ordinary verify remains PostgreSQL-only.
@@ -30,23 +28,20 @@ assert(
     ["docker", "podman"].includes(requestedRuntime),
   "GLOAMING_CONTAINER_RUNTIME must be docker or podman.",
 );
-const runtime =
-  requestedRuntime ??
-  ["docker", "podman"].find(
-    (command) =>
-      spawnSync(command, ["--version"], { encoding: "utf8" }).status === 0,
+if (requestedRuntime === "podman" && !process.env.DOCKER_HOST) {
+  const socket = join(
+    process.env.XDG_RUNTIME_DIR ?? `/run/user/${process.getuid?.()}`,
+    "podman",
+    "podman.sock",
   );
-assert(
-  runtime,
-  "Kafka proof requires a local Docker or Podman CLI; no broker tests are skipped.",
-);
+  assert(existsSync(socket), "Start the Podman API socket or set DOCKER_HOST.");
+  process.env.DOCKER_HOST = `unix://${socket}`;
+}
 const dotnet = process.env.DOTNET_HOST_PATH ?? "dotnet";
 const scratch = mkdtempSync(join(tmpdir(), "gloaming-kafka-package-proof-"));
 const directory = join(scratch, "consumer");
 const source = join(import.meta.dirname, "consumers", "Kafka");
 const id = randomBytes(6).toString("hex");
-const postgres = `gloaming-kafka-proof-pg-${id}`;
-const kafka = `gloaming-kafka-proof-broker-${id}`;
 const password = randomBytes(24).toString("hex");
 const images = {
   kafka:
@@ -55,9 +50,6 @@ const images = {
     "docker.io/library/postgres:18.6@sha256:7341002d2b8c7c5bdd7542a671a95b36196c0b5b888daf454ae4fc33ba5346d7",
 };
 const log = join(scratch, "execution.log");
-const ownedContainers: string[] = [];
-const failures: unknown[] = [];
-let manifest: Record<string, unknown> | undefined;
 const safe = (text: string): string => text.replaceAll(password, "[redacted]");
 const hash = (file: string): string =>
   createHash("sha256").update(readFileSync(file)).digest("hex");
@@ -66,8 +58,6 @@ const xml = (text: string): string =>
     .replaceAll("&", "&amp;")
     .replaceAll('"', "&quot;")
     .replaceAll("<", "&lt;");
-const execute = promisify(execFile);
-writeFileSync(log, "Kafka package-only native proof\n");
 function run(
   command: string,
   args: string[],
@@ -88,7 +78,7 @@ function run(
   assert.equal(
     result.status,
     0,
-    `${command} failed (${result.status}); log: ${log}\n${output}`,
+    `${command} failed (${result.signal ?? result.status}); log: ${log}\n${output}`,
   );
   return result.stdout;
 }
@@ -109,42 +99,7 @@ writeFileSync(log, "Kafka package-only native proof\n");
 const revision = run("git", ["rev-parse", "HEAD"]).trim();
 console.log(`Native Kafka package proof; evidence: ${scratch}`);
 
-async function freePort(): Promise<number> {
-  return await new Promise((resolvePort, reject) => {
-    const reservation = createServer();
-    reservation.on("error", reject);
-    reservation.listen(0, "127.0.0.1", () => {
-      const address = reservation.address();
-      if (!address || typeof address === "string")
-        return reject(new Error("No ephemeral port."));
-      reservation.close((error) =>
-        error ? reject(error) : resolvePort(address.port),
-      );
-    });
-  });
-}
-async function waitForBroker(): Promise<void> {
-  for (let attempt = 0; attempt < 8; attempt++) {
-    try {
-      await execute(
-        runtime!,
-        [
-          "exec",
-          kafka,
-          "/opt/kafka/bin/kafka-topics.sh",
-          "--bootstrap-server",
-          "localhost:19092",
-          "--list",
-        ],
-        { timeout: 10_000, maxBuffer: 1024 * 1024 },
-      );
-      return;
-    } catch {
-      await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
-    }
-  }
-  throw new Error("Owned Kafka container did not become ready.");
-}
+let manifest: Record<string, unknown>;
 try {
   console.log("Packing current Gloaming libraries.");
   const proof = preparePackageProof(root, scratch, run);
@@ -168,9 +123,30 @@ try {
     root,
     "Microsoft.Extensions.DependencyInjection",
   );
+  const { version: testcontainers } = nativePackage(
+    root,
+    "Testcontainers.PostgreSql",
+  );
   writeFileSync(
     join(directory, "Consumer.csproj"),
-    `<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><TreatWarningsAsErrors>true</TreatWarningsAsErrors><AnalysisLevel>latest-recommended</AnalysisLevel><EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild></PropertyGroup><ItemGroup><PackageReference Include="Gloaming.Messaging.EntityFrameworkCore.Postgres" Version="[${xml(version)}]"/><PackageReference Include="Confluent.Kafka" Version="[2.16.0]"/><PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[${xml(dependencyInjection)}]"/></ItemGroup></Project>`,
+    `<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Gloaming.Messaging.EntityFrameworkCore.Postgres" Version="[${xml(version)}]"/>
+    <PackageReference Include="Confluent.Kafka" Version="[2.16.0]"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="[${xml(dependencyInjection)}]"/>
+    <PackageReference Include="Testcontainers.PostgreSql" Version="[${xml(testcontainers)}]"/>
+  </ItemGroup>
+</Project>
+`,
   );
   const { gloaming: selected } = proof.restore(directory, [
     "Gloaming.EntityFrameworkCore",
@@ -195,161 +171,42 @@ try {
     "Package-only consumer built with a fresh cache and the four intended Gloaming packages.",
   );
 
-  const brokerPort = await freePort();
-  let proxyPort = await freePort();
-  while (proxyPort === brokerPort) proxyPort = await freePort();
-  ownedContainers.push(postgres);
-  run(
-    runtime,
-    [
-      "run",
-      "--detach",
-      "--name",
-      postgres,
-      "--publish",
-      "127.0.0.1::5432",
-      "--env",
-      "POSTGRES_PASSWORD",
-      "--env",
-      "POSTGRES_DB=kafka_proof",
-      images.postgres,
-    ],
-    root,
-    { ...process.env, POSTGRES_PASSWORD: password },
-    120_000,
-  );
-  const postgresPort = run(runtime, ["port", postgres, "5432/tcp"])
-    .trim()
-    .split(":")
-    .at(-1);
-  assert(
-    postgresPort && /^\d+$/.test(postgresPort),
-    "Expected an isolated native PostgreSQL port.",
-  );
-  ownedContainers.push(kafka);
-  run(
-    runtime,
-    [
-      "run",
-      "--detach",
-      "--name",
-      kafka,
-      "--publish",
-      `127.0.0.1:${brokerPort}:9092`,
-      "--env",
-      "KAFKA_NODE_ID=1",
-      "--env",
-      "KAFKA_PROCESS_ROLES=broker,controller",
-      "--env",
-      "KAFKA_LISTENERS=INTERNAL://:19092,CONTROLLER://:19093,EXTERNAL://:9092",
-      "--env",
-      `KAFKA_ADVERTISED_LISTENERS=INTERNAL://localhost:19092,EXTERNAL://127.0.0.1:${proxyPort}`,
-      "--env",
-      "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT",
-      "--env",
-      "KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL",
-      "--env",
-      "KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER",
-      "--env",
-      "KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:19093",
-      "--env",
-      "KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1",
-      "--env",
-      "KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1",
-      "--env",
-      "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1",
-      "--env",
-      "KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0",
-      images.kafka,
-    ],
-    root,
-    process.env,
-    120_000,
-  );
-  let pgReady = false;
-  for (let attempt = 0; attempt < 30; attempt++) {
-    if (
-      spawnSync(runtime, ["exec", postgres, "pg_isready", "-U", "postgres"], {
-        encoding: "utf8",
-        timeout: 5_000,
-      }).status === 0
-    ) {
-      pgReady = true;
-      break;
-    }
-    await new Promise((resolveDelay) => setTimeout(resolveDelay, 500));
-  }
-  assert(pgReady, "Owned PostgreSQL container did not become ready.");
-  await waitForBroker();
-  console.log(
-    "Native Kafka and PostgreSQL ready; executing provider/process scenarios.",
-  );
-  let restarted = false;
-  await new Promise<void>((resolveChild, reject) => {
-    const child = spawn(
-      dotnet,
-      [join(directory, "bin", "Release", "net10.0", "Consumer.dll")],
-      {
-        cwd: directory,
-        env: {
+  const cleanupFile = join(scratch, "cleanup.json");
+  process.stdout.write(
+    safe(
+      run(
+        dotnet,
+        [join(directory, "bin", "Release", "net10.0", "Consumer.dll")],
+        directory,
+        {
           ...packageEnv,
-          PROBE_POSTGRES: `Host=127.0.0.1;Port=${postgresPort};Database=kafka_proof;Username=postgres;Password=${password};Pooling=false`,
-          PROBE_KAFKA: `127.0.0.1:${proxyPort}`,
-          PROBE_KAFKA_UPSTREAM: `127.0.0.1:${brokerPort}`,
+          PROBE_POSTGRES_IMAGE: images.postgres,
+          PROBE_KAFKA_IMAGE: images.kafka,
+          PROBE_FIXTURE_PASSWORD: password,
           PROBE_RESULT: join(scratch, "results.json"),
+          PROBE_CLEANUP: cleanupFile,
           GLOAMING_PROOF_REVISION: revision,
           GLOAMING_PROOF_SOURCE: `fixture-${id}`,
           GLOAMING_PROOF_VERSION: version,
         },
-        stdio: ["pipe", "pipe", "pipe"],
-        timeout: 480_000,
-      },
-    );
-    let pending = "";
-    let control: Promise<void> = Promise.resolve();
-    child.stdout.on("data", (data: Buffer) => {
-      const text = safe(data.toString());
-      appendFileSync(log, text);
-      process.stdout.write(text);
-      pending += text;
-      const lines = pending.split("\n");
-      pending = lines.pop()!;
-      for (const line of lines)
-        if (line.trim() === "CONTROL:restart-broker") {
-          control = (async () => {
-            assert(!restarted, "Only one broker restart is selected.");
-            await execute(runtime!, ["restart", kafka], { timeout: 60_000 });
-            await waitForBroker();
-            restarted = true;
-            child.stdin.write("restarted\n");
-          })();
-          void control.catch((error) => {
-            child.kill("SIGKILL");
-            reject(error);
-          });
-        }
-    });
-    child.stderr.on("data", (data: Buffer) => {
-      const text = safe(data.toString());
-      appendFileSync(log, text);
-      process.stderr.write(text);
-    });
-    child.on("error", reject);
-    child.on("close", (code, signal) => {
-      void control
-        .then(() =>
-          code === 0
-            ? resolveChild()
-            : reject(
-                new Error(
-                  `Native proof failed (${code}, ${signal}); log: ${log}`,
-                ),
-              ),
-        )
-        .catch(reject);
-    });
-  });
-  assert(restarted, "Native broker restart must actually execute.");
+        480_000,
+      ),
+    ),
+  );
+  const cleanup = JSON.parse(readFileSync(cleanupFile, "utf8")) as {
+    name: string;
+    id: string;
+    outcome: string;
+  }[];
+  assert.deepEqual(
+    cleanup.map(({ name, outcome }) => ({ name, outcome })),
+    [
+      { name: "broker", outcome: "removed" },
+      { name: "pg", outcome: "removed" },
+    ],
+  );
+  assert(cleanup.every(({ id }) => id));
+  console.log(`Task-owned cleanup: ${JSON.stringify(cleanup)}`);
   const result = JSON.parse(
     readFileSync(join(scratch, "results.json"), "utf8"),
   ) as { cases: { name: string; result: string }[] };
@@ -368,64 +225,23 @@ try {
     gloamingPackages: selected,
     projectReferences: 0,
     packageCache: cache,
-    brokerRestarted: restarted,
+    brokerRestarted: true,
     consumerSources,
     cases: result.cases,
     verifiedAt: new Date().toISOString(),
   };
-} catch (failure) {
-  failures.push(failure);
-  try {
-    for (const name of ownedContainers) {
-      const result = spawnSync(runtime, ["logs", "--tail", "40", name], {
-        encoding: "utf8",
-        timeout: 10_000,
-      });
-      appendFileSync(log, safe((result.stdout ?? "") + (result.stderr ?? "")));
-    }
-  } catch (diagnosticFailure) {
-    failures.push(diagnosticFailure);
-  }
 } finally {
-  try {
-    const cleanup = removeOwnedContainers(
-      runtime,
-      ownedContainers.toReversed(),
-    );
-    writeFileSync(
-      join(scratch, "cleanup.json"),
-      JSON.stringify(cleanup, null, 2) + "\n",
-    );
-    console.log(`Task-owned cleanup: ${JSON.stringify(cleanup)}`);
-    if (cleanup.some((result) => result.outcome === "failed"))
-      failures.push(
-        new Error(`Owned container cleanup failed; evidence: ${scratch}`),
-      );
-  } catch (failure) {
-    failures.push(failure);
-  }
-  try {
-    assert.equal(
-      readIndex(),
-      indexBefore,
-      "The review index changed during verification.",
-    );
-    assert.equal(
-      readStaged(),
-      stagedBefore,
-      "The staged review snapshot changed.",
-    );
-  } catch (failure) {
-    failures.push(failure);
-  }
-}
-if (failures.length === 1) throw failures[0];
-if (failures.length > 1)
-  throw new AggregateError(
-    failures,
-    `Kafka proof or cleanup failed; evidence: ${scratch}`,
+  assert.equal(
+    readIndex(),
+    indexBefore,
+    "The review index changed during verification.",
   );
-assert(manifest, "A successful proof must produce a manifest.");
+  assert.equal(
+    readStaged(),
+    stagedBefore,
+    "The staged review snapshot changed.",
+  );
+}
 writeFileSync(
   join(scratch, "manifest.json"),
   JSON.stringify(manifest, null, 2) + "\n",

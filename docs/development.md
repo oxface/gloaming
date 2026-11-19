@@ -60,19 +60,16 @@ tests with --no-build. MSBuild arguments are not test-runner arguments.
 
 ## Native Kafka package proof
 
-The separate [Kafka recipe](../modular-monolith-patterns/kafka.md) uses a local Docker or Podman
-CLI, the pinned SDK/Node and real task-owned Kafka/PostgreSQL containers. It packs current libraries
-and builds an external consumer with a fresh package cache. It is not an additional native
-Microsoft Testing Platform project:
+The separate [Kafka recipe](../modular-monolith-patterns/kafka.md) uses the pinned SDK and
+Node with Testcontainers. It packs current libraries and builds an external consumer with
+a fresh package cache before running it against disposable Kafka and PostgreSQL.
 
 ~~~bash
 npm --prefix eng/release run verify:kafka
-# Select Podman explicitly if both CLIs are installed:
-GLOAMING_CONTAINER_RUNTIME=podman npm --prefix eng/release run verify:kafka
 ~~~
 
-See the [consumer guide](../eng/release/consumers/Kafka/README.md) for execution, retained
-evidence, resource ownership and the selected topology. Native provider/process, ordinary
+Use the Docker-compatible socket for your engine. The [Kafka consumer guide](../eng/release/consumers/Kafka/README.md)
+includes the rootless Podman invocation, retained evidence and resource ownership. Native provider/process, ordinary
 package and this Kafka package profile protect different integration obligations.
 
 ## Run the reference application
@@ -91,7 +88,11 @@ dotnet test --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposit
 ~~~
 
 Run local runtime graphs sequentially: container-network teardown can disturb another graph.
-Use the AppHost guide's trust instructions for Linux browser and HTTPS tests.
+Use the AppHost guide's trust instructions for Linux browser and HTTPS tests. To retain
+diagnostics locally, create a results directory, set `WHOLESALE_RUNTIME_RESULTS` to its
+path, and pass it to `dotnet test --results-directory` with `--report-xunit-trx` and
+`--report-xunit-markdown`. This retains AppHost state and recent logs alongside the
+Playwright traces and native test reports.
 
 ## Use packages from another repository
 
@@ -120,7 +121,8 @@ dotnet format analyzers Gloaming.slnx --verify-no-changes --no-restore
 [Repository tooling](../eng/README.md) checks public Markdown and literal
 project/source links. Ignored local notes do not participate in published documentation.
 The [release-tool checks](../eng/release/README.md#full-package-adoption-proof) also format-check
-the retained package-consumer C# sources and exercise helper lifecycles without a database or broker.
+the retained package-consumer C# sources. The [native proxy suite](../eng/release/tests/KafkaProxy.Tests.csproj)
+exercises socket lifecycles as part of the ordinary Nx tests.
 
 The [CI workflow](../.github/workflows/ci.yml) uses one scope job for Repository integrity,
 package adoption, Kafka adoption, and Wholesale runtime. The run summary shows the comparison

@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.Json;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
@@ -12,8 +15,8 @@ await KafkaJourney.RunAsync(args);
 
 static partial class KafkaJourney
 {
-    internal static readonly string Broker = Required("PROBE_KAFKA");
-    internal static readonly string Connection = Required("PROBE_POSTGRES");
+    internal static string Broker => Required("PROBE_KAFKA");
+    internal static string Connection => Required("PROBE_POSTGRES");
     private static readonly string SourceIncarnation = Required("GLOAMING_PROOF_SOURCE");
     private static readonly Timestamp RecordTimestamp = new(DateTime.UtcNow);
     private const string TraceParent = "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01";
@@ -69,6 +72,27 @@ static partial class KafkaJourney
             return;
         }
 
+        // Bind the lifetime of the advertised endpoint to the consumer journey.
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        using var fixtureDeadline = CancellationTokenSource.CreateLinkedTokenSource(Token);
+        fixtureDeadline.CancelAfter(TimeSpan.FromMinutes(2));
+        await using var fixtures = new ProviderFixture(
+            Required("PROBE_POSTGRES_IMAGE"),
+            Required("PROBE_KAFKA_IMAGE"),
+            Required("PROBE_FIXTURE_PASSWORD"),
+            SourceIncarnation,
+            Required("PROBE_CLEANUP"),
+            port
+        );
+        await fixtures.StartAsync(fixtureDeadline.Token);
+        Environment.SetEnvironmentVariable("PROBE_POSTGRES", fixtures.ConnectionString);
+        Environment.SetEnvironmentVariable(
+            "PROBE_KAFKA",
+            FormattableString.Invariant($"127.0.0.1:{port}")
+        );
+
         await using (var sender = Sender())
             await sender.Database.ExecuteSqlRawAsync(sender.Database.GenerateCreateScript(), Token);
         await using (var receiver = Receiver())
@@ -77,10 +101,7 @@ static partial class KafkaJourney
                 Token
             );
 
-        await using var proxy = new BrokerProxy(
-            Required("PROBE_KAFKA_UPSTREAM"),
-            new Uri("tcp://" + Broker).Port
-        );
+        await using var proxy = new BrokerProxy(fixtures.BrokerAddress, listener);
         proxy.Start();
         string topic = "gloaming-kafka-" + Guid.NewGuid().ToString("N");
         string group = topic + "-group";
@@ -173,7 +194,7 @@ static partial class KafkaJourney
             Check(await crash.BarrierAsync(Token) == 0, "Intake must start at original offset 0.");
             await CountsAsync(0, 0, 0);
             Check(
-                Committed(topic, group) < 0,
+                await CommittedAsync(topic, group) < 0,
                 "Uncommitted intake must not advance Kafka offsets."
             );
             await crash.KillAsync();
@@ -182,7 +203,7 @@ static partial class KafkaJourney
         await CountsAsync(0, 0, 0);
         Pass(
             "intake-crash-before-database-commit",
-            new { committedOffset = Committed(topic, group) }
+            new { committedOffset = await CommittedAsync(topic, group) }
         );
 
         // Database commit survives death before the independent Kafka offset commit.
@@ -194,7 +215,7 @@ static partial class KafkaJourney
             );
             await CountsAsync(1, 0, 0);
             Check(
-                Committed(topic, group) < 0,
+                await CommittedAsync(topic, group) < 0,
                 "Database-only acceptance must leave offset retryable."
             );
             await crash.KillAsync();
@@ -202,7 +223,7 @@ static partial class KafkaJourney
 
         Pass(
             "intake-crash-after-database-commit",
-            new { committedOffset = Committed(topic, group) }
+            new { committedOffset = await CommittedAsync(topic, group) }
         );
 
         using (var consumer = Consumer(group))
@@ -230,7 +251,7 @@ static partial class KafkaJourney
         }
 
         Check(
-            Committed(topic, group) == 2,
+            await CommittedAsync(topic, group) == 2,
             "Broker must retain next offset 2 only after both durable receipts."
         );
         await CountsAsync(1, 0, 0);
@@ -319,7 +340,7 @@ static partial class KafkaJourney
         }
 
         Check(
-            Committed(topic, group) == 2,
+            await CommittedAsync(topic, group) == 2,
             "Conflict must not advance past itself or later valid work."
         );
         await CountsAsync(1, 1, 0);
@@ -365,7 +386,10 @@ static partial class KafkaJourney
             consumer.Close();
         }
 
-        Check(Committed(topic, group) == 5, "Durable dispositions must advance to next offset 5.");
+        Check(
+            await CommittedAsync(topic, group) == 5,
+            "Durable dispositions must advance to next offset 5."
+        );
         await CountsAsync(2, 1, 2);
         await using (var observer = Receiver())
         {
@@ -453,7 +477,7 @@ static partial class KafkaJourney
             );
             successor.Commit(record);
             Check(
-                Committed(rebalanceTopic, rebalanceGroup) == 1,
+                await CommittedAsync(rebalanceTopic, rebalanceGroup) == 1,
                 "Successor must commit only its accepted offset."
             );
             await old.ResumeAsync();
@@ -471,7 +495,7 @@ static partial class KafkaJourney
         }
 
         Check(
-            Committed(rebalanceTopic, rebalanceGroup) == 1,
+            await CommittedAsync(rebalanceTopic, rebalanceGroup) == 1,
             "Stale owner must leave successor offset intact."
         );
         await using (var provider = Services(new FailureSwitch()))
@@ -493,7 +517,7 @@ static partial class KafkaJourney
             new { nextOffset = 1, staleCommit = staleCommitError }
         );
 
-        await RecoveryCasesAsync(proxy, topic, group);
+        await RecoveryCasesAsync(proxy, fixtures, topic, group);
         await using (var observer = Receiver())
         {
             var receipts = await observer.Set<InboxMessageRecord>().ToArrayAsync(Token);
@@ -548,6 +572,7 @@ static partial class KafkaJourney
             ),
             Token
         );
+        fixtures.Completed = true;
         Console.WriteLine(
             "PASS ALL " + Results.Count + " Kafka/PostgreSQL package adoption scenarios."
         );
@@ -628,13 +653,34 @@ static partial class KafkaJourney
         return consumer.Consume(bounded.Token);
     }
 
-    private static long Committed(string topic, string group)
+    private static async Task<long> CommittedAsync(string topic, string group)
     {
         using var observer = Consumer(group);
-        return observer
-            .Committed([new TopicPartition(topic, 0)], TimeSpan.FromSeconds(10))
-            .Single()
-            .Offset.Value;
+        TopicPartition[] partitions = [new(topic, 0)];
+        var budget = TimeSpan.FromSeconds(10);
+        var started = Stopwatch.GetTimestamp();
+        var remaining = budget;
+        while (true)
+        {
+            Token.ThrowIfCancellationRequested();
+            try
+            {
+                return observer.Committed(partitions, remaining).Single().Offset.Value;
+            }
+            catch (KafkaException error)
+                when (error.Error.Code
+                        is ErrorCode.GroupLoadInProgress
+                            or ErrorCode.GroupCoordinatorNotAvailable
+                            or ErrorCode.NotCoordinatorForGroup
+                )
+            {
+                // Topic readiness can precede the coordinator loading the group's offsets.
+                await Task.Delay(TimeSpan.FromMilliseconds(100), Token);
+                remaining = budget - Stopwatch.GetElapsedTime(started);
+                if (remaining <= TimeSpan.Zero)
+                    throw;
+            }
+        }
     }
 
     private static OutgoingMessage Message(string topic, int amount) =>

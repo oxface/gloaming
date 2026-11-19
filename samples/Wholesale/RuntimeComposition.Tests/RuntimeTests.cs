@@ -37,6 +37,7 @@ public sealed class RuntimeTests
         builder.Configuration["Parameters:oidc-client-id"] = "inert-topology-client";
         builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         await using var app = await builder.BuildAsync(cancellation);
+        await using var evidence = new RuntimeEvidence(app, "database-outage");
         await app.StartAsync(cancellation);
         await app.ResourceNotifications.WaitForResourceHealthyAsync("wholesale", cancellation);
         await app.ResourceNotifications.WaitForResourceAsync(
@@ -120,6 +121,5 @@ public sealed class RuntimeTests
         Assert.Equal(HttpStatusCode.ServiceUnavailable, unready.StatusCode);
         Assert.Equal(HttpStatusCode.OK, alive.StatusCode);
         Assert.Equal(HttpStatusCode.InternalServerError, failedRead.StatusCode);
-        await app.StopAsync(cancellation);
     }
 }

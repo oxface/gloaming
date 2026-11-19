@@ -228,7 +228,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up .NET
-        if: needs.changes.outputs.repository_dotnet == 'true'
+        if: needs.changes.outputs.repository_dotnet == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.kafka == 'true'
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
@@ -251,7 +251,11 @@ jobs:
 
       - name: Test architecture, module schemas and independent adoption
         if: needs.changes.outputs.repository_dotnet == 'true'
-        run: dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-build --no-restore --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+        run: >-
+          dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj
+          --no-build --no-restore --no-progress --no-ansi --output Normal
+          --show-stdout Failed --show-stderr Failed
+          --results-directory "$RUNNER_TEMP/repository-tests" --report-xunit-trx --report-xunit-markdown
 
       - name: Set up Node.js for repository checks
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -275,8 +279,14 @@ jobs:
         run: npm --prefix eng/repository run check
 
       - name: Restore active formatter
-        if: needs.changes.outputs.repository_dotnet == 'true'
+        if: needs.changes.outputs.repository_dotnet == 'true' || needs.changes.outputs.packages == 'true' || needs.changes.outputs.kafka == 'true'
         run: dotnet tool restore
+
+      - name: Verify release tooling
+        if: needs.changes.outputs.packages == 'true' || needs.changes.outputs.kafka == 'true'
+        run: |
+          npm ci --prefix eng/release --ignore-scripts
+          npm --prefix eng/release run check
 
       - name: Verify root formatting
         if: needs.changes.outputs.repository_dotnet == 'true'
@@ -303,15 +313,24 @@ jobs:
 
       - name: Run affected native test projects
         if: needs.changes.outputs.repository_dotnet == 'true' && needs.changes.outputs.full != 'true'
-        run: npm run test:affected -- --excludeTaskDependencies --parallel=3 --outputStyle=static
+        run: >-
+          npm run test:affected -- --excludeTaskDependencies --parallel=3 --outputStyle=static
+          --results-directory="$RUNNER_TEMP/repository-tests" --report-xunit-trx --report-xunit-markdown
 
       - name: Run every ordinary native test project
         if: needs.changes.outputs.full == 'true'
-        run: npm run test:ordinary -- --excludeTaskDependencies --parallel=3 --outputStyle=static
+        run: >-
+          npm run test:ordinary -- --excludeTaskDependencies --parallel=3 --outputStyle=static
+          --results-directory="$RUNNER_TEMP/repository-tests" --report-xunit-trx --report-xunit-markdown
 
-      - name: Run codec sample consumer
-        if: needs.changes.outputs.repository_dotnet == 'true'
-        run: dotnet run --project src/Gloaming.Events/samples/EventCodecDemo/EventCodecDemo.csproj --no-build --no-restore
+      - name: Retain native test reports
+        if: ${{ !cancelled() && needs.changes.outputs.repository_dotnet == 'true' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: repository-test-reports-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/repository-tests
+          if-no-files-found: ignore
+          retention-days: 7
 
   packages:
     needs: changes
@@ -349,12 +368,20 @@ jobs:
           package-manager-cache: false
       - name: Install package verification tooling
         run: npm ci --prefix eng/release --ignore-scripts
-      - name: Restore pinned .NET tools
-        run: dotnet tool restore
-      - name: Check TypeScript and formatting
-        run: npm --prefix eng/release run check
       - name: Prove local package artifacts and external consumers
+        env:
+          TMPDIR: ${{ runner.temp }}
         run: npm --prefix eng/release run verify
+      - name: Retain package adoption evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-adoption-evidence-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gloaming-package-proof-*/*.log
+            ${{ runner.temp }}/gloaming-package-proof-*/manifest.json
+          if-no-files-found: ignore
+          retention-days: 7
 
   kafka:
     needs: changes
@@ -362,8 +389,6 @@ jobs:
     name: Native Kafka package adoption
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      GLOAMING_CONTAINER_RUNTIME: docker
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -380,12 +405,22 @@ jobs:
           package-manager-cache: false
       - name: Install package verification tooling
         run: npm ci --prefix eng/release --ignore-scripts
-      - name: Restore pinned .NET tools
-        run: dotnet tool restore
-      - name: Check TypeScript and formatting
-        run: npm --prefix eng/release run check
       - name: Prove native Kafka delivery from packed libraries
+        env:
+          TMPDIR: ${{ runner.temp }}
         run: npm --prefix eng/release run verify:kafka
+      - name: Retain Kafka adoption evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: kafka-adoption-evidence-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gloaming-kafka-package-proof-*/execution.log
+            ${{ runner.temp }}/gloaming-kafka-package-proof-*/manifest.json
+            ${{ runner.temp }}/gloaming-kafka-package-proof-*/results.json
+            ${{ runner.temp }}/gloaming-kafka-package-proof-*/cleanup.json
+          if-no-files-found: ignore
+          retention-days: 7
 
   runtime:
     needs: changes
@@ -411,18 +446,22 @@ jobs:
         run: |
           aspire_version="$(dotnet msbuild samples/Wholesale/AppHost/Wholesale.AppHost.csproj -getProperty:AspireHostingSDKVersion -nologo)"
           dotnet tool install --global Aspire.Cli --version "$aspire_version"
-      - name: Install Linux certificate trust tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes libnss3-tools
       - name: Trust native development HTTPS certificate
         run: |
-          # Trust checks use this environment in the current step as well as later steps.
+          command -v certutil
+          nss_db="${XDG_DATA_HOME:-$HOME/.local/share}/pki/nssdb"
+          if [[ -d "$HOME/.pki/nssdb" ]]; then
+            nss_db="$HOME/.pki/nssdb"
+          fi
+          mkdir -p "$nss_db"
+          if [[ ! -f "$nss_db/cert9.db" ]]; then
+            certutil -N --empty-password -d "sql:$nss_db"
+          fi
+          export DOTNET_DEV_CERTS_NSSDB_PATHS="$nss_db"
           export SSL_CERT_DIR="$HOME/.aspnet/dev-certs/trust:${SSL_CERT_DIR:-/etc/ssl/certs}"
           dotnet dev-certs https --trust
-          echo "SSL_CERT_DIR=$SSL_CERT_DIR" >> "$GITHUB_ENV"
-      - name: Verify development HTTPS certificate trust
-        run: dotnet dev-certs https --check --trust
+          dotnet dev-certs https --check --trust
+          printf 'SSL_CERT_DIR=%s\n' "$SSL_CERT_DIR" >> "$GITHUB_ENV"
       - name: Restore runtime consumer and its dependencies
         run: dotnet restore samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj
       - name: Build runtime consumer and its dependencies
@@ -435,15 +474,16 @@ jobs:
           WHOLESALE_RUNTIME_RESULTS: ${{ runner.temp }}/wholesale-runtime
         run: |
           mkdir -p "$WHOLESALE_RUNTIME_RESULTS"
-          dotnet test \
+          timeout --signal=INT --kill-after=20s 10m dotnet test \
             --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj \
             --no-build --no-restore --no-progress --no-ansi --output Normal \
             --show-stdout Failed --show-stderr Failed \
             --results-directory "$WHOLESALE_RUNTIME_RESULTS" \
             --report-xunit-trx --report-xunit-trx-filename wholesale-runtime.trx \
+            --report-xunit-markdown \
             2>&1 | tee "$WHOLESALE_RUNTIME_RESULTS/test.log"
-      - name: Retain Wholesale runtime failure diagnostics
-        if: failure()
+      - name: Retain Wholesale runtime evidence
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: wholesale-runtime-diagnostics-${{ github.run_attempt }}

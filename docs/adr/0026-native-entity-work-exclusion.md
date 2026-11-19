@@ -1,6 +1,6 @@
 # ADR 0026: native entity-work exclusion
 
-Status: accepted architecture decision. Exact changes remain subject to owner review before commit.
+Status: accepted architecture decision.
 
 ## Context
 

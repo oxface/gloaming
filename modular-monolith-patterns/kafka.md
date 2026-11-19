@@ -106,21 +106,21 @@ PostgreSQL effects.
 
 ## Verification and limits
 
-From the Gloaming repository root, with the pinned SDK/Node and a local Docker or Podman CLI:
+From the Gloaming repository root, with the pinned SDK, Node and a Docker-compatible engine:
 
 ```sh
 npm ci --prefix eng/release --ignore-scripts
 npm --prefix eng/release run verify:kafka
-# Select the local engine explicitly when needed:
-GLOAMING_CONTAINER_RUNTIME=podman npm --prefix eng/release run verify:kafka
 ```
 
 The [runner](https://github.com/oxface/gloaming/blob/main/eng/release/verify-kafka.ts) packs current libraries, restores an external
 consumer through source mapping into a fresh cache, verifies its exact four-package Gloaming
-closure and zero ProjectReferences, then provisions its own isolated broker and PostgreSQL.
-It retains source/archive hashes, redacted logs, per-scenario outcomes and cleanup evidence.
+closure and zero ProjectReferences, then uses Testcontainers to provision an isolated broker and
+PostgreSQL. It retains source/archive hashes, redacted logs, per-scenario outcomes and cleanup
+evidence. See the [consumer guide](https://github.com/oxface/gloaming/blob/main/eng/release/consumers/Kafka/README.md)
+for rootless Podman setup.
 The [Native Kafka package adoption check](https://github.com/oxface/gloaming/blob/main/.github/workflows/ci.yml)
-owns this profile. The ordinary seventeen-profile package command remains PostgreSQL-only.
+owns this profile. The ordinary package command uses PostgreSQL.
 
 The selected proofs cover process death before/after intake commit, accepted publication before
 outbox completion, duplicate effects, native local rollback, conflicting/malformed disposition,

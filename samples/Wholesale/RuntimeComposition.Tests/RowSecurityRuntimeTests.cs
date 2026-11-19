@@ -39,6 +39,7 @@ public sealed class RowSecurityRuntimeTests
         builder.Configuration["Parameters:oidc-client-id"] = "inert-a27-client";
         builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         await using var app = await builder.BuildAsync(cancellation);
+        await using var evidence = new RuntimeEvidence(app, "row-security-runtime");
         await app.StartAsync(cancellation);
         await app.ResourceNotifications.WaitForResourceHealthyAsync("wholesale", cancellation);
         Assert.True(app.ResourceNotifications.TryGetCurrentState("api", out var api));
@@ -68,6 +69,39 @@ public sealed class RowSecurityRuntimeTests
         );
         Assert.True(app.ResourceNotifications.TryGetCurrentState("demo-setup", out var finished));
         Assert.Equal(0, finished.Snapshot.ExitCode);
+
+        await using (
+            var policies = new NpgsqlCommand(
+                """
+                SELECT ARRAY(SELECT rolname::text FROM pg_roles
+                        WHERE rolname IN ('wholesale_access', 'wholesale_sales') ORDER BY rolname),
+                    ARRAY(SELECT c.relname::text FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+                        WHERE n.nspname = 'sales' AND c.relrowsecurity AND c.relforcerowsecurity
+                        ORDER BY c.relname)
+                """,
+                observer
+            )
+        )
+        {
+            await using var reader = await policies.ExecuteReaderAsync(cancellation);
+            Assert.True(await reader.ReadAsync(cancellation));
+            Assert.Equal<string>(
+                ["wholesale_access", "wholesale_sales"],
+                reader.GetFieldValue<string[]>(0)
+            );
+            Assert.Equal<string>(
+                [
+                    "audit_entries",
+                    "customer_addresses",
+                    "customer_profiles",
+                    "draft_order_grants",
+                    "draft_order_lines",
+                    "draft_orders",
+                ],
+                reader.GetFieldValue<string[]>(1)
+            );
+        }
+
         var started = await commands.ExecuteCommandAsync(
             "api",
             KnownResourceCommands.StartCommand,
@@ -161,7 +195,5 @@ public sealed class RowSecurityRuntimeTests
             );
             Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, rejected.SqlState);
         }
-
-        await app.StopAsync(cancellation);
     }
 }

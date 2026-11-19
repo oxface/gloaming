@@ -7,7 +7,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Aspire.Hosting.Testing" />
-    <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="Microsoft.Playwright.Xunit.v3" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../AppHost/Wholesale.AppHost.csproj" />
     <ProjectReference Include="../Api/Wholesale.Api.csproj" />

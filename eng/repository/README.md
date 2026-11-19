@@ -87,8 +87,8 @@ configuration; dependency bots receive no validation bypass.
 The root [Nx configuration](../../nx.json) pins the first-party `@nx/dotnet` plugin
 through the root [manifest](../../package.json) and lockfile. MSBuild infers project
 references, build dependencies and native `test-dotnet` targets. The native test target
-name keeps .NET CI separate from npm packages' own `test` scripts. The repository and release-tool
-[projects](project.json) expose their existing checks through the same task runner.
+name keeps .NET CI separate from npm packages' own `test` scripts. The [repository tooling](project.json) and [package tooling](../release/project.json)
+also expose Nx targets.
 Native `dotnet` and prefix-based npm commands remain usable directly.
 
 Install and restore before using the inferred graph:
@@ -131,7 +131,8 @@ Nx and path filters. PRs compare their base SHA with the checked-out merge SHA. 
 `main` compare against the last successful push run of this workflow so a failed or canceled
 run does not drop pending changes from scope. If the base is unavailable, equal to the
 checked-out commit, or outside its history, all checks eligible for that event run.
-Manual dispatch, shared build/project/CI inputs and unmapped paths also request full coverage.
+Manual dispatch, changes to shared build or CI inputs, and paths outside the
+configured source and tooling roots also request full coverage.
 The scope job summary records the comparison range, selection or fallback reason, and which
 checks will run.
 
@@ -140,28 +141,26 @@ and the [environment scope map](../../.github/ci-paths.yml) for Repository integ
 steps, package adoption, and Kafka adoption. Package and Kafka proof scripts own the inputs
 for consumers they generate outside the checkout.
 
-PRs with a usable comparison range also evaluate the [Kafka Nx target](../release/project.json)
-using the Postgres messaging project, its transitive project references, the release tooling
-and the Kafka guide. The scope summary shows the raw path filter result, the advisory Nx result,
-the final Kafka job decision after applying fallbacks, and the Nx query duration. Compare setup
-and path filter durations in the scope step timings. When Wholesale runtime selection has
-already queried Nx, it can warm the graph cache for the Kafka query. The path filter and
-existing full-run fallbacks control the Kafka job.
+The Kafka path filter and full-run fallbacks control the Kafka job. The scope summary
+includes the [Kafka Nx target](../release/project.json) as an advisory comparison.
+That target models the PostgreSQL messaging project, its transitive references and the
+Kafka guide.
 
 Wholesale runtime remains eligible on PRs and manual dispatch. Scoped PRs use Nx to detect
 changes that affect `RuntimeComposition.Tests`, including its AppHost and API references.
 Its [Nx target inputs](../../samples/Wholesale/RuntimeComposition.Tests/project.json) also
 cover the entire Wholesale sample and root Aspire configuration, including files Aspire
 reads at runtime. Scope needs the SDK and pinned Nx to evaluate the graph. The runtime job
-owns the restore, browser installation, certificate trust, and Aspire test execution. On failure
-after tests start, the `wholesale-runtime-diagnostics-<attempt>` artifact retains the test log,
-xUnit TRX report and any Playwright traces produced by the browser cases for seven days.
+owns the restore, browser installation, certificate trust, and Aspire test execution. The
+`wholesale-runtime-diagnostics-<attempt>` artifact retains the test log, native xUnit TRX
+and Markdown reports, bounded AppHost resource diagnostics and Playwright traces when
+available. Repository integrity publishes its native xUnit reports and verifies release
+tooling once whenever either package proof is selected. The two package jobs retain their
+logs and available manifests, with per-case results and cleanup evidence for Kafka. These
+artifacts are retained for seven days.
 
-Central `Directory.Packages.props` edits now request full coverage, including all special
-proofs. The literal package selector has been retired. Nx also treats the central file as
-a shared native input; package-specific version selection is not claimed. Packaged README
-and recipe edits retain their existing package/Kafka proof selection. Repository integrity
-continues its full-solution restore and formatting checks.
+`Directory.Packages.props` is a shared input and selects full coverage. Packaged README
+and recipe changes select the package proofs whose inputs include them.
 
 `npm --prefix eng/repository run check` verifies environment scopes, the scope summary, gate
 handling of check results and local references. After installing root Nx and restoring the solution,
@@ -178,5 +177,7 @@ full-run fallback. New ordinary test projects do not require a family lane entry
 results from every selected environment check. It accepts a skipped result when scope or event
 policy excludes that check, such as Wholesale runtime on pushes. Once those results are verified,
 the gate runs repository validation. When .NET checks are selected, it builds the solution once
-and uses those outputs for architecture checks, Nx-selected tests and the codec sample. The three
+and uses those outputs for architecture checks and Nx-selected tests. The
+[codec adoption test](../../src/Gloaming.Events/tests/CodecAdoptionTests/CompatibilityTests.cs)
+starts the actual sample and checks its output. The three
 environment checks have individual results in **CI**.

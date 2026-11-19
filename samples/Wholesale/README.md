@@ -1,9 +1,13 @@
-# Wholesale reference product
+# Wholesale reference application
 
 Wholesale composes Access, Sales and Inventory through their public Contracts and
 separate module-owned persistence. Run its [Api](Api/README.md), [Worker](Worker/README.md) and
 finite setup/maintenance roles. [AppHost](AppHost/README.md) orchestrates local PostgreSQL,
 optional Keycloak and the API; it never runs migrations/seeds as an API startup side effect.
+
+The [sample build properties](Directory.Build.props) mark the Wholesale projects as non-packable.
+The solution builds the application and its suites for adoption coverage. The
+[local NuGet pack command](../../eng/release/README.md) delivers the library projects under `src/`.
 
 | Product path | Supported behavior |
 | --- | --- |
