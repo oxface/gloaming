@@ -2,6 +2,12 @@ name: CI
 
 on:
   workflow_dispatch:
+    inputs:
+      performance:
+        description: Performance suite to run
+        type: choice
+        options: ['off', all, events, messaging, wholesale]
+        default: 'off'
   pull_request:
   push:
     branches:
@@ -249,14 +255,6 @@ jobs:
         if: needs.changes.outputs.repository_dotnet == 'true'
         run: dotnet build Gloaming.slnx --no-restore
 
-      - name: Test architecture, module schemas and independent adoption
-        if: needs.changes.outputs.repository_dotnet == 'true'
-        run: >-
-          dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj
-          --no-build --no-restore --no-progress --no-ansi --output Normal
-          --show-stdout Failed --show-stderr Failed
-          --results-directory "$RUNNER_TEMP/repository-tests" --report-xunit-trx --report-xunit-markdown
-
       - name: Set up Node.js for repository checks
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -274,6 +272,12 @@ jobs:
       - name: Verify Nx project inference and affected selection
         if: needs.changes.outputs.repository_dotnet == 'true'
         run: npm run check:nx
+
+      - name: Test architecture, module schemas and independent adoption
+        if: needs.changes.outputs.repository_dotnet == 'true'
+        run: >-
+          npm run test:architecture -- --excludeTaskDependencies --outputStyle=static
+          --results-directory="$RUNNER_TEMP/repository-tests" --report-xunit-trx --report-xunit-markdown
 
       - name: Verify repository tooling and local references
         run: npm --prefix eng/repository run check
@@ -371,7 +375,7 @@ jobs:
       - name: Prove local package artifacts and external consumers
         env:
           TMPDIR: ${{ runner.temp }}
-        run: npm --prefix eng/release run verify
+        run: npm run verify:packages
       - name: Retain package adoption evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -408,7 +412,7 @@ jobs:
       - name: Prove native Kafka delivery from packed libraries
         env:
           TMPDIR: ${{ runner.temp }}
-        run: npm --prefix eng/release run verify:kafka
+        run: npm run verify:kafka
       - name: Retain Kafka adoption evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -427,7 +431,9 @@ jobs:
     if: needs.changes.outputs.runtime == 'true'
     name: Wholesale runtime
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: ${{ inputs.performance && inputs.performance != 'off' && 45 || 15 }}
+    env:
+      NX_DAEMON: 'false'
     defaults:
       run:
         working-directory: ${{ github.workspace }}
@@ -440,6 +446,13 @@ jobs:
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
           global-json-file: global.json
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.21.0
+          package-manager-cache: false
+      - name: Install pinned Nx
+        run: npm ci --ignore-scripts
       - name: Install Aspire CLI matching the AppHost SDK
         env:
           DOTNET_NOLOGO: "true"
@@ -474,14 +487,16 @@ jobs:
           WHOLESALE_RUNTIME_RESULTS: ${{ runner.temp }}/wholesale-runtime
         run: |
           mkdir -p "$WHOLESALE_RUNTIME_RESULTS"
-          timeout --signal=INT --kill-after=20s 10m dotnet test \
-            --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj \
-            --no-build --no-restore --no-progress --no-ansi --output Normal \
-            --show-stdout Failed --show-stderr Failed \
-            --results-directory "$WHOLESALE_RUNTIME_RESULTS" \
-            --report-xunit-trx --report-xunit-trx-filename wholesale-runtime.trx \
-            --report-xunit-markdown \
-            2>&1 | tee "$WHOLESALE_RUNTIME_RESULTS/test.log"
+          timeout --signal=INT --kill-after=20s 10m bash -c '
+            args=(--excludeTaskDependencies --outputStyle=static
+                  --results-directory="$WHOLESALE_RUNTIME_RESULTS"
+                  --report-xunit-trx --report-xunit-markdown)
+            npm run test:system -- "${args[@]}" --report-xunit-trx-filename=wholesale-system.trx
+            system_status=$?
+            npm run test:browser -- "${args[@]}" --report-xunit-trx-filename=wholesale-browser.trx
+            browser_status=$?
+            (( system_status == 0 && browser_status == 0 ))
+          ' 2>&1 | tee "$WHOLESALE_RUNTIME_RESULTS/test.log"
       - name: Retain Wholesale runtime evidence
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -489,4 +504,23 @@ jobs:
           name: wholesale-runtime-diagnostics-${{ github.run_attempt }}
           path: ${{ runner.temp }}/wholesale-runtime
           if-no-files-found: ignore
+          retention-days: 7
+      - name: Run selected performance suites
+        if: inputs.performance && inputs.performance != 'off'
+        env:
+          PERFORMANCE_SUITE: ${{ inputs.performance }}
+        run: |
+          if [[ "$PERFORMANCE_SUITE" == all ]]; then
+            npm run perf -- --outputStyle=static
+          else
+            npm run "perf:$PERFORMANCE_SUITE" -- --outputStyle=static
+          fi
+      - name: Retain native performance reports
+        if: ${{ !cancelled() && inputs.performance && inputs.performance != 'off' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: performance-reports-${{ github.run_attempt }}
+          path: .artifacts/performance
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 7

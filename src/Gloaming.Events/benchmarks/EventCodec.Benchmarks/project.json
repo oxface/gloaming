@@ -1,0 +1,8 @@
+{
+  "targets": {
+    "performance": {
+      "cache": false,
+      "command": "node eng/repository/run-performance.ts event-codec --artifacts run --project src/Gloaming.Events/benchmarks/EventCodec.Benchmarks --configuration Release -- --filter \"*\""
+    }
+  }
+}

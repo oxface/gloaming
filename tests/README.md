@@ -6,20 +6,35 @@ suites. The release tooling owns a native loopback test project for the Kafka fa
 The solution includes every native test project. Earlier/Current binaries and other
 fixture hosts are executable consumers for compatibility and process tests.
 
-## Run a selected suite
+## Run one suite
 
-From the repository root, restore/build the solution, then select a project from the table below:
+Use the smallest suite that covers the change. Nx selects the .NET project and
+orders its build and test tasks. xUnit on Microsoft Testing Platform then
+discovers the cases, applies any class filters, and runs the test fixtures.
+
+| Suite | Command | Execution after Nx selects the project |
+| --- | --- | --- |
+| Messaging contracts | `npm run test:messaging` | xUnit calls the library in-process. |
+| Inbox and outbox integration | `npm run test:inbox-outbox` | xUnit and Testcontainers run the persistence cases against disposable PostgreSQL. |
+| Wholesale application and provider integration | `npm run test:application` | xUnit runs the application's scenarios. Provider cases use PostgreSQL and RabbitMQ fixtures. |
+| Wholesale system | `npm run test:system` | xUnit uses Aspire Testing to start the Wholesale AppHost and check setup, runtime roles and database outage behavior. |
+| Wholesale browser end to end | `npm run test:browser` | xUnit uses Aspire Testing to start the same AppHost, then Playwright Chromium exercises Keycloak sign-in and protected actions. The explicit load test runs through the performance target. |
+| Architecture | `npm run test:architecture` | xUnit checks module and package boundaries, schemas and adoption structure. |
+
+Use `npm run nx -- show projects -t test-dotnet` to discover more project names
+and append `-- --list-tests` to a suite command to preview the xUnit selection. Browser discovery also
+lists the explicit load case, which xUnit skips during ordinary test execution.
+Run `npm test` from a capability folder to select that folder's projects.
 
 ```sh
-dotnet build Gloaming.slnx
-dotnet test --project src/Gloaming.EntityFrameworkCore/tests/CapabilityTests/CapabilityTests.csproj --no-build --no-restore
+cd src/Gloaming.Messaging
+npm test
 ```
 
 The coordinator suite uses native EF/Npgsql model-only probes without opening a database.
 Core identity, codec, history and reaction suites also need no running infrastructure. Provider,
-adoption and process suites use the real services required by their owning contracts; follow
-the [container and runtime prerequisites](../docs/development.md). Directory placement does not
-control test selection: the native solution and explicit CI commands do.
+adoption and process suites use the real services required by their owning contracts.
+See the [container and runtime prerequisites](../docs/development.md).
 
 ## Maintained suites
 
@@ -65,11 +80,59 @@ Test the configured Gloaming or application behavior when it depends on a framew
 Architecture checks enforce the module and package dependency boundaries. Use executable
 adoption tests to verify a fixture's behavior.
 
-The Kafka profile packs and restores the exact package closure, then runs Kafka and PostgreSQL
-through disposable Testcontainers fixtures. Run `npm --prefix eng/release run verify:kafka`
-with a Docker-compatible socket. The [native proxy tests](../eng/release/tests/KafkaProxy.Tests.csproj)
+Run `npm run verify:packages` to pack a snapshot, validate its contents and restore
+and run external consumers against it. Run `npm run verify:kafka` with a
+Docker-compatible socket to pack the Kafka consumer's exact package closure and
+run it against disposable Kafka and PostgreSQL. Both commands invoke the
+[release tooling](../eng/release/README.md) directly.
+The [native proxy tests](../eng/release/tests/KafkaProxy.Tests.csproj)
 exercise the same proxy source over loopback sockets in the ordinary suite. The [recipe](../modular-monolith-patterns/kafka.md) documents
 the transport behavior and limits.
+
+## Opt-in performance baselines
+
+The root `perf` script asks Nx to run the selected `performance` targets
+serially with fresh measurements. Each target invokes its native runner.
+
+| Suite | Command | Execution after Nx selects the target |
+| --- | --- | --- |
+| [Event codec](../src/Gloaming.Events/benchmarks/EventCodec.Benchmarks/README.md) | `npm run perf:events` | `dotnet run` → BenchmarkDotNet → decode and allocation measurements in an isolated .NET process. |
+| [Messaging PostgreSQL](../src/Gloaming.Messaging/benchmarks/Messaging.Postgres.Benchmarks/README.md) | `npm run perf:messaging` | `dotnet run` → BenchmarkDotNet → disposable PostgreSQL via Testcontainers → inbox and outbox batch drain. |
+| [Wholesale HTTP load](../samples/Wholesale/AppHost/README.md#draft-order-performance) | `npm run perf:wholesale` | `dotnet test` → explicit xUnit performance case → Aspire Testing → Wholesale AppHost → Chromium sign-in and k6 HTTP load. |
+
+## Reports
+
+The local `.artifacts/` directory is ignored by Git. For regular .NET runs,
+append `--results-directory=<absolute-path> --report-xunit-trx --report-xunit-markdown`
+to save the console run's results. For Wholesale runtime diagnostics, set
+`WHOLESALE_RUNTIME_RESULTS` to the same absolute path before running the tests.
+
+| Performance suite | Local reports and where the runner shows them |
+| --- | --- |
+| Event codec | `event-codec/results/`. BenchmarkDotNet prints the HTML, full JSON, Markdown and CSV paths under `Export`. |
+| Messaging PostgreSQL | `messaging-postgres/results/`. Uses the same BenchmarkDotNet exporters and console output. |
+| Wholesale HTTP load | `wholesale/`. Contains `measured.html` from the k6 dashboard exporter, `summary.json` from the workload's `handleSummary`, xUnit TRX and Markdown, and AppHost diagnostics. |
+
+Each performance invocation creates a new directory under
+`.artifacts/performance/<run-id>/`. Nx passes that directory to every selected
+target. Each target prints its suite directory when it exits, and the root
+command prints the shared directory when it finishes. The live k6 dashboard is
+optional and the HTML export works in headless runs.
+Package verifiers print their scratch evidence paths. A successful package
+adoption run also retains the feed, selected consumers and manifest under
+`.artifacts/package-adoption/<version>/`.
+
+In [CI](../.github/workflows/ci.yml), each job writes its own results on the
+runner. `actions/upload-artifact` archives those files for download from the
+workflow run's **Artifacts** section for seven days.
+
+| CI check | Uploaded artifact | Contents |
+| --- | --- | --- |
+| Repository integrity | `repository-test-reports-<attempt>` | TRX and Markdown for the selected .NET projects. |
+| Wholesale runtime | `wholesale-runtime-diagnostics-<attempt>` | TRX, test logs, AppHost diagnostics and Playwright traces. |
+| Package integrity and adoption | `package-adoption-evidence-<attempt>` | Verification logs and package provenance manifest. |
+| Native Kafka package adoption | `kafka-adoption-evidence-<attempt>` | Execution log, manifest, results and container cleanup evidence. |
+| Manual CI with a `performance` selection | `performance-reports-<attempt>` | The invocation directory with native exports from the selected suite or suites. |
 
 ## Repository tooling
 

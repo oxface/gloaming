@@ -163,7 +163,7 @@ scratch state on exit. `DOTNET_HOST_PATH` can select the SDK executable.
 dotnet tool restore
 npm ci --prefix eng/release --ignore-scripts
 npm --prefix eng/release run check
-npm --prefix eng/release run verify
+npm run verify:packages
 ```
 
 `check` runs TypeScript, Prettier, CSharpier and the tooling tests. Repository
@@ -201,7 +201,7 @@ Run the independently selected native transport proof with the same SDK/Node req
 and a Docker-compatible engine (Linux x64 is the tested topology):
 
 ```sh
-npm --prefix eng/release run verify:kafka
+npm run verify:kafka
 ```
 
 No database/broker connection or external account is required. Testcontainers creates Kafka

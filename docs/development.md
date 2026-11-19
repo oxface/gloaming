@@ -28,12 +28,30 @@ Run the day-to-day commands from the repository root.
 | --- | --- |
 | Build the full solution | `dotnet build Gloaming.slnx --no-restore` |
 | Test projects affected by your changes | `npm run test:affected` |
-| Run every ordinary .NET test project | `npm run test:ordinary` |
+| Run all regular .NET tests, including architecture and Wholesale runtime | `npm test` |
+| Run selected .NET test projects | `npm test -- -p InboxPostgresTests,OutboxPostgresTests` |
+| Run ordinary .NET tests without architecture and Wholesale runtime | `npm run test:ordinary` |
+| Run all correctness suites and package adoption proofs | `npm run verify` |
+| Run the opt-in performance suites | `npm run perf` |
 | Start Wholesale with the configured AppHost | `aspire start` |
 
-The test scripts exclude architecture and browser/runtime suites, which have their own
-commands below. Set up the [AppHost prerequisites](../samples/Wholesale/AppHost/README.md)
-before starting Wholesale.
+Run `npm test` or `npm run perf` from a capability directory such as
+`src/Gloaming.Messaging` or `samples/Wholesale` to select its subtree. Explicit
+`-p` project names work from either location. Use
+`npm run nx -- show projects -t test-dotnet` or
+`npm run nx -- show projects -t performance` to list selectable projects.
+
+CI uses these same commands after installing their prerequisites. The scope job
+selects the affected ordinary tests and the checks that require separate runner
+setup. Manual CI dispatch runs the full correctness suite. Its `performance`
+option runs all performance targets or selects the Events, Messaging, or Wholesale
+suite using the corresponding npm command, then uploads the native reports.
+The [test guide](../tests/README.md#run-one-suite) shows the individual suite
+commands, execution order and report locations.
+
+Full correctness needs a container engine, the Wholesale browser prerequisites
+below, and the [package proof's PostgreSQL connection](../eng/release/README.md#full-package-adoption-proof).
+Run `npm run verify:packages` or `npm run verify:kafka` to select either proof.
 
 When the pinned SDK is unavailable from your OS package feed, Microsoft's
 [SDK installer](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script)
@@ -46,8 +64,8 @@ runtime. Rootless Podman can use its user socket through DOCKER_HOST. Configure 
 for the test process; TESTCONTAINERS_RYUK_DISABLED=true is useful for environments that manage
 container cleanup independently.
 
-The repository uses the Microsoft Testing Platform runner. Its options are passed directly,
-without an extra separator:
+The repository uses xUnit on Microsoft Testing Platform. Use `dotnet test`
+directly for runner-level options.
 
 ~~~bash
 dotnet test --project tests/ArchitectureTests/ArchitectureTests.csproj --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
@@ -65,7 +83,7 @@ Node with Testcontainers. It packs current libraries and builds an external cons
 a fresh package cache before running it against disposable Kafka and PostgreSQL.
 
 ~~~bash
-npm --prefix eng/release run verify:kafka
+npm run verify:kafka
 ~~~
 
 Use the Docker-compatible socket for your engine. The [Kafka consumer guide](../eng/release/consumers/Kafka/README.md)
@@ -84,15 +102,16 @@ and browser prerequisites. The runtime suite uses actual processes and container
 ~~~bash
 dotnet build samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj
 pwsh samples/Wholesale/RuntimeComposition.Tests/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
-dotnet test --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj --no-build --no-progress --no-ansi --output Normal --show-stdout Failed --show-stderr Failed
+npm run test:system -- --excludeTaskDependencies
+npm run test:browser -- --excludeTaskDependencies
 ~~~
 
 Run local runtime graphs sequentially: container-network teardown can disturb another graph.
 Use the AppHost guide's trust instructions for Linux browser and HTTPS tests. To retain
 diagnostics locally, create a results directory, set `WHOLESALE_RUNTIME_RESULTS` to its
-path, and pass it to `dotnet test --results-directory` with `--report-xunit-trx` and
-`--report-xunit-markdown`. This retains AppHost state and recent logs alongside the
-Playwright traces and native test reports.
+path, and append `--results-directory="$WHOLESALE_RUNTIME_RESULTS" --report-xunit-trx
+--report-xunit-markdown` after `--` on either suite command. This retains AppHost state and
+recent logs alongside the Playwright traces and native test reports.
 
 ## Use packages from another repository
 

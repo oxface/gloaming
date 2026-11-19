@@ -14,7 +14,7 @@ using Npgsql;
 
 namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
-public sealed class BrowserTests : PageTest
+public sealed partial class BrowserTests : PageTest
 {
     private const string AlphaProfile =
         "/organizations/north-supply/customers/10000000-0000-0000-0000-000000000001/profile";
@@ -237,11 +237,16 @@ public sealed class BrowserTests : PageTest
 
     private static async Task<IDistributedApplicationTestingBuilder> CreateBuilderAsync(
         CancellationToken cancellation,
-        bool rowSecurity = false
+        bool rowSecurity = false,
+        params string[] arguments
     )
     {
         var builder = await DistributedApplicationTestingBuilder.CreateAsync<AppHostMarker>(
-            [.. LocalArguments, $"LocalDevelopment:UseSalesRowSecurity={rowSecurity}"],
+            [
+                .. LocalArguments,
+                $"LocalDevelopment:UseSalesRowSecurity={rowSecurity}",
+                .. arguments,
+            ],
             cancellation
         );
         builder.Configuration["Parameters:postgres-password"] =
@@ -259,7 +264,8 @@ public sealed class BrowserTests : PageTest
 
     private static async Task<DistributedApplication> StartAndInitializeAsync(
         IDistributedApplicationTestingBuilder builder,
-        string scenario
+        string scenario,
+        string? resultsDirectory = null
     )
     {
         var app = await builder.BuildAsync(Token);
@@ -307,7 +313,7 @@ public sealed class BrowserTests : PageTest
         }
         catch
         {
-            await new RuntimeEvidence(app, scenario).DisposeAsync();
+            await new RuntimeEvidence(app, scenario, resultsDirectory).DisposeAsync();
             await app.DisposeAsync();
             throw;
         }

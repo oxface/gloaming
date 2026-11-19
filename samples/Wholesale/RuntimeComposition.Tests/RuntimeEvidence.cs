@@ -5,8 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
-internal sealed class RuntimeEvidence(DistributedApplication app, string scenario)
-    : IAsyncDisposable
+internal sealed class RuntimeEvidence(
+    DistributedApplication app,
+    string scenario,
+    string? resultsDirectory = null,
+    string? extraResource = null
+) : IAsyncDisposable
 {
     private static readonly string[] Resources =
     [
@@ -21,7 +25,8 @@ internal sealed class RuntimeEvidence(DistributedApplication app, string scenari
 
     public async ValueTask DisposeAsync()
     {
-        string? directory = Environment.GetEnvironmentVariable("WHOLESALE_RUNTIME_RESULTS");
+        string? directory =
+            resultsDirectory ?? Environment.GetEnvironmentVariable("WHOLESALE_RUNTIME_RESULTS");
         if (string.IsNullOrEmpty(directory))
             return;
 
@@ -30,7 +35,9 @@ internal sealed class RuntimeEvidence(DistributedApplication app, string scenari
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             var logger = app.Services.GetRequiredService<ResourceLoggerService>();
             var evidence = new StringBuilder();
-            foreach (string name in Resources)
+            foreach (
+                string name in extraResource is null ? Resources : [.. Resources, extraResource]
+            )
             {
                 if (!app.ResourceNotifications.TryGetCurrentState(name, out var resource))
                     continue;

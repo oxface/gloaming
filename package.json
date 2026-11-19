@@ -8,8 +8,22 @@
   "scripts": {
     "nx": "nx",
     "graph": "nx graph",
+    "test": "node eng/repository/run-suites.ts test-dotnet",
+    "test:messaging": "npm test -- -p MessagingTests",
+    "test:inbox-outbox": "npm test -- -p InboxPostgresTests,OutboxPostgresTests",
+    "test:application": "npm test -- -p Wholesale.IntegrationTests",
+    "test:system": "npm test -- -p RuntimeComposition.Tests --filter-class=\"*RuntimeTests\"",
+    "test:browser": "npm test -- -p RuntimeComposition.Tests --filter-class=\"*BrowserTests\"",
+    "test:architecture": "npm test -- -p ArchitectureTests",
     "test:affected": "nx affected -t test-dotnet --exclude=RuntimeComposition.Tests,ArchitectureTests",
     "test:ordinary": "nx run-many -t test-dotnet --exclude=RuntimeComposition.Tests,ArchitectureTests",
+    "perf": "node eng/repository/run-suites.ts performance --parallel=1",
+    "perf:events": "npm run perf -- -p EventCodec.Benchmarks",
+    "perf:messaging": "npm run perf -- -p Messaging.Postgres.Benchmarks",
+    "perf:wholesale": "npm run perf -- -p RuntimeComposition.Tests",
+    "verify": "npm test && npm run check:nx && npm --prefix eng/repository test && npm --prefix eng/release test && npm run verify:packages && npm run verify:kafka",
+    "verify:packages": "npm --prefix eng/release run verify",
+    "verify:kafka": "npm --prefix eng/release run verify:kafka",
     "check:nx": "node --test eng/repository/nx-selection.proof.ts"
   },
   "devDependencies": {

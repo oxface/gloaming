@@ -58,6 +58,9 @@
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Hosting/Gloaming.Messaging.EntityFrameworkCore.Hosting.csproj" />
     <Project Path="src/Gloaming.Messaging/Gloaming.Messaging.EntityFrameworkCore.Postgres/Gloaming.Messaging.EntityFrameworkCore.Postgres.csproj" />
   </Folder>
+  <Folder Name="/Libraries/Messaging/Benchmarks/">
+    <Project Path="src/Gloaming.Messaging/benchmarks/Messaging.Postgres.Benchmarks/Messaging.Postgres.Benchmarks.csproj" />
+  </Folder>
   <Folder Name="/Libraries/Messaging/Tests/">
     <Project Path="src/Gloaming.Messaging/tests/RabbitMqTests/RabbitMqTests.csproj" />
     <Project Path="src/Gloaming.Messaging/tests/WorkflowTests/WorkflowTests.csproj" />
@@ -112,6 +115,9 @@
     <Project Path="src/Gloaming.Events/tests/EventHistoryTests/EventHistoryTests.csproj" />
     <Project Path="src/Gloaming.Events/tests/EventSerializationTests/EventSerializationTests.csproj" />
     <Project Path="src/Gloaming.Events/tests/CodecAdoptionTests/EventCodecDemo.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/Events/Benchmarks/">
+    <Project Path="src/Gloaming.Events/benchmarks/EventCodec.Benchmarks/EventCodec.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/Libraries/EventSourcing/">
     <Project Path="src/Gloaming.EventSourcing/Gloaming.EventSourcing.EntityFrameworkCore.Postgres/Gloaming.EventSourcing.EntityFrameworkCore.Postgres.csproj" />

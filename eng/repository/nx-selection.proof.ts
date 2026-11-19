@@ -41,6 +41,52 @@ function affected(path: string, target = "test-dotnet"): string[] {
   );
 }
 
+test("the shared suite entry point scopes capability directories and honors project names", () => {
+  function tasks(
+    target: string,
+    directory: string,
+    ...args: string[]
+  ): string[] {
+    const result = execFileSync(
+      process.execPath,
+      [
+        resolve(root, "eng/repository/run-suites.ts"),
+        target,
+        "--graph=stdout",
+        ...args,
+      ],
+      {
+        cwd: root,
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          INIT_CWD: resolve(root, directory),
+          NX_DAEMON: "false",
+          NX_ISOLATE_PLUGINS: "false",
+        },
+        timeout: 120_000,
+        maxBuffer: 16 * 1024 * 1024,
+      },
+    );
+    const { tasks } = JSON.parse(result) as {
+      tasks: { tasks: Record<string, unknown> };
+    };
+    return Object.keys(tasks.tasks).filter((id) => id.endsWith(`:${target}`));
+  }
+
+  const messaging = tasks("test-dotnet", "src/Gloaming.Messaging");
+  assert(messaging.includes("InboxPostgresTests:test-dotnet"));
+  assert(messaging.includes("OutboxPostgresTests:test-dotnet"));
+  assert(!messaging.includes("RuntimeComposition.Tests:test-dotnet"));
+  assert.deepEqual(
+    tasks("test-dotnet", "src/Gloaming.Messaging", "-p", "ArchitectureTests"),
+    ["ArchitectureTests:test-dotnet"],
+  );
+  assert.deepEqual(tasks("performance", "src/Gloaming.Messaging"), [
+    "Messaging.Postgres.Benchmarks:performance",
+  ]);
+});
+
 test("Nx discovers every declared test project and the solution includes it", () => {
   const paths = execFileSync(
     "git",
