@@ -42,7 +42,7 @@ native agent reconstruction and independent selection of each agent/conversation
 [Modular monolith patterns](modular-monolith-patterns/README.md) describe how to initialize
 or adapt an application and add named modules, state-stored or event-sourced aggregates,
 identity setup and durable handoff. Give an agent that folder and the requested module map;
-the documents supply the workflow and completion checks.
+the documents supply the workflow and completion checks. 
 
 ## Examples and proofs
 
