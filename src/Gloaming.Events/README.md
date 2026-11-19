@@ -23,3 +23,6 @@ Library tests:
 Run a selected project from the repository root using `dotnet test --project <path>`.
 The [test guide](../../tests/README.md) lists suite ownership, selection and infrastructure needs;
 [development commands](../../docs/development.md) cover native/container setup.
+
+Run the [event codec benchmarks](benchmarks/EventCodec.Benchmarks/README.md) in
+Release to measure decode time and allocations for current and retained schemas.

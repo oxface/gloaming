@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+    <Compile Include="../../../../tests/Support/RunBenchmarks.cs" Link="Program.cs" />
+    <ProjectReference Include="../../Gloaming.Events.Serialization/Gloaming.Events.Serialization.csproj" />
+    <Compile
+      Include="../../samples/EventCodecDemo/FixtureEvents.cs"
+      Link="Fixtures/FixtureEvents.cs"
+    />
+    <Compile
+      Include="../../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderEvents.cs"
+      Link="Fixtures/PurchaseOrderEvents.cs"
+    />
+    <Compile
+      Include="../../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderExample.cs"
+      Link="Fixtures/PurchaseOrderExample.cs"
+    />
+    <Compile
+      Include="../../tests/CodecAdoptionTests/Fixtures/Purchasing/PurchaseOrderSchemaEvolutionExample.cs"
+      Link="Fixtures/PurchaseOrderSchemaEvolutionExample.cs"
+    />
+    <None
+      Include="../../samples/EventCodecDemo/Fixtures/Purchasing/line-set.v*.json"
+      Link="Fixtures/%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+    />
+  </ItemGroup>
+</Project>

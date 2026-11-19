@@ -1,6 +1,10 @@
 {
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "targets": {
+    "performance": {
+      "cache": false,
+      "command": "node eng/repository/run-performance.ts wholesale --results-directory test --project samples/Wholesale/RuntimeComposition.Tests/RuntimeComposition.Tests.csproj --configuration Release --explicit only --filter-method Gloaming.Samples.Wholesale.RuntimeComposition.Tests.BrowserTests.MeasuresAuthenticatedDraftOrderPages --report-xunit-trx --report-xunit-markdown"
+    },
     "test-dotnet": {
       "inputs": [
         "...",

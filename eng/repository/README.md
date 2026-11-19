@@ -89,7 +89,9 @@ through the root [manifest](../../package.json) and lockfile. MSBuild infers pro
 references, build dependencies and native `test-dotnet` targets. The native test target
 name keeps .NET CI separate from npm packages' own `test` scripts. The [repository tooling](project.json) and [package tooling](../release/project.json)
 also expose Nx targets.
-Native `dotnet` and prefix-based npm commands remain usable directly.
+The shared [suite entry points](../../docs/development.md#build) use the same
+targets locally and in CI. From a capability directory, `npm test` and
+`npm run perf` derive their scope from Nx project roots.
 
 Install and restore before using the inferred graph:
 
@@ -99,7 +101,7 @@ dotnet restore Gloaming.slnx
 npm run nx -- show projects
 npm run graph
 npm run test:affected -- --base=origin/main
-npm run test:ordinary
+npm test -- -p InboxPostgresTests
 npm run nx -- run repository-tools:check
 ```
 

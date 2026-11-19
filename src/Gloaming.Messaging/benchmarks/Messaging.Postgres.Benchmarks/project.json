@@ -1,0 +1,8 @@
+{
+  "targets": {
+    "performance": {
+      "cache": false,
+      "command": "node eng/repository/run-performance.ts messaging-postgres --artifacts run --project src/Gloaming.Messaging/benchmarks/Messaging.Postgres.Benchmarks --configuration Release -- --filter \"*\""
+    }
+  }
+}

@@ -113,6 +113,38 @@ dotnet dev-certs https --check --trust
 This sets up Chromium's NSS store and the OpenSSL trust path in the same shell.
 On Windows and macOS use `dotnet dev-certs https --trust` for the system trust store.
 
+## Draft-order performance
+
+The opt-in [k6 workload](../RuntimeComposition.Tests/Performance/draft-orders.ts)
+runs beside the normal Wholesale browser tests. It uses the same disposable
+Aspire topology, PostgreSQL row security and Keycloak. Install the matching
+Chromium for this test project as for the browser suite. The test creates a fixed
+dataset of 512 orders per tenant, logs in through HTTPS, and warms both queries
+before measurement. k6 drives the private container-network HTTP endpoint with
+the disposable authenticated session. Both scenarios check the exact visible
+orders, totals and count. k6 offers four requests per second to each page for
+20 seconds and records separate first-page and deeper-page timings.
+
+```sh
+npm run perf:wholesale
+```
+
+The printed `wholesale` directory under `.artifacts/performance/<run-id>/`
+contains native `measured.html`, `summary.json`, workload
+metadata and AppHost diagnostics. k6 correctness thresholds and its exit code
+determine the result. Latencies are reported for comparison. The session fixture
+uses a separate temporary directory that is removed after the run.
+
+Set `Performance__LiveDashboard=true` for an interactive local run. Open the
+dynamic address in `dashboard.txt` inside the current report directory. Close
+the tab once load finishes so k6 can exit. Unattended runs export the same HTML
+with the listener disabled. [k6 web dashboard](https://grafana.com/docs/k6/latest/results-output/web-dashboard/)
+
+The AppHost's internal [`WithK6Reports` extension](K6ReportExtensions.cs)
+configures the report mount, HTML export and optional dashboard on the Toolkit's
+k6 resource. The AppHost supplies the workload, API origin and session fixture
+separately.
+
 ## Optional Sales RLS graph
 
 Set `LocalDevelopment:UseSalesRowSecurity=true` and supply the two runtime password parameters.
