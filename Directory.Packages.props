@@ -3,9 +3,9 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.Agents.AI" Version="1.27.0" />
-    <PackageVersion Include="Microsoft.Agents.AI.Abstractions" Version="1.27.0" />
-    <PackageVersion Include="Microsoft.Agents.AI.Workflows" Version="1.27.0" />
+    <PackageVersion Include="Microsoft.Agents.AI" Version="1.28.0" />
+    <PackageVersion Include="Microsoft.Agents.AI.Abstractions" Version="1.28.0" />
+    <PackageVersion Include="Microsoft.Agents.AI.Workflows" Version="1.28.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.Evaluation" Version="10.11.0" />
     <PackageVersion Include="Microsoft.Extensions.AI.Evaluation.Reporting" Version="10.11.0" />
     <PackageVersion Include="Cronos" Version="0.13.0" />
@@ -26,14 +26,14 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageVersion Include="Npgsql" Version="10.0.3" />
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.16.0" />
-    <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.13.4" />
+    <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.13.5" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.2" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.6.4" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.6.5" />
     <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.5.3-preview.1.26425.3" />
     <PackageVersion Include="MessagePack" Version="3.1.12" />
-    <PackageVersion Include="Microsoft.Playwright.Xunit.v3" Version="1.63.0" />
+    <PackageVersion Include="Microsoft.Playwright.Xunit.v3" Version="1.64.1" />
     <PackageVersion Include="Npgsql.OpenTelemetry" Version="10.0.3" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.20.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.InMemory" Version="1.20.1" />
