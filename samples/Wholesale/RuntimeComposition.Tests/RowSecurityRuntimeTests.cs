@@ -4,7 +4,6 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Gloaming.Samples.Wholesale.Api;
-using Gloaming.Samples.Wholesale.AppHost;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -23,21 +22,19 @@ public sealed class RowSecurityRuntimeTests
         );
         deadline.CancelAfter(TimeSpan.FromMinutes(3));
         CancellationToken cancellation = deadline.Token;
-        await using var builder =
-            await DistributedApplicationTestingBuilder.CreateAsync<AppHostMarker>(
-                [
-                    "LocalDevelopment:UseDataVolume=false",
-                    "LocalDevelopment:UseLocalIdentityProvider=false",
-                    "LocalDevelopment:UseSalesRowSecurity=true",
-                ],
-                cancellation
-            );
+        await using var builder = await WholesaleTestHost.CreateAsync(
+            [
+                "LocalDevelopment:UseDataVolume=false",
+                "LocalDevelopment:UseLocalIdentityProvider=false",
+                "LocalDevelopment:UseSalesRowSecurity=true",
+            ],
+            cancellation
+        );
         builder.Configuration["Parameters:postgres-password"] = "a27-disposable-admin-password";
         builder.Configuration["Parameters:access-runtime-password"] = AccessPassword;
         builder.Configuration["Parameters:sales-runtime-password"] = SalesPassword;
         builder.Configuration["Parameters:oidc-authority"] = "https://identity.test";
         builder.Configuration["Parameters:oidc-client-id"] = "inert-a27-client";
-        builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         await using var app = await builder.BuildAsync(cancellation);
         await using var evidence = new RuntimeEvidence(app, "row-security-runtime");
         await app.StartAsync(cancellation);
@@ -55,20 +52,7 @@ public sealed class RowSecurityRuntimeTests
         )
             Assert.Equal(true, await check.ExecuteScalarAsync(cancellation));
 
-        var commands = app.Services.GetRequiredService<ResourceCommandService>();
-        var setup = await commands.ExecuteCommandAsync(
-            "demo-setup",
-            KnownResourceCommands.StartCommand,
-            cancellation
-        );
-        Assert.True(setup.Success, setup.Message);
-        await app.ResourceNotifications.WaitForResourceAsync(
-            "demo-setup",
-            KnownResourceStates.Finished,
-            cancellation
-        );
-        Assert.True(app.ResourceNotifications.TryGetCurrentState("demo-setup", out var finished));
-        Assert.Equal(0, finished.Snapshot.ExitCode);
+        await FiniteResource.RunAsync(app, "demo-setup", cancellation);
 
         await using (
             var policies = new NpgsqlCommand(
@@ -102,6 +86,7 @@ public sealed class RowSecurityRuntimeTests
             );
         }
 
+        var commands = app.Services.GetRequiredService<ResourceCommandService>();
         var started = await commands.ExecuteCommandAsync(
             "api",
             KnownResourceCommands.StartCommand,

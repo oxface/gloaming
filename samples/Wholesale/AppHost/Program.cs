@@ -1,5 +1,4 @@
 using Aspire.Hosting.ApplicationModel;
-using Gloaming.Samples.Wholesale.AppHost;
 using Microsoft.Extensions.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -103,33 +102,6 @@ else
 {
     api.WithEnvironment("Oidc__Authority", builder.AddParameter("oidc-authority"))
         .WithEnvironment("Oidc__ClientId", builder.AddParameter("oidc-client-id"));
-}
-
-if (builder.Configuration["Performance:ReportsDirectory"] is { Length: > 0 } reports)
-{
-    string session =
-        builder.Configuration["Performance:SessionDirectory"]
-        ?? throw new InvalidOperationException(
-            "The performance run requires a private session directory."
-        );
-    bool live = builder.Configuration.GetValue<bool>("Performance:LiveDashboard");
-    builder
-        .AddK6("draft-order-load")
-        .WithImageTag("1.6.0")
-        .WithScript("/workload/draft-orders.ts")
-        .WithBindMount("../RuntimeComposition.Tests/Performance", "/workload", isReadOnly: true)
-        .WithBindMount(session, "/session", isReadOnly: true)
-        .WithK6Reports(reports, liveDashboard: live)
-        // Container root maps to the host user with rootless Podman and can read the private fixture.
-        .WithContainerRuntimeArgs("--user", "0")
-        .WithEnvironment(
-            "WHOLESALE_ORIGIN",
-            api.GetEndpoint("http", KnownNetworkIdentifiers.DefaultAspireContainerNetwork)
-        )
-        .WithEnvironment("K6_NO_USAGE_REPORT", "true")
-        .WithExplicitStart()
-        .WaitFor(api)
-        .ExcludeFromManifest();
 }
 
 await builder.Build().RunAsync();

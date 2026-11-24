@@ -6,7 +6,7 @@ using Aspire.Hosting.Testing;
 using Gloaming.ActorIdentity;
 using Gloaming.Samples.Wholesale.Api;
 using Gloaming.Samples.Wholesale.Sales.Contracts;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 
 namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
@@ -32,12 +32,31 @@ public sealed partial class BrowserTests
         var session = Directory.CreateTempSubdirectory("gloaming-wholesale-session-");
         try
         {
-            await using var builder = await CreateBuilderAsync(
-                cancellation,
-                true,
-                $"Performance:ReportsDirectory={reports}",
-                $"Performance:SessionDirectory={session.FullName}"
-            );
+            await using var builder = await CreateBuilderAsync(cancellation, rowSecurity: true);
+            bool live = builder.Configuration.GetValue<bool>("Performance:LiveDashboard");
+            var api = builder.CreateResourceBuilder<ProjectResource>("api");
+            builder
+                .AddK6(LoadResource)
+                .WithImageTag("1.6.0")
+                .WithScript("/workload/draft-orders.ts")
+                .WithBindMount(
+                    "../RuntimeComposition.Tests/Performance",
+                    "/workload",
+                    isReadOnly: true
+                )
+                .WithBindMount(session.FullName, "/session", isReadOnly: true)
+                .WithK6Reports(reports, liveDashboard: live)
+                // Container root maps to the host user with rootless Podman and can read the private fixture.
+                .WithContainerRuntimeArgs("--user", "0")
+                .WithEnvironment(
+                    "WHOLESALE_ORIGIN",
+                    api.GetEndpoint("http", KnownNetworkIdentifiers.DefaultAspireContainerNetwork)
+                )
+                .WithEnvironment("K6_NO_USAGE_REPORT", "true")
+                .WithExplicitStart()
+                .WaitFor(api)
+                .ExcludeFromManifest();
+
             await using var app = await StartAndInitializeAsync(builder, LoadResource, reports);
             await using var evidence = new RuntimeEvidence(
                 app,
@@ -97,10 +116,7 @@ public sealed partial class BrowserTests
                 cancellation
             );
             TestContext.Current.TestOutputHelper?.WriteLine($"k6 reports: {reports}");
-            if (
-                bool.TryParse(builder.Configuration["Performance:LiveDashboard"], out bool live)
-                && live
-            )
+            if (live)
             {
                 Uri dashboard = app.GetEndpoint(LoadResource, "dashboard");
                 await File.WriteAllTextAsync(
@@ -111,21 +127,7 @@ public sealed partial class BrowserTests
                 TestContext.Current.TestOutputHelper?.WriteLine($"k6 live dashboard: {dashboard}");
             }
 
-            var commands = app.Services.GetRequiredService<ResourceCommandService>();
-            var result = await commands.ExecuteCommandAsync(
-                LoadResource,
-                KnownResourceCommands.StartCommand,
-                cancellation
-            );
-            Assert.True(result.Success, result.Message);
-            var terminal = await app.ResourceNotifications.WaitForResourceAsync(
-                LoadResource,
-                resource =>
-                    resource.Snapshot.ExitCode.HasValue
-                    || resource.Snapshot.State?.Text == KnownResourceStates.FailedToStart,
-                cancellation
-            );
-            Assert.Equal(0, terminal.Snapshot.ExitCode);
+            await FiniteResource.RunAsync(app, LoadResource, cancellation);
             Assert.True(new FileInfo(Path.Combine(reports, "measured.html")).Length > 0);
             using var summary = JsonDocument.Parse(
                 await File.ReadAllTextAsync(Path.Combine(reports, "summary.json"), cancellation)

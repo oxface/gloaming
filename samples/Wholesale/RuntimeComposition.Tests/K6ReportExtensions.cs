@@ -1,7 +1,8 @@
 using System.Globalization;
+using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
-namespace Gloaming.Samples.Wholesale.AppHost;
+namespace Gloaming.Samples.Wholesale.RuntimeComposition.Tests;
 
 internal static class K6ReportExtensions
 {

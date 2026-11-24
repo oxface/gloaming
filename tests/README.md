@@ -113,11 +113,18 @@ to save the console run's results. For Wholesale runtime diagnostics, set
 | Messaging PostgreSQL | `messaging-postgres/results/`. Uses the same BenchmarkDotNet exporters and console output. |
 | Wholesale HTTP load | `wholesale/`. Contains `measured.html` from the k6 dashboard exporter, `summary.json` from the workload's `handleSummary`, xUnit TRX and Markdown, and AppHost diagnostics. |
 
-Each performance invocation creates a new directory under
+By default, each performance invocation creates a new directory under
 `.artifacts/performance/<run-id>/`. Nx passes that directory to every selected
 target. Each target prints its suite directory when it exits, and the root
 command prints the shared directory when it finishes. The live k6 dashboard is
 optional and the HTML export works in headless runs.
+
+Manual CI verifies the selected suites in that invocation's directory before
+upload. It requires benchmark HTML and JSON with measurements, and Wholesale
+k6 HTML, HTTP metrics JSON, and xUnit TRX. After verification,
+`manifest.json` records the run ID, checkout revision, and verified report paths.
+Available diagnostics are uploaded even when execution or verification fails.
+
 Package verifiers print their scratch evidence paths. A successful package
 adoption run also retains the feed, selected consumers and manifest under
 `.artifacts/package-adoption/<version>/`.
@@ -132,7 +139,7 @@ workflow run's **Artifacts** section for seven days.
 | Wholesale runtime | `wholesale-runtime-diagnostics-<attempt>` | TRX, test logs, AppHost diagnostics and Playwright traces. |
 | Package integrity and adoption | `package-adoption-evidence-<attempt>` | Verification logs and package provenance manifest. |
 | Native Kafka package adoption | `kafka-adoption-evidence-<attempt>` | Execution log, manifest, results and container cleanup evidence. |
-| Manual CI with a `performance` selection | `performance-reports-<attempt>` | The invocation directory with native exports from the selected suite or suites. |
+| Manual CI with a `performance` selection | `performance-reports-<attempt>` | Native exports from the selected suites and a manifest on successful verification. |
 
 ## Repository tooling
 

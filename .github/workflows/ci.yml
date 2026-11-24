@@ -506,21 +506,32 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
       - name: Run selected performance suites
+        id: performance
         if: inputs.performance && inputs.performance != 'off'
         env:
           PERFORMANCE_SUITE: ${{ inputs.performance }}
         run: |
+          mkdir -p .artifacts/performance
+          GLOAMING_PERFORMANCE_RESULTS="$(mktemp -d "$PWD/.artifacts/performance/ci-XXXXXX")"
+          export GLOAMING_PERFORMANCE_RESULTS
+          printf 'directory=%s\n' "$GLOAMING_PERFORMANCE_RESULTS" >> "$GITHUB_OUTPUT"
           if [[ "$PERFORMANCE_SUITE" == all ]]; then
             npm run perf -- --outputStyle=static
           else
             npm run "perf:$PERFORMANCE_SUITE" -- --outputStyle=static
           fi
+      - name: Verify native performance reports
+        if: steps.performance.outputs.directory != ''
+        env:
+          PERFORMANCE_DIRECTORY: ${{ steps.performance.outputs.directory }}
+          PERFORMANCE_SUITE: ${{ inputs.performance }}
+        run: node eng/repository/verify-performance.ts "$PERFORMANCE_DIRECTORY" "$PERFORMANCE_SUITE"
       - name: Retain native performance reports
-        if: ${{ !cancelled() && inputs.performance && inputs.performance != 'off' }}
+        if: ${{ !cancelled() && steps.performance.outputs.directory != '' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: performance-reports-${{ github.run_attempt }}
-          path: .artifacts/performance
+          path: ${{ steps.performance.outputs.directory }}
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 7

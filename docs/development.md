@@ -60,9 +60,16 @@ can install the version selected by global.json. Keep SDK selection explicit.
 ## Native provider and process tests
 
 PostgreSQL and RabbitMQ tests use Testcontainers and require a reachable Docker-compatible
-runtime. Rootless Podman can use its user socket through DOCKER_HOST. Configure socket access
-for the test process; TESTCONTAINERS_RYUK_DISABLED=true is useful for environments that manage
-container cleanup independently.
+runtime. Rootless Podman can use its user socket through `DOCKER_HOST`.
+
+The fixtures dispose their containers during normal test teardown, including when a test
+fails. Keep the Testcontainers [Resource Reaper (Ryuk)](https://dotnet.testcontainers.org/api/resource_reaper/)
+enabled so it can remove resources if the test process crashes or is force-killed. Check
+shell startup files if test commands inherit `TESTCONTAINERS_RYUK_DISABLED=true`. To
+override that export for a single run, prefix the test command with
+`TESTCONTAINERS_RYUK_DISABLED=false`. If the container runtime requires disabling Ryuk,
+scope the setting to that command and use an environment with independent cleanup for
+abandoned test resources.
 
 The repository uses xUnit on Microsoft Testing Platform. Use `dotnet test`
 directly for runner-level options.
@@ -107,6 +114,12 @@ npm run test:browser -- --excludeTaskDependencies
 ~~~
 
 Run local runtime graphs sequentially: container-network teardown can disturb another graph.
+The Wholesale test host waits for Aspire cleanup during normal shutdown. On Linux with Podman
+selected through `ASPIRE_CONTAINER_RUNTIME=podman` or `DOCKER_HOST` pointing to its Unix socket,
+the next Wholesale runtime, browser or performance test recovers abandoned containers and
+anonymous volumes from marked test graphs whose owners have exited. Developer AppHost data
+stays in its named volume.
+
 Use the AppHost guide's trust instructions for Linux browser and HTTPS tests. To retain
 diagnostics locally, create a results directory, set `WHOLESALE_RUNTIME_RESULTS` to its
 path, and append `--results-directory="$WHOLESALE_RUNTIME_RESULTS" --report-xunit-trx
