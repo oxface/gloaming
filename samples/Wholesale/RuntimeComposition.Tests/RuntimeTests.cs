@@ -4,7 +4,6 @@ using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Gloaming.Samples.Wholesale.Api;
-using Gloaming.Samples.Wholesale.AppHost;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -27,15 +26,13 @@ public sealed class RuntimeTests
         );
         deadline.CancelAfter(TimeSpan.FromMinutes(2));
         CancellationToken cancellation = deadline.Token;
-        await using var builder =
-            await DistributedApplicationTestingBuilder.CreateAsync<AppHostMarker>(
-                EphemeralArguments,
-                cancellation
-            );
+        await using var builder = await WholesaleTestHost.CreateAsync(
+            EphemeralArguments,
+            cancellation
+        );
         builder.Configuration["Parameters:postgres-password"] = "disposable-topology-password";
         builder.Configuration["Parameters:oidc-authority"] = "https://identity.test";
         builder.Configuration["Parameters:oidc-client-id"] = "inert-topology-client";
-        builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         await using var app = await builder.BuildAsync(cancellation);
         await using var evidence = new RuntimeEvidence(app, "database-outage");
         await app.StartAsync(cancellation);
@@ -70,20 +67,7 @@ public sealed class RuntimeTests
             );
             Assert.Equal(true, await command.ExecuteScalarAsync(cancellation));
         }
-        var commands = app.Services.GetRequiredService<ResourceCommandService>();
-        var started = await commands.ExecuteCommandAsync(
-            "demo-setup",
-            KnownResourceCommands.StartCommand,
-            cancellation
-        );
-        Assert.True(started.Success, started.Message);
-        await app.ResourceNotifications.WaitForResourceAsync(
-            "demo-setup",
-            KnownResourceStates.Finished,
-            cancellation
-        );
-        Assert.True(app.ResourceNotifications.TryGetCurrentState("demo-setup", out setup));
-        Assert.Equal(0, setup.Snapshot.ExitCode);
+        await FiniteResource.RunAsync(app, "demo-setup", cancellation);
         await app.ResourceNotifications.WaitForResourceHealthyAsync("api", cancellation);
         using var ready = await client.GetAsync("/health/ready", cancellation);
         Assert.Equal(HttpStatusCode.OK, ready.StatusCode);
@@ -101,6 +85,7 @@ public sealed class RuntimeTests
                     .Stock
                     .AvailableQuantity
             );
+        var commands = app.Services.GetRequiredService<ResourceCommandService>();
         var stopped = await commands.ExecuteCommandAsync(
             "postgres",
             KnownResourceCommands.StopCommand,

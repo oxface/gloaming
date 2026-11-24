@@ -58,7 +58,10 @@ if (
 const reports =
   target === "performance" &&
   !args.some((arg) => /^(?:--graph(?:=|$)|--help$)/.test(arg))
-    ? createPerformanceRun()
+    ? resolve(
+        root,
+        process.env.GLOAMING_PERFORMANCE_RESULTS ?? createPerformanceRun(),
+      )
     : undefined;
 const result = spawnSync(
   process.execPath,

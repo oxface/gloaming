@@ -140,10 +140,13 @@ dynamic address in `dashboard.txt` inside the current report directory. Close
 the tab once load finishes so k6 can exit. Unattended runs export the same HTML
 with the listener disabled. [k6 web dashboard](https://grafana.com/docs/k6/latest/results-output/web-dashboard/)
 
-The AppHost's internal [`WithK6Reports` extension](K6ReportExtensions.cs)
-configures the report mount, HTML export and optional dashboard on the Toolkit's
-k6 resource. The AppHost supplies the workload, API origin and session fixture
-separately.
+The [performance test](../RuntimeComposition.Tests/DraftOrderPerformance.cs)
+adds the Toolkit's k6 resource to the disposable graph before Aspire builds it.
+The test supplies the workload, API origin and private session fixture. Its
+[`WithK6Reports` extension](../RuntimeComposition.Tests/K6ReportExtensions.cs)
+sets the report mount, HTML export and optional dashboard. The runtime, browser,
+and performance tests launch `api` and `demo-setup` from the API output for
+their built configuration.
 
 ## Optional Sales RLS graph
 

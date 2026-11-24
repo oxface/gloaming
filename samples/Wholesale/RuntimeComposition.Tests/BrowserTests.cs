@@ -5,7 +5,6 @@ using Aspire.Hosting.Testing;
 using Gloaming.ActorIdentity;
 using Gloaming.Samples.Wholesale.Api;
 using Gloaming.Samples.Wholesale.Api.Endpoints;
-using Gloaming.Samples.Wholesale.AppHost;
 using Gloaming.Samples.Wholesale.Sales.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
@@ -237,16 +236,11 @@ public sealed partial class BrowserTests : PageTest
 
     private static async Task<IDistributedApplicationTestingBuilder> CreateBuilderAsync(
         CancellationToken cancellation,
-        bool rowSecurity = false,
-        params string[] arguments
+        bool rowSecurity = false
     )
     {
-        var builder = await DistributedApplicationTestingBuilder.CreateAsync<AppHostMarker>(
-            [
-                .. LocalArguments,
-                $"LocalDevelopment:UseSalesRowSecurity={rowSecurity}",
-                .. arguments,
-            ],
+        var builder = await WholesaleTestHost.CreateAsync(
+            [.. LocalArguments, $"LocalDevelopment:UseSalesRowSecurity={rowSecurity}"],
             cancellation
         );
         builder.Configuration["Parameters:postgres-password"] =
@@ -258,7 +252,6 @@ public sealed partial class BrowserTests : PageTest
             "browser access;\"quoted'password";
         builder.Configuration["Parameters:sales-runtime-password"] =
             "browser sales;\"quoted'password";
-        builder.Configuration["DcpPublisher:RandomizePorts"] = "true";
         return builder;
     }
 
@@ -284,22 +277,10 @@ public sealed partial class BrowserTests : PageTest
                     KnownResourceStates.Running,
                     Token
                 );
-            var commands = app.Services.GetRequiredService<ResourceCommandService>();
-            var result = await commands.ExecuteCommandAsync(
-                "demo-setup",
-                KnownResourceCommands.StartCommand,
-                Token
-            );
-            Assert.True(result.Success, result.Message);
-            await app.ResourceNotifications.WaitForResourceAsync(
-                "demo-setup",
-                KnownResourceStates.Finished,
-                Token
-            );
-            Assert.True(app.ResourceNotifications.TryGetCurrentState("demo-setup", out var setup));
-            Assert.Equal(0, setup.Snapshot.ExitCode);
+            await FiniteResource.RunAsync(app, "demo-setup", Token);
             if (rowSecurity)
             {
+                var commands = app.Services.GetRequiredService<ResourceCommandService>();
                 var api = await commands.ExecuteCommandAsync(
                     "api",
                     KnownResourceCommands.StartCommand,
